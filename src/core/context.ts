@@ -90,7 +90,8 @@ export function buildSkillContext(
   // Parse message
   if (message && "text" in message && message.text) {
     text = message.text;
-    const match = text.match(/^\/(\w+)(?:@\w+)?\s*(.*)/s);
+    // [^\s@]+ корректно парсит и RU, и EN команды
+    const match = text.match(/^\/([^\s@]+)(?:@\S+)?\s*(.*)/s);
     if (match) {
       triggerType = "command";
       command = match[1].toLowerCase();

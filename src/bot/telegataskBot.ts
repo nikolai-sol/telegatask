@@ -68,6 +68,7 @@ import { logAction } from "../repositories/actionLogRepository";
 import { debugLog, verboseLog } from "../config/debug";
 import type { KnowledgeSourceTelegram } from "../models/knowledge";
 import { buildTelegramMessageLink, formatSourceFallback } from "../utils/telegramLink";
+import { extractFileRefFromMessage } from "../utils/fileRef";
 import { startScheduler, stopScheduler } from "../services/scheduler";
 import { autoSaveFilesToKnowledge } from "../services/autoSaveFiles";
 import { getCommandVariants } from "../config/commands";
@@ -1324,11 +1325,9 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
   }
 
   const text = getMessageText(message);
-  if (!text) {
-    return;
-  }
-
-  const commandMatch = text.trim().match(/^\/(\w+)/);
+  const fileRef = extractFileRefFromMessage(forwardedMessage);
+  const normalizedText = (text ?? "").trim();
+  const commandMatch = normalizedText.match(/^\/(\w+)/);
 
   if (!ctx.from) {
     return;
@@ -1339,7 +1338,8 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
       from: ctx.from.id,
       hasForwardUser,
       forwardFromChatId: forwardFromChat?.id ?? null,
-      text,
+      text: normalizedText,
+      hasFileRef: Boolean(fileRef),
     });
 
     const author = await upsertUserFromTelegramPayload({
@@ -1371,11 +1371,19 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
     const isCommandT = commandMatch?.[1]?.toLowerCase() === "t";
 
     pendingKnowledgeForwards.set(ctx.from.id, {
-      content: text.trim(),
+      content: normalizedText,
       sourceChatId,
       sourceChatTitle: sourceChatTitle ?? getChatTitle(forwardFromChat),
       sourceMessageId: forwardedMessage.forward_from_message_id ?? null,
+      fileRef,
     });
+
+    if (!normalizedText) {
+      if (fileRef) {
+        await ctx.reply("Файл получен. Отправьте /k или /k! чтобы сохранить его в базу знаний.");
+      }
+      return;
+    }
 
     // Если есть отложенное назначение и новое сообщение не команда /t — используем его как описание
     if (pending && !isCommandT) {
@@ -1397,7 +1405,7 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
         }
       }
 
-      const description = text.trim();
+      const description = normalizedText;
       const title = "";
       const dueDate = await resolveDueDate(description);
 
@@ -1471,9 +1479,9 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
       return;
     }
 
-    const mentions = extractMentions(text, entities);
+    const mentions = extractMentions(normalizedText, entities);
     const shouldCreateTask =
-      isCommandT || mentions.length > 0 || looksLikeTaskText(text);
+      isCommandT || mentions.length > 0 || looksLikeTaskText(normalizedText);
 
     if (!shouldCreateTask) {
       await ctx.reply(
@@ -1498,7 +1506,7 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
       }
     }
 
-    const description = text.trim();
+    const description = normalizedText;
     const title = "";
     const dueDate = await resolveDueDate(description);
 
@@ -1506,7 +1514,7 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
     if (resolvedAssignees.length > 0) {
       // Если это /t и нет описания кроме команды — ждём следующее сообщение как текст задачи
       const stripped = stripCommandAndMentions(
-        text,
+        normalizedText,
         mentions.map((m) => m.mentionText)
       );
 

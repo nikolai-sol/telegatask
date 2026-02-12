@@ -18,6 +18,7 @@ import {
 } from "../../repositories/knowledgeRepository";
 import { buildTelegramMessageLink } from "../../utils/telegramLink";
 import { extractFileRefFromMessage } from "../../utils/fileRef";
+import type { FileRefInfo } from "../../utils/fileRef";
 import { getCommandVariants } from "../../config/commands";
 import type { KnowledgeSourceTelegram } from "../../models/knowledge";
 
@@ -34,6 +35,7 @@ export const pendingKnowledgeForwards = new Map<
     sourceChatId: string | null;
     sourceChatTitle: string | null;
     sourceMessageId: number | null;
+    fileRef?: FileRefInfo | null;
   }
 >();
 
@@ -185,10 +187,11 @@ export async function handleKnowledgeLegacy(
 
   const replyText = getMessageText(repliedMessage);
   const forwardedText = forwardedMessage ? getMessageText(forwardedMessage) : null;
-  const fileRef = extractFileRefFromMessage(
+  const directFileRef = extractFileRefFromMessage(
     repliedMessage ?? (forwardedMessage as Message | undefined)
   );
   const pending = pendingKnowledgeForwards.get(ctx.from.id);
+  const fileRef = directFileRef ?? pending?.fileRef ?? null;
 
   let content =
     replyText?.trim() || stripped.trim() || forwardedText?.trim() || "";
