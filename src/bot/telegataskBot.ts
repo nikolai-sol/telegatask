@@ -1985,6 +1985,19 @@ function ensureAdmin(team: any, userId: string): boolean {
   return role === "owner" || role === "admin";
 }
 
+function isSuperAdminFromEnv(username?: string | null): boolean {
+  const raw = process.env.SUPERADMINS || "";
+  if (!raw) return false;
+  const set = new Set(
+    raw
+      .split(",")
+      .map((s) => s.trim().replace(/^@/, "").toLowerCase())
+      .filter(Boolean)
+  );
+  if (!username) return false;
+  return set.has(username.replace(/^@/, "").toLowerCase());
+}
+
 function resolveCommandMention(
   ctx: Context<Update>,
   text: string,
@@ -2025,7 +2038,7 @@ async function handleAdmin(ctx: Context<Update>): Promise<boolean> {
       return true;
     }
 
-    const isAdmin = ensureAdmin(team, user.id);
+    const isAdmin = ensureAdmin(team, user.id) || isSuperAdminFromEnv(user.username ?? null);
     if (!isAdmin) {
       await ctx.reply("Недостаточно прав. Нужен owner/admin команды.");
       return true;
@@ -2062,7 +2075,8 @@ async function handleSetRole(ctx: Context<Update>): Promise<boolean> {
   if (!chatId) return false;
 
   const parts = message.text.trim().split(/\s+/);
-  const role = parts[2] as
+  // Support: /setrole @user role  OR  /setrole <teamId> @user role (useful in private)
+  const role = parts[parts.length - 1] as
     | "owner"
     | "admin"
     | "member"
@@ -2081,13 +2095,14 @@ async function handleSetRole(ctx: Context<Update>): Promise<boolean> {
       first_name: ctx.from.first_name ?? undefined,
       last_name: ctx.from.last_name ?? undefined,
     });
-    const team = await getTeamByChatId(chatId);
+    const possibleTeamId = parts.length >= 4 ? parts[1] : null;
+    const team = possibleTeamId ? await getTeamById(possibleTeamId) : await getTeamByChatId(chatId);
     if (!team) {
       await ctx.reply("Команда не привязана. Используйте /link_team.");
       return true;
     }
 
-    if (!ensureAdmin(team, actor.id)) {
+    if (!ensureAdmin(team, actor.id) && !isSuperAdminFromEnv(actor.username ?? null)) {
       await ctx.reply("Недостаточно прав. Нужен owner/admin команды.");
       return true;
     }
@@ -2140,7 +2155,8 @@ async function handleAllowDeny(
   if (!chatId) return false;
 
   const parts = message.text.trim().split(/\s+/);
-  const action = parts[2] as "create" | "assign" | "edit" | undefined;
+  // Support: /allow @user create|assign|edit  OR  /allow <teamId> @user create|assign|edit
+  const action = parts[parts.length - 1] as "create" | "assign" | "edit" | undefined;
 
   if (!action || !["create", "assign", "edit"].includes(action)) {
     await ctx.reply(`Укажите право: /${kind} @user create|assign|edit`);
@@ -2154,13 +2170,14 @@ async function handleAllowDeny(
       first_name: ctx.from.first_name ?? undefined,
       last_name: ctx.from.last_name ?? undefined,
     });
-    const team = await getTeamByChatId(chatId);
+    const possibleTeamId = parts.length >= 4 ? parts[1] : null;
+    const team = possibleTeamId ? await getTeamById(possibleTeamId) : await getTeamByChatId(chatId);
     if (!team) {
       await ctx.reply("Команда не привязана. Используйте /link_team.");
       return true;
     }
 
-    if (!ensureAdmin(team, actor.id)) {
+    if (!ensureAdmin(team, actor.id) && !isSuperAdminFromEnv(actor.username ?? null)) {
       await ctx.reply("Недостаточно прав. Нужен owner/admin команды.");
       return true;
     }
@@ -2227,7 +2244,7 @@ async function handleSettings(ctx: Context<Update>): Promise<boolean> {
       return true;
     }
 
-    if (!ensureAdmin(team, actor.id)) {
+    if (!ensureAdmin(team, actor.id) && !isSuperAdminFromEnv(actor.username ?? null)) {
       await ctx.reply("Недостаточно прав. Нужен owner/admin команды.");
       return true;
     }
@@ -2417,6 +2434,10 @@ async function handleLinkTeam(ctx: Context<Update>): Promise<boolean> {
 
     const newTeam = await createTeam(`Team-${chatId}`, chatId);
     const createUser = ctx.from ? (await upsertUserFromTelegramPayload({ id: ctx.from.id, username: ctx.from.username ?? undefined, first_name: ctx.from.first_name ?? undefined, last_name: ctx.from.last_name ?? undefined })).id : null;
+    if (createUser) {
+      // Bootstrap: creator becomes owner of the newly created team.
+      await setRole(newTeam.id, createUser, "owner");
+    }
     safeLogAction("team_linked", {
       userId: createUser,
       targetId: newTeam.id,

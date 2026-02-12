@@ -16,16 +16,31 @@ export async function getTeamByChatId(chatId: string): Promise<Team | null> {
 
   const doc = snapshot.docs[0];
   const data = doc.data();
-  return {
+  const team: Team = {
     id: doc.id,
     name: data.name,
     chatIds: data.chatIds ?? [],
     projectIds: data.projectIds ?? [],
+    memberIds: data.memberIds ?? [],
     roles: data.roles ?? {},
     permissions: data.permissions ?? {},
     createdAt: data.createdAt,
     updatedAt: data.updatedAt,
   };
+
+  // Lazy backfill: if memberIds missing but roles exist, persist it for queryability.
+  if ((!data.memberIds || !Array.isArray(data.memberIds) || data.memberIds.length === 0) && data.roles) {
+    const roleIds = Object.keys(data.roles ?? {});
+    if (roleIds.length) {
+      collection.doc(doc.id).set(
+        { memberIds: roleIds, updatedAt: new Date().toISOString() },
+        { merge: true }
+      ).catch(() => {});
+      team.memberIds = roleIds;
+    }
+  }
+
+  return team;
 }
 
 export async function createTeam(name: string, chatId?: string): Promise<Team> {
@@ -34,6 +49,7 @@ export async function createTeam(name: string, chatId?: string): Promise<Team> {
     name,
     chatIds: chatId ? [chatId] : [],
     projectIds: [],
+    memberIds: [],
     roles: {},
     permissions: {},
     createdAt: now,
@@ -67,6 +83,7 @@ export async function getTeamById(teamId: string): Promise<Team | null> {
     name: data.name,
     chatIds: data.chatIds ?? [],
     projectIds: data.projectIds ?? [],
+    memberIds: data.memberIds ?? [],
     roles: data.roles ?? {},
     permissions: data.permissions ?? {},
     createdAt: data.createdAt,
@@ -82,6 +99,7 @@ export async function setRole(
   const ref = collection.doc(teamId);
   await ref.set(
     {
+      memberIds: admin.firestore.FieldValue.arrayUnion(userId),
       roles: {
         [userId]: role,
       },
@@ -99,6 +117,7 @@ export async function updatePermissions(
   const ref = collection.doc(teamId);
   await ref.set(
     {
+      memberIds: admin.firestore.FieldValue.arrayUnion(userId),
       permissions: {
         [userId]: payload,
       },
@@ -106,4 +125,26 @@ export async function updatePermissions(
     },
     { merge: true }
   );
+}
+
+export async function listTeamsByMemberId(userId: string, limitCount: number = 50): Promise<Team[]> {
+  const snapshot = await collection
+    .where("memberIds", "array-contains", userId)
+    .limit(limitCount)
+    .get();
+
+  return snapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      name: data.name,
+      chatIds: data.chatIds ?? [],
+      projectIds: data.projectIds ?? [],
+      memberIds: data.memberIds ?? [],
+      roles: data.roles ?? {},
+      permissions: data.permissions ?? {},
+      createdAt: data.createdAt,
+      updatedAt: data.updatedAt,
+    };
+  });
 }

@@ -12,8 +12,9 @@ import {
   deleteTask,
   createTask,
 } from "../repositories/taskRepository";
-import { getUserByTelegramId, getUserByUsername, upsertUserByUsername } from "../repositories/userRepository";
+import { getUserByTelegramId, getUserByUsername, upsertUserByUsername, getUsersByIds } from "../repositories/userRepository";
 import { logAction } from "../repositories/actionLogRepository";
+import { listTeamsByMemberId } from "../repositories/teamRepository";
 
 const router = Router();
 
@@ -89,25 +90,30 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
 // ─── GET /api/users/suggest?q=... ───
 router.get("/api/users/suggest", webAppAuthMiddleware, async (req: Request, res: Response) => {
   try {
+    const tgUser = req.webAppData!.user;
+    const userId = await resolveUserId(tgUser.id);
+    if (!userId) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
     const q = String(req.query.q ?? "").replace(/^@/, "").trim().toLowerCase();
     if (!q) {
       res.json({ users: [] });
       return;
     }
 
-    // Firestore doesn't support case-insensitive prefix search well without extra fields.
-    // We do a small scan and filter; expected user count is small for now.
-    const { listAllUsers } = await import("../repositories/userRepository");
-    const all = await listAllUsers(500);
-    const users = all
+    const teams = await listTeamsByMemberId(userId, 50);
+    const memberIds = new Set<string>();
+    teams.forEach((t) => (t.memberIds ?? []).forEach((id) => memberIds.add(id)));
+    memberIds.add(userId); // always include self
+
+    const members = await getUsersByIds(Array.from(memberIds));
+    const users = members
       .filter((u) => u.telegramId !== -1)
       .filter((u) => (u.username ?? "").toLowerCase().startsWith(q))
       .slice(0, 10)
-      .map((u) => ({
-        id: u.id,
-        username: u.username,
-        displayName: u.displayName,
-      }));
+      .map((u) => ({ id: u.id, username: u.username, displayName: u.displayName }));
 
     res.json({ users });
   } catch (err) {

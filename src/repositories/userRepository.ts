@@ -164,6 +164,28 @@ export async function getUserByUsername(
   return docToUser(doc.id, doc.data());
 }
 
+export async function getUsersByIds(userIds: string[]): Promise<TelegramUser[]> {
+  const unique = Array.from(new Set(userIds.filter(Boolean)));
+  if (unique.length === 0) return [];
+
+  // Firestore getAll supports batching multiple refs. Keep chunks small.
+  const chunkSize = 200;
+  const result: TelegramUser[] = [];
+  for (let i = 0; i < unique.length; i += chunkSize) {
+    const chunk = unique.slice(i, i + chunkSize);
+    const refs = chunk.map((id) => collection.doc(id));
+    // @ts-ignore - typings for getAll are present on firestore instance.
+    const snaps = await firestore.getAll(...refs);
+    for (const snap of snaps) {
+      if (!snap.exists) continue;
+      const data = snap.data();
+      if (!data) continue;
+      result.push(docToUser(snap.id, data));
+    }
+  }
+  return result;
+}
+
 /** Обновить timezone пользователя */
 export async function updateUserTimezone(
   userId: string,
