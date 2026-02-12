@@ -9,54 +9,46 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Header -->
-  <header class="header">
-    <h1 class="header__title">Задачи</h1>
-    <div class="header__filters">
-      <button class="filter-btn active" data-filter="active">Активные</button>
-      <button class="filter-btn" data-filter="done">Выполненные</button>
-      <button class="filter-btn" data-filter="all">Все</button>
-    </div>
-  </header>
-
-  <!-- Loading state -->
-  <div id="loading" class="loading">
-    <div class="spinner"></div>
-    <p>Загрузка задач...</p>
-  </div>
-
-  <!-- Error state -->
-  <div id="error" class="error-state" style="display:none">
-    <p class="error-state__icon">⚠️</p>
-    <p class="error-state__text">Не удалось загрузить задачи</p>
-    <button class="error-state__retry" onclick="app.loadTasks()">Повторить</button>
-  </div>
-
-  <!-- Empty state -->
-  <div id="empty" class="empty-state" style="display:none">
-    <p class="empty-state__icon">🎉</p>
-    <p class="empty-state__text">Нет задач</p>
-  </div>
-
-  <!-- Task list -->
-  <main id="task-list" class="task-list" style="display:none"></main>
-
-  <!-- Confirm modal -->
-  <div id="modal" class="modal" style="display:none">
-    <div class="modal__backdrop" onclick="app.closeModal()"></div>
-    <div class="modal__sheet">
-      <div class="modal__handle"></div>
-      <p class="modal__title" id="modal-title"></p>
-      <p class="modal__subtitle" id="modal-subtitle"></p>
-      <div class="modal__actions">
-        <button class="modal__btn modal__btn--cancel" onclick="app.closeModal()">Отмена</button>
-        <button class="modal__btn modal__btn--confirm" id="modal-confirm">Подтвердить</button>
+  <div class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="app-header__eyebrow">Telegatask</p>
+        <h1 class="app-header__title">Задачи</h1>
       </div>
-    </div>
+      <button id="filterMenuButton" class="icon-btn" type="button" aria-label="Фильтры">☰</button>
+    </header>
+
+    <nav class="tabs" aria-label="Фильтры задач">
+      <button class="tab active" data-tab="active" type="button">Активные</button>
+      <button class="tab" data-tab="done" type="button">Выполненные</button>
+      <button class="tab" data-tab="all" type="button">Все</button>
+    </nav>
+
+    <main>
+      <section id="loadingState" class="state state--loading" aria-live="polite" hidden>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+        <div class="skeleton-card"></div>
+      </section>
+
+      <section id="emptyState" class="state state--empty" hidden>
+        <p class="state__icon">🗂️</p>
+        <p id="emptyStateText" class="state__text">Нет задач</p>
+      </section>
+
+      <section id="errorState" class="state state--error" hidden>
+        <p class="state__icon">⚠️</p>
+        <p class="state__text">Не удалось загрузить задачи</p>
+        <button id="retryButton" class="btn" type="button">Повторить</button>
+      </section>
+
+      <section id="taskList" class="task-list" aria-live="polite"></section>
+    </main>
   </div>
 
-  <!-- Toast -->
-  <div id="toast" class="toast" style="display:none"></div>
+  <button id="fabAdd" class="fab" type="button" aria-label="Добавить задачу">+</button>
+
+  <div id="toast" class="toast" hidden></div>
 
   <script src="app.js"></script>
 </body>

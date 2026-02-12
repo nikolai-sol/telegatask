@@ -1,24 +1,17 @@
 /**
- * Telegatask Mini App — Task Manager
- * Communicates with bot backend via REST API
+ * Telegatask Mini App — lightweight mobile UI without frameworks.
  */
 
 const tg = window.Telegram?.WebApp;
-
-// ─── Config ───
-const API_BASE = window.__TELEGATASK_API__ || ""; // Will be set from env / config
 const INIT_DATA = tg?.initData || "";
 
-// ─── State ───
 const state = {
   tasks: [],
-  filter: "active", // active | done | all
-  pendingAction: null, // { type: 'done'|'delete', taskId }
+  tab: "active", // active | done | all
+  loading: false,
 };
 
-// ─── App ───
 const app = {
-  /** Initialize the app */
   init() {
     if (tg) {
       tg.ready();
@@ -26,55 +19,82 @@ const app = {
       tg.enableClosingConfirmation();
     }
 
-    this.bindFilters();
     this.detectApiBase();
+    this.bindUi();
+    this.render();
     this.loadTasks();
   },
 
-  /** Detect API base URL from meta tag or Telegram start_param */
   detectApiBase() {
-    // Priority: 1) explicit global, 2) meta tag, 3) start_param, 4) same origin
-    if (API_BASE) return;
+    if (window.__TELEGATASK_API__) return;
 
     const meta = document.querySelector('meta[name="api-base"]');
-    if (meta) {
+    if (meta?.content) {
       window.__TELEGATASK_API__ = meta.content;
       return;
     }
 
-    // Try to get from Telegram start_param (format: api_<encoded_url>)
     const startParam = tg?.initDataUnsafe?.start_param || "";
     if (startParam.startsWith("api_")) {
       try {
         window.__TELEGATASK_API__ = atob(startParam.slice(4));
         return;
-      } catch (e) { /* ignore */ }
+      } catch (e) {
+        console.warn("[MiniApp] failed to decode API url from start_param");
+      }
     }
 
-    // Fallback: use window config or relative path
     window.__TELEGATASK_API__ = "";
   },
 
-  /** Get the API base URL */
   getApiBase() {
     return window.__TELEGATASK_API__ || "";
   },
 
-  /** Bind filter button events */
-  bindFilters() {
-    document.querySelectorAll(".filter-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        document.querySelector(".filter-btn.active")?.classList.remove("active");
-        btn.classList.add("active");
-        state.filter = btn.dataset.filter;
-        this.renderTasks();
+  bindUi() {
+    const tabs = document.querySelectorAll(".tab");
+    tabs.forEach((tabBtn) => {
+      tabBtn.addEventListener("click", () => {
+        state.tab = tabBtn.dataset.tab || "active";
+        this.haptic("light");
+        this.render();
       });
+    });
+
+    document.getElementById("retryButton")?.addEventListener("click", () => {
+      this.loadTasks();
+    });
+
+    document.getElementById("fabAdd")?.addEventListener("click", () => {
+      this.openCreateTask();
+    });
+
+    document.getElementById("filterMenuButton")?.addEventListener("click", () => {
+      this.openFilterMenu();
+    });
+
+    document.getElementById("taskList")?.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      const toggleBtn = target.closest("[data-action='toggle']");
+      if (toggleBtn instanceof HTMLElement) {
+        const taskId = toggleBtn.dataset.taskId;
+        if (taskId) this.toggleDone(taskId);
+        return;
+      }
+
+      const deleteBtn = target.closest("[data-action='delete']");
+      if (deleteBtn instanceof HTMLElement) {
+        const taskId = deleteBtn.dataset.taskId;
+        if (taskId) this.deleteTask(taskId);
+      }
     });
   },
 
-  /** Fetch tasks from API */
   async loadTasks() {
-    this.showLoading();
+    state.loading = true;
+    this.render();
 
     try {
       const base = this.getApiBase();
@@ -90,118 +110,157 @@ const app = {
       }
 
       const data = await res.json();
-      state.tasks = data.tasks || [];
-      this.renderTasks();
-    } catch (err) {
-      console.error("[MiniApp] loadTasks error:", err);
-      this.showError();
+      state.tasks = Array.isArray(data.tasks) ? data.tasks : [];
+      state.loading = false;
+      this.render();
+    } catch (error) {
+      console.error("[MiniApp] loadTasks error", error);
+      state.loading = false;
+      this.showErrorState();
     }
   },
 
-  /** Filter tasks based on current filter */
   getFilteredTasks() {
-    const active = ["incoming", "new", "in_progress", "waiting"];
-    switch (state.filter) {
-      case "active":
-        return state.tasks.filter((t) => active.includes(t.status));
-      case "done":
-        return state.tasks.filter((t) => t.status === "done" || t.status === "cancelled");
-      case "all":
-        return state.tasks;
-      default:
-        return state.tasks;
+    const activeStatuses = ["incoming", "new", "in_progress", "waiting"];
+
+    if (state.tab === "active") {
+      return state.tasks.filter((task) => activeStatuses.includes(task.status));
     }
+
+    if (state.tab === "done") {
+      return state.tasks.filter((task) => task.status === "done" || task.status === "cancelled");
+    }
+
+    return [...state.tasks];
   },
 
-  /** Render the task list */
-  renderTasks() {
-    const tasks = this.getFilteredTasks();
-    const listEl = document.getElementById("task-list");
-    const emptyEl = document.getElementById("empty");
-    const loadingEl = document.getElementById("loading");
-    const errorEl = document.getElementById("error");
+  sortTasks(tasks) {
+    const priorityOrder = { urgent: 0, high: 1, normal: 2, low: 3 };
 
-    loadingEl.style.display = "none";
-    errorEl.style.display = "none";
+    return [...tasks].sort((a, b) => {
+      const pa = priorityOrder[a.priority] ?? 2;
+      const pb = priorityOrder[b.priority] ?? 2;
+      if (pa !== pb) return pa - pb;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  },
 
-    if (tasks.length === 0) {
-      listEl.style.display = "none";
-      emptyEl.style.display = "block";
+  render() {
+    const loadingEl = document.getElementById("loadingState");
+    const emptyEl = document.getElementById("emptyState");
+    const errorEl = document.getElementById("errorState");
+    const listEl = document.getElementById("taskList");
+
+    if (!loadingEl || !emptyEl || !errorEl || !listEl) return;
+
+    this.renderTabs();
+
+    if (state.loading) {
+      loadingEl.hidden = false;
+      emptyEl.hidden = true;
+      errorEl.hidden = true;
+      listEl.hidden = true;
       return;
     }
 
-    emptyEl.style.display = "none";
-    listEl.style.display = "block";
+    const tasks = this.sortTasks(this.getFilteredTasks());
 
-    listEl.innerHTML = tasks
-      .sort((a, b) => {
-        // Priority order: urgent > high > normal > low
-        const prio = { urgent: 0, high: 1, normal: 2, low: 3 };
-        const pa = prio[a.priority] ?? 2;
-        const pb = prio[b.priority] ?? 2;
-        if (pa !== pb) return pa - pb;
-        // Then by date desc
-        return new Date(b.createdAt) - new Date(a.createdAt);
-      })
-      .map((task) => this.renderTaskCard(task))
-      .join("");
+    loadingEl.hidden = true;
+    errorEl.hidden = true;
+
+    if (!tasks.length) {
+      this.renderEmptyState();
+      emptyEl.hidden = false;
+      listEl.hidden = true;
+      return;
+    }
+
+    emptyEl.hidden = true;
+    listEl.hidden = false;
+    listEl.innerHTML = tasks.map((task) => this.renderTaskCard(task)).join("");
   },
 
-  /** Render a single task card */
+  renderTabs() {
+    document.querySelectorAll(".tab").forEach((tabBtn) => {
+      tabBtn.classList.toggle("active", tabBtn.dataset.tab === state.tab);
+    });
+  },
+
+  renderEmptyState() {
+    const textEl = document.getElementById("emptyStateText");
+    if (!textEl) return;
+
+    if (state.tab === "active") {
+      textEl.textContent = "Нет активных задач 🎉";
+      return;
+    }
+
+    if (state.tab === "done") {
+      textEl.textContent = "Нет выполненных задач";
+      return;
+    }
+
+    textEl.textContent = "Пока задач нет";
+  },
+
+  showErrorState() {
+    const loadingEl = document.getElementById("loadingState");
+    const emptyEl = document.getElementById("emptyState");
+    const errorEl = document.getElementById("errorState");
+    const listEl = document.getElementById("taskList");
+
+    if (!loadingEl || !emptyEl || !errorEl || !listEl) return;
+
+    loadingEl.hidden = true;
+    emptyEl.hidden = true;
+    listEl.hidden = true;
+    errorEl.hidden = false;
+  },
+
   renderTaskCard(task) {
     const isDone = task.status === "done" || task.status === "cancelled";
-    const doneClass = isDone ? "task-card--done" : "";
+    const title = this.escapeHtml(task.title || task.description || "Без названия");
 
-    const priorityTag =
-      task.priority && task.priority !== "normal"
-        ? `<span class="task-card__tag tag--priority-${task.priority}">${this.priorityLabel(task.priority)}</span>`
-        : "";
+    const dueChip = task.dueDate
+      ? `<span class="chip ${this.isOverdue(task.dueDate) ? "chip--due-overdue" : ""}">${this.formatDue(task.dueDate)}</span>`
+      : "";
 
-    const dueTag = task.dueDate ? this.renderDueTag(task.dueDate) : "";
+    const projectChip = task.sourceChatTitle
+      ? `<span class="chip">${this.escapeHtml(task.sourceChatTitle)}</span>`
+      : "";
 
-    const statusTag =
-      task.status === "in_progress"
-        ? `<span class="task-card__tag tag--status">В работе</span>`
-        : task.status === "waiting"
-          ? `<span class="task-card__tag tag--status">Ожидание</span>`
-          : "";
+    const priorityChip = task.priority
+      ? `<span class="chip chip--priority-${task.priority}">${this.priorityLabel(task.priority)}</span>`
+      : "";
 
     return `
-      <div class="task-card ${doneClass}" data-id="${task.id}">
-        <div class="task-card__inner">
-          <div class="task-card__check" onclick="app.toggleDone('${task.id}')"></div>
-          <div class="task-card__body">
-            <div class="task-card__title">${this.escapeHtml(task.title)}</div>
-            <div class="task-card__meta">
-              ${priorityTag}${statusTag}${dueTag}
-            </div>
+      <article class="task-card ${isDone ? "task-card--done" : ""}" data-task-id="${task.id}">
+        <button class="task-card__check ${isDone ? "is-done" : ""}" data-action="toggle" data-task-id="${task.id}" type="button" aria-label="${isDone ? "Вернуть" : "Выполнить"}">${isDone ? "✓" : ""}</button>
+
+        <div class="task-card__content">
+          <p class="task-card__title ${isDone ? "is-done" : ""}">${title}</p>
+          <div class="task-card__meta">
+            ${dueChip}
+            ${projectChip}
+            ${priorityChip}
           </div>
         </div>
-        <div class="task-card__actions">
-          <button class="task-card__action" onclick="app.toggleDone('${task.id}')">
-            ${isDone ? "↩️ Вернуть" : "✓ Выполнено"}
-          </button>
-          <button class="task-card__action task-card__action--delete" onclick="app.confirmDelete('${task.id}')">
-            🗑 Удалить
-          </button>
-        </div>
-      </div>
+
+        <button class="task-card__delete" data-action="delete" data-task-id="${task.id}" type="button" aria-label="Удалить">🗑</button>
+      </article>
     `;
   },
 
-  /** Toggle task done status */
   async toggleDone(taskId) {
-    const task = state.tasks.find((t) => t.id === taskId);
+    const task = state.tasks.find((item) => item.id === taskId);
     if (!task) return;
 
-    const isDone = task.status === "done";
-    const newStatus = isDone ? "incoming" : "done";
+    const prevStatus = task.status;
+    const nextStatus = prevStatus === "done" ? "incoming" : "done";
 
-    // Optimistic update
-    task.status = newStatus;
-    this.renderTasks();
-
-    if (tg) tg.HapticFeedback?.impactOccurred("light");
+    task.status = nextStatus;
+    this.haptic("light");
+    this.render();
 
     try {
       const base = this.getApiBase();
@@ -211,50 +270,35 @@ const app = {
           "X-Telegram-Init-Data": INIT_DATA,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ status: nextStatus }),
       });
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
 
-      this.showToast(isDone ? "Задача возвращена" : "✓ Выполнено");
-    } catch (err) {
-      console.error("[MiniApp] toggleDone error:", err);
-      // Revert
-      task.status = isDone ? "done" : "incoming";
-      this.renderTasks();
-      this.showToast("Ошибка, попробуйте снова");
+      this.showToast("Сохранено");
+    } catch (error) {
+      console.error("[MiniApp] toggleDone error", error);
+      task.status = prevStatus;
+      this.render();
+      this.showToast("Ошибка, попробуйте ещё раз");
     }
   },
 
-  /** Show delete confirmation */
-  confirmDelete(taskId) {
-    const task = state.tasks.find((t) => t.id === taskId);
+  async deleteTask(taskId) {
+    const task = state.tasks.find((item) => item.id === taskId);
     if (!task) return;
 
-    if (tg) tg.HapticFeedback?.impactOccurred("medium");
+    const taskTitle = task.title || task.description || "Эту задачу";
+    const confirmed = await this.confirm(`Удалить задачу?\n${taskTitle}`);
+    if (!confirmed) return;
 
-    state.pendingAction = { type: "delete", taskId };
+    this.haptic("medium");
 
-    const modal = document.getElementById("modal");
-    document.getElementById("modal-title").textContent = "Удалить задачу?";
-    document.getElementById("modal-subtitle").textContent = task.title;
-
-    const confirmBtn = document.getElementById("modal-confirm");
-    confirmBtn.textContent = "Удалить";
-    confirmBtn.className = "modal__btn modal__btn--confirm destructive";
-    confirmBtn.onclick = () => this.executeDelete(taskId);
-
-    modal.style.display = "block";
-  },
-
-  /** Execute delete */
-  async executeDelete(taskId) {
-    this.closeModal();
-
-    const card = document.querySelector(`.task-card[data-id="${taskId}"]`);
-    if (card) card.classList.add("removing");
-
-    if (tg) tg.HapticFeedback?.notificationOccurred("warning");
+    const prevTasks = [...state.tasks];
+    state.tasks = state.tasks.filter((item) => item.id !== taskId);
+    this.render();
 
     try {
       const base = this.getApiBase();
@@ -266,94 +310,157 @@ const app = {
         },
       });
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
 
-      // Remove from state after animation
-      setTimeout(() => {
-        state.tasks = state.tasks.filter((t) => t.id !== taskId);
-        this.renderTasks();
-        this.showToast("Задача удалена");
-      }, 300);
-    } catch (err) {
-      console.error("[MiniApp] delete error:", err);
-      if (card) card.classList.remove("removing");
-      this.showToast("Ошибка при удалении");
+      this.showToast("Удалено");
+    } catch (error) {
+      console.error("[MiniApp] deleteTask error", error);
+      state.tasks = prevTasks;
+      this.render();
+      this.showToast("Ошибка, попробуйте ещё раз");
     }
   },
 
-  /** Close modal */
-  closeModal() {
-    document.getElementById("modal").style.display = "none";
-    state.pendingAction = null;
+  async openCreateTask() {
+    const title = await this.ask("Новая задача", "Введите текст задачи");
+    if (!title) return;
+
+    try {
+      const base = this.getApiBase();
+      const res = await fetch(`${base}/api/tasks`, {
+        method: "POST",
+        headers: {
+          "X-Telegram-Init-Data": INIT_DATA,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, description: title }),
+      });
+
+      if (!res.ok) {
+        if (res.status === 404 || res.status === 405) {
+          this.showToast("Создание задачи пока недоступно в API");
+          return;
+        }
+        throw new Error(`HTTP ${res.status}`);
+      }
+
+      this.showToast("Сохранено");
+      await this.loadTasks();
+    } catch (error) {
+      console.error("[MiniApp] createTask error", error);
+      this.showToast("Ошибка, попробуйте ещё раз");
+    }
   },
 
-  /** Show toast notification */
+  openFilterMenu() {
+    if (!tg?.showPopup) {
+      return;
+    }
+
+    tg.showPopup(
+      {
+        title: "Фильтр",
+        message: "Выберите вкладку",
+        buttons: [
+          { id: "active", type: "default", text: "Активные" },
+          { id: "done", type: "default", text: "Выполненные" },
+          { id: "all", type: "default", text: "Все" },
+          { id: "cancel", type: "close", text: "Закрыть" },
+        ],
+      },
+      (buttonId) => {
+        if (buttonId === "active" || buttonId === "done" || buttonId === "all") {
+          state.tab = buttonId;
+          this.render();
+        }
+      }
+    );
+  },
+
+  confirm(message) {
+    return new Promise((resolve) => {
+      if (tg?.showPopup) {
+        tg.showPopup(
+          {
+            title: "Подтверждение",
+            message,
+            buttons: [
+              { id: "yes", type: "destructive", text: "Удалить" },
+              { id: "no", type: "cancel", text: "Отмена" },
+            ],
+          },
+          (buttonId) => resolve(buttonId === "yes")
+        );
+        return;
+      }
+
+      resolve(window.confirm(message));
+    });
+  },
+
+  ask(title, placeholder) {
+    const value = window.prompt(`${title}\n${placeholder}`);
+    return Promise.resolve((value || "").trim());
+  },
+
+  isOverdue(dueDate) {
+    const due = new Date(dueDate).getTime();
+    return Number.isFinite(due) && due < Date.now();
+  },
+
+  formatDue(dueDate) {
+    const date = new Date(dueDate);
+    if (Number.isNaN(date.getTime())) return "Без срока";
+
+    const now = new Date();
+    const diff = date.getTime() - now.getTime();
+    const dayDiff = Math.ceil(diff / (1000 * 60 * 60 * 24));
+
+    if (dayDiff < 0) return `Просрочено ${Math.abs(dayDiff)}д`;
+    if (dayDiff === 0) return "Сегодня";
+    if (dayDiff === 1) return "Завтра";
+
+    return date.toLocaleDateString("ru-RU", {
+      day: "numeric",
+      month: "short",
+    });
+  },
+
+  priorityLabel(priority) {
+    const labels = {
+      urgent: "Срочно",
+      high: "Высокий",
+      normal: "Обычный",
+      low: "Низкий",
+    };
+    return labels[priority] || priority;
+  },
+
+  haptic(intensity) {
+    tg?.HapticFeedback?.impactOccurred(intensity);
+  },
+
   showToast(message) {
     const toast = document.getElementById("toast");
+    if (!toast) return;
+
     toast.textContent = message;
-    toast.style.display = "block";
+    toast.hidden = false;
 
-    clearTimeout(this._toastTimer);
-    this._toastTimer = setTimeout(() => {
-      toast.style.display = "none";
-    }, 2500);
+    clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => {
+      toast.hidden = true;
+    }, 2200);
   },
 
-  /** Show loading state */
-  showLoading() {
-    document.getElementById("loading").style.display = "flex";
-    document.getElementById("error").style.display = "none";
-    document.getElementById("empty").style.display = "none";
-    document.getElementById("task-list").style.display = "none";
-  },
-
-  /** Show error state */
-  showError() {
-    document.getElementById("loading").style.display = "none";
-    document.getElementById("error").style.display = "block";
-    document.getElementById("empty").style.display = "none";
-    document.getElementById("task-list").style.display = "none";
-  },
-
-  /** Priority label */
-  priorityLabel(p) {
-    const map = { urgent: "Срочно", high: "Высокий", normal: "Обычный", low: "Низкий" };
-    return map[p] || p;
-  },
-
-  /** Render due date tag */
-  renderDueTag(dueDate) {
-    const now = new Date();
-    const due = new Date(dueDate);
-    const diffMs = due - now;
-    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-
-    let label, className;
-    if (diffDays < 0) {
-      label = `Просрочено ${Math.abs(diffDays)}д`;
-      className = "tag--overdue";
-    } else if (diffDays === 0) {
-      label = "Сегодня";
-      className = "tag--overdue";
-    } else if (diffDays === 1) {
-      label = "Завтра";
-      className = "tag--due";
-    } else {
-      const d = due.toLocaleDateString("ru-RU", { day: "numeric", month: "short" });
-      label = d;
-      className = "tag--due";
-    }
-
-    return `<span class="task-card__tag ${className}">${label}</span>`;
-  },
-
-  /** Escape HTML */
-  escapeHtml(str) {
+  escapeHtml(value) {
     const div = document.createElement("div");
-    div.textContent = str;
+    div.textContent = value;
     return div.innerHTML;
   },
 };
 
-// Start the app
 document.addEventListener("DOMContentLoaded", () => app.init());
+window.app = app;
