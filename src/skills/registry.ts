@@ -18,6 +18,7 @@ import { knowledgeAddSkill } from "./knowledge-add";
 import { kbActionsSkill } from "./kb-actions";
 import { taskActionsSkill } from "./task-actions";
 import { digestSkill } from "./digest";
+import { teamAdminSkill } from "./team-admin";
 
 /**
  * Зарегистрировать все скиллы.
@@ -31,6 +32,7 @@ export function registerAllSkills(router: SkillRouter): void {
   router.register(kbActionsSkill);
   router.register(taskActionsSkill);
   router.register(digestSkill);
+  router.register(teamAdminSkill);
 
   // Добавляй новые скиллы здесь:
   // router.register(myNewSkill);

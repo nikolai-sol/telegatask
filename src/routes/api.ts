@@ -188,9 +188,14 @@ router.get("/api/projects", webAppAuthMiddleware, async (req: Request, res: Resp
     // Ensure inbox exists for the team
     await ensureTekuchkaProject(activeTeamId);
     const projects = await listProjectsByTeamId(activeTeamId);
+    const visible = projects.filter((p) => {
+      const allowed = (p as any).allowedMemberIds;
+      if (!allowed || !Array.isArray(allowed) || allowed.length === 0) return true;
+      return allowed.includes(userId);
+    });
     res.json({
       activeTeamId,
-      projects: projects.map((p) => ({ id: p.id, name: p.name })),
+      projects: visible.map((p) => ({ id: p.id, name: p.name })),
     });
   } catch (err) {
     console.error("[API] GET /api/projects error:", err);

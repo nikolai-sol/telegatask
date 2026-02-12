@@ -123,6 +123,22 @@ export async function updatePermissions(
   );
 }
 
+export async function removeMember(
+  teamId: string,
+  userId: string
+): Promise<void> {
+  const ref = collection.doc(teamId);
+  await ref.set(
+    {
+      memberIds: admin.firestore.FieldValue.arrayRemove(userId),
+      updatedAt: new Date().toISOString(),
+      [`roles.${userId}`]: admin.firestore.FieldValue.delete(),
+      [`permissions.${userId}`]: admin.firestore.FieldValue.delete(),
+    } as any,
+    { merge: true }
+  );
+}
+
 export async function listTeamsByMemberId(userId: string, limitCount: number = 50): Promise<Team[]> {
   const snapshot = await collection
     .where("memberIds", "array-contains", userId)

@@ -2430,11 +2430,29 @@ async function handleProjects(ctx: Context<Update>): Promise<boolean> {
   if (!chatId) return false;
 
   try {
+    const actor = ctx.from
+      ? await upsertUserFromTelegramPayload({
+          id: ctx.from.id,
+          username: ctx.from.username ?? undefined,
+          first_name: ctx.from.first_name ?? undefined,
+          last_name: ctx.from.last_name ?? undefined,
+        })
+      : null;
+
     const team = await getTeamByChatId(chatId);
     let projects = await listProjectsByChatId(chatId);
 
     if (!projects.length && team) {
       projects = await listProjectsByTeamId(team.id);
+    }
+
+    // Respect project access: if allowedMemberIds is set, only show for included members.
+    if (actor) {
+      projects = projects.filter((p: any) => {
+        const allowed = p.allowedMemberIds;
+        if (!allowed || !Array.isArray(allowed) || allowed.length === 0) return true;
+        return allowed.includes(actor.id);
+      });
     }
 
     if (!projects.length) {

@@ -19,6 +19,7 @@ export async function listProjectsByTeamId(
       description: data.description ?? null,
       teamId: data.teamId ?? null,
       chatIds: data.chatIds ?? [],
+      allowedMemberIds: data.allowedMemberIds ?? null,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     };
@@ -40,6 +41,7 @@ export async function listProjectsByChatId(
       description: data.description ?? null,
       teamId: data.teamId ?? null,
       chatIds: data.chatIds ?? [],
+      allowedMemberIds: data.allowedMemberIds ?? null,
       createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     };
@@ -51,6 +53,7 @@ export async function createProject(input: {
   description?: string | null;
   teamId?: string | null;
   chatIds?: string[];
+  allowedMemberIds?: string[] | null;
 }): Promise<Project> {
   const now = new Date().toISOString();
   const payload = {
@@ -58,12 +61,27 @@ export async function createProject(input: {
     description: input.description ?? null,
     teamId: input.teamId ?? null,
     chatIds: input.chatIds ?? [],
+    allowedMemberIds: input.allowedMemberIds ?? null,
     createdAt: now,
     updatedAt: now,
   };
 
   const docRef = await collection.add(payload);
   return { id: docRef.id, ...payload };
+}
+
+export async function updateProjectAllowedMembers(
+  projectId: string,
+  allowedMemberIds: string[] | null
+): Promise<void> {
+  const ref = collection.doc(projectId);
+  await ref.set(
+    {
+      allowedMemberIds: allowedMemberIds && allowedMemberIds.length ? allowedMemberIds : null,
+      updatedAt: new Date().toISOString(),
+    },
+    { merge: true }
+  );
 }
 
 export async function attachChatToProject(
@@ -92,6 +110,7 @@ export async function getProjectById(
     description: data.description ?? null,
     teamId: data.teamId ?? null,
     chatIds: data.chatIds ?? [],
+    allowedMemberIds: data.allowedMemberIds ?? null,
     createdAt: data.createdAt,
     updatedAt: data.updatedAt,
   };
