@@ -133,21 +133,79 @@ body {
   gap: 10px;
 }
 
-.task-card {
-  align-items: flex-start;
+.task-swipe {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 12px;
   box-shadow: 0 4px 14px color-mix(in srgb, var(--text) 8%, transparent);
+  overflow: hidden;
+  position: relative;
+}
+
+.task-swipe-bg {
+  inset: 0;
+  position: absolute;
+  z-index: 0;
+  display: flex;
+}
+
+.task-swipe-bg .bg-left,
+.task-swipe-bg .bg-right {
+  align-items: center;
+  color: #fff;
+  display: flex;
+  flex: 1;
+  font-size: 14px;
+  font-weight: 650;
+  padding: 0 14px;
+  opacity: 0;
+  transition: opacity 120ms ease-out;
+  user-select: none;
+}
+
+.task-swipe-bg .bg-left {
+  background: #2e7d32;
+  justify-content: flex-start;
+}
+
+.task-swipe-bg .bg-right {
+  background: color-mix(in srgb, var(--danger) 92%, #000 8%);
+  justify-content: flex-end;
+}
+
+.task-swipe.is-swiping-right .task-swipe-bg .bg-left {
+  opacity: 1;
+}
+
+.task-swipe.is-swiping-left .task-swipe-bg .bg-right {
+  opacity: 1;
+}
+
+.task-swipe.swipe-armed.is-swiping-right .task-swipe-bg .bg-left,
+.task-swipe.swipe-armed.is-swiping-left .task-swipe-bg .bg-right {
+  opacity: 1;
+}
+
+.task-card {
+  align-items: flex-start;
+  border-radius: 12px;
   display: grid;
   gap: 8px;
   grid-template-columns: auto 1fr auto;
   min-height: 76px;
   padding: 12px;
+  position: relative;
+  z-index: 1;
+  will-change: transform;
+  touch-action: pan-y;
 }
 
 .task-card--done {
   opacity: 0.68;
+}
+
+.task-card.is-releasing {
+  transition: transform 160ms ease-out;
 }
 
 .task-card__check {
@@ -396,6 +454,21 @@ body {
   text-align: center;
   transform: translateX(-50%);
   z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.toast__btn {
+  background: transparent;
+  border: 0;
+  color: var(--bg);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 750;
+  padding: 6px 8px;
+  text-decoration: underline;
 }
 
 [hidden] {
