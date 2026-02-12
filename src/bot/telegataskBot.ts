@@ -2013,13 +2013,19 @@ async function handleAdmin(ctx: Context<Update>): Promise<boolean> {
   if (!chatId) return false;
 
   try {
+    const user = await upsertUserFromTelegramPayload({
+      id: ctx.from.id,
+      username: ctx.from.username ?? undefined,
+      first_name: ctx.from.first_name ?? undefined,
+      last_name: ctx.from.last_name ?? undefined,
+    });
     const team = await getTeamByChatId(chatId);
     if (!team) {
       await ctx.reply("Команда не привязана. Используйте /link_team.");
       return true;
     }
 
-    const isAdmin = ensureAdmin(team, ctx.from.id.toString());
+    const isAdmin = ensureAdmin(team, user.id);
     if (!isAdmin) {
       await ctx.reply("Недостаточно прав. Нужен owner/admin команды.");
       return true;
@@ -2069,13 +2075,19 @@ async function handleSetRole(ctx: Context<Update>): Promise<boolean> {
   }
 
   try {
+    const actor = await upsertUserFromTelegramPayload({
+      id: ctx.from.id,
+      username: ctx.from.username ?? undefined,
+      first_name: ctx.from.first_name ?? undefined,
+      last_name: ctx.from.last_name ?? undefined,
+    });
     const team = await getTeamByChatId(chatId);
     if (!team) {
       await ctx.reply("Команда не привязана. Используйте /link_team.");
       return true;
     }
 
-    if (!ensureAdmin(team, ctx.from.id.toString())) {
+    if (!ensureAdmin(team, actor.id)) {
       await ctx.reply("Недостаточно прав. Нужен owner/admin команды.");
       return true;
     }
@@ -2093,7 +2105,7 @@ async function handleSetRole(ctx: Context<Update>): Promise<boolean> {
 
     await setRole(team.id, resolved.user.id, role);
     safeLogAction("role_set", {
-      userId: ctx.from.id.toString(),
+      userId: actor.id,
       targetId: resolved.user.id,
       targetType: "user",
       payload: { teamId: team.id, role },
@@ -2136,13 +2148,19 @@ async function handleAllowDeny(
   }
 
   try {
+    const actor = await upsertUserFromTelegramPayload({
+      id: ctx.from.id,
+      username: ctx.from.username ?? undefined,
+      first_name: ctx.from.first_name ?? undefined,
+      last_name: ctx.from.last_name ?? undefined,
+    });
     const team = await getTeamByChatId(chatId);
     if (!team) {
       await ctx.reply("Команда не привязана. Используйте /link_team.");
       return true;
     }
 
-    if (!ensureAdmin(team, ctx.from.id.toString())) {
+    if (!ensureAdmin(team, actor.id)) {
       await ctx.reply("Недостаточно прав. Нужен owner/admin команды.");
       return true;
     }
@@ -2163,7 +2181,7 @@ async function handleAllowDeny(
 
     await updatePermissions(team.id, resolved.user.id, payload);
     safeLogAction("permission_updated", {
-      userId: ctx.from.id.toString(),
+      userId: actor.id,
       targetId: resolved.user.id,
       targetType: "user",
       payload: { teamId: team.id, kind, action },
@@ -2197,13 +2215,19 @@ async function handleSettings(ctx: Context<Update>): Promise<boolean> {
   if (!chatId) return false;
 
   try {
+    const actor = await upsertUserFromTelegramPayload({
+      id: ctx.from.id,
+      username: ctx.from.username ?? undefined,
+      first_name: ctx.from.first_name ?? undefined,
+      last_name: ctx.from.last_name ?? undefined,
+    });
     const team = await getTeamByChatId(chatId);
     if (!team) {
       await ctx.reply("Команда не привязана. Используйте /link_team.");
       return true;
     }
 
-    if (!ensureAdmin(team, ctx.from.id.toString())) {
+    if (!ensureAdmin(team, actor.id)) {
       await ctx.reply("Недостаточно прав. Нужен owner/admin команды.");
       return true;
     }

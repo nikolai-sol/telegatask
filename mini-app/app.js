@@ -15,6 +15,8 @@ const state = {
   selectedTaskIds: new Set(),
   swipe: null, // active swipe session
   pendingDelete: null, // { kind: "single"|"bulk", tasks: any[], timerId }
+  suggestTimer: null,
+  suggestAbort: null,
 };
 
 const app = {
@@ -91,6 +93,24 @@ const app = {
       if (event.key === "Escape") {
         this.closeQuickAdd();
       }
+    });
+    document.getElementById("quickAddInput")?.addEventListener("input", () => {
+      this.onQuickAddInput();
+    });
+    document.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest("#mentionSuggest") || target.closest("#quickAdd")) return;
+      this.hideSuggest();
+    });
+
+    document.getElementById("mentionSuggest")?.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const item = target.closest("[data-username]");
+      if (!(item instanceof HTMLElement)) return;
+      const username = item.dataset.username;
+      if (username) this.applyMention(username);
     });
 
     document.getElementById("sheetBackdrop")?.addEventListener("click", () => {
@@ -799,6 +819,8 @@ const app = {
       return;
     }
 
+    this.hideSuggest();
+
     const tempId = `tmp-${Date.now()}`;
     const tempTask = {
       id: tempId,
@@ -823,7 +845,7 @@ const app = {
           "X-Telegram-Init-Data": INIT_DATA,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ title, description: title }),
+        body: JSON.stringify({ title }),
       });
 
       if (!res.ok) {
@@ -848,6 +870,102 @@ const app = {
       this.render();
       this.showToast("Ошибка, попробуйте ещё раз");
     }
+  },
+
+  onQuickAddInput() {
+    const input = document.getElementById("quickAddInput");
+    if (!(input instanceof HTMLInputElement)) return;
+
+    const ctx = this.getMentionContext(input.value, input.selectionStart ?? input.value.length);
+    if (!ctx) {
+      this.hideSuggest();
+      return;
+    }
+
+    clearTimeout(state.suggestTimer);
+    state.suggestTimer = setTimeout(() => {
+      this.fetchSuggest(ctx.query);
+    }, 150);
+  },
+
+  getMentionContext(value, cursorPos) {
+    const left = value.slice(0, cursorPos);
+    const at = left.lastIndexOf("@");
+    if (at === -1) return null;
+    // require boundary at start or whitespace
+    if (at > 0 && !/\\s/.test(left[at - 1])) return null;
+    const query = left.slice(at + 1);
+    if (!/^[a-zA-Z0-9_]{0,32}$/.test(query)) return null;
+    if (query.length < 1) return null;
+    return { atIndex: at, query };
+  },
+
+  async fetchSuggest(query) {
+    try {
+      const base = this.getApiBase();
+      if (state.suggestAbort) state.suggestAbort.abort();
+      state.suggestAbort = new AbortController();
+
+      const res = await fetch(`${base}/api/users/suggest?q=${encodeURIComponent(query)}`, {
+        headers: {
+          "X-Telegram-Init-Data": INIT_DATA,
+          "Content-Type": "application/json",
+        },
+        signal: state.suggestAbort.signal,
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const users = Array.isArray(data.users) ? data.users : [];
+      this.renderSuggest(users);
+    } catch (err) {
+      // ignore aborts
+      if (String(err?.name) === "AbortError") return;
+      this.hideSuggest();
+    }
+  },
+
+  renderSuggest(users) {
+    const box = document.getElementById("mentionSuggest");
+    if (!(box instanceof HTMLElement)) return;
+    if (!users.length) {
+      box.hidden = true;
+      box.innerHTML = "";
+      return;
+    }
+    box.innerHTML = users
+      .filter((u) => u.username)
+      .slice(0, 10)
+      .map((u) => {
+        const handle = `@${u.username}`;
+        const name = u.displayName ? this.escapeHtml(u.displayName) : "";
+        return `<button class=\"suggest__item\" type=\"button\" data-username=\"${this.escapeHtml(u.username)}\"><span class=\"suggest__handle\">${handle}</span><span class=\"suggest__name\">${name}</span></button>`;
+      })
+      .join("");
+    box.hidden = false;
+  },
+
+  hideSuggest() {
+    const box = document.getElementById("mentionSuggest");
+    if (!(box instanceof HTMLElement)) return;
+    box.hidden = true;
+    box.innerHTML = "";
+  },
+
+  applyMention(username) {
+    const input = document.getElementById("quickAddInput");
+    if (!(input instanceof HTMLInputElement)) return;
+
+    const pos = input.selectionStart ?? input.value.length;
+    const ctx = this.getMentionContext(input.value, pos);
+    if (!ctx) return;
+
+    const before = input.value.slice(0, ctx.atIndex);
+    const after = input.value.slice(pos);
+    input.value = `${before}@${username} ${after}`.replace(/\\s{2,}/g, " ");
+    const newPos = (before + `@${username} `).length;
+    input.setSelectionRange(newPos, newPos);
+    input.focus();
+    this.hideSuggest();
   },
 
   openFilterMenu() {

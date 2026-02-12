@@ -75,6 +75,7 @@ body {
   grid-template-columns: 1fr auto;
   margin-bottom: 12px;
   padding: 8px;
+  position: relative;
 }
 
 .quick-add__input {
@@ -97,6 +98,53 @@ body {
   font-weight: 650;
   height: 40px;
   padding: 0 12px;
+}
+
+.suggest {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 10px 24px color-mix(in srgb, var(--text) 14%, transparent);
+  left: 8px;
+  max-height: 220px;
+  overflow: auto;
+  position: absolute;
+  right: 8px;
+  top: calc(100% + 8px);
+  z-index: 20;
+}
+
+.suggest__item {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 12px;
+  text-align: left;
+  width: 100%;
+}
+
+.suggest__item:active {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.suggest__handle {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.suggest__name {
+  color: var(--hint);
+  font-size: 13px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .tabs {

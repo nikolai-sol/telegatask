@@ -141,6 +141,29 @@ export async function upsertUserByUsername(
   return { id: docId, ...newUserData };
 }
 
+export async function getUserByUsername(
+  username: string
+): Promise<TelegramUser | null> {
+  const normalized = username.replace(/^@/, "");
+  if (!normalized) return null;
+
+  // Fast path: placeholder users created by upsertUserByUsername
+  const docId = `username-${normalized.toLowerCase()}`;
+  const docSnap = await collection.doc(docId).get();
+  if (docSnap.exists) {
+    const data = docSnap.data() || {};
+    return docToUser(docSnap.id, data);
+  }
+
+  const snapshot = await collection
+    .where("username", "==", normalized)
+    .limit(1)
+    .get();
+  if (snapshot.empty) return null;
+  const doc = snapshot.docs[0];
+  return docToUser(doc.id, doc.data());
+}
+
 /** Обновить timezone пользователя */
 export async function updateUserTimezone(
   userId: string,
