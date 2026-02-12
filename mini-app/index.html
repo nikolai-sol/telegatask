@@ -64,6 +64,14 @@
 
   <div id="toast" class="toast" hidden></div>
 
+  <div id="bulkBar" class="bulk-bar" hidden>
+    <button id="bulkCancel" class="bulk-bar__btn" type="button" aria-label="Снять выбор">✕</button>
+    <div id="bulkCount" class="bulk-bar__count">0</div>
+    <div class="bulk-bar__spacer"></div>
+    <button id="bulkDone" class="bulk-bar__btn bulk-bar__btn--accent" type="button" aria-label="Выполнено">✅</button>
+    <button id="bulkDelete" class="bulk-bar__btn bulk-bar__btn--danger" type="button" aria-label="Удалить">🗑</button>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>

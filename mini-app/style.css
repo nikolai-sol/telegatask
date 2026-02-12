@@ -402,6 +402,61 @@ body {
   width: 56px;
 }
 
+.bulk-bar {
+  align-items: center;
+  background: color-mix(in srgb, var(--card) 96%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 12px 26px color-mix(in srgb, var(--text) 14%, transparent);
+  display: flex;
+  gap: 10px;
+  left: 50%;
+  max-width: min(92vw, 560px);
+  padding: 10px 10px;
+  position: fixed;
+  transform: translateX(-50%);
+  z-index: 35;
+}
+
+.bulk-bar__count {
+  color: var(--hint);
+  font-size: 13px;
+  font-weight: 650;
+  min-width: 22px;
+  text-align: center;
+}
+
+.bulk-bar__spacer {
+  flex: 1;
+}
+
+.bulk-bar__btn {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 12px;
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 20px;
+  height: 44px;
+  justify-content: center;
+  width: 44px;
+}
+
+.bulk-bar__btn:active {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.bulk-bar__btn--accent {
+  color: var(--accent);
+}
+
+.bulk-bar__btn--danger {
+  color: var(--danger);
+}
+
 .sheet {
   inset: 0;
   position: fixed;

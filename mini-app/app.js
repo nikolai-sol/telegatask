@@ -12,8 +12,9 @@ const state = {
   actionSheetTaskId: null,
   expandedTaskIds: new Set(),
   quickAddOpen: false,
+  selectedTaskIds: new Set(),
   swipe: null, // active swipe session
-  pendingDelete: null, // { task, timerId }
+  pendingDelete: null, // { kind: "single"|"bulk", tasks: any[], timerId }
 };
 
 const app = {
@@ -109,6 +110,16 @@ const app = {
       if (taskId) this.deleteTask(taskId);
     });
 
+    document.getElementById("bulkCancel")?.addEventListener("click", () => {
+      this.clearSelection();
+    });
+    document.getElementById("bulkDone")?.addEventListener("click", () => {
+      this.bulkMarkDone();
+    });
+    document.getElementById("bulkDelete")?.addEventListener("click", () => {
+      this.bulkDeleteWithUndo();
+    });
+
     document.getElementById("taskList")?.addEventListener("click", (event) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
@@ -116,7 +127,7 @@ const app = {
       const toggleBtn = target.closest("[data-action='toggle']");
       if (toggleBtn instanceof HTMLElement) {
         const taskId = toggleBtn.dataset.taskId;
-        if (taskId) this.toggleDone(taskId);
+        if (taskId) this.toggleSelect(taskId);
         return;
       }
 
@@ -228,6 +239,7 @@ const app = {
     listEl.hidden = false;
     listEl.innerHTML = tasks.map((task) => this.renderTaskCard(task)).join("");
     this.hydrateExpandableText();
+    this.renderBulkBar();
   },
 
   renderTabs() {
@@ -270,6 +282,7 @@ const app = {
   renderTaskCard(task) {
     const isDone = task.status === "done" || task.status === "cancelled";
     const isExpanded = state.expandedTaskIds.has(task.id);
+    const isSelected = state.selectedTaskIds.has(task.id);
     const title = this.escapeHtml(task.title || task.description || "Без названия");
 
     const due = this.formatDueBadge(task.dueDate);
@@ -292,8 +305,8 @@ const app = {
           <div class="bg-right">🗑 Удалить</div>
         </div>
         <article class="task-card ${isDone ? "task-card--done" : ""} ${isExpanded ? "is-expanded" : ""}" data-task-id="${task.id}">
-          <button class="task-card__check ${isDone ? "is-done" : ""}" data-action="toggle" data-task-id="${task.id}" type="button" aria-label="${isDone ? "Вернуть" : "Выполнить"}">
-            <span class="task-card__check-circle">✓</span>
+          <button class="task-card__check ${isSelected ? "is-done" : ""}" data-action="toggle" data-task-id="${task.id}" type="button" aria-label="${isSelected ? "Снять выбор" : "Выбрать"}">
+            <span class="task-card__check-circle">${isSelected ? "✓" : ""}</span>
           </button>
 
           <div class="task-card__content">
@@ -411,6 +424,9 @@ const app = {
 
     if (s.locked !== "swipe") return;
 
+    // When selecting tasks, don't intercept scroll with swipes.
+    if (state.selectedTaskIds.size > 0) return;
+
     event.preventDefault();
 
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
@@ -466,6 +482,11 @@ const app = {
       return;
     }
 
+    if (state.selectedTaskIds.size > 0) {
+      cleanup();
+      return;
+    }
+
     if (dx > 80) {
       releaseToZero();
       setTimeout(() => this.toggleDone(s.taskId), 140);
@@ -493,7 +514,7 @@ const app = {
     // Finalize previous pending delete immediately to keep UX simple.
     if (state.pendingDelete) {
       clearTimeout(state.pendingDelete.timerId);
-      this.finalizeDelete(state.pendingDelete.task.id);
+      state.pendingDelete.tasks.forEach((t) => this.finalizeDelete(t.id));
       state.pendingDelete = null;
     }
 
@@ -501,20 +522,22 @@ const app = {
     this.render();
 
     const timerId = setTimeout(() => {
-      if (!state.pendingDelete || state.pendingDelete.task.id !== taskId) return;
+      if (!state.pendingDelete || state.pendingDelete.kind !== "single") return;
+      if (state.pendingDelete.tasks[0]?.id !== taskId) return;
       state.pendingDelete = null;
       this.finalizeDelete(taskId);
     }, 5000);
 
-    state.pendingDelete = { task, timerId };
+    state.pendingDelete = { kind: "single", tasks: [task], timerId };
 
     this.showToast("Удалено", {
       actionLabel: "Undo",
       durationMs: 5000,
       onAction: () => {
-        if (!state.pendingDelete || state.pendingDelete.task.id !== taskId) return;
+        if (!state.pendingDelete || state.pendingDelete.kind !== "single") return;
+        if (state.pendingDelete.tasks[0]?.id !== taskId) return;
         clearTimeout(state.pendingDelete.timerId);
-        const restored = state.pendingDelete.task;
+        const restored = state.pendingDelete.tasks[0];
         state.pendingDelete = null;
         state.tasks.unshift(restored);
         this.render();
@@ -540,6 +563,125 @@ const app = {
       // Best-effort resync
       this.loadTasks();
     }
+  },
+
+  toggleSelect(taskId) {
+    if (state.selectedTaskIds.has(taskId)) {
+      state.selectedTaskIds.delete(taskId);
+    } else {
+      state.selectedTaskIds.add(taskId);
+    }
+    this.haptic("light");
+    this.renderBulkBar();
+    // Update only checkmarks quickly by rerendering list (simple and consistent)
+    this.render();
+  },
+
+  clearSelection() {
+    if (state.selectedTaskIds.size === 0) return;
+    state.selectedTaskIds.clear();
+    this.haptic("light");
+    this.render();
+  },
+
+  renderBulkBar() {
+    const bar = document.getElementById("bulkBar");
+    const countEl = document.getElementById("bulkCount");
+    if (!(bar instanceof HTMLElement) || !(countEl instanceof HTMLElement)) return;
+    const n = state.selectedTaskIds.size;
+    bar.hidden = n === 0;
+    countEl.textContent = String(n);
+  },
+
+  async bulkMarkDone() {
+    const ids = Array.from(state.selectedTaskIds);
+    if (!ids.length) return;
+
+    // optimistic
+    const prev = new Map();
+    for (const id of ids) {
+      const t = state.tasks.find((x) => x.id === id);
+      if (!t) continue;
+      prev.set(id, t.status);
+      t.status = "done";
+    }
+
+    this.clearSelection();
+    this.showToast("Сохранено");
+    this.render();
+
+    // fire API calls (best-effort)
+    const base = this.getApiBase();
+    const failures = [];
+    for (const id of ids) {
+      try {
+        const res = await fetch(`${base}/api/tasks/${id}/status`, {
+          method: "POST",
+          headers: {
+            "X-Telegram-Init-Data": INIT_DATA,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: "done" }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      } catch {
+        failures.push(id);
+      }
+    }
+
+    if (failures.length) {
+      for (const id of failures) {
+        const t = state.tasks.find((x) => x.id === id);
+        if (t && prev.has(id)) t.status = prev.get(id);
+      }
+      this.render();
+      this.showToast("Ошибка, попробуйте ещё раз");
+    }
+  },
+
+  bulkDeleteWithUndo() {
+    const ids = Array.from(state.selectedTaskIds);
+    if (!ids.length) return;
+
+    // Cancel selection immediately
+    state.selectedTaskIds.clear();
+
+    // For now: if there is a pending delete, finalize it
+    if (state.pendingDelete) {
+      clearTimeout(state.pendingDelete.timerId);
+      state.pendingDelete.tasks.forEach((t) => this.finalizeDelete(t.id));
+      state.pendingDelete = null;
+    }
+
+    const removed = state.tasks.filter((t) => ids.includes(t.id));
+    if (!removed.length) return;
+
+    state.tasks = state.tasks.filter((t) => !ids.includes(t.id));
+    this.haptic("medium");
+    this.render();
+
+    const timerId = setTimeout(() => {
+      if (!state.pendingDelete || state.pendingDelete.kind !== "bulk") return;
+      state.pendingDelete = null;
+      // finalize all
+      removed.forEach((t) => this.finalizeDelete(t.id));
+    }, 5000);
+
+    state.pendingDelete = { kind: "bulk", tasks: removed, timerId };
+
+    this.showToast("Удалено", {
+      actionLabel: "Undo",
+      durationMs: 5000,
+      onAction: () => {
+        if (!state.pendingDelete || state.pendingDelete.kind !== "bulk") return;
+        clearTimeout(state.pendingDelete.timerId);
+        state.pendingDelete = null;
+        // restore at top preserving order
+        state.tasks = [...removed, ...state.tasks];
+        this.render();
+        this.showToast("Отменено");
+      },
+    });
   },
 
   async toggleDone(taskId) {
