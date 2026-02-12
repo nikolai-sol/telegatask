@@ -16,6 +16,7 @@ function docToTask(id: string, data: FirebaseFirestore.DocumentData): Task {
     sourceChatId: data.sourceChatId ?? null,
     sourceChatTitle: data.sourceChatTitle ?? null,
     sourceMessageId: data.sourceMessageId ?? null,
+    projectId: data.projectId ?? null,
     createdByUserId: data.createdByUserId,
     assignedUserId: data.assignedUserId ?? null,
     title: data.title ?? "",
@@ -36,6 +37,7 @@ export interface CreateTaskInput {
   sourceChatId?: string | null;
   sourceChatTitle?: string | null;
   sourceMessageId?: number | null;
+  projectId?: string | null;
   createdByUserId: string;
   assignedUserId?: string | null;
   title: string;
@@ -59,6 +61,7 @@ export async function createTask(input: CreateTaskInput): Promise<Task> {
     sourceChatId: input.sourceChatId ?? null,
     sourceChatTitle: input.sourceChatTitle ?? null,
     sourceMessageId: input.sourceMessageId ?? null,
+    projectId: input.projectId ?? null,
     createdByUserId: input.createdByUserId,
     assignedUserId: input.assignedUserId ?? null,
     title: input.title,
@@ -202,6 +205,17 @@ export async function updateTaskPriority(
   const docRef = firestore.collection("tasks").doc(taskId);
   await docRef.update({
     priority,
+    updatedAt: new Date().toISOString(),
+  });
+}
+
+export async function updateTaskProject(
+  taskId: string,
+  projectId: string | null
+): Promise<void> {
+  const docRef = firestore.collection("tasks").doc(taskId);
+  await docRef.update({
+    projectId: projectId ?? null,
     updatedAt: new Date().toISOString(),
   });
 }

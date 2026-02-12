@@ -11,6 +11,7 @@ function docToUser(id: string, data: FirebaseFirestore.DocumentData): TelegramUs
     username: data.username ?? null,
     displayName: data.displayName ?? `user-${id}`,
     timezone: data.timezone ?? null,
+    activeTeamId: data.activeTeamId ?? null,
     settings: {
       ...DEFAULT_USER_SETTINGS,
       ...(data.settings ?? {}),
@@ -99,6 +100,7 @@ export async function upsertUserFromTelegramPayload(payload: {
     username: payload.username ?? null,
     displayName,
     timezone: null,
+    activeTeamId: null,
     settings: DEFAULT_USER_SETTINGS,
     createdAt: now,
     updatedAt: now,
@@ -208,6 +210,16 @@ export async function updateUserSettings(
   const merged = { ...user.settings, ...settings };
   await collection.doc(userId).update({
     settings: merged,
+    updatedAt: new Date().toISOString(),
+  });
+}
+
+export async function updateUserActiveTeamId(
+  userId: string,
+  activeTeamId: string | null
+): Promise<void> {
+  await collection.doc(userId).update({
+    activeTeamId: activeTeamId ?? null,
     updatedAt: new Date().toISOString(),
   });
 }

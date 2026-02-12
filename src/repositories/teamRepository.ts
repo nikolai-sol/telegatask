@@ -100,11 +100,9 @@ export async function setRole(
   await ref.set(
     {
       memberIds: admin.firestore.FieldValue.arrayUnion(userId),
-      roles: {
-        [userId]: role,
-      },
       updatedAt: new Date().toISOString(),
-    },
+      [`roles.${userId}`]: role,
+    } as any,
     { merge: true }
   );
 }
@@ -118,11 +116,9 @@ export async function updatePermissions(
   await ref.set(
     {
       memberIds: admin.firestore.FieldValue.arrayUnion(userId),
-      permissions: {
-        [userId]: payload,
-      },
       updatedAt: new Date().toISOString(),
-    },
+      [`permissions.${userId}`]: payload,
+    } as any,
     { merge: true }
   );
 }

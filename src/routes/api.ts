@@ -11,10 +11,19 @@ import {
   updateTaskStatus,
   deleteTask,
   createTask,
+  updateTaskProject,
 } from "../repositories/taskRepository";
-import { getUserByTelegramId, getUserByUsername, upsertUserByUsername, getUsersByIds } from "../repositories/userRepository";
+import {
+  getUserByTelegramId,
+  getUserByUsername,
+  upsertUserByUsername,
+  getUsersByIds,
+  getUserById,
+  updateUserActiveTeamId,
+} from "../repositories/userRepository";
 import { logAction } from "../repositories/actionLogRepository";
 import { listTeamsByMemberId } from "../repositories/teamRepository";
+import { createProject, listProjectsByTeamId } from "../repositories/projectRepository";
 
 const router = Router();
 
@@ -22,6 +31,26 @@ const router = Router();
 async function resolveUserId(telegramId: number): Promise<string | null> {
   const user = await getUserByTelegramId(telegramId);
   return user?.id ?? null;
+}
+
+async function resolveActiveTeamId(userId: string): Promise<string | null> {
+  const user = await getUserById(userId);
+  if (user?.activeTeamId) return user.activeTeamId;
+
+  const teams = await listTeamsByMemberId(userId, 20);
+  const first = teams[0]?.id ?? null;
+  if (first) {
+    updateUserActiveTeamId(userId, first).catch(() => {});
+  }
+  return first;
+}
+
+async function ensureTekuchkaProject(teamId: string): Promise<string> {
+  const projects = await listProjectsByTeamId(teamId);
+  const existing = projects.find((p) => (p.name || "").toLowerCase() === "текучка");
+  if (existing) return existing.id;
+  const created = await createProject({ name: "Текучка", description: "Inbox / текучка", teamId });
+  return created.id;
 }
 
 function extractFirstMention(text: string): string | null {
@@ -83,6 +112,87 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
     res.json({ tasks });
   } catch (err) {
     console.error("[API] GET /api/tasks error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
+// ─── GET /api/teams ───
+router.get("/api/teams", webAppAuthMiddleware, async (req: Request, res: Response) => {
+  try {
+    const tgUser = req.webAppData!.user;
+    const userId = await resolveUserId(tgUser.id);
+    if (!userId) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const teams = await listTeamsByMemberId(userId, 50);
+    const user = await getUserById(userId);
+    res.json({
+      teams: teams.map((t) => ({ id: t.id, name: t.name })),
+      activeTeamId: user?.activeTeamId ?? null,
+    });
+  } catch (err) {
+    console.error("[API] GET /api/teams error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
+// ─── POST /api/teams/active ───
+router.post("/api/teams/active", webAppAuthMiddleware, async (req: Request, res: Response) => {
+  try {
+    const tgUser = req.webAppData!.user;
+    const userId = await resolveUserId(tgUser.id);
+    if (!userId) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const teamId = typeof req.body?.teamId === "string" ? req.body.teamId.trim() : "";
+    if (!teamId) {
+      res.status(400).json({ error: "Missing teamId" });
+      return;
+    }
+
+    const teams = await listTeamsByMemberId(userId, 50);
+    if (!teams.find((t) => t.id === teamId)) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    await updateUserActiveTeamId(userId, teamId);
+    res.json({ ok: true, activeTeamId: teamId });
+  } catch (err) {
+    console.error("[API] POST /api/teams/active error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
+// ─── GET /api/projects ───
+router.get("/api/projects", webAppAuthMiddleware, async (req: Request, res: Response) => {
+  try {
+    const tgUser = req.webAppData!.user;
+    const userId = await resolveUserId(tgUser.id);
+    if (!userId) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.json({ projects: [], activeTeamId: null });
+      return;
+    }
+
+    // Ensure inbox exists for the team
+    await ensureTekuchkaProject(activeTeamId);
+    const projects = await listProjectsByTeamId(activeTeamId);
+    res.json({
+      activeTeamId,
+      projects: projects.map((p) => ({ id: p.id, name: p.name })),
+    });
+  } catch (err) {
+    console.error("[API] GET /api/projects error:", err);
     res.status(500).json({ error: "Internal error" });
   }
 });
@@ -153,10 +263,14 @@ router.post("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respon
       }
     }
 
+    const activeTeamId = await resolveActiveTeamId(userId);
+    const projectId = activeTeamId ? await ensureTekuchkaProject(activeTeamId) : null;
+
     const task = await createTask({
       sourceType: "manual",
       createdByUserId: userId,
       assignedUserId,
+      projectId,
       title,
       description: title,
       status: assignedUserId ? "new" : "incoming",
@@ -175,6 +289,39 @@ router.post("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respon
     res.json({ ok: true, task });
   } catch (err) {
     console.error("[API] POST /api/tasks error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
+// ─── POST /api/tasks/:id/project ───
+router.post("/api/tasks/:id/project", webAppAuthMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const tgUser = req.webAppData!.user;
+    const userId = await resolveUserId(tgUser.id);
+
+    if (!userId) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const projectId = typeof req.body?.projectId === "string" ? req.body.projectId : null;
+
+    const task = await getTaskById(id);
+    if (!task) {
+      res.status(404).json({ error: "Task not found" });
+      return;
+    }
+
+    if (task.createdByUserId !== userId && task.assignedUserId !== userId) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    await updateTaskProject(id, projectId);
+    res.json({ ok: true, projectId: projectId ?? null });
+  } catch (err) {
+    console.error("[API] POST /api/tasks/:id/project error:", err);
     res.status(500).json({ error: "Internal error" });
   }
 });

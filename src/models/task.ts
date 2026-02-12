@@ -33,6 +33,7 @@ export interface Task {
   sourceChatId?: string | null; // FK -> chats.id
   sourceChatTitle?: string | null;
   sourceMessageId?: number | null; // Telegram message_id
+  projectId?: string | null; // FK -> projects.id (inbox/tekuchka or linked project)
 
   createdByUserId: string; // FK -> users.id
   assignedUserId?: string | null; // FK -> users.id

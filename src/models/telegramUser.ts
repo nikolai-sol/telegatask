@@ -20,6 +20,7 @@ export interface TelegramUser {
   username?: string | null; // @handle
   displayName: string; // Имя для отображения
   timezone?: string | null; // e.g. "Europe/Moscow" (default null = UTC)
+  activeTeamId?: string | null; // выбранная команда для mini app / дефолтов
   settings: UserSettings;
   createdAt: string; // ISO-строка
   updatedAt: string; // ISO-строка
