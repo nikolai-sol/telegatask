@@ -2,6 +2,7 @@ import { firestore } from "../config/firebase";
 
 export type ActionType =
   | "task_created"
+  | "task_updated"
   | "task_status_updated"
   | "task_deleted"
   | "knowledge_added"

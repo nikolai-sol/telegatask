@@ -220,6 +220,31 @@ export async function updateTaskProject(
   });
 }
 
+export interface UpdateTaskFieldsInput {
+  title?: string;
+  description?: string;
+  dueDate?: string | null;
+  priority?: TaskPriority;
+}
+
+export async function updateTaskFields(
+  taskId: string,
+  patch: UpdateTaskFieldsInput
+): Promise<void> {
+  const docRef = firestore.collection("tasks").doc(taskId);
+
+  const update: Record<string, unknown> = {
+    updatedAt: new Date().toISOString(),
+  };
+
+  if (typeof patch.title === "string") update.title = patch.title;
+  if (typeof patch.description === "string") update.description = patch.description;
+  if (patch.dueDate === null || typeof patch.dueDate === "string") update.dueDate = patch.dueDate;
+  if (typeof patch.priority === "string") update.priority = patch.priority;
+
+  await docRef.update(update);
+}
+
 export async function updateTaskFollowUp(
   taskId: string,
   followUp: TaskFollowUp

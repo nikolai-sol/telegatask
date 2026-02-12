@@ -92,6 +92,25 @@ type CachedList = {
   mode: SortMode;
 };
 
+type TasksUiKind = "l" | "my" | "chat_tasks" | "all_tasks";
+type TasksUiOrigin = "assigned" | "outbox" | "chat" | "all";
+type TasksUiItem = {
+  task: Task;
+  origin: TasksUiOrigin;
+};
+type TasksUiSession = {
+  ownerTelegramId: number;
+  ownerUserId: string;
+  ownerUsername?: string;
+  kind: TasksUiKind;
+  title: string;
+  chatDocId?: string; // for chat_tasks refresh
+  page: number;
+  selectedIndex: number | null; // 0..PAGE_SIZE-1
+  items: TasksUiItem[]; // full list for this view
+  createdAtMs: number;
+};
+
 type ParsePeriod = "today" | "yesterday";
 
 type MentionEntity = MessageEntity.CommonMessageEntity & {
@@ -101,6 +120,11 @@ type MentionEntity = MessageEntity.CommonMessageEntity & {
 
 let bot: Telegraf<Context<Update>> | null = null;
 const userTaskCache = new Map<number, CachedList>();
+const tasksUiSessions = new Map<string, TasksUiSession>();
+
+const TASKS_UI_PAGE_SIZE = 5;
+const TASKS_UI_TTL_MS = 1000 * 60 * 30;
+
 const pendingForwardTasks = new Map<
   number,
   {
@@ -112,6 +136,17 @@ const pendingForwardTasks = new Map<
   }
 >();
 const userLabelCache = new Map<string, string>();
+
+function tasksUiKey(chatId: number, messageId: number): string {
+  return `${chatId}:${messageId}`;
+}
+
+function cleanupTasksUiSessions(): void {
+  const now = Date.now();
+  for (const [key, s] of tasksUiSessions) {
+    if (now - s.createdAtMs > TASKS_UI_TTL_MS) tasksUiSessions.delete(key);
+  }
+}
 
 function assertToken(): string {
   const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -633,6 +668,147 @@ function formatDueLabel(dueDate?: string | null): string {
   if (!d) return "";
   const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`);
   return ` (до ${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())})`;
+}
+
+function buildTasksUiKeyboard(session: TasksUiSession) {
+  const total = session.items.length;
+  const pages = Math.max(1, Math.ceil(total / TASKS_UI_PAGE_SIZE));
+  const page = Math.min(Math.max(0, session.page), pages - 1);
+
+  const prev = Markup.button.callback("◀", "tasksui:page:prev");
+  const next = Markup.button.callback("▶", "tasksui:page:next");
+  const mid = Markup.button.callback(`${page + 1}/${pages}`, "tasksui:refresh");
+  const done = Markup.button.callback("✅", "tasksui:done");
+  const del = Markup.button.callback("🗑", "tasksui:delete");
+
+  const start = page * TASKS_UI_PAGE_SIZE;
+  const end = Math.min(total, start + TASKS_UI_PAGE_SIZE);
+  const countOnPage = Math.max(0, end - start);
+
+  const pickButtons = [];
+  for (let i = 0; i < TASKS_UI_PAGE_SIZE; i += 1) {
+    if (i >= countOnPage) {
+      pickButtons.push(Markup.button.callback("·", "tasksui:noop"));
+      continue;
+    }
+    const isSel = session.selectedIndex === i;
+    const label = isSel ? `✓${i + 1}` : `${i + 1}`;
+    pickButtons.push(Markup.button.callback(label, `tasksui:select:${i + 1}`));
+  }
+
+  return Markup.inlineKeyboard([
+    [prev, mid, next, done, del],
+    pickButtons,
+  ]);
+}
+
+async function refreshTasksUiItems(session: TasksUiSession): Promise<void> {
+  if (session.kind === "all_tasks") {
+    const tasks = await getAllTasks();
+    session.items = tasks.map((t) => ({ task: t, origin: "all" }));
+    return;
+  }
+
+  if (session.kind === "chat_tasks") {
+    if (!session.chatDocId) {
+      session.items = [];
+      return;
+    }
+    const tasks = await getTasksByChatId(session.chatDocId);
+    session.items = tasks.map((t) => ({ task: t, origin: "chat" }));
+    return;
+  }
+
+  // "my" and "l" both depend on user
+  const assigneeIds = [session.ownerUserId];
+  if (session.ownerUsername) {
+    assigneeIds.push(`username-${session.ownerUsername.toLowerCase()}`);
+  }
+
+  const [assigned, outbox] = await Promise.all([
+    getTasksByAssigneeIds(assigneeIds),
+    getTasksByCreator(session.ownerUserId),
+  ]);
+
+  if (session.kind === "my") {
+    session.items = sortTasks(assigned, "date").map((t) => ({ task: t, origin: "assigned" }));
+    return;
+  }
+
+  // "l" summary: assigned + outbox (combined)
+  const assignedOrdered = sortTasks(assigned, "date");
+  const outboxOrdered = sortTasks(outbox, "date");
+  session.items = [
+    ...assignedOrdered.map((t) => ({ task: t, origin: "assigned" as const })),
+    ...outboxOrdered.map((t) => ({ task: t, origin: "outbox" as const })),
+  ];
+}
+
+async function buildTasksUiText(session: TasksUiSession): Promise<string> {
+  const total = session.items.length;
+  const pages = Math.max(1, Math.ceil(total / TASKS_UI_PAGE_SIZE));
+  const page = Math.min(Math.max(0, session.page), pages - 1);
+
+  const header = `${session.title} · стр ${page + 1}/${pages}`;
+  if (total === 0) {
+    return `${header}\n\nНет задач.`;
+  }
+
+  const start = page * TASKS_UI_PAGE_SIZE;
+  const slice = session.items.slice(start, start + TASKS_UI_PAGE_SIZE);
+
+  const lines: string[] = [];
+  for (let i = 0; i < slice.length; i += 1) {
+    const item = slice[i];
+    const t = item.task;
+    const desc =
+      t.description && t.description.length > 140
+        ? `${t.description.slice(0, 140)}…`
+        : (t.description || t.title || "(без описания)");
+
+    const dueLabel = formatDueLabel(t.dueDate);
+
+    let origin = "";
+    if (session.kind === "l") {
+      origin = item.origin === "outbox" ? "→ Я" : "← Мне";
+    } else if (session.kind === "chat_tasks") {
+      origin = t.sourceChatTitle ? `[${t.sourceChatTitle}]` : "";
+    }
+
+    const sel = session.selectedIndex === i ? "👉 " : "";
+    const originPart = origin ? ` ${origin}` : "";
+    lines.push(`${sel}${i + 1}. [${t.status}]${dueLabel}${originPart} ${desc} (id=${t.id})`);
+  }
+
+  return `${header}\n${lines.join("\n")}`;
+}
+
+async function upsertTasksUiSession(
+  ctx: Context<Update>,
+  input: Omit<TasksUiSession, "page" | "selectedIndex" | "items" | "createdAtMs">
+): Promise<TasksUiSession> {
+  cleanupTasksUiSessions();
+  const session: TasksUiSession = {
+    ...input,
+    page: 0,
+    selectedIndex: null,
+    items: [],
+    createdAtMs: Date.now(),
+  };
+  await refreshTasksUiItems(session);
+  return session;
+}
+
+async function sendTasksUi(
+  ctx: Context<Update>,
+  session: TasksUiSession
+): Promise<void> {
+  if (!ctx.from) return;
+  const text = await buildTasksUiText(session);
+  const kb = buildTasksUiKeyboard(session);
+  const sent = await ctx.telegram.sendMessage(ctx.from.id, text, kb);
+  const key = tasksUiKey(sent.chat.id, sent.message_id);
+  tasksUiSessions.set(key, session);
 }
 
 function formatTaskList(
@@ -1617,49 +1793,27 @@ async function handleListTasks(ctx: Context<Update>): Promise<boolean> {
       last_name: ctx.from.last_name ?? undefined,
     });
 
+    // Keep cache for /done and /del numeric mode (global list for user)
     const assigneeIds = [user.id];
-    if (user.username) {
-      assigneeIds.push(`username-${user.username.toLowerCase()}`);
-    }
-
-    const assigned = await getTasksByAssigneeIds(assigneeIds);
-    const outbox = await getTasksByCreator(user.id);
-
-    const { text, orderedAssigned } = summarizeTasks(
-      assigned,
-      outbox,
-      "date"
-    );
-
+    if (user.username) assigneeIds.push(`username-${user.username.toLowerCase()}`);
+    const [assigned, outbox] = await Promise.all([
+      getTasksByAssigneeIds(assigneeIds),
+      getTasksByCreator(user.id),
+    ]);
     userTaskCache.set(ctx.from.id, {
-      assignedOrdered: orderedAssigned,
-      outbox,
+      assignedOrdered: sortTasks(assigned, "date"),
+      outbox: sortTasks(outbox, "date"),
       mode: "date",
     });
 
-    const MAX_LEN = 4000;
-    const sortMode = "date";
-    if (text.length <= MAX_LEN) {
-      const ids = extractTaskIdsFromText(text);
-      const keyboard = buildTaskListWithActionsKeyboard(ids, sortMode);
-      await ctx.telegram.sendMessage(ctx.from.id, text, keyboard);
-    } else {
-      const parts: string[] = [];
-      let rest = text;
-      while (rest.length > MAX_LEN) {
-        const chunk = rest.slice(0, MAX_LEN);
-        const lastNewline = chunk.lastIndexOf("\n");
-        const cut = lastNewline > MAX_LEN / 2 ? lastNewline + 1 : MAX_LEN;
-        parts.push(rest.slice(0, cut));
-        rest = rest.slice(cut);
-      }
-      if (rest) parts.push(rest);
-      for (let i = 0; i < parts.length; i++) {
-        const ids = extractTaskIdsFromText(parts[i]);
-        const opts = buildTaskListWithActionsKeyboard(ids, sortMode);
-        await ctx.telegram.sendMessage(ctx.from.id, parts[i], opts);
-      }
-    }
+    const session = await upsertTasksUiSession(ctx, {
+      ownerTelegramId: ctx.from.id,
+      ownerUserId: user.id,
+      ownerUsername: user.username ?? undefined,
+      kind: "l",
+      title: "Сводка задач",
+    });
+    await sendTasksUi(ctx, session);
 
     if (message.chat.type !== "private") {
       await ctx.reply("Отправил список задач в личку.");
@@ -2626,17 +2780,21 @@ async function handleMyTasks(ctx: Context<Update>): Promise<boolean> {
     const assigned = await getTasksByAssigneeIds(assigneeIds);
     const outbox = await getTasksByCreator(user.id);
 
-    const { text, ordered } = formatTaskList(assigned, "Мои задачи");
-
+    const ordered = sortTasks(assigned, "date");
     userTaskCache.set(ctx.from.id, {
       assignedOrdered: ordered,
       outbox,
       mode: "date",
     });
 
-    const ids = ordered.map((t) => t.id);
-    const keyboard = buildTaskListWithActionsKeyboard(ids, "date");
-    await ctx.telegram.sendMessage(ctx.from.id, text, keyboard);
+    const session = await upsertTasksUiSession(ctx, {
+      ownerTelegramId: ctx.from.id,
+      ownerUserId: user.id,
+      ownerUsername: user.username ?? undefined,
+      kind: "my",
+      title: "Мои задачи",
+    });
+    await sendTasksUi(ctx, session);
 
     if (message.chat.type !== "private") {
       await ctx.reply("Отправил список задач в личку.");
@@ -3060,11 +3218,20 @@ async function handleChatTasks(ctx: Context<Update>): Promise<boolean> {
       type: message.chat.type,
     });
 
-    const tasks = await getTasksByChatId(chat.id);
-    const heading = `Задачи из чата ${chat.title || "без названия"}`;
-    const text = await formatTaskFlowList(tasks, heading, false);
-
-    await ctx.telegram.sendMessage(ctx.from.id, text);
+    const session = await upsertTasksUiSession(ctx, {
+      ownerTelegramId: ctx.from.id,
+      ownerUserId: (await upsertUserFromTelegramPayload({
+        id: ctx.from.id,
+        username: ctx.from.username ?? undefined,
+        first_name: ctx.from.first_name ?? undefined,
+        last_name: ctx.from.last_name ?? undefined,
+      })).id,
+      ownerUsername: ctx.from.username ?? undefined,
+      kind: "chat_tasks",
+      title: `Задачи чата: ${chat.title || "без названия"}`,
+      chatDocId: chat.id,
+    });
+    await sendTasksUi(ctx, session);
     await ctx.reply("Отправил список задач по чату в личку.");
   } catch (error) {
     console.error("Failed to handle /chat_tasks", error);
@@ -3089,10 +3256,21 @@ async function handleAllTasks(ctx: Context<Update>): Promise<boolean> {
   }
 
   try {
-    const tasks = await getAllTasks();
-    const text = await formatTaskFlowList(tasks, "Все активные задачи", true);
+    const user = await upsertUserFromTelegramPayload({
+      id: ctx.from.id,
+      username: ctx.from.username ?? undefined,
+      first_name: ctx.from.first_name ?? undefined,
+      last_name: ctx.from.last_name ?? undefined,
+    });
 
-    await ctx.telegram.sendMessage(ctx.from.id, text);
+    const session = await upsertTasksUiSession(ctx, {
+      ownerTelegramId: ctx.from.id,
+      ownerUserId: user.id,
+      ownerUsername: user.username ?? undefined,
+      kind: "all_tasks",
+      title: "Все активные задачи",
+    });
+    await sendTasksUi(ctx, session);
 
     if (message.chat.type !== "private") {
       await ctx.reply("Отправил список задач в личку.");
@@ -3372,6 +3550,239 @@ async function handleSortCallback(ctx: Context<Update>): Promise<void> {
     return;
   }
   await ctx.answerCbQuery().catch(() => {});
+}
+
+async function handleTasksUiCallback(ctx: Context<Update>): Promise<boolean> {
+  const callback = ctx.callbackQuery;
+  if (!callback || !("data" in callback)) return false;
+
+  const data = callback.data || "";
+  if (!data.startsWith("tasksui:")) return false;
+
+  // Some buttons are placeholders
+  if (data === "tasksui:noop") {
+    await ctx.answerCbQuery().catch(() => {});
+    return true;
+  }
+
+  const msg = callback.message;
+  if (!msg || !("message_id" in msg) || !("chat" in msg)) {
+    await ctx.answerCbQuery("Нет контекста сообщения").catch(() => {});
+    return true;
+  }
+
+  const chatId = msg.chat.id;
+  const messageId = msg.message_id;
+  const key = tasksUiKey(chatId, messageId);
+
+  cleanupTasksUiSessions();
+  const session = tasksUiSessions.get(key);
+  if (!session) {
+    await ctx.answerCbQuery("Сессия устарела. Запросите список заново.").catch(() => {});
+    return true;
+  }
+
+  if (!ctx.from || ctx.from.id !== session.ownerTelegramId) {
+    await ctx.answerCbQuery("Это не ваш список").catch(() => {});
+    return true;
+  }
+
+  const parts = data.split(":");
+  // tasksui:<action>:<...>
+  const action = parts[1] || "";
+
+  const total = session.items.length;
+  const pages = Math.max(1, Math.ceil(total / TASKS_UI_PAGE_SIZE));
+
+  const clampPage = () => {
+    session.page = Math.min(Math.max(0, session.page), pages - 1);
+    const start = session.page * TASKS_UI_PAGE_SIZE;
+    const onPage = session.items.slice(start, start + TASKS_UI_PAGE_SIZE).length;
+    if (session.selectedIndex !== null && session.selectedIndex >= onPage) {
+      session.selectedIndex = onPage > 0 ? onPage - 1 : null;
+    }
+  };
+
+  const rerender = async () => {
+    clampPage();
+    const text = await buildTasksUiText(session);
+    const kb = buildTasksUiKeyboard(session);
+    try {
+      await ctx.editMessageText(text, kb);
+    } catch (err) {
+      // Message could be too old to edit or changed; fallback to new message
+      try {
+        const sent = await ctx.reply(text, kb);
+        const newKey = tasksUiKey(sent.chat.id, sent.message_id);
+        tasksUiSessions.set(newKey, { ...session, createdAtMs: Date.now() });
+      } catch {
+        /* ignore */
+      }
+    }
+  };
+
+  try {
+    if (action === "refresh") {
+      await refreshTasksUiItems(session);
+      session.selectedIndex = null;
+      session.page = 0;
+      await rerender();
+      await ctx.answerCbQuery().catch(() => {});
+      return true;
+    }
+
+    if (action === "page") {
+      const dir = parts[2] || "";
+      if (dir === "next") session.page += 1;
+      if (dir === "prev") session.page -= 1;
+      await rerender();
+      await ctx.answerCbQuery().catch(() => {});
+      return true;
+    }
+
+    if (action === "select") {
+      const n = parseInt(parts[2] || "", 10);
+      if (!Number.isFinite(n) || n < 1 || n > TASKS_UI_PAGE_SIZE) {
+        await ctx.answerCbQuery("Некорректный выбор").catch(() => {});
+        return true;
+      }
+      session.selectedIndex = n - 1;
+      await rerender();
+      await ctx.answerCbQuery().catch(() => {});
+      return true;
+    }
+
+    if (action === "done" || action === "delete") {
+      const totalNow = session.items.length;
+      const pagesNow = Math.max(1, Math.ceil(totalNow / TASKS_UI_PAGE_SIZE));
+      session.page = Math.min(Math.max(0, session.page), pagesNow - 1);
+      const start = session.page * TASKS_UI_PAGE_SIZE;
+      const slice = session.items.slice(start, start + TASKS_UI_PAGE_SIZE);
+
+      if (session.selectedIndex === null || !slice[session.selectedIndex]) {
+        await ctx.answerCbQuery("Выберите задачу (1-5)").catch(() => {});
+        return true;
+      }
+
+      const selected = slice[session.selectedIndex].task;
+      const actor = await upsertUserFromTelegramPayload({
+        id: session.ownerTelegramId,
+        username: session.ownerUsername ?? undefined,
+      });
+
+      const canEdit =
+        isSuperAdminFromEnv(actor.username ?? null) ||
+        selected.createdByUserId === actor.id ||
+        selected.assignedUserId === actor.id;
+
+      if (!canEdit) {
+        await ctx.answerCbQuery("Нет прав на эту задачу").catch(() => {});
+        return true;
+      }
+
+      if (action === "done") {
+        const nextStatus = selected.status === "done" ? "incoming" : "done";
+        await updateTaskStatus(selected.id, nextStatus);
+        safeLogAction("task_status_updated", {
+          userId: actor.id,
+          targetId: selected.id,
+          targetType: "task",
+          payload: { previousStatus: selected.status, newStatus: nextStatus, source: "tasksui" },
+        });
+      } else {
+        await deleteTask(selected.id);
+        safeLogAction("task_deleted", {
+          userId: actor.id,
+          targetId: selected.id,
+          targetType: "task",
+          payload: { status: selected.status, source: "tasksui" },
+        });
+      }
+
+      // Refresh list to reflect filters after mutation
+      await refreshTasksUiItems(session);
+      session.selectedIndex = null;
+      await rerender();
+      await ctx.answerCbQuery(action === "done" ? "Сохранено" : "Удалено").catch(() => {});
+      return true;
+    }
+  } catch (error) {
+    console.error("[tasksui] callback error", error);
+    await ctx.answerCbQuery("Ошибка").catch(() => {});
+    return true;
+  }
+
+  await ctx.answerCbQuery().catch(() => {});
+  return true;
+}
+
+async function handleLegacyTaskButtonsCallback(ctx: Context<Update>): Promise<boolean> {
+  const callback = ctx.callbackQuery;
+  if (!callback || !("data" in callback)) return false;
+  const data = callback.data || "";
+  if (!data.startsWith("task:")) return false;
+
+  const parts = data.split(":"); // task:done:<id> | task:del:<id>
+  if (parts.length !== 3) return false;
+  const action = parts[1];
+  const taskId = parts[2];
+
+  if (!ctx.from) return false;
+  const actor = await upsertUserFromTelegramPayload({
+    id: ctx.from.id,
+    username: ctx.from.username ?? undefined,
+    first_name: ctx.from.first_name ?? undefined,
+    last_name: ctx.from.last_name ?? undefined,
+  });
+
+  const task = await getTaskById(taskId);
+  if (!task) {
+    await ctx.answerCbQuery("Задача не найдена").catch(() => {});
+    return true;
+  }
+
+  const canEdit =
+    isSuperAdminFromEnv(actor.username ?? null) ||
+    task.createdByUserId === actor.id ||
+    task.assignedUserId === actor.id;
+
+  if (!canEdit) {
+    await ctx.answerCbQuery("Нет прав").catch(() => {});
+    return true;
+  }
+
+  try {
+    if (action === "done") {
+      await updateTaskStatus(taskId, "done");
+      safeLogAction("task_status_updated", {
+        userId: actor.id,
+        targetId: taskId,
+        targetType: "task",
+        payload: { previousStatus: task.status, newStatus: "done", source: "legacy_inline" },
+      });
+      await ctx.answerCbQuery("Сохранено").catch(() => {});
+      return true;
+    }
+
+    if (action === "del") {
+      await deleteTask(taskId);
+      safeLogAction("task_deleted", {
+        userId: actor.id,
+        targetId: taskId,
+        targetType: "task",
+        payload: { status: task.status, source: "legacy_inline" },
+      });
+      await ctx.answerCbQuery("Удалено").catch(() => {});
+      return true;
+    }
+  } catch (error) {
+    console.error("[legacy task buttons] error", error);
+    await ctx.answerCbQuery("Ошибка").catch(() => {});
+    return true;
+  }
+
+  await ctx.answerCbQuery().catch(() => {});
+  return true;
 }
 
 // ============================================================
@@ -3801,6 +4212,12 @@ export function initTelegataskBot(): void {
         const handled = await skillRouter.handleCallback(ctx);
         if (handled) return;
       }
+
+      const handledTasksUi = await handleTasksUiCallback(ctx);
+      if (handledTasksUi) return;
+
+      const handledLegacyTasks = await handleLegacyTaskButtonsCallback(ctx);
+      if (handledLegacyTasks) return;
 
       const handledControl = await handleControlPanelCallback(ctx);
       if (handledControl) return;

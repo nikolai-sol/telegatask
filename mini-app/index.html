@@ -75,6 +75,50 @@
 
   <div id="toast" class="toast" hidden></div>
 
+  <div id="sheetOverlay" class="overlay" hidden></div>
+  <div id="taskSheet" class="task-sheet" hidden>
+    <div class="task-sheet__handle" aria-hidden="true"></div>
+    <header class="task-sheet__header">
+      <div class="task-sheet__title">Задача</div>
+      <button id="taskSheetClose" class="icon-btn icon-btn--ghost" type="button" aria-label="Закрыть">✕</button>
+    </header>
+
+    <div class="task-sheet__body">
+      <label class="field">
+        <div class="field__label">Заголовок</div>
+        <input id="taskSheetTitle" class="field__input" type="text" autocomplete="off" maxlength="280">
+      </label>
+
+      <div class="field">
+        <div class="field__label">Срок</div>
+        <div class="chips">
+          <button id="dueToday" class="chip-btn" type="button" data-due="today">Сегодня</button>
+          <button id="dueTomorrow" class="chip-btn" type="button" data-due="tomorrow">Завтра</button>
+          <button id="dueClear" class="chip-btn" type="button" data-due="clear">Снять</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field__label">Приоритет</div>
+        <div class="chips">
+          <button class="chip-btn" type="button" data-priority="urgent">P1</button>
+          <button class="chip-btn" type="button" data-priority="high">P2</button>
+          <button class="chip-btn" type="button" data-priority="normal">Обычный</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field__label">Проект</div>
+        <div id="taskSheetProject" class="field__value">—</div>
+      </div>
+
+      <div class="task-sheet__actions">
+        <button id="taskSheetDone" class="btn btn--ghost" type="button">✅ Done</button>
+        <button id="taskSheetDelete" class="btn btn--danger" type="button">🗑 Delete</button>
+      </div>
+    </div>
+  </div>
+
   <div id="bulkBar" class="bulk-bar" hidden>
     <button id="bulkCancel" class="bulk-bar__btn" type="button" aria-label="Снять выбор">✕</button>
     <div id="bulkCount" class="bulk-bar__count">0</div>

@@ -65,6 +65,11 @@ body {
   width: 44px;
 }
 
+.icon-btn--ghost {
+  background: transparent;
+  border-color: transparent;
+}
+
 .quick-add {
   align-items: center;
   background: var(--card);
@@ -616,6 +621,132 @@ body {
   font-weight: 750;
   padding: 6px 8px;
   text-decoration: underline;
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.35);
+  inset: 0;
+  position: fixed;
+  z-index: 45;
+}
+
+.task-sheet {
+  background: var(--card);
+  border-radius: 16px 16px 0 0;
+  bottom: 0;
+  box-shadow: 0 -16px 42px color-mix(in srgb, #000 26%, transparent);
+  left: 0;
+  max-height: 75vh;
+  overflow: hidden;
+  position: fixed;
+  right: 0;
+  transform: translateY(110%);
+  transition: transform 180ms ease-out;
+  z-index: 46;
+}
+
+.task-sheet.is-open {
+  transform: translateY(0);
+}
+
+.task-sheet__handle {
+  background: color-mix(in srgb, var(--text) 18%, transparent);
+  border-radius: 999px;
+  height: 4px;
+  margin: 8px auto 0;
+  width: 44px;
+}
+
+.task-sheet__header {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 10px 0;
+}
+
+.task-sheet__title {
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--hint);
+  text-transform: uppercase;
+  padding-left: 6px;
+}
+
+.task-sheet__body {
+  padding: 12px 14px calc(16px + env(safe-area-inset-bottom, 0px));
+  display: grid;
+  gap: 14px;
+}
+
+.field__label {
+  color: var(--hint);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.field__input {
+  background: color-mix(in srgb, var(--card) 70%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-size: 15px;
+  height: 44px;
+  outline: none;
+  padding: 0 12px;
+  width: 100%;
+}
+
+.field__value {
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 650;
+  padding: 10px 0 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-btn {
+  background: var(--chip-bg);
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  border-radius: 999px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 650;
+  min-height: 36px;
+  padding: 6px 10px;
+}
+
+.chip-btn.is-active {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 38%, transparent);
+  color: var(--accent);
+}
+
+.task-sheet__actions {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.btn--ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.btn--danger {
+  background: color-mix(in srgb, var(--danger) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--danger) 40%, transparent);
+  color: var(--danger);
 }
 
 [hidden] {

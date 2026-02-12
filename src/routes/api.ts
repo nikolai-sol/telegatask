@@ -12,6 +12,7 @@ import {
   deleteTask,
   createTask,
   updateTaskProject,
+  updateTaskFields,
 } from "../repositories/taskRepository";
 import {
   getUserByTelegramId,
@@ -411,6 +412,66 @@ router.delete("/api/tasks/:id", webAppAuthMiddleware, async (req: Request, res: 
     res.json({ ok: true });
   } catch (err) {
     console.error("[API] DELETE /api/tasks/:id error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
+// ─── PATCH /api/tasks/:id ───
+router.patch("/api/tasks/:id", webAppAuthMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const tgUser = req.webAppData!.user;
+    const userId = await resolveUserId(tgUser.id);
+
+    if (!userId) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const task = await getTaskById(id);
+    if (!task) {
+      res.status(404).json({ error: "Task not found" });
+      return;
+    }
+
+    if (task.createdByUserId !== userId && task.assignedUserId !== userId) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    const titleRaw = typeof req.body?.title === "string" ? req.body.title.trim() : undefined;
+    const dueDateRaw =
+      req.body?.dueDate === null || typeof req.body?.dueDate === "string" ? req.body.dueDate : undefined;
+    const priorityRaw = typeof req.body?.priority === "string" ? req.body.priority : undefined;
+
+    const validPriorities = ["low", "normal", "high", "urgent"];
+    if (priorityRaw !== undefined && !validPriorities.includes(priorityRaw)) {
+      res.status(400).json({ error: "Invalid priority" });
+      return;
+    }
+
+    const patch: any = {};
+    if (titleRaw !== undefined) {
+      patch.title = titleRaw;
+      // Keep legacy description in sync for now (many flows still use description).
+      patch.description = titleRaw;
+    }
+    if (dueDateRaw !== undefined) patch.dueDate = dueDateRaw;
+    if (priorityRaw !== undefined) patch.priority = priorityRaw;
+
+    await updateTaskFields(id, patch);
+
+    logAction({
+      action: "task_updated",
+      userId,
+      targetId: id,
+      targetType: "task",
+      payload: { patch: Object.keys(patch), source: "mini_app" },
+    }).catch(() => {});
+
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("[API] PATCH /api/tasks/:id error:", err);
     res.status(500).json({ error: "Internal error" });
   }
 });

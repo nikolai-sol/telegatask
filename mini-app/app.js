@@ -19,9 +19,13 @@ const state = {
   suggestAbort: null,
   projects: null, // { activeTeamId, list: [{id,name}] }
   projectPicker: null, // { taskIds: string[] }
+  taskSheetTaskId: null,
+  taskSheetTimer: null,
+  swipeSuppressClickUntil: 0,
 };
 
 const app = {
+  sheetDrag: null,
   init() {
     if (tg) {
       tg.ready();
@@ -167,9 +171,59 @@ const app = {
       this.applyProjectToPickedTasks(projectId || null);
     });
 
+    document.getElementById("sheetOverlay")?.addEventListener("click", () => {
+      this.closeTaskSheet();
+    });
+    document.getElementById("taskSheetClose")?.addEventListener("click", () => {
+      this.closeTaskSheet();
+    });
+    document.getElementById("taskSheetTitle")?.addEventListener("input", () => {
+      this.onTaskSheetChangeDebounced();
+    });
+    document.getElementById("taskSheet")?.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      const dueBtn = target.closest("[data-due]");
+      if (dueBtn instanceof HTMLElement) {
+        const v = dueBtn.dataset.due || "";
+        this.setTaskSheetDue(v);
+        return;
+      }
+
+      const prBtn = target.closest("[data-priority]");
+      if (prBtn instanceof HTMLElement) {
+        const v = prBtn.dataset.priority || "";
+        this.setTaskSheetPriority(v);
+        return;
+      }
+    });
+    document.getElementById("taskSheetDone")?.addEventListener("click", () => {
+      const taskId = state.taskSheetTaskId;
+      if (taskId) this.toggleDone(taskId);
+    });
+    document.getElementById("taskSheetDelete")?.addEventListener("click", () => {
+      const taskId = state.taskSheetTaskId;
+      if (!taskId) return;
+      this.closeTaskSheet();
+      this.deleteWithUndo(taskId);
+    });
+
     document.getElementById("taskList")?.addEventListener("click", (event) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
+
+      const cardEl = target.closest(".task-card");
+      if (cardEl instanceof HTMLElement) {
+        const taskId = cardEl.dataset.taskId;
+        // Don't open details while selecting or when interacting with controls.
+        if (!taskId) return;
+        if (state.selectedTaskIds.size > 0) return;
+        if (Date.now() < state.swipeSuppressClickUntil) return;
+        if (target.closest("[data-action]")) return;
+        this.openTaskSheet(taskId);
+        return;
+      }
 
       const toggleBtn = target.closest("[data-action='toggle']");
       if (toggleBtn instanceof HTMLElement) {
@@ -197,6 +251,13 @@ const app = {
     list?.addEventListener("pointermove", (event) => this.onSwipePointerMove(event));
     list?.addEventListener("pointerup", (event) => this.onSwipePointerUp(event));
     list?.addEventListener("pointercancel", (event) => this.onSwipePointerUp(event));
+
+    // Swipe down to close details sheet (optional)
+    const sheet = document.getElementById("taskSheet");
+    sheet?.addEventListener("pointerdown", (event) => this.onSheetPointerDown(event));
+    sheet?.addEventListener("pointermove", (event) => this.onSheetPointerMove(event));
+    sheet?.addEventListener("pointerup", (event) => this.onSheetPointerUp(event));
+    sheet?.addEventListener("pointercancel", (event) => this.onSheetPointerUp(event));
   },
 
   async loadTasks() {
@@ -373,6 +434,199 @@ const app = {
         </article>
       </div>
     `;
+  },
+
+  openTaskSheet(taskId) {
+    const task = state.tasks.find((t) => t.id === taskId);
+    if (!task) return;
+
+    state.taskSheetTaskId = taskId;
+
+    const overlay = document.getElementById("sheetOverlay");
+    const sheet = document.getElementById("taskSheet");
+    const titleInput = document.getElementById("taskSheetTitle");
+    const projectEl = document.getElementById("taskSheetProject");
+
+    if (!(overlay instanceof HTMLElement) || !(sheet instanceof HTMLElement)) return;
+    if (titleInput instanceof HTMLInputElement) {
+      titleInput.value = task.title || task.description || "";
+      setTimeout(() => titleInput.focus(), 30);
+    }
+
+    if (projectEl instanceof HTMLElement) {
+      const projectName = this.getProjectName(task.projectId ?? null);
+      projectEl.textContent = projectName || task.sourceChatTitle || "Текучка";
+    }
+
+    this.syncTaskSheetChips(task);
+
+    overlay.hidden = false;
+    sheet.hidden = false;
+    // allow display before animating
+    requestAnimationFrame(() => sheet.classList.add("is-open"));
+  },
+
+  closeTaskSheet() {
+    const overlay = document.getElementById("sheetOverlay");
+    const sheet = document.getElementById("taskSheet");
+    if (!(overlay instanceof HTMLElement) || !(sheet instanceof HTMLElement)) return;
+    sheet.classList.remove("is-open");
+    setTimeout(() => {
+      overlay.hidden = true;
+      sheet.hidden = true;
+    }, 190);
+    state.taskSheetTaskId = null;
+  },
+
+  syncTaskSheetChips(task) {
+    const sheet = document.getElementById("taskSheet");
+    if (!(sheet instanceof HTMLElement)) return;
+
+    const due = this.getDueKind(task.dueDate);
+    sheet.querySelectorAll("[data-due]").forEach((el) => {
+      if (!(el instanceof HTMLElement)) return;
+      const v = el.dataset.due || "";
+      el.classList.toggle("is-active", v === due);
+    });
+
+    const pr = task.priority || "normal";
+    sheet.querySelectorAll("[data-priority]").forEach((el) => {
+      if (!(el instanceof HTMLElement)) return;
+      const v = el.dataset.priority || "";
+      el.classList.toggle("is-active", v === pr);
+    });
+  },
+
+  getDueKind(dueDate) {
+    if (!dueDate) return "clear";
+    const d = new Date(dueDate);
+    if (Number.isNaN(d.getTime())) return "clear";
+    const now = new Date();
+    const dueDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const diffDays = Math.round((dueDay - nowDay) / (24 * 60 * 60 * 1000));
+    if (diffDays === 0) return "today";
+    if (diffDays === 1) return "tomorrow";
+    return "custom";
+  },
+
+  setTaskSheetDue(kind) {
+    const taskId = state.taskSheetTaskId;
+    if (!taskId) return;
+    const task = state.tasks.find((t) => t.id === taskId);
+    if (!task) return;
+
+    let dueDate = null;
+    if (kind === "today" || kind === "tomorrow") {
+      const now = new Date();
+      const base = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0);
+      if (kind === "tomorrow") base.setDate(base.getDate() + 1);
+      dueDate = base.toISOString();
+    }
+
+    task.dueDate = dueDate;
+    this.syncTaskSheetChips(task);
+    this.render();
+    this.onTaskSheetChangeDebounced();
+  },
+
+  setTaskSheetPriority(priority) {
+    const taskId = state.taskSheetTaskId;
+    if (!taskId) return;
+    const task = state.tasks.find((t) => t.id === taskId);
+    if (!task) return;
+    task.priority = priority;
+    this.syncTaskSheetChips(task);
+    this.render();
+    this.onTaskSheetChangeDebounced();
+  },
+
+  onTaskSheetChangeDebounced() {
+    clearTimeout(state.taskSheetTimer);
+    state.taskSheetTimer = setTimeout(() => {
+      this.flushTaskSheetPatch();
+    }, 300);
+  },
+
+  async flushTaskSheetPatch() {
+    const taskId = state.taskSheetTaskId;
+    if (!taskId) return;
+    const task = state.tasks.find((t) => t.id === taskId);
+    if (!task) return;
+
+    const titleEl = document.getElementById("taskSheetTitle");
+    const title = titleEl instanceof HTMLInputElement ? titleEl.value.trim() : (task.title || task.description || "");
+
+    // optimistic already in UI; keep state consistent
+    task.title = title;
+    task.description = title;
+    this.render();
+
+    try {
+      const base = this.getApiBase();
+      const res = await fetch(`${base}/api/tasks/${taskId}`, {
+        method: "PATCH",
+        headers: {
+          "X-Telegram-Init-Data": INIT_DATA,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          dueDate: task.dueDate ?? null,
+          priority: task.priority ?? "normal",
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      this.haptic("light");
+    } catch (err) {
+      console.error("[MiniApp] task patch failed", err);
+      this.showToast("Ошибка, попробуйте ещё раз");
+      // Resync is safest
+      this.loadTasks();
+    }
+  },
+
+  onSheetPointerDown(event) {
+    if (!(event instanceof PointerEvent)) return;
+    const sheet = document.getElementById("taskSheet");
+    if (!(sheet instanceof HTMLElement) || sheet.hidden) return;
+    // Only if started on header/handle area
+    if (!event.target || !(event.target instanceof Element)) return;
+    if (!event.target.closest(".task-sheet__header") && !event.target.closest(".task-sheet__handle")) return;
+    this.sheetDrag = { id: event.pointerId, y0: event.clientY, dy: 0, locked: false };
+    sheet.setPointerCapture(event.pointerId);
+  },
+
+  onSheetPointerMove(event) {
+    if (!(event instanceof PointerEvent)) return;
+    const sheet = document.getElementById("taskSheet");
+    if (!(sheet instanceof HTMLElement)) return;
+    const s = this.sheetDrag;
+    if (!s || s.id !== event.pointerId) return;
+    s.dy = event.clientY - s.y0;
+    if (s.dy < 0) return;
+    if (s.dy > 6) s.locked = true;
+    if (!s.locked) return;
+    event.preventDefault();
+    sheet.style.transition = "none";
+    sheet.style.transform = `translateY(${Math.min(320, s.dy)}px)`;
+  },
+
+  onSheetPointerUp(event) {
+    if (!(event instanceof PointerEvent)) return;
+    const sheet = document.getElementById("taskSheet");
+    if (!(sheet instanceof HTMLElement)) return;
+    const s = this.sheetDrag;
+    if (!s || s.id !== event.pointerId) return;
+    this.sheetDrag = null;
+
+    const dy = s.dy;
+    sheet.style.transition = "";
+    sheet.style.transform = "";
+
+    if (dy > 120) {
+      this.closeTaskSheet();
+    }
   },
 
   getProjectName(projectId) {
@@ -635,6 +889,9 @@ const app = {
       cleanup();
       return;
     }
+
+    // Prevent the follow-up click from opening details sheet after a swipe.
+    state.swipeSuppressClickUntil = Date.now() + 260;
 
     if (dx > 80) {
       releaseToZero();
