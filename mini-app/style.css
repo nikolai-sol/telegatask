@@ -528,6 +528,50 @@ body {
   right: 0;
 }
 
+.sheet__title {
+  color: var(--hint);
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.02em;
+  padding: 10px 6px 6px;
+  text-transform: uppercase;
+}
+
+.sheet__list {
+  display: grid;
+  gap: 4px;
+  max-height: 48vh;
+  overflow: auto;
+  padding: 6px 0 8px;
+}
+
+.sheet__item {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  font-size: 15px;
+  font-weight: 650;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 10px 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.sheet__item:active {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.sheet__item-hint {
+  color: var(--hint);
+  font-size: 12px;
+  font-weight: 650;
+}
+
 .sheet__action {
   background: transparent;
   border: 0;

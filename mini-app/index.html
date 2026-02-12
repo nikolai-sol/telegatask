@@ -58,8 +58,18 @@
     <button id="sheetBackdrop" class="sheet__backdrop" type="button" aria-label="Закрыть"></button>
     <div class="sheet__panel">
       <button id="sheetToggleDone" class="sheet__action" type="button">Отметить выполненной</button>
+      <button id="sheetMove" class="sheet__action" type="button">Перенести в проект</button>
       <button id="sheetDelete" class="sheet__action sheet__action--danger" type="button">Удалить</button>
       <button id="sheetCancel" class="sheet__action" type="button">Отмена</button>
+    </div>
+  </div>
+
+  <div id="projectSheet" class="sheet" hidden>
+    <button id="projectBackdrop" class="sheet__backdrop" type="button" aria-label="Закрыть"></button>
+    <div class="sheet__panel">
+      <div class="sheet__title">Перенести в проект</div>
+      <div id="projectList" class="sheet__list"></div>
+      <button id="projectCancel" class="sheet__action" type="button">Отмена</button>
     </div>
   </div>
 
@@ -70,6 +80,7 @@
     <div id="bulkCount" class="bulk-bar__count">0</div>
     <div class="bulk-bar__spacer"></div>
     <button id="bulkDone" class="bulk-bar__btn bulk-bar__btn--accent" type="button" aria-label="Выполнено">✅</button>
+    <button id="bulkMove" class="bulk-bar__btn bulk-bar__btn--accent" type="button" aria-label="В проект">📁</button>
     <button id="bulkDelete" class="bulk-bar__btn bulk-bar__btn--danger" type="button" aria-label="Удалить">🗑</button>
   </div>
 

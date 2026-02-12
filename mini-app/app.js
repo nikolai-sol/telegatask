@@ -17,6 +17,8 @@ const state = {
   pendingDelete: null, // { kind: "single"|"bulk", tasks: any[], timerId }
   suggestTimer: null,
   suggestAbort: null,
+  projects: null, // { activeTeamId, list: [{id,name}] }
+  projectPicker: null, // { taskIds: string[] }
 };
 
 const app = {
@@ -129,6 +131,11 @@ const app = {
       this.closeActionSheet();
       if (taskId) this.deleteTask(taskId);
     });
+    document.getElementById("sheetMove")?.addEventListener("click", () => {
+      const taskId = state.actionSheetTaskId;
+      this.closeActionSheet();
+      if (taskId) this.openProjectPicker([taskId]);
+    });
 
     document.getElementById("bulkCancel")?.addEventListener("click", () => {
       this.clearSelection();
@@ -136,8 +143,28 @@ const app = {
     document.getElementById("bulkDone")?.addEventListener("click", () => {
       this.bulkMarkDone();
     });
+    document.getElementById("bulkMove")?.addEventListener("click", () => {
+      const ids = Array.from(state.selectedTaskIds);
+      if (!ids.length) return;
+      this.openProjectPicker(ids);
+    });
     document.getElementById("bulkDelete")?.addEventListener("click", () => {
       this.bulkDeleteWithUndo();
+    });
+
+    document.getElementById("projectBackdrop")?.addEventListener("click", () => {
+      this.closeProjectPicker();
+    });
+    document.getElementById("projectCancel")?.addEventListener("click", () => {
+      this.closeProjectPicker();
+    });
+    document.getElementById("projectList")?.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const btn = target.closest("[data-project-id]");
+      if (!(btn instanceof HTMLElement)) return;
+      const projectId = btn.dataset.projectId || "";
+      this.applyProjectToPickedTasks(projectId || null);
     });
 
     document.getElementById("taskList")?.addEventListener("click", (event) => {
@@ -310,9 +337,12 @@ const app = {
       ? `<span class="chip ${due.overdue ? "chip--due-overdue" : ""}">${due.label}</span>`
       : "";
 
-    const projectChip = task.sourceChatTitle
-      ? `<span class="chip">${this.escapeHtml(task.sourceChatTitle)}</span>`
-      : "";
+    const projectName = this.getProjectName(task.projectId ?? null);
+    const projectChip = projectName
+      ? `<span class="chip">📁 ${this.escapeHtml(projectName)}</span>`
+      : task.sourceChatTitle
+        ? `<span class="chip">${this.escapeHtml(task.sourceChatTitle)}</span>`
+        : "";
 
     const priorityChip = task.priority && task.priority !== "normal"
       ? `<span class="chip chip--priority-${task.priority}">${this.priorityLabel(task.priority)}</span>`
@@ -343,6 +373,105 @@ const app = {
         </article>
       </div>
     `;
+  },
+
+  getProjectName(projectId) {
+    if (!projectId) return null;
+    const list = state.projects?.list || [];
+    const p = list.find((x) => x.id === projectId);
+    return p ? p.name : null;
+  },
+
+  async loadProjects() {
+    try {
+      const base = this.getApiBase();
+      const res = await fetch(`${base}/api/projects`, {
+        headers: {
+          "X-Telegram-Init-Data": INIT_DATA,
+          "Content-Type": "application/json",
+        },
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const list = Array.isArray(data.projects) ? data.projects : [];
+      state.projects = { activeTeamId: data.activeTeamId ?? null, list };
+    } catch (err) {
+      // non-fatal
+    }
+  },
+
+  async openProjectPicker(taskIds) {
+    state.projectPicker = { taskIds: [...taskIds] };
+    await this.loadProjects();
+
+    const sheet = document.getElementById("projectSheet");
+    const listEl = document.getElementById("projectList");
+    if (!(sheet instanceof HTMLElement) || !(listEl instanceof HTMLElement)) return;
+
+    const projects = state.projects?.list || [];
+    if (!projects.length) {
+      listEl.innerHTML = `<div class=\"sheet__title\">Нет проектов</div>`;
+    } else {
+      listEl.innerHTML = projects
+        .map((p) => `<button class=\"sheet__item\" type=\"button\" data-project-id=\"${p.id}\"><span>${this.escapeHtml(p.name)}</span><span class=\"sheet__item-hint\">→</span></button>`)
+        .join("");
+    }
+
+    sheet.hidden = false;
+  },
+
+  closeProjectPicker() {
+    const sheet = document.getElementById("projectSheet");
+    if (sheet) sheet.hidden = true;
+    state.projectPicker = null;
+  },
+
+  async applyProjectToPickedTasks(projectId) {
+    const picked = state.projectPicker?.taskIds || [];
+    if (!picked.length) {
+      this.closeProjectPicker();
+      return;
+    }
+
+    // Optimistic update
+    const prev = new Map();
+    for (const id of picked) {
+      const t = state.tasks.find((x) => x.id === id);
+      if (!t) continue;
+      prev.set(id, t.projectId ?? null);
+      t.projectId = projectId;
+    }
+    state.selectedTaskIds.clear();
+    this.closeProjectPicker();
+    this.render();
+    this.showToast("Сохранено");
+
+    const base = this.getApiBase();
+    const failures = [];
+    for (const id of picked) {
+      try {
+        const res = await fetch(`${base}/api/tasks/${id}/project`, {
+          method: "POST",
+          headers: {
+            "X-Telegram-Init-Data": INIT_DATA,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ projectId }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      } catch {
+        failures.push(id);
+      }
+    }
+
+    if (failures.length) {
+      for (const id of failures) {
+        const t = state.tasks.find((x) => x.id === id);
+        if (t && prev.has(id)) t.projectId = prev.get(id);
+      }
+      this.render();
+      this.showToast("Ошибка, попробуйте ещё раз");
+    }
   },
 
   hydrateExpandableText() {
