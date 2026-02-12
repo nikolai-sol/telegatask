@@ -3716,9 +3716,9 @@ const BOT_COMMANDS_RU = [
   { command: "scan_on", description: "Включить auto-scan (в группе)" },
   { command: "scan_off", description: "Выключить auto-scan (в группе)" },
   { command: "k", description: "В знания" },
-  { command: "поиск", description: "Поиск по знаниям" },
-  { command: "спроси", description: "Вопрос по базе (RAG)" },
-  { command: "дайджест", description: "Дайджест по чату" },
+  { command: "ksearch", description: "Поиск по знаниям" },
+  { command: "ask", description: "Вопрос по базе (RAG)" },
+  { command: "digest", description: "Дайджест по чату" },
   { command: "status", description: "Статус бота" },
   { command: "info", description: "Справка" },
 ];
