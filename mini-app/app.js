@@ -9,6 +9,9 @@ const state = {
   tasks: [],
   tab: "active", // active | done | all
   loading: false,
+  actionSheetTaskId: null,
+  expandedTaskIds: new Set(),
+  quickAddOpen: false,
 };
 
 const app = {
@@ -66,11 +69,42 @@ const app = {
     });
 
     document.getElementById("fabAdd")?.addEventListener("click", () => {
-      this.openCreateTask();
+      this.openQuickAdd();
     });
 
     document.getElementById("filterMenuButton")?.addEventListener("click", () => {
       this.openFilterMenu();
+    });
+
+    document.getElementById("quickAddSubmit")?.addEventListener("click", () => {
+      this.submitQuickAdd();
+    });
+
+    document.getElementById("quickAddInput")?.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        this.submitQuickAdd();
+      }
+      if (event.key === "Escape") {
+        this.closeQuickAdd();
+      }
+    });
+
+    document.getElementById("sheetBackdrop")?.addEventListener("click", () => {
+      this.closeActionSheet();
+    });
+    document.getElementById("sheetCancel")?.addEventListener("click", () => {
+      this.closeActionSheet();
+    });
+    document.getElementById("sheetToggleDone")?.addEventListener("click", () => {
+      const taskId = state.actionSheetTaskId;
+      this.closeActionSheet();
+      if (taskId) this.toggleDone(taskId);
+    });
+    document.getElementById("sheetDelete")?.addEventListener("click", () => {
+      const taskId = state.actionSheetTaskId;
+      this.closeActionSheet();
+      if (taskId) this.deleteTask(taskId);
     });
 
     document.getElementById("taskList")?.addEventListener("click", (event) => {
@@ -84,10 +118,17 @@ const app = {
         return;
       }
 
-      const deleteBtn = target.closest("[data-action='delete']");
-      if (deleteBtn instanceof HTMLElement) {
-        const taskId = deleteBtn.dataset.taskId;
-        if (taskId) this.deleteTask(taskId);
+      const menuBtn = target.closest("[data-action='menu']");
+      if (menuBtn instanceof HTMLElement) {
+        const taskId = menuBtn.dataset.taskId;
+        if (taskId) this.openActionSheet(taskId);
+        return;
+      }
+
+      const expandBtn = target.closest("[data-action='expand']");
+      if (expandBtn instanceof HTMLElement) {
+        const taskId = expandBtn.dataset.taskId;
+        if (taskId) this.toggleExpand(taskId);
       }
     });
   },
@@ -178,6 +219,7 @@ const app = {
     emptyEl.hidden = true;
     listEl.hidden = false;
     listEl.innerHTML = tasks.map((task) => this.renderTaskCard(task)).join("");
+    this.hydrateExpandableText();
   },
 
   renderTabs() {
@@ -219,26 +261,31 @@ const app = {
 
   renderTaskCard(task) {
     const isDone = task.status === "done" || task.status === "cancelled";
+    const isExpanded = state.expandedTaskIds.has(task.id);
     const title = this.escapeHtml(task.title || task.description || "Без названия");
 
-    const dueChip = task.dueDate
-      ? `<span class="chip ${this.isOverdue(task.dueDate) ? "chip--due-overdue" : ""}">${this.formatDue(task.dueDate)}</span>`
+    const due = this.formatDueBadge(task.dueDate);
+    const dueChip = due
+      ? `<span class="chip ${due.overdue ? "chip--due-overdue" : ""}">${due.label}</span>`
       : "";
 
     const projectChip = task.sourceChatTitle
       ? `<span class="chip">${this.escapeHtml(task.sourceChatTitle)}</span>`
       : "";
 
-    const priorityChip = task.priority
+    const priorityChip = task.priority && task.priority !== "normal"
       ? `<span class="chip chip--priority-${task.priority}">${this.priorityLabel(task.priority)}</span>`
       : "";
 
     return `
-      <article class="task-card ${isDone ? "task-card--done" : ""}" data-task-id="${task.id}">
-        <button class="task-card__check ${isDone ? "is-done" : ""}" data-action="toggle" data-task-id="${task.id}" type="button" aria-label="${isDone ? "Вернуть" : "Выполнить"}">${isDone ? "✓" : ""}</button>
+      <article class="task-card ${isDone ? "task-card--done" : ""} ${isExpanded ? "is-expanded" : ""}" data-task-id="${task.id}">
+        <button class="task-card__check ${isDone ? "is-done" : ""}" data-action="toggle" data-task-id="${task.id}" type="button" aria-label="${isDone ? "Вернуть" : "Выполнить"}">
+          <span class="task-card__check-circle">✓</span>
+        </button>
 
         <div class="task-card__content">
-          <p class="task-card__title ${isDone ? "is-done" : ""}">${title}</p>
+          <p class="task-card__title ${isDone ? "is-done" : ""}" data-role="title">${title}</p>
+          <button class="task-card__expand" data-action="expand" data-task-id="${task.id}" type="button">Показать</button>
           <div class="task-card__meta">
             ${dueChip}
             ${projectChip}
@@ -246,9 +293,43 @@ const app = {
           </div>
         </div>
 
-        <button class="task-card__delete" data-action="delete" data-task-id="${task.id}" type="button" aria-label="Удалить">🗑</button>
+        <button class="task-card__menu" data-action="menu" data-task-id="${task.id}" type="button" aria-label="Действия">…</button>
       </article>
     `;
+  },
+
+  hydrateExpandableText() {
+    const cards = document.querySelectorAll(".task-card");
+
+    cards.forEach((card) => {
+      const titleEl = card.querySelector("[data-role='title']");
+      const expandBtn = card.querySelector(".task-card__expand");
+      const taskId = card.getAttribute("data-task-id") || "";
+      if (!(titleEl instanceof HTMLElement) || !(expandBtn instanceof HTMLElement) || !taskId) return;
+
+      const wasExpanded = card.classList.contains("is-expanded");
+      if (wasExpanded) card.classList.remove("is-expanded");
+      const hasOverflow = titleEl.scrollHeight > titleEl.clientHeight + 1;
+      if (wasExpanded) card.classList.add("is-expanded");
+
+      expandBtn.classList.toggle("is-visible", hasOverflow);
+
+      if (!hasOverflow) {
+        state.expandedTaskIds.delete(taskId);
+        card.classList.remove("is-expanded");
+      }
+
+      expandBtn.textContent = state.expandedTaskIds.has(taskId) ? "Скрыть" : "Показать";
+    });
+  },
+
+  toggleExpand(taskId) {
+    if (state.expandedTaskIds.has(taskId)) {
+      state.expandedTaskIds.delete(taskId);
+    } else {
+      state.expandedTaskIds.add(taskId);
+    }
+    this.render();
   },
 
   async toggleDone(taskId) {
@@ -286,18 +367,31 @@ const app = {
     }
   },
 
-  async deleteTask(taskId) {
+  openActionSheet(taskId) {
     const task = state.tasks.find((item) => item.id === taskId);
     if (!task) return;
 
-    const taskTitle = task.title || task.description || "Эту задачу";
-    const confirmed = await this.confirm(`Удалить задачу?\n${taskTitle}`);
-    if (!confirmed) return;
+    state.actionSheetTaskId = taskId;
 
-    this.haptic("medium");
+    const toggleBtn = document.getElementById("sheetToggleDone");
+    const sheet = document.getElementById("actionSheet");
+    if (toggleBtn) {
+      const done = task.status === "done" || task.status === "cancelled";
+      toggleBtn.textContent = done ? "Вернуть в активные" : "Отметить выполненной";
+    }
+    if (sheet) sheet.hidden = false;
+  },
 
+  closeActionSheet() {
+    const sheet = document.getElementById("actionSheet");
+    if (sheet) sheet.hidden = true;
+    state.actionSheetTaskId = null;
+  },
+
+  async deleteTask(taskId) {
     const prevTasks = [...state.tasks];
     state.tasks = state.tasks.filter((item) => item.id !== taskId);
+    this.haptic("medium");
     this.render();
 
     try {
@@ -323,9 +417,51 @@ const app = {
     }
   },
 
-  async openCreateTask() {
-    const title = await this.ask("Новая задача", "Введите текст задачи");
-    if (!title) return;
+  openQuickAdd() {
+    const wrap = document.getElementById("quickAdd");
+    const input = document.getElementById("quickAddInput");
+    if (!(wrap instanceof HTMLElement) || !(input instanceof HTMLInputElement)) return;
+
+    state.quickAddOpen = true;
+    wrap.hidden = false;
+    input.focus();
+  },
+
+  closeQuickAdd() {
+    const wrap = document.getElementById("quickAdd");
+    const input = document.getElementById("quickAddInput");
+    if (!(wrap instanceof HTMLElement) || !(input instanceof HTMLInputElement)) return;
+
+    input.value = "";
+    wrap.hidden = true;
+    state.quickAddOpen = false;
+  },
+
+  async submitQuickAdd() {
+    const input = document.getElementById("quickAddInput");
+    if (!(input instanceof HTMLInputElement)) return;
+
+    const title = input.value.trim();
+    if (!title) {
+      input.focus();
+      return;
+    }
+
+    const tempId = `tmp-${Date.now()}`;
+    const tempTask = {
+      id: tempId,
+      title,
+      description: title,
+      status: "new",
+      priority: "normal",
+      createdAt: new Date().toISOString(),
+    };
+
+    input.value = "";
+    state.tab = "active";
+    state.tasks.unshift(tempTask);
+    this.haptic("light");
+    this.render();
 
     try {
       const base = this.getApiBase();
@@ -339,17 +475,25 @@ const app = {
       });
 
       if (!res.ok) {
-        if (res.status === 404 || res.status === 405) {
-          this.showToast("Создание задачи пока недоступно в API");
-          return;
-        }
         throw new Error(`HTTP ${res.status}`);
       }
 
+      const data = await res.json().catch(() => null);
+      const created = data?.task && data.task.id ? data.task : null;
+
+      if (created) {
+        const idx = state.tasks.findIndex((t) => t.id === tempId);
+        if (idx !== -1) state.tasks[idx] = created;
+        this.render();
+      } else {
+        await this.loadTasks();
+      }
+
       this.showToast("Сохранено");
-      await this.loadTasks();
     } catch (error) {
-      console.error("[MiniApp] createTask error", error);
+      console.error("[MiniApp] quick add failed", error);
+      state.tasks = state.tasks.filter((item) => item.id !== tempId);
+      this.render();
       this.showToast("Ошибка, попробуйте ещё раз");
     }
   },
@@ -379,60 +523,34 @@ const app = {
     );
   },
 
-  confirm(message) {
-    return new Promise((resolve) => {
-      if (tg?.showPopup) {
-        tg.showPopup(
-          {
-            title: "Подтверждение",
-            message,
-            buttons: [
-              { id: "yes", type: "destructive", text: "Удалить" },
-              { id: "no", type: "cancel", text: "Отмена" },
-            ],
-          },
-          (buttonId) => resolve(buttonId === "yes")
-        );
-        return;
-      }
+  formatDueBadge(dueDate) {
+    if (!dueDate) return null;
 
-      resolve(window.confirm(message));
-    });
-  },
-
-  ask(title, placeholder) {
-    const value = window.prompt(`${title}\n${placeholder}`);
-    return Promise.resolve((value || "").trim());
-  },
-
-  isOverdue(dueDate) {
-    const due = new Date(dueDate).getTime();
-    return Number.isFinite(due) && due < Date.now();
-  },
-
-  formatDue(dueDate) {
-    const date = new Date(dueDate);
-    if (Number.isNaN(date.getTime())) return "Без срока";
+    const due = new Date(dueDate);
+    if (Number.isNaN(due.getTime())) return null;
 
     const now = new Date();
-    const diff = date.getTime() - now.getTime();
-    const dayDiff = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    const dueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate());
+    const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    if (dayDiff < 0) return `Просрочено ${Math.abs(dayDiff)}д`;
-    if (dayDiff === 0) return "Сегодня";
-    if (dayDiff === 1) return "Завтра";
+    if (dueDay.getTime() < nowDay.getTime()) {
+      return { label: "Просрочено", overdue: true };
+    }
 
-    return date.toLocaleDateString("ru-RU", {
-      day: "numeric",
-      month: "short",
-    });
+    if (dueDay.getTime() === nowDay.getTime()) {
+      return { label: "Сегодня", overdue: false };
+    }
+
+    return {
+      label: due.toLocaleDateString("ru-RU", { day: "numeric", month: "short" }),
+      overdue: false,
+    };
   },
 
   priorityLabel(priority) {
     const labels = {
       urgent: "Срочно",
       high: "Высокий",
-      normal: "Обычный",
       low: "Низкий",
     };
     return labels[priority] || priority;

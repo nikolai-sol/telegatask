@@ -18,6 +18,11 @@
       <button id="filterMenuButton" class="icon-btn" type="button" aria-label="Фильтры">☰</button>
     </header>
 
+    <section id="quickAdd" class="quick-add" hidden>
+      <input id="quickAddInput" class="quick-add__input" type="text" placeholder="Быстро добавить задачу" maxlength="280" autocomplete="off">
+      <button id="quickAddSubmit" class="quick-add__submit" type="button">Добавить</button>
+    </section>
+
     <nav class="tabs" aria-label="Фильтры задач">
       <button class="tab active" data-tab="active" type="button">Активные</button>
       <button class="tab" data-tab="done" type="button">Выполненные</button>
@@ -47,6 +52,15 @@
   </div>
 
   <button id="fabAdd" class="fab" type="button" aria-label="Добавить задачу">+</button>
+
+  <div id="actionSheet" class="sheet" hidden>
+    <button id="sheetBackdrop" class="sheet__backdrop" type="button" aria-label="Закрыть"></button>
+    <div class="sheet__panel">
+      <button id="sheetToggleDone" class="sheet__action" type="button">Отметить выполненной</button>
+      <button id="sheetDelete" class="sheet__action sheet__action--danger" type="button">Удалить</button>
+      <button id="sheetCancel" class="sheet__action" type="button">Отмена</button>
+    </div>
+  </div>
 
   <div id="toast" class="toast" hidden></div>
 
