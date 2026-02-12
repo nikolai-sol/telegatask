@@ -1,0 +1,9 @@
+{
+  "id": "knowledge-add",
+  "name": "Knowledge Add",
+  "description": "Добавить в базу знаний (текст, reply, forward, файл)",
+  "version": "1.0.0",
+  "triggers": ["command:/k"],
+  "plan": "free",
+  "author": "telegatask"
+}

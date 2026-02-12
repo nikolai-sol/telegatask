@@ -1,0 +1,9 @@
+{
+  "id": "task-actions",
+  "name": "Task Actions",
+  "description": "Create task from knowledge",
+  "version": "1.0.0",
+  "triggers": ["callback:task:"],
+  "plan": "free",
+  "author": "telegatask"
+}

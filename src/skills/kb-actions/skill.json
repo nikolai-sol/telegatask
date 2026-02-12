@@ -1,0 +1,9 @@
+{
+  "id": "kb-actions",
+  "name": "KB Actions",
+  "description": "Save to KB callbacks",
+  "version": "1.0.0",
+  "triggers": ["callback:kb:"],
+  "plan": "free",
+  "author": "telegatask"
+}

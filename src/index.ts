@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import healthRouter from "./routes/health";
 import debugRouter from "./routes/debug";
+import apiRouter from "./routes/api";
 import {
   initTelegataskBot,
   stopTelegataskBot,
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use(healthRouter);
 app.use(debugRouter);
+app.use(apiRouter);
 
 const PORT = process.env.PORT || 3000;
 

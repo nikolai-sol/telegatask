@@ -182,3 +182,67 @@ export async function extractTasksWithGemini(
     return null;
   }
 }
+
+export type AskContextItem = { id: string; text: string; source?: string };
+
+export async function askWithGemini(
+  question: string,
+  contextItems: AskContextItem[]
+): Promise<string | null> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    return null;
+  }
+
+  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  const contextLines = contextItems.map(
+    (c) => `[id:${c.id}] ${c.source ? `(source: ${c.source}) ` : ""}${c.text}`
+  );
+
+  const systemPrompt =
+    "Ты — ассистент, отвечающий по базе знаний пользователя. " +
+    "Отвечай кратко, опираясь только на приведённый контекст. " +
+    "Если в контексте нет нужной информации — честно скажи «Не найдено» или «В базе нет данных». " +
+    "Не придумывай факты.";
+
+  const userPrompt =
+    "Контекст из базы знаний:\n" +
+    (contextLines.length ? contextLines.join("\n\n") : "(пусто)") +
+    "\n\nВопрос: " +
+    question;
+
+  try {
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            { role: "user", parts: [{ text: systemPrompt + "\n\n" + userPrompt }] },
+          ],
+          generationConfig: {
+            temperature: 0.3,
+            maxOutputTokens: 1024,
+          },
+        }),
+      }
+    );
+
+    if (!res.ok) {
+      console.error("Gemini ask failed", res.status);
+      return null;
+    }
+
+    const data = (await res.json()) as { candidates?: GeminiCandidate[] };
+    return (
+      data.candidates?.[0]?.content?.parts
+        ?.map((part) => part.text ?? "")
+        .join("")
+        .trim() ?? null
+    );
+  } catch (error) {
+    console.error("Gemini ask failed", error);
+    return null;
+  }
+}

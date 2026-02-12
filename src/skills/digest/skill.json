@@ -1,0 +1,7 @@
+{
+  "id": "digest",
+  "name": "Digest",
+  "description": "Сводка по чату за период",
+  "version": "1.0.0",
+  "triggers": ["command:/digest", "callback:digest:chat:"]
+}

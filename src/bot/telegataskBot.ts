@@ -14,7 +14,9 @@ import {
 import {
   upsertChatFromTelegramPayload,
   getChatById,
+  getChatByTelegramId,
   listChats,
+  setChatCaptureMode,
 } from "../repositories/chatRepository";
 import {
   createTask,
@@ -26,6 +28,8 @@ import {
   getAllTasks,
   getTasksBySourceMessage,
   updateTaskStatus,
+  updateTaskPriority,
+  updateTaskFollowUp,
 } from "../repositories/taskRepository";
 import type { TelegramUser } from "../models/telegramUser";
 import type { Task } from "../models/task";
@@ -33,6 +37,7 @@ import { deleteTask } from "../repositories/taskRepository";
 import {
   addKnowledgeEntry,
   listKnowledgeByUser,
+  listKnowledgeForSearch,
 } from "../repositories/knowledgeRepository";
 import {
   listProjectsByChatId,
@@ -52,6 +57,7 @@ import { setDefaultProjectForChat } from "../repositories/settingsRepository";
 import {
   extractTasksWithGemini,
   inferDueDateWithGemini,
+  askWithGemini,
 } from "../services/gemini";
 import {
   listMessagesByChatAndTime,
@@ -60,6 +66,23 @@ import {
 } from "../repositories/messageRepository";
 import { logAction } from "../repositories/actionLogRepository";
 import { debugLog, verboseLog } from "../config/debug";
+import type { KnowledgeSourceTelegram } from "../models/knowledge";
+import { buildTelegramMessageLink, formatSourceFallback } from "../utils/telegramLink";
+import { startScheduler, stopScheduler } from "../services/scheduler";
+import { autoSaveFilesToKnowledge } from "../services/autoSaveFiles";
+import { getCommandVariants } from "../config/commands";
+import type { TaskPriority } from "../models/task";
+import { SkillRouter } from "../core/router";
+import { KBService } from "../core/services/kb";
+import { LLMService } from "../core/services/llm";
+import { TelegramService } from "../core/services/telegram";
+import { registerAllSkills } from "../skills/registry";
+import {
+  pendingKnowledgeForwards,
+  handleKnowledgeImportantFollowup,
+} from "../legacy/knowledge/handleKnowledge";
+
+let skillRouter: SkillRouter | null = null;
 
 type SortMode = "date" | "project";
 type CachedList = {
@@ -87,15 +110,6 @@ const pendingForwardTasks = new Map<
     createdByUserId: string;
   }
 >();
-const pendingKnowledgeForwards = new Map<
-  number,
-  {
-    content: string;
-    sourceChatId: string | null;
-    sourceChatTitle: string | null;
-    sourceMessageId: number | null;
-  }
->();
 const userLabelCache = new Map<string, string>();
 
 function assertToken(): string {
@@ -113,6 +127,16 @@ function safeLogAction(
   logAction({ action, ...params }).catch((err) =>
     console.error("[actionLog] failed to log", action, err)
   );
+}
+
+const STOP_WORDS = new Set(["и", "в", "на", "с", "по", "для", "из", "к", "о", "у", "это", "что", "как", "the", "a", "an", "is", "are", "of", "to", "in"]);
+
+function extractSearchKeywords(query: string): string[] {
+  return query
+    .toLowerCase()
+    .replace(/[^\wа-яё\s]/gi, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 2 && !STOP_WORDS.has(w));
 }
 
 function getMessageText(message?: Message): string | null {
@@ -542,8 +566,10 @@ function buildMainMenuKeyboard() {
     ["/my_today", "/my_overdue"],
     ["/chat_tasks", "/all_tasks"],
     ["/parse_today", "/parse_yesterday"],
+    ["/priority", "/wait"],
+    ["/chats"],
     ["/k"],
-    ["/ksearch"],
+    ["/ksearch", "/ask"],
     ["/done", "/del"],
     ["/status"],
     ["/info"],
@@ -789,27 +815,67 @@ function buildListSortKeyboard(mode: SortMode) {
   ]);
 }
 
+/** Извлечь task id из строк вида (id=xxx) */
+function extractTaskIdsFromText(text: string): string[] {
+  const ids: string[] = [];
+  const re = /\(id=([^)]+)\)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) ids.push(m[1]);
+  return ids;
+}
+
+/** Клавиатура: кнопки Выполнено/Удалить для задач + сортировка (макс 20 задач) */
+function buildTaskListWithActionsKeyboard(
+  taskIds: string[],
+  sortMode: SortMode
+) {
+  const MAX_TASKS = 20;
+  const ids = taskIds.slice(0, MAX_TASKS);
+  const rows: any[][] = [];
+
+  // Mini App button (if configured)
+  const miniAppUrl = process.env.MINI_APP_URL;
+  if (miniAppUrl) {
+    rows.push([{ text: "📋 Открыть менеджер задач", web_app: { url: miniAppUrl } }]);
+  }
+
+  for (const id of ids) {
+    rows.push([
+      Markup.button.callback("✅ Выполнено", `task:done:${id}`),
+      Markup.button.callback("🗑 Удалить", `task:del:${id}`),
+    ]);
+  }
+
+  rows.push([
+    Markup.button.callback(
+      sortMode === "date" ? "✅ По дате" : "По дате",
+      "sort_date"
+    ),
+    Markup.button.callback(
+      sortMode === "project" ? "✅ По проекту" : "По проекту",
+      "sort_project"
+    ),
+  ]);
+  return Markup.inlineKeyboard(rows);
+}
+
 async function handleStart(ctx: Context<Update>): Promise<void> {
   const helpText =
-    "Привет! Я помогу сохранить задачи.\n\n" +
-    "В группе: /t @username текст задачи или упомяни меня с текстом (\"задача\", \"нужно\", \"сделай\").\n" +
-    "В личке: перешли сообщение с @username или /t — создам задачу. Для знаний: /k или \"это важно\" после форварда.\n\n" +
-    "Команды:\n" +
-    "/l — список ваших активных задач (приходит в личку)\n" +
-    "/my — мои задачи\n" +
-    "/outbox — задачи, которые я поставил\n" +
-    "/chat_tasks — задачи из текущего чата\n" +
-    "/all_tasks — все активные задачи\n" +
-    "/parse_today — разобрать чат за сегодня\n" +
-    "/parse_yesterday — разобрать чат за вчера\n" +
-    "/done <id|номер> — отметить задачу выполненной\n" +
-    "/del <id|номер> — удалить задачу\n" +
-    "/k <текст> — добавить запись в базу знаний\n" +
-    "/ksearch <текст> — поиск по базе знаний\n" +
-    "/status — состояние бота\n" +
-    "/info — подсказка по командам";
+    "👋 <b>Привет! Я — ваш ассистент по задачам.</b>\n\n" +
+    "Что я умею:\n" +
+    "📋 Создавать и отслеживать задачи\n" +
+    "🔍 Автоматически сканировать чаты каждые 30 мин\n" +
+    "🔔 Напоминать о дедлайнах\n" +
+    "📋 Follow-up: кто не ответил\n" +
+    "💬 Напоминать о неотвеченных mentions\n" +
+    "☀️ Утренний бриф / 🌙 Вечерний дайджест\n" +
+    "📚 База знаний + RAG-ответы\n\n" +
+    "<b>Быстрый старт:</b>\n" +
+    "В группе: /t @user задача или /scan_on для авто-сканирования\n" +
+    "В личке: перешли сообщение или /task\n\n" +
+    "/info — полный список команд";
 
-  await ctx.reply(helpText);
+  await ctx.reply(helpText, { parse_mode: "HTML" });
   await sendMainMenu(ctx);
 }
 
@@ -825,8 +891,14 @@ function isTCommandMessage(
   return null;
 }
 
-function isCommand(text: string, name: string): boolean {
-  const pattern = new RegExp(`^/${name}(?:@\\S+)?\\b`, "i");
+function isCommand(text: string, nameOrNames: string | string[]): boolean {
+  const names =
+    Array.isArray(nameOrNames)
+      ? nameOrNames
+      : getCommandVariants(nameOrNames);
+  const escaped = names.map((n) => n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+  // \b не работает с кириллицей — используем (?:\s|$) для границы команды
+  const pattern = new RegExp(`^/(${escaped})(?:@\\S+)?(?:\\s|$)`, "i");
   return pattern.test(text.trim());
 }
 
@@ -1557,11 +1629,29 @@ async function handleListTasks(ctx: Context<Update>): Promise<boolean> {
       mode: "date",
     });
 
-    await ctx.telegram.sendMessage(
-      ctx.from.id,
-      text,
-      buildListSortKeyboard("date")
-    );
+    const MAX_LEN = 4000;
+    const sortMode = "date";
+    if (text.length <= MAX_LEN) {
+      const ids = extractTaskIdsFromText(text);
+      const keyboard = buildTaskListWithActionsKeyboard(ids, sortMode);
+      await ctx.telegram.sendMessage(ctx.from.id, text, keyboard);
+    } else {
+      const parts: string[] = [];
+      let rest = text;
+      while (rest.length > MAX_LEN) {
+        const chunk = rest.slice(0, MAX_LEN);
+        const lastNewline = chunk.lastIndexOf("\n");
+        const cut = lastNewline > MAX_LEN / 2 ? lastNewline + 1 : MAX_LEN;
+        parts.push(rest.slice(0, cut));
+        rest = rest.slice(cut);
+      }
+      if (rest) parts.push(rest);
+      for (let i = 0; i < parts.length; i++) {
+        const ids = extractTaskIdsFromText(parts[i]);
+        const opts = buildTaskListWithActionsKeyboard(ids, sortMode);
+        await ctx.telegram.sendMessage(ctx.from.id, parts[i], opts);
+      }
+    }
 
     if (message.chat.type !== "private") {
       await ctx.reply("Отправил список задач в личку.");
@@ -1737,24 +1827,39 @@ async function handleInfo(ctx: Context<Update>): Promise<boolean> {
   }
 
   const helpText =
-    "Команды:\n" +
-    "В группе: /t @username текст задачи или упомяни меня с текстом (\"задача\", \"нужно\", \"сделай\").\n" +
-    "В личке: перешли сообщение с @username или /t — создам задачу. Для знаний: /k или \"это важно\" после форварда.\n\n" +
-    "/l — список ваших активных задач (приходит в личку)\n" +
+    "📋 <b>Команды:</b>\n\n" +
+    "<b>Задачи:</b>\n" +
+    "/task — создать задачу\n" +
+    "/l — список задач (сводка)\n" +
     "/my — мои задачи\n" +
     "/outbox — задачи, которые я поставил\n" +
-    "/chat_tasks — задачи из текущего чата\n" +
-    "/all_tasks — все активные задачи\n" +
-    "/parse_today — разобрать чат за сегодня\n" +
-    "/parse_yesterday — разобрать чат за вчера\n" +
-    "/done <id|номер> — отметить задачу выполненной\n" +
-    "/del <id|номер> — удалить задачу\n" +
-    "/k <текст> — добавить запись в базу знаний\n" +
-    "/ksearch <текст> — поиск по базе знаний\n" +
-    "/status — состояние бота\n" +
-    "/info — подсказка по командам\n";
+    "/my_today — задачи на сегодня\n" +
+    "/my_overdue — просроченные\n" +
+    "/chat_tasks — задачи чата\n" +
+    "/all_tasks — все задачи\n" +
+    "/done <id> — выполнена\n" +
+    "/del <id> — удалить\n" +
+    "/priority <id> <low|normal|high|urgent> — приоритет\n" +
+    "/wait <id> — в ожидание + follow-up\n\n" +
+    "<b>Auto-scan:</b>\n" +
+    "/chats — 🎛 центр управления чатами (вкл/выкл scan)\n" +
+    "/scan_on — включить scan (в группе)\n" +
+    "/scan_off — выключить scan (в группе)\n" +
+    "/parse_today — разобрать вручную за сегодня\n" +
+    "/parse_yesterday — за вчера\n\n" +
+    "<b>Знания:</b>\n" +
+    "/k <текст> — в базу знаний\n" +
+    "/ksearch <текст> — поиск\n" +
+    "/ask <вопрос> — ответ по базе (RAG)\n\n" +
+    "<b>Уведомления (авто):</b>\n" +
+    "🔔 Напоминания о дедлайнах\n" +
+    "📋 Follow-up: кто не ответил\n" +
+    "💬 Мне не ответили\n" +
+    "☀️ Утренний бриф (9:00)\n" +
+    "🌙 Вечерний дайджест (19:00)\n\n" +
+    "/status — состояние бота";
 
-  await ctx.reply(helpText);
+  await ctx.reply(helpText, { parse_mode: "HTML" });
   await sendMainMenu(ctx);
   return true;
 }
@@ -1770,161 +1875,6 @@ async function handleHelp(ctx: Context<Update>): Promise<boolean> {
   }
 
   return handleInfo(ctx);
-}
-
-async function handleKnowledge(ctx: Context<Update>): Promise<boolean> {
-  const message = ctx.message;
-  if (!message || !("text" in message) || !message.text) {
-    return false;
-  }
-
-  if (!isCommand(message.text, "k")) {
-    return false;
-  }
-
-  if (!ctx.from) {
-    return false;
-  }
-
-  const repliedMessage =
-    "reply_to_message" in message ? message.reply_to_message : undefined;
-
-  const forwardedMessage =
-    "forward_from" in message || "forward_from_chat" in message
-      ? (message as Message & {
-          forward_from_chat?: TelegramChat;
-          forward_from_message_id?: number;
-        })
-      : null;
-
-  const rawText = message.text.trim();
-  const isBang = /^\/k!/i.test(rawText);
-  let stripped = rawText.replace(/^\/k!?(@\S+)?\s*/i, "");
-  let isImportant = isBang;
-
-  if (/^важно\b/i.test(stripped)) {
-    isImportant = true;
-    stripped = stripped.replace(/^важно\b[:\s-]*/i, "");
-  }
-
-  const replyText = getMessageText(repliedMessage);
-  const forwardedText = forwardedMessage ? getMessageText(forwardedMessage) : null;
-  const pending = pendingKnowledgeForwards.get(ctx.from.id);
-
-  let content = replyText?.trim() || stripped.trim() || forwardedText?.trim() || "";
-  let sourceChatId =
-    forwardedMessage?.forward_from_chat?.id?.toString() ??
-    ("chat" in message ? message.chat.id.toString() : null);
-  let sourceChatTitle =
-    getChatTitle(forwardedMessage?.forward_from_chat) ??
-    ("chat" in message ? getChatTitle(message.chat) : null);
-  let sourceMessageId =
-    forwardedMessage?.forward_from_message_id ?? message.message_id;
-
-  if (!content && pending) {
-    content = pending.content;
-    sourceChatId = pending.sourceChatId;
-    sourceChatTitle = pending.sourceChatTitle;
-    sourceMessageId = pending.sourceMessageId ?? sourceMessageId;
-  }
-
-  if (!content) {
-    await ctx.reply("Нужно указать текст после /k или ответить на сообщение.");
-    return true;
-  }
-
-  try {
-    const user = await upsertUserFromTelegramPayload({
-      id: ctx.from.id,
-      username: ctx.from.username ?? undefined,
-      first_name: ctx.from.first_name ?? undefined,
-      last_name: ctx.from.last_name ?? undefined,
-    });
-
-    const item = await addKnowledgeEntry({
-      content,
-      isImportant,
-      createdByUserId: user.id,
-      sourceChatId,
-      sourceChatTitle,
-      sourceMessageId,
-    });
-
-    console.log("Knowledge item saved", item);
-    safeLogAction("knowledge_added", {
-      userId: user.id,
-      targetId: item.id,
-      targetType: "knowledge",
-      payload: { isImportant: item.isImportant },
-    });
-    pendingKnowledgeForwards.delete(ctx.from.id);
-
-    await ctx.reply("В знания добавлено.");
-  } catch (error) {
-    console.error("Failed to handle /k command", error);
-    await ctx.reply("Не удалось записать в базу знаний.");
-  }
-
-  return true;
-}
-
-async function handleKnowledgeImportantFollowup(
-  ctx: Context<Update>
-): Promise<boolean> {
-  const message = ctx.message;
-  if (!message || !("text" in message) || !message.text) {
-    return false;
-  }
-
-  if (!ctx.from) {
-    return false;
-  }
-
-  if (message.chat.type !== "private") {
-    return false;
-  }
-
-  const pending = pendingKnowledgeForwards.get(ctx.from.id);
-  if (!pending) {
-    return false;
-  }
-
-  if (!/^(это\s+)?важно\b/i.test(message.text.trim())) {
-    return false;
-  }
-
-  try {
-    const user = await upsertUserFromTelegramPayload({
-      id: ctx.from.id,
-      username: ctx.from.username ?? undefined,
-      first_name: ctx.from.first_name ?? undefined,
-      last_name: ctx.from.last_name ?? undefined,
-    });
-
-    const item = await addKnowledgeEntry({
-      content: pending.content,
-      isImportant: true,
-      createdByUserId: user.id,
-      sourceChatId: pending.sourceChatId,
-      sourceChatTitle: pending.sourceChatTitle,
-      sourceMessageId: pending.sourceMessageId,
-    });
-
-    console.log("Knowledge item saved from important followup", item);
-    safeLogAction("knowledge_added", {
-      userId: user.id,
-      targetId: item.id,
-      targetType: "knowledge",
-      payload: { isImportant: true },
-    });
-    pendingKnowledgeForwards.delete(ctx.from.id);
-    await ctx.reply("Сохранил важное в базу знаний.");
-    return true;
-  } catch (error) {
-    console.error("Failed to handle important knowledge followup", error);
-    await ctx.reply("Не удалось сохранить в базу знаний.");
-    return true;
-  }
 }
 
 async function handleKnowledgeSearch(ctx: Context<Update>): Promise<boolean> {
@@ -1955,35 +1905,60 @@ async function handleKnowledgeSearch(ctx: Context<Update>): Promise<boolean> {
       last_name: ctx.from.last_name ?? undefined,
     });
 
-    const items = await listKnowledgeByUser(user.id, 200);
-    const needle = query.toLowerCase();
-    const matches = items.filter((item) =>
-      item.content.toLowerCase().includes(needle)
-    );
+    const scope: { userId: string; chatId?: string; telegramChatId?: number; teamId?: string; limit: number } = {
+      userId: user.id,
+      limit: 500,
+    };
+    if (message.chat.type !== "private" && "chat" in message) {
+      const chat = await upsertChatFromTelegramPayload({
+        id: message.chat.id,
+        title: "title" in message.chat ? message.chat.title : undefined,
+        type: message.chat.type as "group" | "supergroup",
+      });
+      scope.chatId = chat.id;
+      scope.telegramChatId = message.chat.id;
+      const team = await getTeamByChatId(message.chat.id.toString());
+      if (team) scope.teamId = team.id;
+    }
 
-    if (!matches.length) {
+    const items = await listKnowledgeForSearch(scope);
+    const keywords = extractSearchKeywords(query);
+    const searchTerms = keywords.length > 0 ? keywords : [query.toLowerCase()];
+    const scored = items
+      .map((item) => {
+        const textLower = item.text.toLowerCase();
+        const matchCount = searchTerms.filter((kw) => textLower.includes(kw)).length;
+        if (matchCount === 0) return null;
+        const recencyScore = new Date(item.createdAt).getTime();
+        return { item, matchCount, recencyScore, score: matchCount * 10 + Math.log(1 + recencyScore / 1e12) };
+      })
+      .filter((x): x is NonNullable<typeof x> => x !== null)
+      .sort((a, b) => b.score - a.score);
+
+    const limit = 10;
+    const trimmed = scored.slice(0, limit).map((s) => s.item);
+
+    if (!trimmed.length) {
       await ctx.reply("В базе знаний совпадений не найдено.");
       return true;
     }
 
-    const limit = 10;
-    const trimmed = matches.slice(0, limit);
     const lines = trimmed.map((item, idx) => {
-      const prefix = item.isImportant ? "⭐ " : "";
-      const excerpt =
-        item.content.length > 140
-          ? `${item.content.slice(0, 140)}…`
-          : item.content;
-      const source = item.sourceChatTitle ? ` (${item.sourceChatTitle})` : "";
-      return `${idx + 1}. ${prefix}${excerpt}${source} (id=${item.id})`;
+      const prefix = item.importance === "important" ? "⭐ " : "";
+      const typeLabel = `[${item.type}]`;
+      const excerpt = item.text.length > 120 ? `${item.text.slice(0, 120)}…` : item.text;
+      const srcLink = buildTelegramMessageLink(item.source);
+      const srcText = srcLink ? srcLink : formatSourceFallback(item.source, item.sourceChatTitle);
+      return `${idx + 1}. ${prefix}${typeLabel} ${excerpt} (id=${item.id.slice(0, 8)})\n   Source: ${srcText}`;
     });
 
     const header =
-      matches.length > limit
-        ? `Найдено ${matches.length}. Показаны первые ${limit}:`
-        : `Найдено ${matches.length}:`;
+      scored.length > limit
+        ? `Найдено ${scored.length}. Топ ${limit}:`
+        : `Найдено ${scored.length}:`;
     const text = `${header}\n${lines.join("\n")}`;
 
+    safeLogAction("knowledge_search", { userId: user.id, payload: { query, hits: trimmed.length } });
     await ctx.telegram.sendMessage(ctx.from.id, text);
 
     if (message.chat.type !== "private") {
@@ -2606,7 +2581,9 @@ async function handleMyTasks(ctx: Context<Update>): Promise<boolean> {
       mode: "date",
     });
 
-    await ctx.telegram.sendMessage(ctx.from.id, text);
+    const ids = ordered.map((t) => t.id);
+    const keyboard = buildTaskListWithActionsKeyboard(ids, "date");
+    await ctx.telegram.sendMessage(ctx.from.id, text, keyboard);
 
     if (message.chat.type !== "private") {
       await ctx.reply("Отправил список задач в личку.");
@@ -3075,6 +3052,94 @@ async function handleAllTasks(ctx: Context<Update>): Promise<boolean> {
   return true;
 }
 
+async function handleAsk(ctx: Context<Update>): Promise<boolean> {
+  const message = ctx.message;
+  if (!message || !("text" in message) || !message.text) {
+    return false;
+  }
+
+  if (!isCommand(message.text, "ask")) {
+    return false;
+  }
+
+  const question = message.text.replace(/^\/ask(?:@\S+)?\s*/i, "").trim();
+  if (!question) {
+    await ctx.reply("Укажите вопрос: /ask <вопрос>");
+    return true;
+  }
+
+  if (!ctx.from) return false;
+
+  try {
+    const user = await upsertUserFromTelegramPayload({
+      id: ctx.from.id,
+      username: ctx.from.username ?? undefined,
+      first_name: ctx.from.first_name ?? undefined,
+      last_name: ctx.from.last_name ?? undefined,
+    });
+
+    let scope: { userId: string; chatId?: string; telegramChatId?: number; teamId?: string; limit?: number } = {
+      userId: user.id,
+      limit: 500,
+    };
+    if (message.chat.type !== "private" && "chat" in message) {
+      const chat = await upsertChatFromTelegramPayload({
+        id: message.chat.id,
+        title: "title" in message.chat ? message.chat.title : undefined,
+        type: message.chat.type as "group" | "supergroup",
+      });
+      scope.chatId = chat.id;
+      scope.telegramChatId = message.chat.id;
+      const team = await getTeamByChatId(message.chat.id.toString());
+      if (team) scope.teamId = team.id;
+    }
+
+    const items = await listKnowledgeForSearch(scope);
+    const keywords = extractSearchKeywords(question);
+    const searchTerms = keywords.length > 0 ? keywords : [question.toLowerCase()];
+    const scored = items
+      .map((item) => {
+        const textLower = item.text.toLowerCase();
+        const matchCount = searchTerms.filter((kw) => textLower.includes(kw)).length;
+        if (matchCount === 0) return null;
+        const recencyScore = new Date(item.createdAt).getTime();
+        return { item, score: matchCount * 10 + Math.log(1 + recencyScore / 1e12) };
+      })
+      .filter((x): x is NonNullable<typeof x> => x !== null)
+      .sort((a, b) => b.score - a.score);
+
+    const top10 = scored.slice(0, 10).map((s) => s.item);
+
+    const contextItems = top10.map((c) => ({
+      id: c.id.slice(0, 8),
+      text: c.text.slice(0, 500),
+      source: c.sourceChatTitle || buildTelegramMessageLink(c.source) || undefined,
+    }));
+
+    const answer = await askWithGemini(question, contextItems);
+
+    if (!answer) {
+      await ctx.reply("Gemini недоступен. Укажите GEMINI_API_KEY.");
+      return true;
+    }
+
+    const sourceLines = top10.slice(0, 5).map((item, i) => {
+      const link = buildTelegramMessageLink(item.source);
+      const src = link || formatSourceFallback(item.source, item.sourceChatTitle);
+      return `${i + 1}. ${item.text.slice(0, 80)}… — ${src}`;
+    });
+    const sourcesBlock = sourceLines.length ? "\n\nSources:\n" + sourceLines.join("\n") : "";
+
+    safeLogAction("ask_executed", { userId: user.id, payload: { question: question.slice(0, 100), hitsCount: top10.length } });
+    await ctx.reply(answer + sourcesBlock);
+  } catch (error) {
+    console.error("Failed to handle /ask", error);
+    await ctx.reply("Не удалось выполнить запрос.");
+  }
+
+  return true;
+}
+
 async function handleSearch(ctx: Context<Update>): Promise<boolean> {
   const message = ctx.message;
   if (!message || !("text" in message) || !message.text) {
@@ -3151,7 +3216,7 @@ async function handleDigest(ctx: Context<Update>): Promise<boolean> {
   }
 
   await ctx.reply(
-    "Принял запрос на дайджест. ИИ-дайджест будет подключён позже."
+    "Digest доступен. Если видите это сообщение — skill router не обработал команду. Проверьте деплой и pm2 restart telegatask."
   );
 
   return true;
@@ -3185,47 +3250,479 @@ async function handleStubCommands(ctx: Context<Update>): Promise<boolean> {
 
 async function handleSortCallback(ctx: Context<Update>): Promise<void> {
   const callback = ctx.callbackQuery;
-  if (!callback || !("data" in callback)) {
-    return;
-  }
+  if (!callback || !("data" in callback)) return;
 
   const data = callback.data;
-  if (data !== "sort_date" && data !== "sort_project") {
-    return;
-  }
+  if (data !== "sort_date" && data !== "sort_project") return;
 
   const mode: SortMode = data === "sort_project" ? "project" : "date";
-
   const userId = ctx.from?.id;
-  if (!userId) {
-    return;
-  }
-
-  const cached = userTaskCache.get(userId);
-  if (!cached) {
-    await ctx.answerCbQuery("Сначала запросите /l");
-    return;
-  }
-
-  const { text, orderedAssigned } = summarizeTasks(
-    cached.assignedOrdered,
-    cached.outbox,
-    mode
-  );
-
-  userTaskCache.set(userId, {
-    assignedOrdered: orderedAssigned,
-    outbox: cached.outbox,
-    mode,
-  });
+  if (!userId) return;
 
   try {
-    await ctx.editMessageText(text, buildListSortKeyboard(mode));
+    const cached = userTaskCache.get(userId);
+    if (!cached) {
+      await ctx.answerCbQuery("Сначала запросите /l");
+      return;
+    }
+
+    const { text, orderedAssigned } = summarizeTasks(
+      cached.assignedOrdered,
+      cached.outbox,
+      mode
+    );
+
+    userTaskCache.set(userId, {
+      assignedOrdered: orderedAssigned,
+      outbox: cached.outbox,
+      mode,
+    });
+
+    const MAX_LEN = 4000;
+    const ids = extractTaskIdsFromText(text);
+    const keyboard = buildTaskListWithActionsKeyboard(ids, mode);
+
+    if (text.length <= MAX_LEN) {
+      try {
+        await ctx.editMessageText(text, keyboard);
+      } catch (editErr) {
+        console.error("Failed to edit task list", editErr);
+        await ctx.reply(text, keyboard);
+      }
+    } else {
+      const parts: string[] = [];
+      let rest = text;
+      while (rest.length > MAX_LEN) {
+        const cut = rest.lastIndexOf("\n", MAX_LEN);
+        const pos = cut > MAX_LEN / 2 ? cut + 1 : MAX_LEN;
+        parts.push(rest.slice(0, pos));
+        rest = rest.slice(pos);
+      }
+      if (rest) parts.push(rest);
+      try {
+        await ctx.deleteMessage();
+      } catch {
+        /* ignore */
+      }
+      const chatId = ctx.chat?.id ?? ctx.from?.id;
+      if (chatId) {
+        for (let i = 0; i < parts.length; i++) {
+          const partIds = extractTaskIdsFromText(parts[i]);
+          const partKb = buildTaskListWithActionsKeyboard(partIds, mode);
+          await ctx.telegram.sendMessage(chatId, parts[i], partKb);
+        }
+      }
+    }
   } catch (error) {
-    console.error("Failed to edit task list", error);
-    await ctx.reply(text, buildListSortKeyboard(mode));
-  } finally {
-    await ctx.answerCbQuery();
+    console.error("handleSortCallback failed", error);
+    await ctx.answerCbQuery("Ошибка при сортировке").catch(() => {});
+    return;
+  }
+  await ctx.answerCbQuery().catch(() => {});
+}
+
+// ============================================================
+// Scan On/Off — включить/выключить auto-scan для чата
+// (работает и в группе, и из личного чата через /chats)
+// ============================================================
+
+async function handleScanOn(ctx: Context<Update>): Promise<boolean> {
+  const message = ctx.message;
+  if (!message || !("text" in message) || !message.text) return false;
+  if (!isCommand(message.text, "scan_on")) return false;
+
+  if (!message.chat || (message.chat.type !== "group" && message.chat.type !== "supergroup")) {
+    await ctx.reply("Команда /scan_on работает в групповых чатах.\nДля управления из личного чата используйте /chats");
+    return true;
+  }
+
+  try {
+    const chat = await upsertChatFromTelegramPayload({
+      id: message.chat.id,
+      title: "title" in message.chat ? message.chat.title : undefined,
+      type: message.chat.type,
+    });
+
+    await setChatCaptureMode(chat.id, "auto_scan");
+    await ctx.reply(
+      "✅ Auto-scan включён для этого чата.\n" +
+      "Бот будет каждые 30 мин анализировать сообщения и создавать задачи.\n\n" +
+      "Управление: /chats (в личке)"
+    );
+    debugLog(`[scan] Auto-scan enabled for chat ${chat.id} ("${chat.title}")`);
+  } catch (error) {
+    console.error("Failed to enable scan", error);
+    await ctx.reply("Ошибка при включении auto-scan.");
+  }
+
+  return true;
+}
+
+async function handleScanOff(ctx: Context<Update>): Promise<boolean> {
+  const message = ctx.message;
+  if (!message || !("text" in message) || !message.text) return false;
+  if (!isCommand(message.text, "scan_off")) return false;
+
+  if (!message.chat || (message.chat.type !== "group" && message.chat.type !== "supergroup")) {
+    await ctx.reply("Команда /scan_off работает в групповых чатах.\nДля управления из личного чата используйте /chats");
+    return true;
+  }
+
+  try {
+    const chat = await upsertChatFromTelegramPayload({
+      id: message.chat.id,
+      title: "title" in message.chat ? message.chat.title : undefined,
+      type: message.chat.type,
+    });
+
+    await setChatCaptureMode(chat.id, "off");
+    await ctx.reply("🔕 Auto-scan выключен.\nУправление: /chats (в личке)");
+    debugLog(`[scan] Auto-scan disabled for chat ${chat.id} ("${chat.title}")`);
+  } catch (error) {
+    console.error("Failed to disable scan", error);
+    await ctx.reply("Ошибка при выключении auto-scan.");
+  }
+
+  return true;
+}
+
+// ============================================================
+// /chats — Центр управления чатами (из личного чата)
+// ============================================================
+
+function buildChatsControlPanel(chats: import("../models/chat").Chat[]) {
+  const groupChats = chats.filter(
+    (c) => c.type === "group" || c.type === "supergroup"
+  );
+
+  if (!groupChats.length) {
+    return { text: "📭 Нет чатов.\nДобавьте бота в групповой чат — он появится здесь.", buttons: null };
+  }
+
+  const lines = groupChats.map((chat, i) => {
+    const icon = chat.captureMode === "auto_scan" ? "🟢" : "⚪";
+    const mode = chat.captureMode === "auto_scan" ? "SCAN ON" : "scan off";
+    const lastScan = chat.lastScannedAt
+      ? `последний скан: ${formatShortDate(chat.lastScannedAt)}`
+      : "ещё не сканировался";
+    return `${i + 1}. ${icon} <b>${escapeHtml(chat.title || "Без названия")}</b>\n   ${mode} · ${lastScan}`;
+  });
+
+  const text =
+    `🎛 <b>Центр управления чатами</b>\n\n` +
+    lines.join("\n\n") +
+    `\n\n` +
+    `Нажмите кнопку чтобы включить/выключить auto-scan:`;
+
+  const buttons = groupChats.map((chat) => {
+    const isOn = chat.captureMode === "auto_scan";
+    const label = isOn
+      ? `🔕 Выкл: ${(chat.title || "Без названия").slice(0, 25)}`
+      : `🟢 Вкл: ${(chat.title || "Без названия").slice(0, 25)}`;
+    return [Markup.button.callback(label, `ctl:scan:${chat.id}:${isOn ? "off" : "on"}`)];
+  });
+
+  // Кнопки "Включить все" / "Выключить все" / "Обновить"
+  const hasAnyOn = groupChats.some((c) => c.captureMode === "auto_scan");
+  const hasAnyOff = groupChats.some((c) => c.captureMode !== "auto_scan");
+
+  const bottomRow = [];
+  if (hasAnyOff) bottomRow.push(Markup.button.callback("🟢 Все ON", "ctl:scan_all:on"));
+  if (hasAnyOn) bottomRow.push(Markup.button.callback("🔕 Все OFF", "ctl:scan_all:off"));
+  bottomRow.push(Markup.button.callback("🔄 Обновить", "ctl:refresh"));
+  buttons.push(bottomRow);
+
+  return { text, buttons: Markup.inlineKeyboard(buttons) };
+}
+
+async function handleChatsCommand(ctx: Context<Update>): Promise<boolean> {
+  const message = ctx.message;
+  if (!message || !("text" in message) || !message.text) return false;
+  if (!isCommand(message.text, "chats")) return false;
+
+  try {
+    const chats = await listChats(50);
+    const { text, buttons } = buildChatsControlPanel(chats);
+
+    if (buttons) {
+      await ctx.reply(text, { parse_mode: "HTML", ...buttons });
+    } else {
+      await ctx.reply(text, { parse_mode: "HTML" });
+    }
+  } catch (error) {
+    console.error("Failed to list chats", error);
+    await ctx.reply("Ошибка при загрузке списка чатов.");
+  }
+
+  return true;
+}
+
+/** Callback handler для кнопок центра управления чатами */
+async function handleControlPanelCallback(ctx: Context<Update>): Promise<boolean> {
+  const callback = ctx.callbackQuery;
+  if (!callback || !("data" in callback)) return false;
+
+  const data = callback.data || "";
+  if (!data.startsWith("ctl:")) return false;
+
+  try {
+    // ctl:scan:<chatId>:<on|off>
+    if (data.startsWith("ctl:scan:") && !data.startsWith("ctl:scan_all:")) {
+      const parts = data.split(":");
+      if (parts.length !== 4) {
+        await ctx.answerCbQuery("Ошибка.");
+        return true;
+      }
+      const chatId = parts[2];
+      const action = parts[3]; // "on" or "off"
+
+      const newMode = action === "on" ? "auto_scan" as const : "off" as const;
+      await setChatCaptureMode(chatId, newMode);
+
+      const chat = await getChatById(chatId);
+      const label = chat?.title || "чат";
+      await ctx.answerCbQuery(
+        action === "on"
+          ? `✅ Scan ON: ${label}`
+          : `🔕 Scan OFF: ${label}`
+      );
+
+      // Обновляем панель
+      await refreshControlPanel(ctx);
+      return true;
+    }
+
+    // ctl:scan_all:<on|off>
+    if (data.startsWith("ctl:scan_all:")) {
+      const action = data.split(":")[2]; // "on" or "off"
+      const chats = await listChats(50);
+      const groupChats = chats.filter(
+        (c) => c.type === "group" || c.type === "supergroup"
+      );
+
+      const newMode = action === "on" ? "auto_scan" as const : "off" as const;
+      for (const chat of groupChats) {
+        await setChatCaptureMode(chat.id, newMode);
+      }
+
+      await ctx.answerCbQuery(
+        action === "on"
+          ? `✅ Scan включён для ${groupChats.length} чатов`
+          : `🔕 Scan выключен для ${groupChats.length} чатов`
+      );
+
+      await refreshControlPanel(ctx);
+      return true;
+    }
+
+    // ctl:refresh
+    if (data === "ctl:refresh") {
+      await ctx.answerCbQuery("Обновлено");
+      await refreshControlPanel(ctx);
+      return true;
+    }
+  } catch (error) {
+    console.error("Failed to handle control panel callback", error);
+    await ctx.answerCbQuery("Ошибка.");
+  }
+
+  return true;
+}
+
+/** Обновить сообщение с панелью управления */
+async function refreshControlPanel(ctx: Context<Update>): Promise<void> {
+  try {
+    const chats = await listChats(50);
+    const { text, buttons } = buildChatsControlPanel(chats);
+
+    if (buttons) {
+      await ctx.editMessageText(text, { parse_mode: "HTML", ...buttons });
+    } else {
+      await ctx.editMessageText(text, { parse_mode: "HTML" });
+    }
+  } catch (error) {
+    // editMessageText может упасть если текст не изменился
+    debugLog("[chats] Failed to refresh control panel", error);
+  }
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function formatShortDate(iso: string): string {
+  try {
+    return new Date(iso).toLocaleString("ru-RU", {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Europe/Moscow",
+    });
+  } catch {
+    return iso;
+  }
+}
+
+// ============================================================
+// Priority — /priority <id|номер> <low|normal|high|urgent>
+// ============================================================
+
+async function handlePriorityCommand(ctx: Context<Update>): Promise<boolean> {
+  const message = ctx.message;
+  if (!message || !("text" in message) || !message.text) return false;
+  if (!isCommand(message.text, "priority")) return false;
+
+  const parts = message.text.trim().split(/\s+/);
+  if (parts.length < 3) {
+    await ctx.reply("Использование: /priority <id|номер> <low|normal|high|urgent>");
+    return true;
+  }
+
+  const taskIdOrNum = parts[1];
+  const priorityStr = parts[2].toLowerCase();
+
+  const validPriorities: TaskPriority[] = ["low", "normal", "high", "urgent"];
+  if (!validPriorities.includes(priorityStr as TaskPriority)) {
+    await ctx.reply(`Неверный приоритет. Допустимые: ${validPriorities.join(", ")}`);
+    return true;
+  }
+
+  try {
+    const task = await getTaskById(taskIdOrNum);
+    if (!task) {
+      await ctx.reply("Задача не найдена.");
+      return true;
+    }
+
+    await updateTaskPriority(task.id, priorityStr as TaskPriority);
+    const labels: Record<string, string> = {
+      low: "🟢 low",
+      normal: "⚪ normal",
+      high: "🟠 high",
+      urgent: "🔴 urgent",
+    };
+    await ctx.reply(`Приоритет задачи обновлён: ${labels[priorityStr]}\n${task.description.slice(0, 100)}`);
+  } catch (error) {
+    console.error("Failed to update priority", error);
+    await ctx.reply("Ошибка при обновлении приоритета.");
+  }
+
+  return true;
+}
+
+// ============================================================
+// Wait — /wait <id|номер> — перевести в статус "waiting"
+// ============================================================
+
+async function handleWaitCommand(ctx: Context<Update>): Promise<boolean> {
+  const message = ctx.message;
+  if (!message || !("text" in message) || !message.text) return false;
+  if (!isCommand(message.text, "wait")) return false;
+
+  const parts = message.text.trim().split(/\s+/);
+  if (parts.length < 2) {
+    await ctx.reply("Использование: /wait <id задачи>\nПереводит задачу в статус «ожидание» + включает follow-up.");
+    return true;
+  }
+
+  const taskId = parts[1];
+
+  try {
+    const task = await getTaskById(taskId);
+    if (!task) {
+      await ctx.reply("Задача не найдена.");
+      return true;
+    }
+
+    await updateTaskStatus(task.id, "waiting");
+    await updateTaskFollowUp(task.id, {
+      enabled: true,
+      checkAfterHours: 24,
+      lastCheckedAt: new Date().toISOString(),
+      lastNotifiedAt: null,
+    });
+
+    await ctx.reply(
+      `⏳ Задача переведена в статус «ожидание».\n` +
+      `Follow-up: бот напомнит если нет ответа через 24ч.\n` +
+      `${task.description.slice(0, 100)}`
+    );
+  } catch (error) {
+    console.error("Failed to set wait status", error);
+    await ctx.reply("Ошибка при обновлении статуса.");
+  }
+
+  return true;
+}
+
+/** Команды по умолчанию (en + ru пользователи без своей локали) */
+const BOT_COMMANDS = [
+  { command: "start", description: "Приветствие и меню" },
+  { command: "task", description: "Создать задачу" },
+  { command: "l", description: "Список задач (сводка)" },
+  { command: "my", description: "Мои задачи" },
+  { command: "outbox", description: "Задачи, которые я поставил" },
+  { command: "my_today", description: "На сегодня" },
+  { command: "my_overdue", description: "Просроченные" },
+  { command: "chat_tasks", description: "Задачи чата" },
+  { command: "all_tasks", description: "Все задачи" },
+  { command: "parse_today", description: "Разбор за сегодня" },
+  { command: "parse_yesterday", description: "Разбор за вчера" },
+  { command: "done", description: "Отметить выполненной" },
+  { command: "del", description: "Удалить задачу" },
+  { command: "priority", description: "Приоритет задачи" },
+  { command: "wait", description: "В ожидание + follow-up" },
+  { command: "chats", description: "Центр управления чатами" },
+  { command: "scan_on", description: "Включить auto-scan (в группе)" },
+  { command: "scan_off", description: "Выключить auto-scan (в группе)" },
+  { command: "k", description: "В знания" },
+  { command: "ksearch", description: "Поиск по знаниям" },
+  { command: "ask", description: "Вопрос по базе (RAG)" },
+  { command: "digest", description: "Дайджест по чату" },
+  { command: "status", description: "Статус бота" },
+  { command: "info", description: "Справка" },
+];
+
+/** Русские команды (меню для ru-локали) */
+const BOT_COMMANDS_RU = [
+  { command: "start", description: "Приветствие и меню" },
+  { command: "task", description: "Создать задачу" },
+  { command: "l", description: "Список задач (сводка)" },
+  { command: "my", description: "Мои задачи" },
+  { command: "outbox", description: "Задачи, которые я поставил" },
+  { command: "my_today", description: "На сегодня" },
+  { command: "my_overdue", description: "Просроченные" },
+  { command: "chat_tasks", description: "Задачи чата" },
+  { command: "all_tasks", description: "Все задачи" },
+  { command: "parse_today", description: "Разбор за сегодня" },
+  { command: "parse_yesterday", description: "Разбор за вчера" },
+  { command: "done", description: "Отметить выполненной" },
+  { command: "del", description: "Удалить задачу" },
+  { command: "priority", description: "Приоритет задачи" },
+  { command: "wait", description: "В ожидание + follow-up" },
+  { command: "chats", description: "Центр управления чатами" },
+  { command: "scan_on", description: "Включить auto-scan (в группе)" },
+  { command: "scan_off", description: "Выключить auto-scan (в группе)" },
+  { command: "k", description: "В знания" },
+  { command: "поиск", description: "Поиск по знаниям" },
+  { command: "спроси", description: "Вопрос по базе (RAG)" },
+  { command: "дайджест", description: "Дайджест по чату" },
+  { command: "status", description: "Статус бота" },
+  { command: "info", description: "Справка" },
+];
+
+async function setBotCommandsMenu(): Promise<void> {
+  if (!bot) return;
+  try {
+    await bot.telegram.setMyCommands(BOT_COMMANDS);
+    await bot.telegram.setMyCommands(BOT_COMMANDS_RU, { language_code: "ru" });
+    console.log("Bot commands menu set (default + ru)");
+  } catch (e) {
+    console.error("Failed to set bot commands", e);
   }
 }
 
@@ -3234,17 +3731,47 @@ export function initTelegataskBot(): void {
 
   bot = new Telegraf(token);
 
+  // Initialize skill router
+  const tgService = new TelegramService();
+  tgService.setBot(bot);
+  skillRouter = new SkillRouter({
+    kb: new KBService(),
+    llm: new LLMService(),
+    tg: tgService,
+  });
+  registerAllSkills(skillRouter);
+
   bot.start(handleStart);
   bot.on("callback_query", async (ctx) => {
-    const handledParse = await handleParseChatCallback(ctx);
-    if (!handledParse) {
-      await handleSortCallback(ctx);
+    try {
+      if (skillRouter) {
+        const handled = await skillRouter.handleCallback(ctx);
+        if (handled) return;
+      }
+
+      const handledControl = await handleControlPanelCallback(ctx);
+      if (handledControl) return;
+
+      const handledParse = await handleParseChatCallback(ctx);
+      if (!handledParse) {
+        await handleSortCallback(ctx);
+      }
+    } catch (error) {
+      console.error("[bot] callback_query error", error);
+      await ctx.answerCbQuery("Ошибка").catch(() => {});
     }
   });
   bot.on("message", async (ctx) => {
     logIncomingMessage(ctx);
     await storeIncomingMessage(ctx);
+    await autoSaveFilesToKnowledge(ctx);
     try {
+      // Try skill router first (for migrated commands)
+      if (skillRouter) {
+        const handled = await skillRouter.handleMessage(ctx);
+        if (handled) return;
+      }
+
       const handledInfo = await handleInfo(ctx);
       if (handledInfo) {
         return;
@@ -3375,6 +3902,11 @@ export function initTelegataskBot(): void {
         return;
       }
 
+      const handledAsk = await handleAsk(ctx);
+      if (handledAsk) {
+        return;
+      }
+
       const handledSearch = await handleSearch(ctx);
       if (handledSearch) {
         return;
@@ -3395,13 +3927,33 @@ export function initTelegataskBot(): void {
         return;
       }
 
-      const handledStub = await handleStubCommands(ctx);
-      if (handledStub) {
+      const handledChats = await handleChatsCommand(ctx);
+      if (handledChats) {
         return;
       }
 
-      const handledKnowledge = await handleKnowledge(ctx);
-      if (handledKnowledge) {
+      const handledScanOn = await handleScanOn(ctx);
+      if (handledScanOn) {
+        return;
+      }
+
+      const handledScanOff = await handleScanOff(ctx);
+      if (handledScanOff) {
+        return;
+      }
+
+      const handledPriority = await handlePriorityCommand(ctx);
+      if (handledPriority) {
+        return;
+      }
+
+      const handledWait = await handleWaitCommand(ctx);
+      if (handledWait) {
+        return;
+      }
+
+      const handledStub = await handleStubCommands(ctx);
+      if (handledStub) {
         return;
       }
 
@@ -3415,15 +3967,26 @@ export function initTelegataskBot(): void {
 
   bot
     .launch()
-    .then(() => {
+    .then(async () => {
       console.log("telegatask bot launched (long polling)");
+      await setBotCommandsMenu();
+      if (skillRouter) {
+        await skillRouter.initAll();
+        console.log("[skills] All skills initialized");
+      }
+      startScheduler(bot!);
     })
     .catch((error) => {
       console.error("Failed to launch telegatask bot", error);
     });
 }
 
-export function stopTelegataskBot(): void {
+export async function stopTelegataskBot(): Promise<void> {
+  stopScheduler();
+  if (skillRouter) {
+    await skillRouter.destroyAll();
+    skillRouter = null;
+  }
   if (bot) {
     bot.stop("Shutting down telegatask bot");
   }

@@ -1,7 +1,24 @@
 import { firestore } from "../config/firebase";
-import { TelegramUser } from "../models/telegramUser";
+import { TelegramUser, UserSettings, DEFAULT_USER_SETTINGS } from "../models/telegramUser";
 
 const collection = firestore.collection("users");
+
+/** Normalize Firestore doc to TelegramUser with defaults for new fields */
+function docToUser(id: string, data: FirebaseFirestore.DocumentData): TelegramUser {
+  return {
+    id,
+    telegramId: data.telegramId ?? -1,
+    username: data.username ?? null,
+    displayName: data.displayName ?? `user-${id}`,
+    timezone: data.timezone ?? null,
+    settings: {
+      ...DEFAULT_USER_SETTINGS,
+      ...(data.settings ?? {}),
+    },
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt,
+  };
+}
 
 export async function getUserByTelegramId(
   telegramId: number
@@ -11,21 +28,9 @@ export async function getUserByTelegramId(
     .limit(1)
     .get();
 
-  if (snapshot.empty) {
-    return null;
-  }
-
+  if (snapshot.empty) return null;
   const doc = snapshot.docs[0];
-  const data = doc.data();
-
-  return {
-    id: doc.id,
-    telegramId: data.telegramId,
-    username: data.username ?? null,
-    displayName: data.displayName,
-    createdAt: data.createdAt,
-    updatedAt: data.updatedAt,
-  };
+  return docToUser(doc.id, doc.data());
 }
 
 export async function getUserById(
@@ -33,24 +38,10 @@ export async function getUserById(
 ): Promise<TelegramUser | null> {
   const docRef = collection.doc(userId);
   const docSnap = await docRef.get();
-
-  if (!docSnap.exists) {
-    return null;
-  }
-
+  if (!docSnap.exists) return null;
   const data = docSnap.data();
-  if (!data) {
-    return null;
-  }
-
-  return {
-    id: docSnap.id,
-    telegramId: data.telegramId ?? -1,
-    username: data.username ?? null,
-    displayName: data.displayName ?? `user-${docSnap.id}`,
-    createdAt: data.createdAt,
-    updatedAt: data.updatedAt,
-  };
+  if (!data) return null;
+  return docToUser(docSnap.id, data);
 }
 
 function buildDisplayName(payload: {
@@ -64,14 +55,8 @@ function buildDisplayName(payload: {
     .join(" ")
     .trim();
 
-  if (fullName) {
-    return fullName;
-  }
-
-  if (payload.username) {
-    return payload.username;
-  }
-
+  if (fullName) return fullName;
+  if (payload.username) return payload.username;
   return `user-${payload.id}`;
 }
 
@@ -93,19 +78,17 @@ export async function upsertUserFromTelegramPayload(payload: {
     const doc = snapshot.docs[0];
     const data = doc.data();
 
-    const updatedUser: TelegramUser = {
-      id: doc.id,
-      telegramId: data.telegramId,
+    const updatedUser = docToUser(doc.id, {
+      ...data,
       username: payload.username ?? data.username ?? null,
       displayName,
-      createdAt: data.createdAt,
       updatedAt: now,
-    };
+    });
 
     await doc.ref.update({
       username: updatedUser.username,
       displayName: updatedUser.displayName,
-      updatedAt: updatedUser.updatedAt,
+      updatedAt: now,
     });
 
     return updatedUser;
@@ -115,16 +98,14 @@ export async function upsertUserFromTelegramPayload(payload: {
     telegramId: payload.id,
     username: payload.username ?? null,
     displayName,
+    timezone: null,
+    settings: DEFAULT_USER_SETTINGS,
     createdAt: now,
     updatedAt: now,
   };
 
   const docRef = await collection.add(newUserData);
-
-  return {
-    id: docRef.id,
-    ...newUserData,
-  };
+  return { id: docRef.id, ...newUserData };
 }
 
 export async function upsertUserByUsername(
@@ -138,37 +119,56 @@ export async function upsertUserByUsername(
 
   if (docSnap.exists) {
     const data = docSnap.data() || {};
-    const updatedUser: TelegramUser = {
-      id: docSnap.id,
-      telegramId: data.telegramId ?? -1,
+    return docToUser(docSnap.id, {
+      ...data,
       username: data.username ?? normalized,
       displayName: data.displayName ?? normalized,
-      createdAt: data.createdAt ?? now,
       updatedAt: now,
-    };
-
-    await docRef.set(
-      {
-        username: updatedUser.username,
-        displayName: updatedUser.displayName,
-        updatedAt: updatedUser.updatedAt,
-      },
-      { merge: true }
-    );
-
-    return updatedUser;
+    });
   }
 
-  const newUser: TelegramUser = {
-    id: docId,
+  const newUserData = {
     telegramId: -1,
     username: normalized,
     displayName: normalized,
+    timezone: null,
+    settings: DEFAULT_USER_SETTINGS,
     createdAt: now,
     updatedAt: now,
   };
 
-  await docRef.set(newUser);
+  await docRef.set(newUserData);
+  return { id: docId, ...newUserData };
+}
 
-  return newUser;
+/** Обновить timezone пользователя */
+export async function updateUserTimezone(
+  userId: string,
+  timezone: string
+): Promise<void> {
+  await collection.doc(userId).update({
+    timezone,
+    updatedAt: new Date().toISOString(),
+  });
+}
+
+/** Обновить настройки пользователя (merge) */
+export async function updateUserSettings(
+  userId: string,
+  settings: Partial<UserSettings>
+): Promise<void> {
+  const user = await getUserById(userId);
+  if (!user) return;
+
+  const merged = { ...user.settings, ...settings };
+  await collection.doc(userId).update({
+    settings: merged,
+    updatedAt: new Date().toISOString(),
+  });
+}
+
+/** Все пользователи (для cron: briefs, digests) */
+export async function listAllUsers(limitCount: number = 500): Promise<TelegramUser[]> {
+  const snapshot = await collection.limit(limitCount).get();
+  return snapshot.docs.map((doc) => docToUser(doc.id, doc.data()));
 }

@@ -1,0 +1,9 @@
+{
+  "id": "scan",
+  "name": "Scan Control",
+  "description": "Включить/выключить auto-scan в групповом чате",
+  "version": "1.0.0",
+  "triggers": ["command:/scan_on", "command:/scan_off"],
+  "plan": "free",
+  "author": "telegatask"
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Telegatask</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <h1 class="header__title">Задачи</h1>
+    <div class="header__filters">
+      <button class="filter-btn active" data-filter="active">Активные</button>
+      <button class="filter-btn" data-filter="done">Выполненные</button>
+      <button class="filter-btn" data-filter="all">Все</button>
+    </div>
+  </header>
+
+  <!-- Loading state -->
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Загрузка задач...</p>
+  </div>
+
+  <!-- Error state -->
+  <div id="error" class="error-state" style="display:none">
+    <p class="error-state__icon">⚠️</p>
+    <p class="error-state__text">Не удалось загрузить задачи</p>
+    <button class="error-state__retry" onclick="app.loadTasks()">Повторить</button>
+  </div>
+
+  <!-- Empty state -->
+  <div id="empty" class="empty-state" style="display:none">
+    <p class="empty-state__icon">🎉</p>
+    <p class="empty-state__text">Нет задач</p>
+  </div>
+
+  <!-- Task list -->
+  <main id="task-list" class="task-list" style="display:none"></main>
+
+  <!-- Confirm modal -->
+  <div id="modal" class="modal" style="display:none">
+    <div class="modal__backdrop" onclick="app.closeModal()"></div>
+    <div class="modal__sheet">
+      <div class="modal__handle"></div>
+      <p class="modal__title" id="modal-title"></p>
+      <p class="modal__subtitle" id="modal-subtitle"></p>
+      <div class="modal__actions">
+        <button class="modal__btn modal__btn--cancel" onclick="app.closeModal()">Отмена</button>
+        <button class="modal__btn modal__btn--confirm" id="modal-confirm">Подтвердить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" style="display:none"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

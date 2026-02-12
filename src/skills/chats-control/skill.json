@@ -1,0 +1,9 @@
+{
+  "id": "chats-control",
+  "name": "Chats Control Panel",
+  "description": "Управление автосканированием чатов",
+  "version": "1.0.0",
+  "triggers": ["command:/chats", "callback:ctl:"],
+  "plan": "free",
+  "author": "telegatask"
+}

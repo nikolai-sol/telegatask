@@ -4,32 +4,40 @@
       "collectionGroup": "knowledge",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "createdByUserId", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "DESCENDING" }
+        {"fieldPath": "dedupeKey", "order": "ASCENDING"},
+        {"fieldPath": "createdByUserId", "order": "ASCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "knowledge",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "createdByUserId", "order": "ASCENDING"},
+        {"fieldPath": "createdAt", "order": "DESCENDING"}
       ]
     },
     {
       "collectionGroup": "messages",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "telegramChatId", "order": "ASCENDING" },
-        { "fieldPath": "createdAt", "order": "ASCENDING" }
+        {"fieldPath": "telegramChatId", "order": "ASCENDING"},
+        {"fieldPath": "createdAt", "order": "ASCENDING"}
       ]
     },
     {
       "collectionGroup": "tasks",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "sourceChatId", "order": "ASCENDING" },
-        { "fieldPath": "status", "order": "ASCENDING" }
+        {"fieldPath": "sourceChatId", "order": "ASCENDING"},
+        {"fieldPath": "status", "order": "ASCENDING"}
       ]
     },
     {
       "collectionGroup": "tasks",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "sourceChatId", "order": "ASCENDING" },
-        { "fieldPath": "sourceMessageId", "order": "ASCENDING" }
+        {"fieldPath": "sourceChatId", "order": "ASCENDING"},
+        {"fieldPath": "sourceMessageId", "order": "ASCENDING"}
       ]
     }
   ],

@@ -5,10 +5,19 @@ export type ActionType =
   | "task_status_updated"
   | "task_deleted"
   | "knowledge_added"
+  | "knowledge_search"
+  | "ask_executed"
   | "team_linked"
   | "role_set"
   | "permission_updated"
-  | "project_attached";
+  | "project_attached"
+  | "scan_executed"
+  | "reminder_sent"
+  | "followup_sent"
+  | "unanswered_mention_sent"
+  | "brief_sent"
+  | "digest_sent"
+  | "digest_run";
 
 export interface ActionLogEntry {
   id: string;

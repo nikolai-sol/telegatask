@@ -1,0 +1,9 @@
+{
+  "id": "knowledge",
+  "name": "Knowledge Search",
+  "description": "Поиск по базе знаний",
+  "version": "1.0.0",
+  "triggers": ["command:/ksearch"],
+  "plan": "free",
+  "author": "telegatask"
+}

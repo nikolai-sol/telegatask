@@ -1,0 +1,9 @@
+{
+  "id": "ask",
+  "name": "Ask AI",
+  "description": "RAG-ответ по базе знаний через Gemini",
+  "version": "1.0.0",
+  "triggers": ["command:/ask"],
+  "plan": "free",
+  "author": "telegatask"
+}
