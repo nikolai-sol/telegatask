@@ -12,12 +12,19 @@ import {
   listTeamsByMemberId,
   setRole,
   removeMember,
+  updatePermissions,
 } from "../../repositories/teamRepository";
 import { getUsersByIds, upsertUserByUsername, upsertUserFromTelegramPayload } from "../../repositories/userRepository";
 import { listProjectsByTeamId, updateProjectAllowedMembers } from "../../repositories/projectRepository";
 import { logAction } from "../../repositories/actionLogRepository";
 
-type Screen = "home" | "members" | "projects" | "project_access" | "pick_team";
+type Screen =
+  | "home"
+  | "members"
+  | "member"
+  | "projects"
+  | "project_access"
+  | "pick_team";
 
 type Session = {
   ownerTelegramId: number;
@@ -25,6 +32,7 @@ type Session = {
   ownerUsername?: string | null;
   teamId: string | null;
   screen: Screen;
+  memberId?: string | null;
   projectId?: string | null;
   pickIds?: string[]; // selected memberIds during project picker
   awaiting?: "add_member" | null;
@@ -72,6 +80,20 @@ async function assertTeamAccess(ctx: SkillContext, teamId: string): Promise<{ ok
   return { ok: false, reason: "Недостаточно прав (нужен owner/admin)" };
 }
 
+function roleLabel(role: string | null | undefined): string {
+  switch (role) {
+    case "owner":
+      return "owner";
+    case "admin":
+      return "admin";
+    case "read_only":
+      return "read_only";
+    case "member":
+    default:
+      return "member";
+  }
+}
+
 function kbHome(teamId: string | null) {
   if (!teamId) {
     return Markup.inlineKeyboard([
@@ -96,6 +118,48 @@ function kbMembers(isSuperAdmin: boolean, canEdit: boolean) {
   if (canEdit || isSuperAdmin) row.push(Markup.button.callback("➕ Добавить", "teamui:add_member"));
   row.push(Markup.button.callback("⬅ Назад", "teamui:home"));
   return Markup.inlineKeyboard([row]);
+}
+
+function kbMemberDetail(opts: {
+  isOwnerOrSuper: boolean;
+  canEdit: boolean;
+  role: string;
+  perms: { create?: boolean; assign?: boolean; edit?: boolean };
+  targetIsSelf: boolean;
+}) {
+  const { isOwnerOrSuper, canEdit, role, perms, targetIsSelf } = opts;
+  const rows: any[][] = [];
+
+  if (canEdit) {
+    rows.push([
+      Markup.button.callback(role === "member" ? "✓ member" : "member", "teamui:role:member"),
+      Markup.button.callback(role === "read_only" ? "✓ read_only" : "read_only", "teamui:role:read_only"),
+    ]);
+    rows.push([
+      Markup.button.callback(role === "admin" ? "✓ admin" : "admin", "teamui:role:admin"),
+      Markup.button.callback(
+        role === "owner" ? "✓ owner" : "owner",
+        "teamui:role:owner"
+      ),
+    ]);
+  }
+
+  rows.push([
+    Markup.button.callback(`${perms.create ? "✓" : " " } create`, `teamui:perm:create:${perms.create ? "off" : "on"}`),
+    Markup.button.callback(`${perms.assign ? "✓" : " " } assign`, `teamui:perm:assign:${perms.assign ? "off" : "on"}`),
+  ]);
+  rows.push([
+    Markup.button.callback(`${perms.edit ? "✓" : " " } edit`, `teamui:perm:edit:${perms.edit ? "off" : "on"}`),
+    Markup.button.callback("🔄 Обновить", "teamui:refresh"),
+  ]);
+
+  if (isOwnerOrSuper && !targetIsSelf) {
+    rows.push([Markup.button.callback("🗑 Удалить из команды", "teamui:rm_current")]);
+  }
+
+  rows.push([Markup.button.callback("⬅ Назад", "teamui:members")]);
+
+  return Markup.inlineKeyboard(rows);
 }
 
 function kbProjects() {
@@ -164,6 +228,7 @@ async function render(ctx: SkillContext, session: Session): Promise<{ text: stri
   const isSuper = isSuperAdminFromEnv(session.ownerUsername ?? null);
   const role = team.roles?.[session.ownerUserId];
   const canEdit = role === "owner" || role === "admin" || isSuper;
+  const isOwnerOrSuper = role === "owner" || isSuper;
 
   if (session.screen === "members") {
     const memberIds = team.memberIds ?? [];
@@ -178,17 +243,44 @@ async function render(ctx: SkillContext, session: Session): Promise<{ text: stri
       `Команда: ${escapeHtml(team.name)}\n\n` +
       (lines.length ? lines.join("\n") : "Пока никого нет.");
 
-    const removeRows = users
-      .slice(0, 8)
-      .map((u) => [
-        Markup.button.callback(`🗑 ${u.username ? `@${u.username}` : u.displayName}`.slice(0, 32), `teamui:rm:${u.id}`),
-      ]);
-
     const baseKb = kbMembers(isSuper, canEdit);
-    const markup = Markup.inlineKeyboard([
-      ...removeRows,
-      ...(baseKb.reply_markup?.inline_keyboard ?? []),
+    const openRows = users.slice(0, 10).map((u) => [
+      Markup.button.callback(
+        `${u.username ? `@${u.username}` : u.displayName}`.slice(0, 36),
+        `teamui:mem:${u.id}`
+      ),
     ]);
+    const markup = Markup.inlineKeyboard([...openRows, ...(baseKb.reply_markup?.inline_keyboard ?? [])]);
+
+    return { text, markup };
+  }
+
+  if (session.screen === "member") {
+    const memberId = session.memberId;
+    if (!memberId) return { text: "Участник не выбран.", markup: kbMembers(isSuper, canEdit) };
+
+    const users = await getUsersByIds([memberId]);
+    const u = users[0];
+    const display = u
+      ? (u.username ? `@${u.username}` : escapeHtml(u.displayName))
+      : escapeHtml(memberId.slice(0, 8));
+    const memberRole = roleLabel(team.roles?.[memberId]);
+    const perms = (team.permissions?.[memberId] ?? {}) as any;
+
+    const text =
+      `<b>Участник</b>\n` +
+      `Команда: ${escapeHtml(team.name)}\n` +
+      `Пользователь: ${display}\n\n` +
+      `Роль: <b>${escapeHtml(memberRole)}</b>\n` +
+      `Права: create=${perms.create ? "on" : "off"}, assign=${perms.assign ? "on" : "off"}, edit=${perms.edit ? "on" : "off"}`;
+
+    const markup = kbMemberDetail({
+      isOwnerOrSuper,
+      canEdit,
+      role: memberRole,
+      perms,
+      targetIsSelf: memberId === session.ownerUserId,
+    });
 
     return { text, markup };
   }
@@ -362,6 +454,7 @@ export const teamAdminSkill: Skill = {
       if (data === "teamui:home") {
         session.screen = "home";
         session.awaiting = null;
+        session.memberId = null;
         await ctx.raw.answerCbQuery().catch(() => {});
         await editOrReply(ctx, session, true);
         return { handled: true };
@@ -409,6 +502,17 @@ export const teamAdminSkill: Skill = {
       if (data === "teamui:members") {
         session.screen = "members";
         session.awaiting = null;
+        session.memberId = null;
+        await ctx.raw.answerCbQuery().catch(() => {});
+        await editOrReply(ctx, session, true);
+        return { handled: true };
+      }
+
+      if (data.startsWith("teamui:mem:")) {
+        const memberId = data.slice("teamui:mem:".length);
+        session.screen = "member";
+        session.memberId = memberId;
+        session.awaiting = null;
         await ctx.raw.answerCbQuery().catch(() => {});
         await editOrReply(ctx, session, true);
         return { handled: true };
@@ -421,10 +525,21 @@ export const teamAdminSkill: Skill = {
         return { handled: true };
       }
 
-      if (data.startsWith("teamui:rm:")) {
-        const userId = data.slice("teamui:rm:".length);
+      if (data === "teamui:rm_current") {
+        const userId = session.memberId;
         if (!userId) {
-          await ctx.raw.answerCbQuery("Некорректно").catch(() => {});
+          await ctx.raw.answerCbQuery("Не выбран").catch(() => {});
+          return { handled: true };
+        }
+        const t = await getTeamById(session.teamId);
+        const actorRole = t?.roles?.[session.ownerUserId];
+        const isSuper = isSuperAdminFromEnv(session.ownerUsername ?? null);
+        if (userId === session.ownerUserId) {
+          await ctx.raw.answerCbQuery("Нельзя удалить себя").catch(() => {});
+          return { handled: true };
+        }
+        if (actorRole !== "owner" && !isSuper) {
+          await ctx.raw.answerCbQuery("Нужен owner").catch(() => {});
           return { handled: true };
         }
         await removeMember(session.teamId, userId);
@@ -435,7 +550,63 @@ export const teamAdminSkill: Skill = {
           targetType: "user",
           payload: { teamId: session.teamId, kind: "remove_member", source: "team_manage" },
         }).catch(() => {});
+        session.screen = "members";
+        session.memberId = null;
         await ctx.raw.answerCbQuery("Удалено").catch(() => {});
+        await editOrReply(ctx, session, true);
+        return { handled: true };
+      }
+
+      if (data.startsWith("teamui:role:")) {
+        const nextRole = data.slice("teamui:role:".length) as any;
+        const memberId = session.memberId;
+        if (!memberId) {
+          await ctx.raw.answerCbQuery("Не выбран").catch(() => {});
+          return { handled: true };
+        }
+        const t = await getTeamById(session.teamId);
+        const actorRole = t?.roles?.[session.ownerUserId];
+        const isSuper = isSuperAdminFromEnv(session.ownerUsername ?? null);
+        if (nextRole === "owner" && actorRole !== "owner" && !isSuper) {
+          await ctx.raw.answerCbQuery("Назначить owner может только owner/суперадмин").catch(() => {});
+          return { handled: true };
+        }
+        await setRole(session.teamId, memberId, nextRole);
+        logAction({
+          action: "role_set",
+          userId: ctx.user.id,
+          targetId: memberId,
+          targetType: "user",
+          payload: { teamId: session.teamId, role: nextRole, source: "team_manage" },
+        }).catch(() => {});
+        await ctx.raw.answerCbQuery("Сохранено").catch(() => {});
+        await editOrReply(ctx, session, true);
+        return { handled: true };
+      }
+
+      if (data.startsWith("teamui:perm:")) {
+        // teamui:perm:<create|assign|edit>:<on|off>
+        const parts = data.split(":");
+        const perm = parts[2];
+        const mode = parts[3];
+        const memberId = session.memberId;
+        if (!memberId) {
+          await ctx.raw.answerCbQuery("Не выбран").catch(() => {});
+          return { handled: true };
+        }
+        const t = await getTeamById(session.teamId);
+        const existing = (t?.permissions?.[memberId] ?? {}) as any;
+        const next = { ...existing };
+        next[perm] = mode === "on";
+        await updatePermissions(session.teamId, memberId, next);
+        logAction({
+          action: "permission_updated",
+          userId: ctx.user.id,
+          targetId: memberId,
+          targetType: "user",
+          payload: { teamId: session.teamId, kind: "perm_toggle", perm, value: next[perm], source: "team_manage" },
+        }).catch(() => {});
+        await ctx.raw.answerCbQuery("Сохранено").catch(() => {});
         await editOrReply(ctx, session, true);
         return { handled: true };
       }
@@ -443,6 +614,7 @@ export const teamAdminSkill: Skill = {
       if (data === "teamui:projects") {
         session.screen = "projects";
         session.awaiting = null;
+        session.memberId = null;
         await ctx.raw.answerCbQuery().catch(() => {});
         await editOrReply(ctx, session, true);
         return { handled: true };
