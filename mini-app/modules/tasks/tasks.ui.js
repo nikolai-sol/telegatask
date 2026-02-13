@@ -4,7 +4,7 @@
 
 import { getState, setState } from "../../core/store.js";
 import * as tasksApi from "./tasks.api.js";
-import * as selectors from "./tasks.selectors.js";
+import * as actions from "./tasks.actions.js";
 
 const tg = window.Telegram?.WebApp;
 const INIT_DATA = tg?.initData || "";
@@ -79,9 +79,8 @@ const tasksApp = {
       tg.enableClosingConfirmation();
     }
 
-    this.detectApiBase();
     this.bindUi();
-    this.render();
+    // Initial UI comes from store.subscribe() when loadTasks sets loading=true.
     this.loadTasks();
   },
 
@@ -119,9 +118,8 @@ const tasksApp = {
         if (state.selectedTaskIds.size > 0) {
           state.selectedTaskIds.clear();
         }
-        state.tab = tabBtn.dataset.tab || "active";
+        setState({ tab: tabBtn.dataset.tab || "active" });
         this.haptic("light");
-        this.render();
       });
     });
 
@@ -206,12 +204,12 @@ const tasksApp = {
     document.getElementById("sheetToggleDone")?.addEventListener("click", () => {
       const taskId = state.actionSheetTaskId;
       this.closeActionSheet();
-      if (taskId) this.toggleDone(taskId);
+      if (taskId) actions.toggleDone(taskId);
     });
     document.getElementById("sheetDelete")?.addEventListener("click", () => {
       const taskId = state.actionSheetTaskId;
       this.closeActionSheet();
-      if (taskId) this.deleteTask(taskId);
+      if (taskId) actions.deleteTask(taskId, { withUndo: true });
     });
     document.getElementById("sheetMove")?.addEventListener("click", () => {
       const taskId = state.actionSheetTaskId;
@@ -223,7 +221,10 @@ const tasksApp = {
       this.clearSelection();
     });
     document.getElementById("bulkDone")?.addEventListener("click", () => {
-      this.bulkMarkDone();
+      const ids = Array.from(state.selectedTaskIds);
+      if (!ids.length) return;
+      state.selectedTaskIds.clear();
+      actions.bulkDone(ids);
     });
     document.getElementById("bulkMove")?.addEventListener("click", () => {
       const ids = Array.from(state.selectedTaskIds);
@@ -231,7 +232,10 @@ const tasksApp = {
       this.openProjectPicker(ids);
     });
     document.getElementById("bulkDelete")?.addEventListener("click", () => {
-      this.bulkDeleteWithUndo();
+      const ids = Array.from(state.selectedTaskIds);
+      if (!ids.length) return;
+      state.selectedTaskIds.clear();
+      actions.bulkDelete(ids);
     });
 
     document.getElementById("projectBackdrop")?.addEventListener("click", () => {
@@ -278,13 +282,13 @@ const tasksApp = {
     });
     document.getElementById("taskSheetDone")?.addEventListener("click", () => {
       const taskId = state.taskSheetTaskId;
-      if (taskId) this.toggleDone(taskId);
+      if (taskId) actions.toggleDone(taskId);
     });
     document.getElementById("taskSheetDelete")?.addEventListener("click", () => {
       const taskId = state.taskSheetTaskId;
       if (!taskId) return;
       this.closeTaskSheet();
-      this.deleteWithUndo(taskId);
+      actions.deleteTask(taskId, { withUndo: true });
     });
 
     const viewport = document.getElementById("taskListViewport");
@@ -355,20 +359,19 @@ const tasksApp = {
   },
 
   async loadTasks() {
-    setState({ loading: true });
-
     try {
-      const data = await tasksApi.fetchTasks();
-      setState({ tasks: Array.isArray(data?.tasks) ? data.tasks : [], loading: false });
+      await actions.loadTasks();
     } catch (error) {
       console.error("[MiniApp] loadTasks error", error);
-      setState({ loading: false });
       this.showErrorState();
     }
   },
 
-  render() {
-    const s = getState() || state;
+  render(view = null) {
+    const s = view?.state || getState() || state;
+    const visibleTasks = view?.visibleTasks || [];
+    const items = view?.items || [];
+    const emptyText = view?.emptyText;
     const loadingEl = document.getElementById("loadingState");
     const emptyEl = document.getElementById("emptyState");
     const errorEl = document.getElementById("errorState");
@@ -390,14 +393,13 @@ const tasksApp = {
       return;
     }
 
-    const tasks = selectors.sortTasks(selectors.applyFilters(selectors.selectTasksByTab(s), s));
     this.renderSearchUi();
 
     loadingEl.hidden = true;
     errorEl.hidden = true;
 
-    if (!tasks.length) {
-      this.renderEmptyState();
+    if (!visibleTasks.length) {
+      this.renderEmptyState(emptyText);
       emptyEl.hidden = false;
       viewport.hidden = true;
       sticky.hidden = true;
@@ -406,7 +408,6 @@ const tasksApp = {
 
     emptyEl.hidden = true;
     viewport.hidden = false;
-    const items = selectors.flattenGroupedTasks(tasks, s);
     state.vlistItems = items;
     state.vlistPrefix = this.buildPrefixHeights(items);
     state.vlistTotal = state.vlistPrefix[state.vlistPrefix.length - 1] || 0;
@@ -530,10 +531,10 @@ const tasksApp = {
     });
   },
 
-  renderEmptyState() {
+  renderEmptyState(emptyText) {
     const textEl = document.getElementById("emptyStateText");
     if (!textEl) return;
-    textEl.textContent = selectors.selectEmptyStateText(getState() || state);
+    textEl.textContent = String(emptyText || "Нет задач");
   },
 
   showErrorState() {
@@ -614,8 +615,7 @@ const tasksApp = {
 
     const next = input.value;
     clearTimeout(state.queryTimer);
-    state.query = next;
-    this.render();
+    setState({ query: next });
     this.closeSearchPanel();
   },
 
@@ -629,8 +629,7 @@ const tasksApp = {
 
     clearTimeout(state.queryTimer);
     state.queryTimer = setTimeout(() => {
-      state.query = next;
-      this.render();
+      setState({ query: next });
     }, 200);
   },
 
@@ -640,16 +639,16 @@ const tasksApp = {
       input.value = "";
       input.focus();
     }
-    state.query = "";
     clearTimeout(state.queryTimer);
-    this.render();
+    setState({ query: "" });
   },
 
   toggleFilter(key) {
     if (!state.filters || !(key in state.filters)) return;
-    state.filters[key] = !state.filters[key];
+    const next = { ...state.filters, [key]: !state.filters[key] };
+    state.filters = next;
     this.haptic("light");
-    this.render();
+    setState({ filters: next });
   },
 
   renderTaskCard(task) {
@@ -715,12 +714,14 @@ const tasksApp = {
   },
 
   toggleGroupCollapsed(key) {
-    if (!state.collapsedGroups) state.collapsedGroups = new Set();
-    if (state.collapsedGroups.has(key)) state.collapsedGroups.delete(key);
-    else state.collapsedGroups.add(key);
-    saveCollapsedGroups(state.collapsedGroups);
+    const prev = state.collapsedGroups || new Set();
+    const next = new Set(prev);
+    if (next.has(key)) next.delete(key);
+    else next.add(key);
+    state.collapsedGroups = next;
+    saveCollapsedGroups(next);
     this.haptic("light");
-    this.render();
+    setState({ collapsedGroups: next });
   },
 
   buildPrefixHeights(items) {
@@ -822,7 +823,8 @@ const tasksApp = {
   setTaskSheetDue(kind) {
     const taskId = state.taskSheetTaskId;
     if (!taskId) return;
-    const task = state.tasks.find((t) => t.id === taskId);
+    const s = getState() || state;
+    const task = (s.tasks || []).find((t) => t.id === taskId);
     if (!task) return;
 
     let dueDate = null;
@@ -833,20 +835,19 @@ const tasksApp = {
       dueDate = base.toISOString();
     }
 
-    task.dueDate = dueDate;
-    this.syncTaskSheetChips(task);
-    this.render();
+    actions.updateTask(taskId, { dueDate }, { sync: false });
+    this.syncTaskSheetChips({ ...task, dueDate });
     this.onTaskSheetChangeDebounced();
   },
 
   setTaskSheetPriority(priority) {
     const taskId = state.taskSheetTaskId;
     if (!taskId) return;
-    const task = state.tasks.find((t) => t.id === taskId);
+    const s = getState() || state;
+    const task = (s.tasks || []).find((t) => t.id === taskId);
     if (!task) return;
-    task.priority = priority;
-    this.syncTaskSheetChips(task);
-    this.render();
+    actions.updateTask(taskId, { priority }, { sync: false });
+    this.syncTaskSheetChips({ ...task, priority });
     this.onTaskSheetChangeDebounced();
   },
 
@@ -861,30 +862,18 @@ const tasksApp = {
     const taskId = state.taskSheetTaskId;
     if (!taskId) return;
     const s = getState() || state;
-    const prevTasks = Array.isArray(s.tasks) ? s.tasks : [];
-    const task = prevTasks.find((t) => t.id === taskId);
+    const task = (Array.isArray(s.tasks) ? s.tasks : []).find((t) => t.id === taskId);
     if (!task) return;
 
     const titleEl = document.getElementById("taskSheetTitle");
     const title = titleEl instanceof HTMLInputElement ? titleEl.value.trim() : (task.title || task.description || "");
 
-    // optimistic already in UI; keep state consistent via store
-    const nextTasks = prevTasks.map((t) => (t.id === taskId ? { ...t, title, description: title } : t));
-    setState({ tasks: nextTasks });
-
-    try {
-      await tasksApi.updateTaskFields(taskId, {
-        title,
-        dueDate: task.dueDate ?? null,
-        priority: task.priority ?? "normal",
-      });
-      this.haptic("light");
-    } catch (err) {
-      console.error("[MiniApp] task patch failed", err);
-      this.showToast("Ошибка, попробуйте ещё раз");
-      // Resync is safest
-      this.loadTasks();
-    }
+    await actions.updateTask(taskId, {
+      title,
+      description: title,
+      dueDate: task.dueDate ?? null,
+      priority: task.priority ?? "normal",
+    });
   },
 
   onSheetPointerDown(event) {
@@ -980,36 +969,9 @@ const tasksApp = {
       return;
     }
 
-    // Optimistic update
-    const prev = new Map();
-    for (const id of picked) {
-      const t = state.tasks.find((x) => x.id === id);
-      if (!t) continue;
-      prev.set(id, t.projectId ?? null);
-      t.projectId = projectId;
-    }
     state.selectedTaskIds.clear();
     this.closeProjectPicker();
-    this.render();
-    this.showToast("Сохранено");
-
-    const failures = [];
-    for (const id of picked) {
-      try {
-        await tasksApi.updateTaskProject(id, projectId);
-      } catch {
-        failures.push(id);
-      }
-    }
-
-    if (failures.length) {
-      for (const id of failures) {
-        const t = state.tasks.find((x) => x.id === id);
-        if (t && prev.has(id)) t.projectId = prev.get(id);
-      }
-      this.render();
-      this.showToast("Ошибка, попробуйте ещё раз");
-    }
+    actions.moveProject(picked, projectId);
   },
 
   hydrateExpandableText() {
@@ -1043,7 +1005,7 @@ const tasksApp = {
     } else {
       state.expandedTaskIds.add(taskId);
     }
-    this.render();
+    setState({});
   },
 
   onSwipePointerDown(event) {
@@ -1179,7 +1141,7 @@ const tasksApp = {
 
     if (dx > 80) {
       releaseToZero();
-      setTimeout(() => this.toggleDone(s.taskId), 140);
+      setTimeout(() => actions.toggleDone(s.taskId), 140);
       return;
     }
 
@@ -1189,7 +1151,7 @@ const tasksApp = {
       s.card.style.transform = "translateX(-140px)";
       setTimeout(() => {
         cleanup();
-        this.deleteWithUndo(s.taskId);
+        actions.deleteTask(s.taskId, { withUndo: true });
       }, 170);
       return;
     }
@@ -1198,53 +1160,7 @@ const tasksApp = {
   },
 
   deleteWithUndo(taskId) {
-    const task = state.tasks.find((t) => t.id === taskId);
-    if (!task) return;
-
-    // Finalize previous pending delete immediately to keep UX simple.
-    if (state.pendingDelete) {
-      clearTimeout(state.pendingDelete.timerId);
-      state.pendingDelete.tasks.forEach((t) => this.finalizeDelete(t.id));
-      state.pendingDelete = null;
-    }
-
-    state.tasks = state.tasks.filter((t) => t.id !== taskId);
-    this.render();
-
-    const timerId = setTimeout(() => {
-      if (!state.pendingDelete || state.pendingDelete.kind !== "single") return;
-      if (state.pendingDelete.tasks[0]?.id !== taskId) return;
-      state.pendingDelete = null;
-      this.finalizeDelete(taskId);
-    }, 5000);
-
-    state.pendingDelete = { kind: "single", tasks: [task], timerId };
-
-    this.showToast("Удалено", {
-      actionLabel: "Undo",
-      durationMs: 5000,
-      onAction: () => {
-        if (!state.pendingDelete || state.pendingDelete.kind !== "single") return;
-        if (state.pendingDelete.tasks[0]?.id !== taskId) return;
-        clearTimeout(state.pendingDelete.timerId);
-        const restored = state.pendingDelete.tasks[0];
-        state.pendingDelete = null;
-        state.tasks.unshift(restored);
-        this.render();
-        this.showToast("Отменено");
-      },
-    });
-  },
-
-  async finalizeDelete(taskId) {
-    try {
-      await tasksApi.deleteTask(taskId);
-    } catch (error) {
-      console.error("[MiniApp] finalizeDelete error", error);
-      this.showToast("Ошибка удаления");
-      // Best-effort resync
-      this.loadTasks();
-    }
+    actions.deleteTask(taskId, { withUndo: true });
   },
 
   toggleSelect(taskId) {
@@ -1254,16 +1170,14 @@ const tasksApp = {
       state.selectedTaskIds.add(taskId);
     }
     this.haptic("light");
-    this.renderBulkBar();
-    // Update only checkmarks quickly by rerendering list (simple and consistent)
-    this.render();
+    setState({});
   },
 
   clearSelection() {
     if (state.selectedTaskIds.size === 0) return;
     state.selectedTaskIds.clear();
     this.haptic("light");
-    this.render();
+    setState({});
   },
 
   renderBulkBar() {
@@ -1275,112 +1189,21 @@ const tasksApp = {
     countEl.textContent = String(n);
   },
 
-  async bulkMarkDone() {
+  bulkMarkDone() {
     const ids = Array.from(state.selectedTaskIds);
     if (!ids.length) return;
-
-    const s = getState() || state;
-    const prevTasks = Array.isArray(s.tasks) ? s.tasks : [];
-    const idSet = new Set(ids);
-    const prevStatus = new Map();
-    prevTasks.forEach((t) => {
-      if (idSet.has(t.id)) prevStatus.set(t.id, t.status);
-    });
-
-    // clear selection before setState, so subscriber render sees empty selection
     state.selectedTaskIds.clear();
-    this.showToast("Сохранено");
-    this.haptic("light");
-
-    const nextTasks = prevTasks.map((t) => (idSet.has(t.id) ? { ...t, status: "done" } : t));
-    setState({ tasks: nextTasks });
-
-    // fire API calls (best-effort)
-    const failures = [];
-    for (const id of ids) {
-      try {
-        await tasksApi.updateTaskStatus(id, "done");
-      } catch {
-        failures.push(id);
-      }
-    }
-
-    if (failures.length) {
-      const after = (getState() || state).tasks || [];
-      const failSet = new Set(failures);
-      const rolled = after.map((t) => (failSet.has(t.id) ? { ...t, status: prevStatus.get(t.id) ?? t.status } : t));
-      setState({ tasks: rolled });
-      this.showToast("Ошибка, попробуйте ещё раз");
-    }
+    actions.bulkDone(ids);
   },
 
   bulkDeleteWithUndo() {
     const ids = Array.from(state.selectedTaskIds);
     if (!ids.length) return;
-
-    // Cancel selection immediately
     state.selectedTaskIds.clear();
-
-    // For now: if there is a pending delete, finalize it
-    if (state.pendingDelete) {
-      clearTimeout(state.pendingDelete.timerId);
-      state.pendingDelete.tasks.forEach((t) => this.finalizeDelete(t.id));
-      state.pendingDelete = null;
-    }
-
-    const removed = state.tasks.filter((t) => ids.includes(t.id));
-    if (!removed.length) return;
-
-    state.tasks = state.tasks.filter((t) => !ids.includes(t.id));
-    this.haptic("medium");
-    this.render();
-
-    const timerId = setTimeout(() => {
-      if (!state.pendingDelete || state.pendingDelete.kind !== "bulk") return;
-      state.pendingDelete = null;
-      // finalize all
-      removed.forEach((t) => this.finalizeDelete(t.id));
-    }, 5000);
-
-    state.pendingDelete = { kind: "bulk", tasks: removed, timerId };
-
-    this.showToast("Удалено", {
-      actionLabel: "Undo",
-      durationMs: 5000,
-      onAction: () => {
-        if (!state.pendingDelete || state.pendingDelete.kind !== "bulk") return;
-        clearTimeout(state.pendingDelete.timerId);
-        state.pendingDelete = null;
-        // restore at top preserving order
-        state.tasks = [...removed, ...state.tasks];
-        this.render();
-        this.showToast("Отменено");
-      },
-    });
+    actions.bulkDelete(ids);
   },
-
-  async toggleDone(taskId) {
-    const s = getState() || state;
-    const prevTasks = Array.isArray(s.tasks) ? s.tasks : [];
-    const task = prevTasks.find((t) => t.id === taskId);
-    if (!task) return;
-
-    const prevStatus = task.status;
-    const nextStatus = prevStatus === "done" ? "incoming" : "done";
-
-    const nextTasks = prevTasks.map((t) => (t.id === taskId ? { ...t, status: nextStatus } : t));
-    this.haptic("light");
-    setState({ tasks: nextTasks });
-
-    try {
-      await tasksApi.updateTaskStatus(taskId, nextStatus);
-      this.showToast("Сохранено");
-    } catch (error) {
-      console.error("[MiniApp] toggleDone error", error);
-      const rolled = prevTasks.map((t) => (t.id === taskId ? { ...t, status: prevStatus } : t));
-      setState({ tasks: rolled });
-      this.showToast("Ошибка, попробуйте ещё раз");
-    }
+  toggleDone(taskId) {
+    actions.toggleDone(taskId);
   },
 
   openActionSheet(taskId) {
@@ -1402,23 +1225,6 @@ const tasksApp = {
     const sheet = document.getElementById("actionSheet");
     if (sheet) sheet.hidden = true;
     state.actionSheetTaskId = null;
-  },
-
-  async deleteTask(taskId) {
-    const s = getState() || state;
-    const prevTasks = Array.isArray(s.tasks) ? s.tasks : [];
-    const nextTasks = prevTasks.filter((t) => t.id !== taskId);
-    this.haptic("medium");
-    setState({ tasks: nextTasks });
-
-    try {
-      await tasksApi.deleteTask(taskId);
-      this.showToast("Удалено");
-    } catch (error) {
-      console.error("[MiniApp] deleteTask error", error);
-      setState({ tasks: prevTasks });
-      this.showToast("Ошибка, попробуйте ещё раз");
-    }
   },
 
   openQuickAdd() {
@@ -1453,42 +1259,7 @@ const tasksApp = {
 
     this.hideSuggest();
     this.closeQuickAdd();
-
-    const tempId = `tmp-${Date.now()}`;
-    const tempTask = {
-      id: tempId,
-      title,
-      description: title,
-      status: "new",
-      priority: "normal",
-      createdAt: new Date().toISOString(),
-    };
-
-    const s = getState() || state;
-    const prevTasks = Array.isArray(s.tasks) ? s.tasks : [];
-    setState({ tab: "active", tasks: [tempTask, ...prevTasks] });
-    this.haptic("light");
-
-    try {
-      const data = await tasksApi.createTask(title).catch(() => null);
-      const created = data?.task && data.task.id ? data.task : null;
-
-      if (created) {
-        const after = getState() || state;
-        const replaced = (after.tasks || []).map((t) => (t.id === tempId ? created : t));
-        setState({ tasks: replaced });
-      } else {
-        await this.loadTasks();
-      }
-
-      this.showToast("Сохранено");
-    } catch (error) {
-      console.error("[MiniApp] quick add failed", error);
-      const after = getState() || state;
-      const cleaned = (after.tasks || []).filter((t) => t.id !== tempId);
-      setState({ tasks: cleaned });
-      this.showToast("Ошибка, попробуйте ещё раз");
-    }
+    actions.quickAdd(title);
   },
 
   onQuickAddInput() {
@@ -1596,8 +1367,7 @@ const tasksApp = {
       },
       (buttonId) => {
         if (buttonId === "active" || buttonId === "done" || buttonId === "all") {
-          state.tab = buttonId;
-          this.render();
+          setState({ tab: buttonId });
         }
       }
     );
@@ -1638,35 +1408,6 @@ const tasksApp = {
 
   haptic(intensity) {
     tg?.HapticFeedback?.impactOccurred(intensity);
-  },
-
-  showToast(message, opts = null) {
-    const toast = document.getElementById("toast");
-    if (!toast) return;
-
-    const actionLabel = opts && opts.actionLabel ? String(opts.actionLabel) : null;
-    const onAction = opts && typeof opts.onAction === "function" ? opts.onAction : null;
-    const durationMs = opts && typeof opts.durationMs === "number" ? opts.durationMs : 2200;
-
-    if (actionLabel && onAction) {
-      toast.innerHTML = `<span class=\"toast__text\"></span><button class=\"toast__btn\" type=\"button\"></button>`;
-      const textEl = toast.querySelector(".toast__text");
-      const btn = toast.querySelector(".toast__btn");
-      if (textEl) textEl.textContent = message;
-      if (btn) {
-        btn.textContent = actionLabel;
-        btn.onclick = () => onAction();
-      }
-    } else {
-      toast.textContent = message;
-    }
-
-    toast.hidden = false;
-
-    clearTimeout(this.toastTimer);
-    this.toastTimer = setTimeout(() => {
-      toast.hidden = true;
-    }, durationMs);
   },
 
   throttle(fn, waitMs) {

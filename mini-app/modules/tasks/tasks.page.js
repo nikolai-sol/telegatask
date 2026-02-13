@@ -1,7 +1,16 @@
 import { initStore, getState, subscribe } from "../../core/store.js";
 import { tasksApp, state as initialState } from "./tasks.ui.js";
+import * as selectors from "./tasks.selectors.js";
 
 let unsub = null;
+
+function renderFromState() {
+  const s = getState() || initialState;
+  const visibleTasks = selectors.sortTasks(selectors.applyFilters(selectors.selectTasksByTab(s), s));
+  const items = selectors.flattenGroupedTasks(visibleTasks, s);
+  const emptyText = selectors.selectEmptyStateText(s);
+  tasksApp.render({ state: s, visibleTasks, items, emptyText });
+}
 
 export function mountTasks() {
   // Initialize store once. For now we keep initial state colocated with tasks module.
@@ -11,7 +20,7 @@ export function mountTasks() {
   if (!unsub) {
     unsub = subscribe(() => {
       try {
-        tasksApp.render();
+        renderFromState();
       } catch {
         // ignore
       }
@@ -19,6 +28,7 @@ export function mountTasks() {
   }
 
   tasksApp.init();
+  renderFromState();
 }
 
 export function unmountTasks() {
@@ -28,4 +38,3 @@ export function unmountTasks() {
   }
   // TODO: remove event listeners when we introduce router/unmount lifecycle.
 }
-
