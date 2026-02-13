@@ -481,6 +481,12 @@ router.patch("/api/campaigns/:id", webAppAuthMiddleware, async (req: Request, re
     const spentRaw = (req.body && "spent" in req.body) ? req.body.spent : undefined;
     const currencyRaw = (req.body && "currency" in req.body) ? req.body.currency : undefined;
 
+    const wantsFinanceUpdate = plannedBudgetRaw !== undefined || spentRaw !== undefined || currencyRaw !== undefined;
+    if (wantsFinanceUpdate && role !== "owner" && role !== "account") {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
     const plannedBudget =
       plannedBudgetRaw === null
         ? null

@@ -74,11 +74,19 @@ export function mountCampaignDetails(root, ctx = {}) {
     const tasks = selectTasksByCampaign(s, id);
     const role = String(s.activeTeamRole || "").trim().toLowerCase();
     const isViewer = role === "viewer";
+    const canEditFinance = role === "owner" || role === "account";
+    const canSeeFinance = !isViewer;
     const tabRaw = String(s.campaignTab || "overview").trim().toLowerCase();
     const campaignTab =
       tabRaw === "overview" || tabRaw === "tasks" || tabRaw === "finance" || tabRaw === "team"
         ? tabRaw
         : "overview";
+    const effectiveTab = (!canSeeFinance && campaignTab === "finance") ? "overview" : campaignTab;
+
+    if (financeEditing && !canEditFinance) {
+      financeEditing = false;
+      financeDraft = null;
+    }
 
     const plannedBudget =
       campaign && typeof campaign.plannedBudget === "number" ? campaign.plannedBudget : null;
@@ -129,14 +137,14 @@ export function mountCampaignDetails(root, ctx = {}) {
                   </section>
 
                   <nav class="campaign-tabs" aria-label="Campaign lifecycle">
-                    <button class="campaign-tab ${campaignTab === "overview" ? "active" : ""}" type="button" data-campaign-tab="overview">Overview</button>
-                    <button class="campaign-tab ${campaignTab === "tasks" ? "active" : ""}" type="button" data-campaign-tab="tasks">Tasks</button>
-                    <button class="campaign-tab ${campaignTab === "finance" ? "active" : ""}" type="button" data-campaign-tab="finance">Finance</button>
-                    <button class="campaign-tab ${campaignTab === "team" ? "active" : ""}" type="button" data-campaign-tab="team">Team</button>
+                    <button class="campaign-tab ${effectiveTab === "overview" ? "active" : ""}" type="button" data-campaign-tab="overview">Overview</button>
+                    <button class="campaign-tab ${effectiveTab === "tasks" ? "active" : ""}" type="button" data-campaign-tab="tasks">Tasks</button>
+                    ${canSeeFinance ? `<button class="campaign-tab ${effectiveTab === "finance" ? "active" : ""}" type="button" data-campaign-tab="finance">Finance</button>` : ""}
+                    <button class="campaign-tab ${effectiveTab === "team" ? "active" : ""}" type="button" data-campaign-tab="team">Team</button>
                   </nav>
 
                   ${
-                    campaignTab === "overview"
+                    effectiveTab === "overview"
                       ? `
                         <section class="settings-card">
                           <div class="settings-card__title">Overview</div>
@@ -149,7 +157,7 @@ export function mountCampaignDetails(root, ctx = {}) {
                   }
 
                   ${
-                    campaignTab === "tasks"
+                    effectiveTab === "tasks"
                       ? `
                         <section class="settings-card campaign-tasks">
                           <div class="settings-card__title">Tasks</div>
@@ -192,7 +200,7 @@ export function mountCampaignDetails(root, ctx = {}) {
                   }
 
                   ${
-                    campaignTab === "finance"
+                    effectiveTab === "finance"
                       ? `
                         <section class="settings-card">
                           <div class="settings-card__title">Finance</div>
@@ -234,7 +242,7 @@ export function mountCampaignDetails(root, ctx = {}) {
                                   <section class="state state--empty">
                                     <p class="state__icon">💶</p>
                                     <p class="state__text">No budget set</p>
-                                    ${isViewer ? "" : `<button id="financeSetBudget" class="btn" type="button">Set budget</button>`}
+                                    ${canEditFinance ? `<button id="financeSetBudget" class="btn" type="button">Set budget</button>` : ""}
                                   </section>
                                 `
                                 : `
@@ -246,7 +254,7 @@ export function mountCampaignDetails(root, ctx = {}) {
                                       <div class="campaign-progress__bar"><div class="campaign-progress__fill" style="width:${Math.round(progress * 100)}%"></div></div>
                                       <div class="campaign-progress__text">${Math.round(progress * 100)}%</div>
                                     </div>
-                                    ${isViewer ? "" : `<div class="campaign-actions"><button id="financeEdit" class="btn btn--ghost" type="button">Edit</button></div>`}
+                                    ${canEditFinance ? `<div class="campaign-actions"><button id="financeEdit" class="btn btn--ghost" type="button">Edit</button></div>` : ""}
                                   </div>
                                 `
                           }
@@ -256,7 +264,7 @@ export function mountCampaignDetails(root, ctx = {}) {
                   }
 
                   ${
-                    campaignTab === "team"
+                    effectiveTab === "team"
                       ? `
                         <section class="settings-card">
                           <div class="settings-card__title">Team</div>
@@ -293,6 +301,7 @@ export function mountCampaignDetails(root, ctx = {}) {
       if (!(el instanceof HTMLElement)) return;
       el.onclick = () => {
         const next = String(el.dataset.campaignTab || "overview").trim().toLowerCase();
+        if (next === "finance" && !canSeeFinance) return;
         setState({ campaignTab: next });
       };
     });
@@ -305,7 +314,7 @@ export function mountCampaignDetails(root, ctx = {}) {
     const setBudgetBtn = root.querySelector("#financeSetBudget");
     if (setBudgetBtn instanceof HTMLElement) {
       setBudgetBtn.onclick = () => {
-        if (isViewer) return;
+        if (!canEditFinance) return;
         financeEditing = true;
         financeDraft = { plannedBudget: plannedBudget ?? 0, spent: spent ?? 0, currency };
         setState({}); // rerender
@@ -315,7 +324,7 @@ export function mountCampaignDetails(root, ctx = {}) {
     const financeEditBtn = root.querySelector("#financeEdit");
     if (financeEditBtn instanceof HTMLElement) {
       financeEditBtn.onclick = () => {
-        if (isViewer) return;
+        if (!canEditFinance) return;
         financeEditing = true;
         financeDraft = { plannedBudget, spent, currency };
         setState({}); // rerender
@@ -369,7 +378,7 @@ export function mountCampaignDetails(root, ctx = {}) {
     const financeSaveBtn = root.querySelector("#financeSave");
     if (financeSaveBtn instanceof HTMLElement) {
       financeSaveBtn.onclick = async () => {
-        if (isViewer) return;
+        if (!canEditFinance) return;
         syncFinancePreview();
         const draftNow = financeDraft || { plannedBudget, spent, currency };
         const pb = draftNow.plannedBudget === null ? null : Number(draftNow.plannedBudget);
