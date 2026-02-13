@@ -6,7 +6,8 @@ const tg = window.Telegram?.WebApp;
 const INIT_DATA = tg?.initData || "";
 
 const VLIST = {
-  itemHeight: 110,
+  taskHeight: 110,
+  headerHeight: 40,
   overscan: 6,
   maxItems: 120,
   measured: false,
@@ -32,7 +33,9 @@ const state = {
   query: "",
   queryTimer: null,
   filters: { today: false, overdue: false, p1: false, nodue: false },
-  vlistTasks: [],
+  vlistItems: [],
+  vlistPrefix: null,
+  vlistTotal: 0,
 };
 
 const app = {
@@ -243,7 +246,8 @@ const app = {
     const viewport = document.getElementById("taskListViewport");
     if (viewport instanceof HTMLElement) {
       this.vlistScrollHandler = this.throttle(() => {
-        this.renderVirtualList(state.vlistTasks || []);
+        this.renderVirtualList(state.vlistItems || []);
+        this.updateStickyGroupHeader();
       }, 16);
       viewport.addEventListener("scroll", this.vlistScrollHandler, { passive: true });
     }
@@ -400,8 +404,9 @@ const app = {
     const errorEl = document.getElementById("errorState");
     const listEl = document.getElementById("taskList");
     const viewport = document.getElementById("taskListViewport");
+    const sticky = document.getElementById("stickyGroupHeader");
 
-    if (!loadingEl || !emptyEl || !errorEl || !listEl || !viewport) return;
+    if (!loadingEl || !emptyEl || !errorEl || !listEl || !viewport || !sticky) return;
 
     this.renderTabs();
 
@@ -410,6 +415,7 @@ const app = {
       emptyEl.hidden = true;
       errorEl.hidden = true;
       viewport.hidden = true;
+      sticky.hidden = true;
       this.renderSearchUi();
       return;
     }
@@ -424,17 +430,22 @@ const app = {
       this.renderEmptyState();
       emptyEl.hidden = false;
       viewport.hidden = true;
+      sticky.hidden = true;
       return;
     }
 
     emptyEl.hidden = true;
     viewport.hidden = false;
-    state.vlistTasks = tasks;
-    this.renderVirtualList(tasks);
+    const items = this.flattenGroupedTasks(tasks);
+    state.vlistItems = items;
+    state.vlistPrefix = this.buildPrefixHeights(items);
+    state.vlistTotal = state.vlistPrefix[state.vlistPrefix.length - 1] || 0;
+    this.updateStickyGroupHeader();
+    this.renderVirtualList(items);
     this.renderBulkBar();
   },
 
-  renderVirtualList(allTasks) {
+  renderVirtualList(flatList) {
     const viewport = document.getElementById("taskListViewport");
     const topSpacer = document.getElementById("topSpacer");
     const bottomSpacer = document.getElementById("bottomSpacer");
@@ -445,7 +456,7 @@ const app = {
     if (!(bottomSpacer instanceof HTMLElement)) return;
     if (!(list instanceof HTMLElement)) return;
 
-    const total = Array.isArray(allTasks) ? allTasks.length : 0;
+    const total = Array.isArray(flatList) ? flatList.length : 0;
     if (total === 0) {
       topSpacer.style.height = "0px";
       bottomSpacer.style.height = "0px";
@@ -453,36 +464,92 @@ const app = {
       return;
     }
 
-    // Measure approximate card height once (median of 1..3 cards).
+    // Measure approximate heights once (median of 1..3 items of each type).
     if (!VLIST.measured) {
-      const sample = allTasks.slice(0, Math.min(3, total));
-      list.innerHTML = sample.map((t) => this.renderTaskCard(t)).join("");
-      const heights = Array.from(list.querySelectorAll(".task-swipe"))
+      const sampleHeaders = flatList.filter((x) => x.type === "header").slice(0, 2);
+      const sampleTasks = flatList.filter((x) => x.type === "task").slice(0, 2);
+      const sample = [...sampleHeaders, ...sampleTasks].slice(0, 3);
+      list.innerHTML = sample
+        .map((it) => (it.type === "header" ? this.renderGroupHeader(it) : this.renderTaskCard(it.task)))
+        .join("");
+
+      const headerHeights = Array.from(list.querySelectorAll(".group-header"))
         .map((el) => (el instanceof HTMLElement ? el.offsetHeight : 0))
-        .filter((h) => h > 40 && h < 260)
+        .filter((h) => h > 18 && h < 90)
         .sort((a, b) => a - b);
-      if (heights.length) {
-        VLIST.itemHeight = heights[Math.floor(heights.length / 2)];
-        VLIST.measured = true;
-      }
+      if (headerHeights.length) VLIST.headerHeight = headerHeights[Math.floor(headerHeights.length / 2)];
+
+      const taskHeights = Array.from(list.querySelectorAll(".task-swipe"))
+        .map((el) => (el instanceof HTMLElement ? el.offsetHeight : 0))
+        .filter((h) => h > 50 && h < 260)
+        .sort((a, b) => a - b);
+      if (taskHeights.length) VLIST.taskHeight = taskHeights[Math.floor(taskHeights.length / 2)];
+
+      VLIST.measured = true;
     }
 
     const scrollTop = viewport.scrollTop;
     const viewportHeight = viewport.clientHeight || window.innerHeight;
 
-    const itemsPerScreen = Math.ceil(viewportHeight / VLIST.itemHeight);
+    const prefix = state.vlistPrefix && Array.isArray(state.vlistPrefix) && state.vlistPrefix.length === total + 1
+      ? state.vlistPrefix
+      : this.buildPrefixHeights(flatList);
+    state.vlistPrefix = prefix;
+    const totalHeight = prefix[prefix.length - 1] || 0;
+    state.vlistTotal = totalHeight;
+
+    const minH = Math.max(24, Math.min(VLIST.headerHeight, VLIST.taskHeight));
+    const itemsPerScreen = Math.ceil(viewportHeight / minH);
     const windowSize = Math.min(VLIST.maxItems, itemsPerScreen + VLIST.overscan * 2);
 
-    let start = Math.floor(scrollTop / VLIST.itemHeight) - VLIST.overscan;
+    let start = this.lowerBound(prefix, scrollTop) - VLIST.overscan;
     start = Math.max(0, start);
     let end = Math.min(total, start + windowSize);
     start = Math.max(0, end - windowSize);
 
-    topSpacer.style.height = start * VLIST.itemHeight + "px";
-    bottomSpacer.style.height = (total - end) * VLIST.itemHeight + "px";
+    topSpacer.style.height = prefix[start] + "px";
+    bottomSpacer.style.height = (totalHeight - prefix[end]) + "px";
 
-    const windowTasks = allTasks.slice(start, end);
-    list.innerHTML = windowTasks.map((t) => this.renderTaskCard(t)).join("");
+    const windowItems = flatList.slice(start, end);
+    list.innerHTML = windowItems
+      .map((it) => (it.type === "header" ? this.renderGroupHeader(it) : this.renderTaskCard(it.task)))
+      .join("");
+  },
+
+  updateStickyGroupHeader() {
+    const sticky = document.getElementById("stickyGroupHeader");
+    const viewport = document.getElementById("taskListViewport");
+    if (!(sticky instanceof HTMLElement) || !(viewport instanceof HTMLElement)) return;
+
+    const items = state.vlistItems || [];
+    if (!items.length) {
+      sticky.hidden = true;
+      sticky.textContent = "";
+      return;
+    }
+
+    const prefix = state.vlistPrefix;
+    if (!prefix || prefix.length !== items.length + 1) {
+      sticky.hidden = true;
+      return;
+    }
+
+    const firstIndex = Math.min(items.length - 1, Math.max(0, this.lowerBound(prefix, viewport.scrollTop)));
+    let i = firstIndex;
+    if (items[i] && items[i].type === "header") {
+      sticky.textContent = items[i].title;
+      sticky.hidden = false;
+      return;
+    }
+    while (i >= 0) {
+      if (items[i].type === "header") {
+        sticky.textContent = items[i].title;
+        sticky.hidden = false;
+        return;
+      }
+      i -= 1;
+    }
+    sticky.hidden = true;
   },
 
   renderTabs() {
@@ -631,6 +698,83 @@ const app = {
         </article>
       </div>
     `;
+  },
+
+  renderGroupHeader(item) {
+    const title = this.escapeHtml(item.title || "");
+    return `<div class="group-header" data-group-key="${this.escapeHtml(item.key || "")}">${title}</div>`;
+  },
+
+  groupTasks(tasks) {
+    const groups = { overdue: [], today: [], tomorrow: [], upcoming: [], nodue: [] };
+    const now = new Date();
+    const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+    tasks.forEach((task) => {
+      const dueAt = task.dueDate;
+      if (!dueAt) {
+        groups.nodue.push(task);
+        return;
+      }
+
+      const due = new Date(dueAt);
+      if (Number.isNaN(due.getTime())) {
+        groups.nodue.push(task);
+        return;
+      }
+
+      const dueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate()).getTime();
+      const diff = dueDay - nowDay;
+
+      if (diff < 0) groups.overdue.push(task);
+      else if (diff === 0) groups.today.push(task);
+      else if (diff === 86400000) groups.tomorrow.push(task);
+      else groups.upcoming.push(task);
+    });
+
+    return groups;
+  },
+
+  flattenGroupedTasks(tasks) {
+    const groups = this.groupTasks(tasks);
+    const result = [];
+
+    function pushGroup(key, title) {
+      if (groups[key].length) {
+        result.push({ type: "header", key, title });
+        groups[key].forEach((task) => result.push({ type: "task", task }));
+      }
+    }
+
+    pushGroup("overdue", "Просрочено");
+    pushGroup("today", "Сегодня");
+    pushGroup("tomorrow", "Завтра");
+    pushGroup("upcoming", "Позже");
+    pushGroup("nodue", "Без даты");
+
+    return result;
+  },
+
+  buildPrefixHeights(items) {
+    const prefix = new Array(items.length + 1);
+    prefix[0] = 0;
+    for (let i = 0; i < items.length; i += 1) {
+      const h = items[i].type === "header" ? VLIST.headerHeight : VLIST.taskHeight;
+      prefix[i + 1] = prefix[i] + h;
+    }
+    return prefix;
+  },
+
+  // first index i such that prefix[i] >= value (prefix is non-decreasing, length n+1)
+  lowerBound(prefix, value) {
+    let lo = 0;
+    let hi = prefix.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (prefix[mid] < value) lo = mid + 1;
+      else hi = mid;
+    }
+    return lo;
   },
 
   openTaskSheet(taskId) {
