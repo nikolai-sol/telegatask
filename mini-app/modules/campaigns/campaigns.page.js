@@ -7,6 +7,7 @@ import { renderCampaignList } from "./campaigns.ui.js";
 const initialState = {
   campaigns: [],
   campaignsLoading: false,
+  activeTeamId: null,
 };
 
 function ensureCampaignsState() {
@@ -37,6 +38,8 @@ function markup() {
         <div id="campaignList"></div>
       </main>
     </div>
+
+    <div id="toast" class="toast" hidden></div>
   `;
 }
 
@@ -49,14 +52,27 @@ export function mountCampaigns(root) {
   const unmountNav = mountBottomNav(root, "campaigns");
 
   const ctrl = new AbortController();
+  let lastActiveTeamId = (getState() || {}).activeTeamId ?? null;
 
   function render() {
     const s = getState() || {};
     const campaigns = selectors.selectCampaigns(s);
-    renderCampaignList(root, campaigns);
+    const loading = Boolean(s.campaignsLoading);
+    renderCampaignList(root, campaigns, { loading });
   }
 
-  const unsub = subscribe(() => render());
+  const unsub = subscribe(() => {
+    const s = getState() || {};
+    const activeTeamId = s.activeTeamId ?? null;
+    // If active team changed while staying on the page: clear + reload.
+    if (activeTeamId !== lastActiveTeamId) {
+      lastActiveTeamId = activeTeamId;
+      setState({ campaigns: [] });
+      actions.loadCampaigns().catch(() => {});
+      return;
+    }
+    render();
+  });
 
   root.addEventListener("click", (e) => {
     const target = e.target;
@@ -65,8 +81,12 @@ export function mountCampaigns(root) {
     const addBtn = target.closest("#addCampaignBtn");
     if (addBtn) {
       const name = prompt("Название кампании:");
-      const created = actions.createCampaign(name);
-      if (created?.id) window.location.hash = `#/campaigns/${created.id}`;
+      Promise.resolve()
+        .then(() => actions.createDraftCampaign(name))
+        .then((created) => {
+          if (created?.id) window.location.hash = `#/campaigns/${created.id}`;
+        })
+        .catch(() => {});
       return;
     }
 
@@ -87,4 +107,3 @@ export function mountCampaigns(root) {
     root.innerHTML = "";
   };
 }
-

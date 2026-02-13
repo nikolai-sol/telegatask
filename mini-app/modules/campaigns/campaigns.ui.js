@@ -60,11 +60,38 @@ export function renderEmptyState() {
   `;
 }
 
-export function renderCampaignList(root, campaigns) {
+export function renderLoadingState() {
+  return `
+    <section class="state state--loading">
+      <div class="skeleton-card"></div>
+      <div class="skeleton-card"></div>
+    </section>
+  `;
+}
+
+export function renderCampaignList(root, campaigns, opts = null) {
   const listEl = root.querySelector("#campaignList");
   if (!(listEl instanceof HTMLElement)) return;
 
+  const loading = Boolean(opts?.loading);
+  const emptyText = typeof opts?.emptyText === "string" ? opts.emptyText : null;
+
+  if (loading) {
+    listEl.innerHTML = renderLoadingState();
+    return;
+  }
+
   if (!Array.isArray(campaigns) || campaigns.length === 0) {
+    if (emptyText) {
+      listEl.innerHTML = `
+        <section class="state state--empty">
+          <p class="state__icon">📣</p>
+          <p class="state__text">Нет кампаний</p>
+          <p class="state__text">${escapeHtml(emptyText)}</p>
+        </section>
+      `;
+      return;
+    }
     listEl.innerHTML = renderEmptyState();
     return;
   }
@@ -75,4 +102,3 @@ export function renderCampaignList(root, campaigns) {
     </div>
   `;
 }
-
