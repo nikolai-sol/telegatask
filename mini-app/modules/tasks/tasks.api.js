@@ -1,7 +1,8 @@
 import { apiFetch } from "../../core/api.js";
 
-export async function fetchTasks() {
-  return apiFetch("/api/tasks");
+export async function fetchTasks(opts = {}) {
+  const scope = String(opts?.scope || "my").trim().toLowerCase() || "my";
+  return apiFetch(`/api/tasks?scope=${encodeURIComponent(scope)}`);
 }
 
 export async function createTask(input) {

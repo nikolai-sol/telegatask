@@ -113,10 +113,54 @@ export function flattenGroupedTasks(tasks, state) {
   return result;
 }
 
+function campaignNameById(state) {
+  const list = Array.isArray(state?.campaigns) ? state.campaigns : [];
+  const map = new Map();
+  list.forEach((c) => {
+    if (!c || !c.id) return;
+    map.set(String(c.id), String(c.name || "Untitled"));
+  });
+  return map;
+}
+
+export function flattenCampaignGroups(tasks, state) {
+  const result = [];
+  const collapsed = state?.collapsedGroups || new Set();
+  const nameMap = campaignNameById(state);
+  const groups = new Map(); // key -> { title, tasks: [] }
+
+  (tasks || []).forEach((t) => {
+    const cid = t?.campaignId ? String(t.campaignId) : "";
+    const key = cid ? `camp:${cid}` : "camp:none";
+    const title = cid ? (nameMap.get(cid) || `Campaign ${cid}`) : "Без кампании";
+    if (!groups.has(key)) groups.set(key, { key, title, tasks: [] });
+    groups.get(key).tasks.push(t);
+  });
+
+  const entries = Array.from(groups.values());
+  entries.sort((a, b) => {
+    if (a.key === "camp:none") return 1;
+    if (b.key === "camp:none") return -1;
+    return safeLower(a.title).localeCompare(safeLower(b.title));
+  });
+
+  for (const g of entries) {
+    const arr = g.tasks || [];
+    if (!arr.length) continue;
+    result.push({ type: "header", key: g.key, title: g.title, count: arr.length });
+    if (collapsed && collapsed.has && collapsed.has(g.key)) continue;
+    arr.forEach((task) => result.push({ type: "task", task }));
+  }
+
+  return result;
+}
+
 export function selectVisibleItems(state) {
   const base = selectTasksByTab(state);
   const filtered = applyFilters(base, state);
   const sorted = sortTasks(filtered);
+  const scope = String(state?.tasksScope || "my").trim().toLowerCase() || "my";
+  if (scope === "team") return flattenCampaignGroups(sorted, state);
   return flattenGroupedTasks(sorted, state);
 }
 
@@ -125,8 +169,8 @@ export function selectEmptyStateText(state) {
     String(state?.query || "").trim().length > 0 ||
     Object.values(state?.filters || {}).some(Boolean);
   if (anyFilter) return "Ничего не найдено";
+  if (String(state?.tasksScope || "my") === "team") return "Нет задач в команде";
   if ((state?.tab || "active") === "active") return "Нет активных задач 🎉";
   if (state?.tab === "done") return "Нет выполненных задач";
   return "Пока задач нет";
 }
-

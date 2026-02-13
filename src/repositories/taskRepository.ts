@@ -172,6 +172,15 @@ export async function getTasksByAssigneeIds(
   return Array.from(tasksMap.values());
 }
 
+// Helpers for Mini App scopes (explicit team boundary).
+export async function getTasksByAssigneeInTeam(
+  teamId: string,
+  assigneeIds: string[],
+  statuses: TaskStatus[]
+): Promise<Task[]> {
+  return getTasksByAssigneeIds(assigneeIds, statuses, teamId);
+}
+
 export async function getTasksByCreator(
   creatorId: string,
   statuses: TaskStatus[] = ["incoming", "new", "in_progress", "waiting"],
@@ -187,6 +196,29 @@ export async function getTasksByCreator(
         .collection("tasks")
         .where("createdByUserId", "==", creatorId)
         .where("status", "in", statuses);
+
+  const snapshot = await query.get();
+  return snapshot.docs.map((doc) => docToTask(doc.id, doc.data()));
+}
+
+export async function getTasksByCreatorInTeam(
+  teamId: string,
+  creatorId: string,
+  statuses: TaskStatus[]
+): Promise<Task[]> {
+  return getTasksByCreator(creatorId, statuses, teamId);
+}
+
+export async function getTasksByTeamId(
+  teamId: string,
+  statuses: TaskStatus[] = ["incoming", "new", "in_progress", "waiting", "done", "cancelled"],
+  limitCount: number = 500
+): Promise<Task[]> {
+  const query = firestore
+    .collection("tasks")
+    .where("teamId", "==", teamId)
+    .where("status", "in", statuses)
+    .limit(limitCount);
 
   const snapshot = await query.get();
   return snapshot.docs.map((doc) => docToTask(doc.id, doc.data()));

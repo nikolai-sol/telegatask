@@ -63,6 +63,8 @@ function saveCollapsedGroups(set) {
 
 const state = {
   tasks: [],
+  tasksScope: "my", // my | team
+  activeTeamRole: null, // "owner"|"account"|"project"|"viewer" (from backend)
   tab: "active", // active | done | all
   loading: false,
   actionSheetTaskId: null,
@@ -172,6 +174,14 @@ const tasksApp = {
 
   bindUi() {
     const signal = this.abort?.signal;
+    const scopeBtns = $all(".scope-btn");
+    scopeBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const scope = btn.dataset.scope || "my";
+        this.switchScope(scope);
+      }, signal ? { signal } : undefined);
+    });
+
     const tabs = $all(".tab");
     tabs.forEach((tabBtn) => {
       tabBtn.addEventListener("click", () => {
@@ -428,6 +438,17 @@ const tasksApp = {
     }
   },
 
+  async switchScope(scope) {
+    const next = String(scope || "my").trim().toLowerCase() || "my";
+    if (next !== "my" && next !== "team") return;
+    try {
+      await actions.loadTasks({ scope: next });
+    } catch (error) {
+      console.error("[MiniApp] switchScope error", error);
+      this.showErrorState();
+    }
+  },
+
   render(view = null) {
     const s = view?.state || getState() || state;
     const visibleTasks = view?.visibleTasks || [];
@@ -442,6 +463,7 @@ const tasksApp = {
 
     if (!loadingEl || !emptyEl || !errorEl || !listEl || !viewport || !sticky) return;
 
+    this.renderScopeSwitch(s);
     this.renderTabs();
 
     if (s.loading) {
@@ -475,6 +497,30 @@ const tasksApp = {
     this.updateStickyGroupHeader();
     this.renderVirtualList(items);
     this.renderBulkBar();
+  },
+
+  renderScopeSwitch(s) {
+    const scope = String(s?.tasksScope || "my").trim().toLowerCase() || "my";
+    const role = String(s?.activeTeamRole || "").trim().toLowerCase();
+    const isViewer = role === "viewer";
+
+    const myBtn = $one('.scope-btn[data-scope="my"]');
+    const teamBtn = $one('.scope-btn[data-scope="team"]');
+
+    if (teamBtn instanceof HTMLElement) {
+      teamBtn.hidden = isViewer;
+    }
+
+    // If role changed to viewer while in team scope, UI will hide the button; backend will reject team scope anyway.
+
+    const btns = $all(".scope-btn");
+    btns.forEach((b) => {
+      const bScope = String(b.dataset.scope || "my").trim().toLowerCase();
+      b.classList.toggle("active", bScope === scope);
+    });
+
+    // If there's no team button, make sure "my" is active.
+    if (isViewer && myBtn instanceof HTMLElement) myBtn.classList.add("active");
   },
 
   renderVirtualList(flatList) {

@@ -7,6 +7,7 @@ import { webAppAuthMiddleware } from "../middleware/validateWebApp";
 import {
   getTasksByAssigneeIds,
   getTasksByCreator,
+  getTasksByTeamId,
   getTaskById,
   updateTaskStatus,
   deleteTask,
@@ -131,9 +132,49 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
       return;
     }
 
+    const scopeRaw = typeof req.query?.scope === "string" ? req.query.scope : "";
+    const scope = (scopeRaw || "my").trim().toLowerCase();
+    if (scope !== "my" && scope !== "team") {
+      res.status(400).json({ error: "Invalid scope" });
+      return;
+    }
+
     const activeTeamId = await resolveActiveTeamId(userId);
     if (!activeTeamId) {
-      res.json({ tasks: [] });
+      res.json({ tasks: [], scope: "my", activeTeamId: null, activeTeamRole: "viewer" });
+      return;
+    }
+
+    const role = await getUserRoleInTeam(userId, activeTeamId);
+
+    if (scope === "team") {
+      if (role === "viewer") {
+        res.status(403).json({ error: "Access denied" });
+        return;
+      }
+
+      const allStatuses: Array<"incoming" | "new" | "in_progress" | "waiting" | "done" | "cancelled"> =
+        ["incoming", "new", "in_progress", "waiting", "done", "cancelled"];
+
+      const tasks = await getTasksByTeamId(activeTeamId, allStatuses, 600);
+
+      // Sort: active first, then by priority, then by date
+      const prioOrder: Record<string, number> = { urgent: 0, high: 1, normal: 2, low: 3 };
+      const activeStatuses = new Set(["incoming", "new", "in_progress", "waiting"]);
+
+      tasks.sort((a, b) => {
+        const aActive = activeStatuses.has(a.status) ? 0 : 1;
+        const bActive = activeStatuses.has(b.status) ? 0 : 1;
+        if (aActive !== bActive) return aActive - bActive;
+
+        const pa = prioOrder[a.priority] ?? 2;
+        const pb = prioOrder[b.priority] ?? 2;
+        if (pa !== pb) return pa - pb;
+
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+
+      res.json({ tasks, scope, activeTeamId, activeTeamRole: role });
       return;
     }
 
@@ -177,7 +218,7 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
-    res.json({ tasks });
+    res.json({ tasks, scope: "my", activeTeamId, activeTeamRole: role });
   } catch (err) {
     console.error("[API] GET /api/tasks error:", err);
     res.status(500).json({ error: "Internal error" });

@@ -1,6 +1,7 @@
 import { getState, setState } from "../../core/store.js";
 import * as api from "./tasks.api.js";
 import { showToast } from "../shared/toast.js";
+import { fetchCampaigns } from "../campaigns/campaigns.api.js";
 
 const tg = window.Telegram?.WebApp;
 
@@ -31,12 +32,42 @@ export function cleanupTasksActions() {
   inFlight.clear();
 }
 
-export async function loadTasks() {
-  setState({ loading: true });
+export async function loadTasks(opts = {}) {
+  const scope = String(opts?.scope || (getState() || {}).tasksScope || "my").trim().toLowerCase() || "my";
+  setState({ loading: true, tasksScope: scope });
   try {
-    const data = await api.fetchTasks();
-    setState({ tasks: Array.isArray(data?.tasks) ? data.tasks : [], loading: false });
+    const data = await api.fetchTasks({ scope });
+    const tasks = Array.isArray(data?.tasks) ? data.tasks : [];
+    const activeTeamRole = data?.activeTeamRole || null;
+    setState({ tasks, activeTeamRole, loading: false, tasksScope: data?.scope || scope });
+
+    // In Team scope, preload campaign names for grouping.
+    if ((data?.scope || scope) === "team") {
+      fetchCampaigns()
+        .then((res) => {
+          const campaigns = Array.isArray(res?.campaigns) ? res.campaigns : [];
+          setState({ campaigns });
+        })
+        .catch(() => {});
+    }
   } catch (err) {
+    if (err?.status === 403 && scope === "team") {
+      // Fallback to "my" if user has no permission.
+      showToast("Нет доступа к задачам команды");
+      setState({ tasksScope: "my" });
+      try {
+        const data = await api.fetchTasks({ scope: "my" });
+        setState({
+          tasks: Array.isArray(data?.tasks) ? data.tasks : [],
+          activeTeamRole: data?.activeTeamRole || null,
+          loading: false,
+          tasksScope: "my",
+        });
+        return;
+      } catch {
+        // continue to error state in UI
+      }
+    }
     setState({ loading: false });
     throw err;
   }
