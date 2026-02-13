@@ -16,3 +16,10 @@ if (!admin.apps.length) {
 }
 
 export const firestore = admin.firestore();
+// Many entities have optional fields (e.g. chatUsername, fileMeta.name). Firestore rejects `undefined` values by default.
+// Enabling this avoids runtime errors on optional nested fields and keeps payloads clean.
+try {
+  firestore.settings({ ignoreUndefinedProperties: true });
+} catch {
+  // ignore (can throw if called after first use in some environments)
+}
