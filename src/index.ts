@@ -17,7 +17,11 @@ app.use(express.json());
 // Mini App static (works even when GitHub Pages is unavailable for private repos).
 // In production: /opt/telegatask/mini-app; in dev: ./mini-app
 const miniAppDir = path.join(__dirname, "..", "mini-app");
-app.get("/mini-app", (_req, res) => res.redirect(302, "/mini-app/"));
+app.use((req, res, next) => {
+  // Express treats /mini-app and /mini-app/ as the same route by default, so use originalUrl to avoid loops.
+  if (req.originalUrl === "/mini-app") return res.redirect(302, "/mini-app/");
+  next();
+});
 app.use("/mini-app", express.static(miniAppDir));
 
 app.use(healthRouter);
