@@ -50,8 +50,12 @@ async function deleteAllDocs(db, collectionName, limit) {
 async function clearActiveTeamId(db, limit) {
   const col = db.collection("users");
   let totalUpdated = 0;
+  let lastDoc = null;
   while (true) {
-    const snap = await col.limit(limit).get();
+    // IMPORTANT: paginate, because updates don't remove docs and a plain limit() would loop forever.
+    let q = col.orderBy(admin.firestore.FieldPath.documentId()).limit(limit);
+    if (lastDoc) q = q.startAfter(lastDoc);
+    const snap = await q.get();
     if (snap.empty) break;
 
     const batch = db.batch();
@@ -60,6 +64,7 @@ async function clearActiveTeamId(db, limit) {
     }
     await batch.commit();
     totalUpdated += snap.size;
+    lastDoc = snap.docs[snap.docs.length - 1] || null;
     console.log(`[users] Reset activeTeamId for ${snap.size}, total ${totalUpdated}`);
   }
   console.log(`[users] Done. Total updated: ${totalUpdated}`);
@@ -113,4 +118,3 @@ main().catch((e) => {
   console.error(e);
   process.exit(1);
 });
-
