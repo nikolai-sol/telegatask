@@ -46,9 +46,10 @@ export function mountCampaignDetails(root, ctx = {}) {
   const patch = {};
   if (sBoot.tasks === undefined) patch.tasks = [];
   if (sBoot.loading === undefined) patch.loading = false;
+  if (sBoot.campaignTab === undefined) patch.campaignTab = "overview";
   if (Object.keys(patch).length) setState(patch);
 
-  const ctrl = new AbortController();
+  const ctrl = new AbortController(); // reserved for future delegated handlers
 
   function render() {
     const s = getState() || {};
@@ -56,6 +57,11 @@ export function mountCampaignDetails(root, ctx = {}) {
     const loading = Boolean(s.campaignsLoading) && !campaign;
     const tasksLoading = Boolean(s.loading);
     const tasks = selectTasksByCampaign(s, id);
+    const tabRaw = String(s.campaignTab || "overview").trim().toLowerCase();
+    const campaignTab =
+      tabRaw === "overview" || tabRaw === "tasks" || tabRaw === "finance" || tabRaw === "team"
+        ? tabRaw
+        : "overview";
 
     root.innerHTML = `
       <div class="app-shell">
@@ -85,42 +91,97 @@ export function mountCampaignDetails(root, ctx = {}) {
                     <div class="campaign-details__row"><span class="campaign-details__k">Created by</span><span class="campaign-details__v">${escapeHtml(campaign.createdByUserId || "—")}</span></div>
                   </section>
 
-                  <section class="settings-card campaign-tasks">
-                    <div class="settings-card__title">Tasks in this campaign</div>
-                    <div class="quick-add campaign-tasks__add">
-                      <input id="campaignTaskInput" class="quick-add__input" type="text" placeholder="Добавить задачу в кампанию" maxlength="280" autocomplete="off">
-                      <button id="campaignTaskAdd" class="quick-add__submit" type="button">Добавить</button>
-                    </div>
+                  <nav class="campaign-tabs" aria-label="Campaign lifecycle">
+                    <button class="campaign-tab ${campaignTab === "overview" ? "active" : ""}" type="button" data-campaign-tab="overview">Overview</button>
+                    <button class="campaign-tab ${campaignTab === "tasks" ? "active" : ""}" type="button" data-campaign-tab="tasks">Tasks</button>
+                    <button class="campaign-tab ${campaignTab === "finance" ? "active" : ""}" type="button" data-campaign-tab="finance">Finance</button>
+                    <button class="campaign-tab ${campaignTab === "team" ? "active" : ""}" type="button" data-campaign-tab="team">Team</button>
+                  </nav>
 
-                    ${
-                      tasksLoading
-                        ? `
-                          <div class="campaign-tasks__skeleton">
-                            <div class="skeleton-card"></div>
-                            <div class="skeleton-card"></div>
+                  ${
+                    campaignTab === "overview"
+                      ? `
+                        <section class="settings-card">
+                          <div class="settings-card__title">Overview</div>
+                          <div class="campaign-actions">
+                            <button id="campaignEditBtn" class="btn btn--ghost" type="button">Edit name/status</button>
                           </div>
-                        `
-                        : tasks.length
-                          ? `
-                            <div class="campaign-list campaign-tasks__list">
-                              ${tasks.map((t) => `
-                                <button class="campaign-card" type="button" data-task-id="${escapeHtml(t.id)}">
-                                  <div class="campaign-card__top">
-                                    <div class="campaign-card__name ${t.status === "done" ? "campaign-task--done" : ""}">${escapeHtml(t.title || t.description || "Untitled")}</div>
-                                    <span class="chip">${escapeHtml(t.status || "")}</span>
+                        </section>
+                      `
+                      : ""
+                  }
+
+                  ${
+                    campaignTab === "tasks"
+                      ? `
+                        <section class="settings-card campaign-tasks">
+                          <div class="settings-card__title">Tasks</div>
+                          <div class="quick-add campaign-tasks__add">
+                            <input id="campaignTaskInput" class="quick-add__input" type="text" placeholder="Добавить задачу в кампанию" maxlength="280" autocomplete="off">
+                            <button id="campaignTaskAdd" class="quick-add__submit" type="button">+ Add task</button>
+                          </div>
+
+                          ${
+                            tasksLoading
+                              ? `
+                                <div class="campaign-tasks__skeleton">
+                                  <div class="skeleton-card"></div>
+                                  <div class="skeleton-card"></div>
+                                </div>
+                              `
+                              : tasks.length
+                                ? `
+                                  <div class="campaign-list campaign-tasks__list">
+                                    ${tasks.map((t) => `
+                                      <button class="campaign-card" type="button" data-task-id="${escapeHtml(t.id)}">
+                                        <div class="campaign-card__top">
+                                          <div class="campaign-card__name ${t.status === "done" ? "campaign-task--done" : ""}">${escapeHtml(t.title || t.description || "Untitled")}</div>
+                                          <span class="chip">${escapeHtml(t.status || "")}</span>
+                                        </div>
+                                      </button>
+                                    `).join("")}
                                   </div>
-                                </button>
-                              `).join("")}
-                            </div>
-                          `
-                          : `
-                            <section class="state state--empty campaign-tasks__empty">
-                              <p class="state__icon">✅</p>
-                              <p class="state__text">Пока нет задач</p>
-                            </section>
-                          `
-                    }
-                  </section>
+                                `
+                                : `
+                                  <section class="state state--empty campaign-tasks__empty">
+                                    <p class="state__icon">✅</p>
+                                    <p class="state__text">Пока нет задач</p>
+                                  </section>
+                                `
+                          }
+                        </section>
+                      `
+                      : ""
+                  }
+
+                  ${
+                    campaignTab === "finance"
+                      ? `
+                        <section class="settings-card">
+                          <div class="settings-card__title">Finance</div>
+                          <div class="campaign-finance">
+                            <div class="campaign-finance__row"><span class="campaign-finance__k">Budget</span><span class="campaign-finance__v">—</span></div>
+                            <div class="campaign-finance__row"><span class="campaign-finance__k">Spent</span><span class="campaign-finance__v">—</span></div>
+                            <div class="campaign-finance__row"><span class="campaign-finance__k">Invoices</span><span class="campaign-finance__v">—</span></div>
+                          </div>
+                        </section>
+                      `
+                      : ""
+                  }
+
+                  ${
+                    campaignTab === "team"
+                      ? `
+                        <section class="settings-card">
+                          <div class="settings-card__title">Team</div>
+                          <section class="state state--empty">
+                            <p class="state__icon">👥</p>
+                            <p class="state__text">Team members coming soon</p>
+                          </section>
+                        </section>
+                      `
+                      : ""
+                  }
                 `
                 : `
                   <section class="state state--empty">
@@ -140,6 +201,19 @@ export function mountCampaignDetails(root, ctx = {}) {
       backBtn.onclick = () => {
         window.location.hash = "#/campaigns";
       };
+    }
+
+    root.querySelectorAll("[data-campaign-tab]").forEach((el) => {
+      if (!(el instanceof HTMLElement)) return;
+      el.onclick = () => {
+        const next = String(el.dataset.campaignTab || "overview").trim().toLowerCase();
+        setState({ campaignTab: next });
+      };
+    });
+
+    const editBtn = root.querySelector("#campaignEditBtn");
+    if (editBtn instanceof HTMLElement) {
+      editBtn.onclick = () => showToast("Soon");
     }
 
     const addBtn = root.querySelector("#campaignTaskAdd");

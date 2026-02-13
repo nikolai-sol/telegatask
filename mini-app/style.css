@@ -930,6 +930,71 @@ main {
   max-width: 60%;
 }
 
+.campaign-tabs {
+  background: color-mix(in srgb, var(--card) 75%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: grid;
+  gap: 6px;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  margin: 12px 0;
+  padding: 6px;
+}
+
+.campaign-tab {
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  color: var(--hint);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 650;
+  min-height: 38px;
+  padding: 6px 8px;
+}
+
+.campaign-tab.active {
+  background: var(--card);
+  box-shadow: 0 1px 6px color-mix(in srgb, var(--text) 12%, transparent);
+  color: var(--text);
+  font-weight: 750;
+}
+
+.campaign-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.campaign-finance {
+  display: grid;
+  gap: 8px;
+  color: var(--text);
+}
+
+.campaign-finance__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+}
+
+.campaign-finance__row:first-of-type {
+  border-top: 0;
+}
+
+.campaign-finance__k {
+  color: var(--hint);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.campaign-finance__v {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 650;
+}
+
 .campaign-tasks {
   margin-top: 12px;
 }
