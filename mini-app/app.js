@@ -72,6 +72,10 @@ const app = {
     const tabs = document.querySelectorAll(".tab");
     tabs.forEach((tabBtn) => {
       tabBtn.addEventListener("click", () => {
+        // Keep search/query/filters, but reset selection when switching tabs.
+        if (state.selectedTaskIds.size > 0) {
+          state.selectedTaskIds.clear();
+        }
         state.tab = tabBtn.dataset.tab || "active";
         this.haptic("light");
         this.render();
