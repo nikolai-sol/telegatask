@@ -37,6 +37,16 @@ export async function runAutoScan(): Promise<ScanResult[]> {
     const chats = await listChatsForScan();
     if (!chats.length) {
       debugLog("[scanner] No chats configured for auto_scan");
+      // Still log that scan tick ran (useful for ops).
+      await logAction({
+        action: "scan_executed",
+        payload: {
+          chatsScanned: 0,
+          totalMessages: 0,
+          totalTasksCreated: 0,
+          note: "no_auto_scan_chats",
+        },
+      }).catch(() => {});
       return results;
     }
 

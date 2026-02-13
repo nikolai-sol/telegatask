@@ -22,9 +22,11 @@ import {
   getUserById,
   updateUserActiveTeamId,
 } from "../repositories/userRepository";
-import { logAction } from "../repositories/actionLogRepository";
+import { logAction, listActionLogs } from "../repositories/actionLogRepository";
 import { listTeamsByMemberId } from "../repositories/teamRepository";
 import { createProject, listProjectsByTeamId } from "../repositories/projectRepository";
+import { listChatsForScan } from "../repositories/chatRepository";
+import { getSchedulerStats } from "../services/scheduler";
 
 const router = Router();
 
@@ -58,6 +60,61 @@ function extractFirstMention(text: string): string | null {
   const match = text.match(/(^|\\s)@([a-zA-Z0-9_]{3,32})\\b/);
   return match ? match[2] : null;
 }
+
+function isSuperAdminFromEnv(username?: string | null): boolean {
+  const raw = process.env.SUPERADMINS || "";
+  if (!raw) return false;
+  const set = new Set(
+    raw
+      .split(",")
+      .map((s) => s.trim().replace(/^@/, "").toLowerCase())
+      .filter(Boolean)
+  );
+  if (!username) return false;
+  return set.has(username.replace(/^@/, "").toLowerCase());
+}
+
+// ─── GET /api/admin/ops ───
+router.get("/api/admin/ops", webAppAuthMiddleware, async (req: Request, res: Response) => {
+  try {
+    const tgUser = req.webAppData!.user;
+
+    if (!isSuperAdminFromEnv(tgUser.username ?? null)) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    const chats = await listChatsForScan();
+    const scheduler = getSchedulerStats();
+    const logs = await listActionLogs(80);
+
+    const scanLogs = logs.filter((l) => l.action === "scan_executed").slice(0, 10);
+    const digestLogs = logs.filter((l) => l.action === "digest_run").slice(0, 10);
+
+    res.json({
+      ok: true,
+      serverTime: new Date().toISOString(),
+      scheduler,
+      autoScan: {
+        enabledChatsCount: chats.length,
+        chats: chats.map((c) => ({
+          id: c.id,
+          telegramChatId: c.telegramChatId,
+          title: c.title,
+          lastScannedAt: c.lastScannedAt ?? null,
+          scanIntervalMin: c.scanIntervalMin ?? 30,
+        })),
+      },
+      recent: {
+        scan_executed: scanLogs,
+        digest_run: digestLogs,
+      },
+    });
+  } catch (err) {
+    console.error("[API] GET /api/admin/ops error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
 
 // ─── GET /api/tasks ───
 router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Response) => {

@@ -27,6 +27,57 @@ import { debugLog } from "../config/debug";
 
 const jobs: ReturnType<typeof cron.schedule>[] = [];
 
+type CronKey =
+  | "auto_scan"
+  | "deadline_reminders"
+  | "followups"
+  | "unanswered_mentions"
+  | "morning_briefs"
+  | "evening_digests";
+
+type SchedulerStats = {
+  startedAt: string | null;
+  jobsCount: number;
+  lastRunAt: Record<CronKey, string | null>;
+  lastOkAt: Record<CronKey, string | null>;
+  lastError: Record<CronKey, string | null>;
+  lastAutoScanSummary: { chatsScanned: number; totalMessages: number; totalTasksCreated: number } | null;
+};
+
+const stats: SchedulerStats = {
+  startedAt: null,
+  jobsCount: 0,
+  lastRunAt: {
+    auto_scan: null,
+    deadline_reminders: null,
+    followups: null,
+    unanswered_mentions: null,
+    morning_briefs: null,
+    evening_digests: null,
+  },
+  lastOkAt: {
+    auto_scan: null,
+    deadline_reminders: null,
+    followups: null,
+    unanswered_mentions: null,
+    morning_briefs: null,
+    evening_digests: null,
+  },
+  lastError: {
+    auto_scan: null,
+    deadline_reminders: null,
+    followups: null,
+    unanswered_mentions: null,
+    morning_briefs: null,
+    evening_digests: null,
+  },
+  lastAutoScanSummary: null,
+};
+
+export function getSchedulerStats(): SchedulerStats {
+  return JSON.parse(JSON.stringify({ ...stats, jobsCount: jobs.length })) as SchedulerStats;
+}
+
 /**
  * Запустить все cron-задачи. Вызывается после bot.launch().
  */
@@ -36,19 +87,29 @@ export function startScheduler(bot: Telegraf): void {
   setBriefingBotInstance(bot);
 
   console.log("[scheduler] Starting cron jobs...");
+  stats.startedAt = new Date().toISOString();
 
   // 1. Auto-scan чатов — каждые 30 мин
   jobs.push(
     cron.schedule("*/30 * * * *", async () => {
       debugLog("[scheduler] Running auto-scan...");
+      stats.lastRunAt.auto_scan = new Date().toISOString();
       try {
         const results = await runAutoScan();
         const total = results.reduce((s, r) => s + r.tasksCreated, 0);
+        stats.lastOkAt.auto_scan = new Date().toISOString();
+        stats.lastError.auto_scan = null;
+        stats.lastAutoScanSummary = {
+          chatsScanned: results.length,
+          totalMessages: results.reduce((s, r) => s + r.messagesScanned, 0),
+          totalTasksCreated: total,
+        };
         if (total > 0) {
           // Уведомляем всех пользователей о найденных задачах
           await notifyScanResults(bot, results);
         }
       } catch (error) {
+        stats.lastError.auto_scan = String((error as any)?.message || error);
         console.error("[scheduler] Auto-scan cron failed", error);
       }
     })
@@ -58,10 +119,14 @@ export function startScheduler(bot: Telegraf): void {
   jobs.push(
     cron.schedule("*/5 * * * *", async () => {
       debugLog("[scheduler] Checking deadline reminders...");
+      stats.lastRunAt.deadline_reminders = new Date().toISOString();
       try {
         const count = await checkDeadlineReminders();
+        stats.lastOkAt.deadline_reminders = new Date().toISOString();
+        stats.lastError.deadline_reminders = null;
         if (count > 0) debugLog(`[scheduler] Sent ${count} deadline reminders`);
       } catch (error) {
+        stats.lastError.deadline_reminders = String((error as any)?.message || error);
         console.error("[scheduler] Deadline reminders cron failed", error);
       }
     })
@@ -71,10 +136,14 @@ export function startScheduler(bot: Telegraf): void {
   jobs.push(
     cron.schedule("15,45 * * * *", async () => {
       debugLog("[scheduler] Checking follow-ups...");
+      stats.lastRunAt.followups = new Date().toISOString();
       try {
         const count = await checkFollowUps();
+        stats.lastOkAt.followups = new Date().toISOString();
+        stats.lastError.followups = null;
         if (count > 0) debugLog(`[scheduler] Sent ${count} follow-up notifications`);
       } catch (error) {
+        stats.lastError.followups = String((error as any)?.message || error);
         console.error("[scheduler] Follow-up cron failed", error);
       }
     })
@@ -84,10 +153,14 @@ export function startScheduler(bot: Telegraf): void {
   jobs.push(
     cron.schedule("3,18,33,48 * * * *", async () => {
       debugLog("[scheduler] Checking unanswered mentions...");
+      stats.lastRunAt.unanswered_mentions = new Date().toISOString();
       try {
         const count = await checkUnansweredMentions();
+        stats.lastOkAt.unanswered_mentions = new Date().toISOString();
+        stats.lastError.unanswered_mentions = null;
         if (count > 0) debugLog(`[scheduler] Sent ${count} unanswered mention notifications`);
       } catch (error) {
+        stats.lastError.unanswered_mentions = String((error as any)?.message || error);
         console.error("[scheduler] Unanswered mentions cron failed", error);
       }
     })
@@ -96,9 +169,13 @@ export function startScheduler(bot: Telegraf): void {
   // 5. Morning briefs — каждую минуту (проверяет timezone внутри)
   jobs.push(
     cron.schedule("* * * * *", async () => {
+      stats.lastRunAt.morning_briefs = new Date().toISOString();
       try {
         await sendMorningBriefs();
+        stats.lastOkAt.morning_briefs = new Date().toISOString();
+        stats.lastError.morning_briefs = null;
       } catch (error) {
+        stats.lastError.morning_briefs = String((error as any)?.message || error);
         console.error("[scheduler] Morning briefs cron failed", error);
       }
     })
@@ -107,15 +184,20 @@ export function startScheduler(bot: Telegraf): void {
   // 6. Evening digests — каждую минуту (проверяет timezone внутри)
   jobs.push(
     cron.schedule("* * * * *", async () => {
+      stats.lastRunAt.evening_digests = new Date().toISOString();
       try {
         await sendEveningDigests();
+        stats.lastOkAt.evening_digests = new Date().toISOString();
+        stats.lastError.evening_digests = null;
       } catch (error) {
+        stats.lastError.evening_digests = String((error as any)?.message || error);
         console.error("[scheduler] Evening digests cron failed", error);
       }
     })
   );
 
   console.log(`[scheduler] ${jobs.length} cron jobs started`);
+  stats.jobsCount = jobs.length;
 }
 
 /**
