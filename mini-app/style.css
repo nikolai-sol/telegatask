@@ -143,6 +143,17 @@ main {
   padding: 6px;
 }
 
+.team-group-switch {
+  background: color-mix(in srgb, var(--card) 75%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: grid;
+  gap: 6px;
+  grid-template-columns: 1fr 1fr;
+  margin-bottom: 10px;
+  padding: 6px;
+}
+
 .scope-btn {
   background: transparent;
   border: 0;
@@ -156,6 +167,25 @@ main {
 }
 
 .scope-btn.active {
+  background: var(--card);
+  box-shadow: 0 1px 6px color-mix(in srgb, var(--text) 12%, transparent);
+  color: var(--text);
+  font-weight: 750;
+}
+
+.team-group-btn {
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  color: var(--hint);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 650;
+  min-height: 38px;
+  padding: 6px 10px;
+}
+
+.team-group-btn.active {
   background: var(--card);
   box-shadow: 0 1px 6px color-mix(in srgb, var(--text) 12%, transparent);
   color: var(--text);

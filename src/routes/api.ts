@@ -25,7 +25,7 @@ import {
 } from "../repositories/userRepository";
 import { logAction, listActionLogs } from "../repositories/actionLogRepository";
 import { listTeamsByMemberId } from "../repositories/teamRepository";
-import { createProject, listProjectsByTeamId } from "../repositories/projectRepository";
+import { createProject, getProjectsByIds, listProjectsByTeamId } from "../repositories/projectRepository";
 import { listChatsForScan } from "../repositories/chatRepository";
 import { getSchedulerStats } from "../services/scheduler";
 import { createCampaign, deleteCampaign, getCampaignById, listCampaignsByTeamId, updateCampaign } from "../repositories/campaignRepository";
@@ -161,6 +161,20 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
       return usersById;
     }
 
+    async function buildProjectsById(tasks: any[]) {
+      const ids = new Set<string>();
+      (tasks || []).forEach((t) => {
+        if (t?.projectId) ids.add(String(t.projectId));
+      });
+      if (ids.size === 0) return {};
+      const projects = await getProjectsByIds(Array.from(ids));
+      const projectsById: Record<string, { name: string }> = {};
+      projects.forEach((p) => {
+        projectsById[p.id] = { name: p.name || `project-${p.id}` };
+      });
+      return projectsById;
+    }
+
     if (scope === "team") {
       if (role === "viewer") {
         res.status(403).json({ error: "Access denied" });
@@ -188,8 +202,11 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       });
 
-      const usersById = await buildUsersById(tasks);
-      res.json({ tasks, usersById, scope, activeTeamId, activeTeamRole: role });
+      const [usersById, projectsById] = await Promise.all([
+        buildUsersById(tasks),
+        buildProjectsById(tasks),
+      ]);
+      res.json({ tasks, usersById, projectsById, scope, activeTeamId, activeTeamRole: role });
       return;
     }
 
@@ -233,8 +250,11 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
-    const usersById = await buildUsersById(tasks);
-    res.json({ tasks, usersById, scope: "my", activeTeamId, activeTeamRole: role });
+    const [usersById, projectsById] = await Promise.all([
+      buildUsersById(tasks),
+      buildProjectsById(tasks),
+    ]);
+    res.json({ tasks, usersById, projectsById, scope: "my", activeTeamId, activeTeamRole: role });
   } catch (err) {
     console.error("[API] GET /api/tasks error:", err);
     res.status(500).json({ error: "Internal error" });

@@ -40,6 +40,10 @@ function tasksMarkup() {
           <button class="scope-btn active" data-scope="my" type="button">Мои</button>
           <button class="scope-btn" data-scope="team" type="button">Команда</button>
         </nav>
+        <nav class="team-group-switch" aria-label="Группировка в команде" hidden>
+          <button class="team-group-btn active" data-group-by="campaign" type="button">Campaign</button>
+          <button class="team-group-btn" data-group-by="project" type="button">Project</button>
+        </nav>
         <nav class="tabs" aria-label="Вкладки задач">
           <button class="tab active" data-tab="active" type="button">Активные</button>
           <button class="tab" data-tab="done" type="button">Выполненные</button>
@@ -162,7 +166,9 @@ function renderFromState() {
   const scope = String(s?.tasksScope || "my").trim().toLowerCase() || "my";
   const items =
     scope === "team"
-      ? selectors.flattenCampaignGroups(visibleTasks, s)
+      ? (String(s?.teamGroupBy || "campaign").trim().toLowerCase() === "project"
+        ? selectors.flattenProjectGroups(visibleTasks, s)
+        : selectors.flattenCampaignGroups(visibleTasks, s))
       : selectors.flattenGroupedTasks(visibleTasks, s);
   const emptyText = selectors.selectEmptyStateText(s);
   tasksApp.render({ state: s, visibleTasks, items, emptyText });

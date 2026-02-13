@@ -155,12 +155,58 @@ export function flattenCampaignGroups(tasks, state) {
   return result;
 }
 
+function projectNameById(state) {
+  const map = new Map();
+  const dict = state?.projectsById && typeof state.projectsById === "object" ? state.projectsById : {};
+  Object.keys(dict || {}).forEach((id) => {
+    const v = dict[id];
+    if (!id) return;
+    map.set(String(id), String(v?.name || `Project ${id}`));
+  });
+  return map;
+}
+
+export function flattenProjectGroups(tasks, state) {
+  const result = [];
+  const collapsed = state?.collapsedGroups || new Set();
+  const nameMap = projectNameById(state);
+  const groups = new Map(); // key -> { title, tasks: [] }
+
+  (tasks || []).forEach((t) => {
+    const pid = t?.projectId ? String(t.projectId) : "";
+    const key = pid ? `proj:${pid}` : "proj:none";
+    const title = pid ? (nameMap.get(pid) || `Project ${pid}`) : "Без проекта";
+    if (!groups.has(key)) groups.set(key, { key, title, tasks: [] });
+    groups.get(key).tasks.push(t);
+  });
+
+  const entries = Array.from(groups.values());
+  entries.sort((a, b) => {
+    if (a.key === "proj:none") return 1;
+    if (b.key === "proj:none") return -1;
+    return safeLower(a.title).localeCompare(safeLower(b.title));
+  });
+
+  for (const g of entries) {
+    const arr = g.tasks || [];
+    if (!arr.length) continue;
+    result.push({ type: "header", key: g.key, title: g.title, count: arr.length });
+    if (collapsed && collapsed.has && collapsed.has(g.key)) continue;
+    arr.forEach((task) => result.push({ type: "task", task }));
+  }
+
+  return result;
+}
+
 export function selectVisibleItems(state) {
   const base = selectTasksByTab(state);
   const filtered = applyFilters(base, state);
   const sorted = sortTasks(filtered);
   const scope = String(state?.tasksScope || "my").trim().toLowerCase() || "my";
-  if (scope === "team") return flattenCampaignGroups(sorted, state);
+  if (scope === "team") {
+    const groupBy = String(state?.teamGroupBy || "campaign").trim().toLowerCase() || "campaign";
+    return groupBy === "project" ? flattenProjectGroups(sorted, state) : flattenCampaignGroups(sorted, state);
+  }
   return flattenGroupedTasks(sorted, state);
 }
 

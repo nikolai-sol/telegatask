@@ -42,7 +42,10 @@ export async function loadTasks(opts = {}) {
     const usersById = (data && typeof data === "object" && data.usersById && typeof data.usersById === "object")
       ? data.usersById
       : {};
-    setState({ tasks, usersById, activeTeamRole, loading: false, tasksScope: data?.scope || scope });
+    const projectsById = (data && typeof data === "object" && data.projectsById && typeof data.projectsById === "object")
+      ? data.projectsById
+      : {};
+    setState({ tasks, usersById, projectsById, activeTeamRole, loading: false, tasksScope: data?.scope || scope });
 
     // In Team scope, preload campaign names for grouping.
     if ((data?.scope || scope) === "team") {
@@ -63,6 +66,7 @@ export async function loadTasks(opts = {}) {
         setState({
           tasks: Array.isArray(data?.tasks) ? data.tasks : [],
           usersById: (data && typeof data === "object" && data.usersById && typeof data.usersById === "object") ? data.usersById : {},
+          projectsById: (data && typeof data === "object" && data.projectsById && typeof data.projectsById === "object") ? data.projectsById : {},
           activeTeamRole: data?.activeTeamRole || null,
           loading: false,
           tasksScope: "my",

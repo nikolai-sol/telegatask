@@ -66,6 +66,8 @@ const state = {
   tasksScope: "my", // my | team
   activeTeamRole: null, // "owner"|"account"|"project"|"viewer" (from backend)
   usersById: {}, // { [userId]: { displayName, username } }
+  projectsById: {}, // { [projectId]: { name } }
+  teamGroupBy: "campaign", // campaign | project
   tab: "active", // active | done | all
   loading: false,
   actionSheetTaskId: null,
@@ -180,6 +182,14 @@ const tasksApp = {
       btn.addEventListener("click", () => {
         const scope = btn.dataset.scope || "my";
         this.switchScope(scope);
+      }, signal ? { signal } : undefined);
+    });
+
+    const groupBtns = $all(".team-group-btn");
+    groupBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const groupBy = btn.dataset.groupBy || "campaign";
+        this.switchTeamGroupBy(groupBy);
       }, signal ? { signal } : undefined);
     });
 
@@ -450,6 +460,12 @@ const tasksApp = {
     }
   },
 
+  switchTeamGroupBy(groupBy) {
+    const next = String(groupBy || "campaign").trim().toLowerCase() || "campaign";
+    if (next !== "campaign" && next !== "project") return;
+    setState({ teamGroupBy: next });
+  },
+
   render(view = null) {
     const s = view?.state || getState() || state;
     const visibleTasks = view?.visibleTasks || [];
@@ -465,6 +481,7 @@ const tasksApp = {
     if (!loadingEl || !emptyEl || !errorEl || !listEl || !viewport || !sticky) return;
 
     this.renderScopeSwitch(s);
+    this.renderTeamGroupSwitch(s);
     this.renderTabs();
 
     if (s.loading) {
@@ -522,6 +539,19 @@ const tasksApp = {
 
     // If there's no team button, make sure "my" is active.
     if (isViewer && myBtn instanceof HTMLElement) myBtn.classList.add("active");
+  },
+
+  renderTeamGroupSwitch(s) {
+    const scope = String(s?.tasksScope || "my").trim().toLowerCase() || "my";
+    const row = $one(".team-group-switch");
+    if (row instanceof HTMLElement) row.hidden = scope !== "team";
+
+    const groupBy = String(s?.teamGroupBy || "campaign").trim().toLowerCase() || "campaign";
+    const btns = $all(".team-group-btn");
+    btns.forEach((b) => {
+      const k = String(b.dataset.groupBy || "campaign").trim().toLowerCase();
+      b.classList.toggle("active", k === groupBy);
+    });
   },
 
   renderVirtualList(flatList) {
