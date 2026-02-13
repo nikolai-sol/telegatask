@@ -197,7 +197,7 @@ router.get("/api/teams", webAppAuthMiddleware, async (req: Request, res: Respons
     const teams = await listTeamsByMemberId(userId, 50);
     const user = await getUserById(userId);
     res.json({
-      teams: teams.map((t) => ({ id: t.id, name: t.name })),
+      teams: teams.map((t) => ({ id: t.id, name: t.name, role: t.roles?.[userId] ?? null })),
       activeTeamId: user?.activeTeamId ?? null,
     });
   } catch (err) {

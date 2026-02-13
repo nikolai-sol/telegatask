@@ -699,6 +699,106 @@ main {
   justify-content: space-between;
 }
 
+/* Settings */
+.settings-shell main {
+  padding-bottom: calc(12px + var(--bottom-nav-h) + var(--safe-bottom));
+}
+
+.settings-hint {
+  color: var(--hint);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.settings-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--text) 8%, transparent);
+  padding: 12px;
+}
+
+.settings-card__title {
+  color: var(--hint);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.radio-list {
+  display: grid;
+  gap: 8px;
+}
+
+.radio-item {
+  align-items: center;
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  border-radius: 12px;
+  cursor: pointer;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 24px 1fr;
+  min-height: 52px;
+  padding: 10px 12px;
+}
+
+.radio-item:active {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.radio-item__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.radio-item__dot {
+  align-items: center;
+  border: 2px solid color-mix(in srgb, var(--hint) 60%, transparent);
+  border-radius: 999px;
+  display: inline-flex;
+  height: 22px;
+  justify-content: center;
+  width: 22px;
+}
+
+.radio-item__input:checked + .radio-item__dot {
+  border-color: color-mix(in srgb, var(--accent) 72%, transparent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+.radio-item__input:checked + .radio-item__dot::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.radio-item__text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.radio-item__name {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 720;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.radio-item__meta {
+  color: var(--hint);
+  font-size: 12px;
+  font-weight: 650;
+}
+
 .campaign-card__name {
   color: var(--text);
   font-size: 15px;
