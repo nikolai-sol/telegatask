@@ -356,84 +356,15 @@ const tasksApp = {
 
   async loadTasks() {
     setState({ loading: true });
-    this.render();
 
     try {
       const data = await tasksApi.fetchTasks();
       setState({ tasks: Array.isArray(data?.tasks) ? data.tasks : [], loading: false });
-      this.render();
     } catch (error) {
       console.error("[MiniApp] loadTasks error", error);
       setState({ loading: false });
       this.showErrorState();
     }
-  },
-
-  getFilteredTasks() {
-    const activeStatuses = ["incoming", "new", "in_progress", "waiting"];
-
-    if (state.tab === "active") {
-      return state.tasks.filter((task) => activeStatuses.includes(task.status));
-    }
-
-    if (state.tab === "done") {
-      return state.tasks.filter((task) => task.status === "done" || task.status === "cancelled");
-    }
-
-    return [...state.tasks];
-  },
-
-  applyFilters(tasks) {
-    let out = [...tasks];
-
-    const query = (state.query || "").trim().toLowerCase();
-    if (query) {
-      out = out.filter((t) => {
-        const hay = String(t.title || t.description || "").toLowerCase();
-        return hay.includes(query);
-      });
-    }
-
-    const f = state.filters || { today: false, overdue: false, p1: false, nodue: false };
-    if (f.p1) {
-      out = out.filter((t) => (t.priority || "normal") === "urgent");
-    }
-    if (f.nodue) {
-      out = out.filter((t) => !t.dueDate);
-    }
-    if (f.today || f.overdue) {
-      out = out.filter((t) => {
-        const tag = this.computeDueTag(t.dueDate);
-        if (f.today && tag !== "today") return false;
-        if (f.overdue && tag !== "overdue") return false;
-        return true;
-      });
-    }
-
-    return out;
-  },
-
-  computeDueTag(dueDate) {
-    if (!dueDate) return "none";
-    const due = new Date(dueDate);
-    if (Number.isNaN(due.getTime())) return "none";
-    const now = new Date();
-    const dueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate());
-    const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    if (dueDay.getTime() < nowDay.getTime()) return "overdue";
-    if (dueDay.getTime() === nowDay.getTime()) return "today";
-    return "future";
-  },
-
-  sortTasks(tasks) {
-    const priorityOrder = { urgent: 0, high: 1, normal: 2, low: 3 };
-
-    return [...tasks].sort((a, b) => {
-      const pa = priorityOrder[a.priority] ?? 2;
-      const pb = priorityOrder[b.priority] ?? 2;
-      if (pa !== pb) return pa - pb;
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
   },
 
   render() {
@@ -783,59 +714,6 @@ const tasksApp = {
     `;
   },
 
-  groupTasks(tasks) {
-    const groups = { overdue: [], today: [], tomorrow: [], upcoming: [], nodue: [] };
-    const now = new Date();
-    const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-
-    tasks.forEach((task) => {
-      const dueAt = task.dueDate;
-      if (!dueAt) {
-        groups.nodue.push(task);
-        return;
-      }
-
-      const due = new Date(dueAt);
-      if (Number.isNaN(due.getTime())) {
-        groups.nodue.push(task);
-        return;
-      }
-
-      const dueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate()).getTime();
-      const diff = dueDay - nowDay;
-
-      if (diff < 0) groups.overdue.push(task);
-      else if (diff === 0) groups.today.push(task);
-      else if (diff === 86400000) groups.tomorrow.push(task);
-      else groups.upcoming.push(task);
-    });
-
-    return groups;
-  },
-
-  flattenGroupedTasks(tasks) {
-    const groups = this.groupTasks(tasks);
-    const result = [];
-    const collapsed = state.collapsedGroups || new Set();
-
-    function pushGroup(key, title) {
-      const arr = groups[key] || [];
-      if (arr.length) {
-        result.push({ type: "header", key, title, count: arr.length });
-        if (collapsed.has(key)) return;
-        arr.forEach((task) => result.push({ type: "task", task }));
-      }
-    }
-
-    pushGroup("overdue", "Просрочено");
-    pushGroup("today", "Сегодня");
-    pushGroup("tomorrow", "Завтра");
-    pushGroup("upcoming", "Позже");
-    pushGroup("nodue", "Без даты");
-
-    return result;
-  },
-
   toggleGroupCollapsed(key) {
     if (!state.collapsedGroups) state.collapsedGroups = new Set();
     if (state.collapsedGroups.has(key)) state.collapsedGroups.delete(key);
@@ -982,16 +860,17 @@ const tasksApp = {
   async flushTaskSheetPatch() {
     const taskId = state.taskSheetTaskId;
     if (!taskId) return;
-    const task = state.tasks.find((t) => t.id === taskId);
+    const s = getState() || state;
+    const prevTasks = Array.isArray(s.tasks) ? s.tasks : [];
+    const task = prevTasks.find((t) => t.id === taskId);
     if (!task) return;
 
     const titleEl = document.getElementById("taskSheetTitle");
     const title = titleEl instanceof HTMLInputElement ? titleEl.value.trim() : (task.title || task.description || "");
 
-    // optimistic already in UI; keep state consistent
-    task.title = title;
-    task.description = title;
-    this.render();
+    // optimistic already in UI; keep state consistent via store
+    const nextTasks = prevTasks.map((t) => (t.id === taskId ? { ...t, title, description: title } : t));
+    setState({ tasks: nextTasks });
 
     try {
       await tasksApi.updateTaskFields(taskId, {
@@ -1400,18 +1279,21 @@ const tasksApp = {
     const ids = Array.from(state.selectedTaskIds);
     if (!ids.length) return;
 
-    // optimistic
-    const prev = new Map();
-    for (const id of ids) {
-      const t = state.tasks.find((x) => x.id === id);
-      if (!t) continue;
-      prev.set(id, t.status);
-      t.status = "done";
-    }
+    const s = getState() || state;
+    const prevTasks = Array.isArray(s.tasks) ? s.tasks : [];
+    const idSet = new Set(ids);
+    const prevStatus = new Map();
+    prevTasks.forEach((t) => {
+      if (idSet.has(t.id)) prevStatus.set(t.id, t.status);
+    });
 
-    this.clearSelection();
+    // clear selection before setState, so subscriber render sees empty selection
+    state.selectedTaskIds.clear();
     this.showToast("Сохранено");
-    this.render();
+    this.haptic("light");
+
+    const nextTasks = prevTasks.map((t) => (idSet.has(t.id) ? { ...t, status: "done" } : t));
+    setState({ tasks: nextTasks });
 
     // fire API calls (best-effort)
     const failures = [];
@@ -1424,11 +1306,10 @@ const tasksApp = {
     }
 
     if (failures.length) {
-      for (const id of failures) {
-        const t = state.tasks.find((x) => x.id === id);
-        if (t && prev.has(id)) t.status = prev.get(id);
-      }
-      this.render();
+      const after = (getState() || state).tasks || [];
+      const failSet = new Set(failures);
+      const rolled = after.map((t) => (failSet.has(t.id) ? { ...t, status: prevStatus.get(t.id) ?? t.status } : t));
+      setState({ tasks: rolled });
       this.showToast("Ошибка, попробуйте ещё раз");
     }
   },
@@ -1479,23 +1360,25 @@ const tasksApp = {
   },
 
   async toggleDone(taskId) {
-    const task = state.tasks.find((item) => item.id === taskId);
+    const s = getState() || state;
+    const prevTasks = Array.isArray(s.tasks) ? s.tasks : [];
+    const task = prevTasks.find((t) => t.id === taskId);
     if (!task) return;
 
     const prevStatus = task.status;
     const nextStatus = prevStatus === "done" ? "incoming" : "done";
 
-    task.status = nextStatus;
+    const nextTasks = prevTasks.map((t) => (t.id === taskId ? { ...t, status: nextStatus } : t));
     this.haptic("light");
-    this.render();
+    setState({ tasks: nextTasks });
 
     try {
       await tasksApi.updateTaskStatus(taskId, nextStatus);
       this.showToast("Сохранено");
     } catch (error) {
       console.error("[MiniApp] toggleDone error", error);
-      task.status = prevStatus;
-      this.render();
+      const rolled = prevTasks.map((t) => (t.id === taskId ? { ...t, status: prevStatus } : t));
+      setState({ tasks: rolled });
       this.showToast("Ошибка, попробуйте ещё раз");
     }
   },
@@ -1522,18 +1405,18 @@ const tasksApp = {
   },
 
   async deleteTask(taskId) {
-    const prevTasks = [...state.tasks];
-    state.tasks = state.tasks.filter((item) => item.id !== taskId);
+    const s = getState() || state;
+    const prevTasks = Array.isArray(s.tasks) ? s.tasks : [];
+    const nextTasks = prevTasks.filter((t) => t.id !== taskId);
     this.haptic("medium");
-    this.render();
+    setState({ tasks: nextTasks });
 
     try {
       await tasksApi.deleteTask(taskId);
       this.showToast("Удалено");
     } catch (error) {
       console.error("[MiniApp] deleteTask error", error);
-      state.tasks = prevTasks;
-      this.render();
+      setState({ tasks: prevTasks });
       this.showToast("Ошибка, попробуйте ещё раз");
     }
   },
@@ -1581,19 +1464,19 @@ const tasksApp = {
       createdAt: new Date().toISOString(),
     };
 
-    state.tab = "active";
-    state.tasks.unshift(tempTask);
+    const s = getState() || state;
+    const prevTasks = Array.isArray(s.tasks) ? s.tasks : [];
+    setState({ tab: "active", tasks: [tempTask, ...prevTasks] });
     this.haptic("light");
-    this.render();
 
     try {
       const data = await tasksApi.createTask(title).catch(() => null);
       const created = data?.task && data.task.id ? data.task : null;
 
       if (created) {
-        const idx = state.tasks.findIndex((t) => t.id === tempId);
-        if (idx !== -1) state.tasks[idx] = created;
-        this.render();
+        const after = getState() || state;
+        const replaced = (after.tasks || []).map((t) => (t.id === tempId ? created : t));
+        setState({ tasks: replaced });
       } else {
         await this.loadTasks();
       }
@@ -1601,8 +1484,9 @@ const tasksApp = {
       this.showToast("Сохранено");
     } catch (error) {
       console.error("[MiniApp] quick add failed", error);
-      state.tasks = state.tasks.filter((item) => item.id !== tempId);
-      this.render();
+      const after = getState() || state;
+      const cleaned = (after.tasks || []).filter((t) => t.id !== tempId);
+      setState({ tasks: cleaned });
       this.showToast("Ошибка, попробуйте ещё раз");
     }
   },
