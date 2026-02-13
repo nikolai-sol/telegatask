@@ -22,6 +22,9 @@ const state = {
   taskSheetTaskId: null,
   taskSheetTimer: null,
   swipeSuppressClickUntil: 0,
+  query: "",
+  queryTimer: null,
+  filters: { today: false, overdue: false, p1: false, nodue: false },
 };
 
 const app = {
@@ -81,6 +84,21 @@ const app = {
 
     document.getElementById("fabAdd")?.addEventListener("click", () => {
       this.openQuickAdd();
+    });
+
+    document.getElementById("searchInput")?.addEventListener("input", () => {
+      this.onSearchInput();
+    });
+    document.getElementById("searchClear")?.addEventListener("click", () => {
+      this.clearSearch();
+    });
+    document.getElementById("filterChips")?.addEventListener("click", (event) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      const btn = target.closest("[data-filter]");
+      if (!(btn instanceof HTMLElement)) return;
+      const key = btn.dataset.filter || "";
+      this.toggleFilter(key);
     });
 
     document.getElementById("filterMenuButton")?.addEventListener("click", () => {
@@ -302,6 +320,48 @@ const app = {
     return [...state.tasks];
   },
 
+  applyFilters(tasks) {
+    let out = [...tasks];
+
+    const query = (state.query || "").trim().toLowerCase();
+    if (query) {
+      out = out.filter((t) => {
+        const hay = String(t.title || t.description || "").toLowerCase();
+        return hay.includes(query);
+      });
+    }
+
+    const f = state.filters || { today: false, overdue: false, p1: false, nodue: false };
+    if (f.p1) {
+      out = out.filter((t) => (t.priority || "normal") === "urgent");
+    }
+    if (f.nodue) {
+      out = out.filter((t) => !t.dueDate);
+    }
+    if (f.today || f.overdue) {
+      out = out.filter((t) => {
+        const tag = this.computeDueTag(t.dueDate);
+        if (f.today && tag !== "today") return false;
+        if (f.overdue && tag !== "overdue") return false;
+        return true;
+      });
+    }
+
+    return out;
+  },
+
+  computeDueTag(dueDate) {
+    if (!dueDate) return "none";
+    const due = new Date(dueDate);
+    if (Number.isNaN(due.getTime())) return "none";
+    const now = new Date();
+    const dueDay = new Date(due.getFullYear(), due.getMonth(), due.getDate());
+    const nowDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    if (dueDay.getTime() < nowDay.getTime()) return "overdue";
+    if (dueDay.getTime() === nowDay.getTime()) return "today";
+    return "future";
+  },
+
   sortTasks(tasks) {
     const priorityOrder = { urgent: 0, high: 1, normal: 2, low: 3 };
 
@@ -328,10 +388,12 @@ const app = {
       emptyEl.hidden = true;
       errorEl.hidden = true;
       listEl.hidden = true;
+      this.renderSearchUi();
       return;
     }
 
-    const tasks = this.sortTasks(this.getFilteredTasks());
+    const tasks = this.sortTasks(this.applyFilters(this.getFilteredTasks()));
+    this.renderSearchUi();
 
     loadingEl.hidden = true;
     errorEl.hidden = true;
@@ -360,6 +422,14 @@ const app = {
     const textEl = document.getElementById("emptyStateText");
     if (!textEl) return;
 
+    const anyFilter =
+      (state.query || "").trim().length > 0 ||
+      Object.values(state.filters || {}).some(Boolean);
+    if (anyFilter) {
+      textEl.textContent = "Ничего не найдено";
+      return;
+    }
+
     if (state.tab === "active") {
       textEl.textContent = "Нет активных задач 🎉";
       return;
@@ -385,6 +455,61 @@ const app = {
     emptyEl.hidden = true;
     listEl.hidden = true;
     errorEl.hidden = false;
+  },
+
+  renderSearchUi() {
+    const input = document.getElementById("searchInput");
+    const clear = document.getElementById("searchClear");
+    if (input instanceof HTMLInputElement) {
+      if (input.value !== state.query && document.activeElement !== input) {
+        // keep input in sync when changed elsewhere
+        input.value = state.query || "";
+      }
+    }
+    if (clear instanceof HTMLElement) {
+      const has = (input instanceof HTMLInputElement ? input.value : state.query || "").trim().length > 0;
+      clear.hidden = !has;
+    }
+
+    document.querySelectorAll("#filterChips [data-filter]").forEach((el) => {
+      if (!(el instanceof HTMLElement)) return;
+      const k = el.dataset.filter;
+      if (!k) return;
+      el.classList.toggle("is-active", Boolean(state.filters && state.filters[k]));
+    });
+  },
+
+  onSearchInput() {
+    const input = document.getElementById("searchInput");
+    if (!(input instanceof HTMLInputElement)) return;
+    const next = input.value;
+
+    const clear = document.getElementById("searchClear");
+    if (clear instanceof HTMLElement) clear.hidden = next.trim().length === 0;
+
+    clearTimeout(state.queryTimer);
+    state.queryTimer = setTimeout(() => {
+      state.query = next;
+      this.render();
+    }, 200);
+  },
+
+  clearSearch() {
+    const input = document.getElementById("searchInput");
+    if (input instanceof HTMLInputElement) {
+      input.value = "";
+      input.focus();
+    }
+    state.query = "";
+    clearTimeout(state.queryTimer);
+    this.render();
+  },
+
+  toggleFilter(key) {
+    if (!state.filters || !(key in state.filters)) return;
+    state.filters[key] = !state.filters[key];
+    this.haptic("light");
+    this.render();
   },
 
   renderTaskCard(task) {
