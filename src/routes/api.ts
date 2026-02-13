@@ -411,6 +411,9 @@ router.post("/api/campaigns", webAppAuthMiddleware, async (req: Request, res: Re
       teamId: activeTeamId,
       name,
       status: "draft",
+      plannedBudget: null,
+      spent: 0,
+      currency: "EUR",
       createdByUserId: userId,
     });
 
@@ -464,7 +467,58 @@ router.patch("/api/campaigns/:id", webAppAuthMiddleware, async (req: Request, re
       return;
     }
 
-    await updateCampaign(id, { name, status: status as any });
+    function parseNonNegNumber(v: unknown): number | undefined {
+      if (v === undefined) return undefined;
+      if (v === null) return undefined;
+      const n = typeof v === "number" ? v : Number(String(v).trim());
+      if (!Number.isFinite(n)) return undefined;
+      if (n < 0) return undefined;
+      return n;
+    }
+
+    // plannedBudget: allow null to clear, or non-negative number.
+    const plannedBudgetRaw = (req.body && "plannedBudget" in req.body) ? req.body.plannedBudget : undefined;
+    const spentRaw = (req.body && "spent" in req.body) ? req.body.spent : undefined;
+    const currencyRaw = (req.body && "currency" in req.body) ? req.body.currency : undefined;
+
+    const plannedBudget =
+      plannedBudgetRaw === null
+        ? null
+        : plannedBudgetRaw === undefined
+          ? undefined
+          : parseNonNegNumber(plannedBudgetRaw);
+
+    const spent = spentRaw === undefined ? undefined : parseNonNegNumber(spentRaw);
+
+    const currency =
+      typeof currencyRaw === "string" && currencyRaw.trim()
+        ? currencyRaw.trim().toUpperCase()
+        : currencyRaw === undefined
+          ? undefined
+          : "";
+
+    if (plannedBudgetRaw !== undefined && plannedBudgetRaw !== null && plannedBudget === undefined) {
+      res.status(400).json({ error: "Invalid plannedBudget" });
+      return;
+    }
+    if (spentRaw !== undefined && spent === undefined) {
+      res.status(400).json({ error: "Invalid spent" });
+      return;
+    }
+    if (currencyRaw !== undefined) {
+      if (!currency || !/^[A-Z]{3}$/.test(currency)) {
+        res.status(400).json({ error: "Invalid currency" });
+        return;
+      }
+    }
+
+    await updateCampaign(id, {
+      name,
+      status: status as any,
+      plannedBudget: plannedBudget === undefined ? undefined : plannedBudget,
+      spent: spent === undefined ? undefined : spent,
+      currency: currencyRaw === undefined ? undefined : currency,
+    });
     res.json({ ok: true });
   } catch (err) {
     console.error("[API] PATCH /api/campaigns/:id error:", err);

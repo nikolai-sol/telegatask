@@ -4,6 +4,7 @@ import { mountBottomNav } from "../shared/bottomNav.js";
 import { loadCampaigns } from "./campaigns.actions.js";
 import { loadTasks, quickAdd } from "../tasks/tasks.actions.js";
 import { showToast } from "../shared/toast.js";
+import { updateCampaign } from "./campaigns.api.js";
 
 function escapeHtml(str) {
   return String(str || "")
@@ -37,6 +38,9 @@ export function mountCampaignDetails(root, ctx = {}) {
   if (!(root instanceof HTMLElement)) return null;
   const id = ctx?.params?.id || "";
 
+  let financeEditing = false;
+  let financeDraft = null; // { plannedBudget, spent, currency }
+
   const s0 = getState();
   if (!s0) {
     initStore({ campaigns: [], campaignsLoading: false, activeTeamId: null });
@@ -51,17 +55,50 @@ export function mountCampaignDetails(root, ctx = {}) {
 
   const ctrl = new AbortController(); // reserved for future delegated handlers
 
+  function fmtMoney(amount, currency) {
+    const n = Number(amount);
+    if (!Number.isFinite(n)) return "—";
+    const cur = String(currency || "EUR").toUpperCase();
+    try {
+      return new Intl.NumberFormat("ru-RU", { style: "currency", currency: cur, maximumFractionDigits: 0 }).format(n);
+    } catch {
+      return `${n} ${cur}`;
+    }
+  }
+
   function render() {
     const s = getState() || {};
     const campaign = selectCampaignById(s, id);
     const loading = Boolean(s.campaignsLoading) && !campaign;
     const tasksLoading = Boolean(s.loading);
     const tasks = selectTasksByCampaign(s, id);
+    const role = String(s.activeTeamRole || "").trim().toLowerCase();
+    const isViewer = role === "viewer";
     const tabRaw = String(s.campaignTab || "overview").trim().toLowerCase();
     const campaignTab =
       tabRaw === "overview" || tabRaw === "tasks" || tabRaw === "finance" || tabRaw === "team"
         ? tabRaw
         : "overview";
+
+    const plannedBudget =
+      campaign && typeof campaign.plannedBudget === "number" ? campaign.plannedBudget : null;
+    const spent =
+      campaign && typeof campaign.spent === "number" ? campaign.spent : 0;
+    const currency =
+      campaign && typeof campaign.currency === "string" && campaign.currency.trim()
+        ? campaign.currency.trim().toUpperCase()
+        : "EUR";
+    const remaining =
+      plannedBudget === null ? null : Math.max(0, plannedBudget - (Number.isFinite(spent) ? spent : 0));
+    const progress =
+      plannedBudget && plannedBudget > 0 ? Math.max(0, Math.min(1, spent / plannedBudget)) : 0;
+
+    const draft = financeDraft || { plannedBudget, spent, currency };
+    const draftPlanned = draft.plannedBudget === null ? null : Number(draft.plannedBudget);
+    const draftSpent = Number.isFinite(Number(draft.spent)) ? Number(draft.spent) : 0;
+    const draftCurrency = String(draft.currency || currency || "EUR").toUpperCase();
+    const draftRemaining = draftPlanned === null ? null : Math.max(0, draftPlanned - draftSpent);
+    const draftProgress = draftPlanned && draftPlanned > 0 ? Math.max(0, Math.min(1, draftSpent / draftPlanned)) : 0;
 
     root.innerHTML = `
       <div class="app-shell">
@@ -159,11 +196,60 @@ export function mountCampaignDetails(root, ctx = {}) {
                       ? `
                         <section class="settings-card">
                           <div class="settings-card__title">Finance</div>
-                          <div class="campaign-finance">
-                            <div class="campaign-finance__row"><span class="campaign-finance__k">Budget</span><span class="campaign-finance__v">—</span></div>
-                            <div class="campaign-finance__row"><span class="campaign-finance__k">Spent</span><span class="campaign-finance__v">—</span></div>
-                            <div class="campaign-finance__row"><span class="campaign-finance__k">Invoices</span><span class="campaign-finance__v">—</span></div>
-                          </div>
+                          ${
+                            financeEditing
+                              ? `
+                                <div class="campaign-finance-edit">
+                                  <label class="field">
+                                    <div class="field__label">Planned budget</div>
+                                    <input id="financePlanned" class="field__input" inputmode="decimal" type="number" min="0" step="1" placeholder="—" value="${draftPlanned === null ? "" : escapeHtml(String(draftPlanned))}">
+                                  </label>
+                                  <label class="field">
+                                    <div class="field__label">Spent</div>
+                                    <input id="financeSpent" class="field__input" inputmode="decimal" type="number" min="0" step="1" value="${escapeHtml(String(draftSpent))}">
+                                  </label>
+                                  <label class="field">
+                                    <div class="field__label">Currency</div>
+                                    <select id="financeCurrency" class="field__input">
+                                      ${["EUR","USD","RUB"].map((c) => `<option value="${c}" ${c === draftCurrency ? "selected" : ""}>${c}</option>`).join("")}
+                                    </select>
+                                  </label>
+
+                                  <div class="campaign-finance-preview">
+                                    <div class="campaign-finance__row"><span class="campaign-finance__k">Remaining</span><span id="financeRemaining" class="campaign-finance__v">${draftRemaining === null ? "—" : escapeHtml(fmtMoney(draftRemaining, draftCurrency))}</span></div>
+                                    <div class="campaign-progress">
+                                      <div class="campaign-progress__bar"><div id="financeProgressBar" class="campaign-progress__fill" style="width:${Math.round(draftProgress * 100)}%"></div></div>
+                                      <div id="financeProgressText" class="campaign-progress__text">${Math.round(draftProgress * 100)}%</div>
+                                    </div>
+                                  </div>
+
+                                  <div class="campaign-actions">
+                                    <button id="financeCancel" class="btn btn--ghost" type="button">Cancel</button>
+                                    <button id="financeSave" class="btn" type="button">Save</button>
+                                  </div>
+                                </div>
+                              `
+                              : plannedBudget === null
+                                ? `
+                                  <section class="state state--empty">
+                                    <p class="state__icon">💶</p>
+                                    <p class="state__text">No budget set</p>
+                                    ${isViewer ? "" : `<button id="financeSetBudget" class="btn" type="button">Set budget</button>`}
+                                  </section>
+                                `
+                                : `
+                                  <div class="campaign-finance">
+                                    <div class="campaign-finance__row"><span class="campaign-finance__k">Planned</span><span class="campaign-finance__v">${escapeHtml(fmtMoney(plannedBudget, currency))}</span></div>
+                                    <div class="campaign-finance__row"><span class="campaign-finance__k">Spent</span><span class="campaign-finance__v">${escapeHtml(fmtMoney(spent, currency))}</span></div>
+                                    <div class="campaign-finance__row"><span class="campaign-finance__k">Remaining</span><span class="campaign-finance__v">${remaining === null ? "—" : escapeHtml(fmtMoney(remaining, currency))}</span></div>
+                                    <div class="campaign-progress">
+                                      <div class="campaign-progress__bar"><div class="campaign-progress__fill" style="width:${Math.round(progress * 100)}%"></div></div>
+                                      <div class="campaign-progress__text">${Math.round(progress * 100)}%</div>
+                                    </div>
+                                    ${isViewer ? "" : `<div class="campaign-actions"><button id="financeEdit" class="btn btn--ghost" type="button">Edit</button></div>`}
+                                  </div>
+                                `
+                          }
                         </section>
                       `
                       : ""
@@ -214,6 +300,107 @@ export function mountCampaignDetails(root, ctx = {}) {
     const editBtn = root.querySelector("#campaignEditBtn");
     if (editBtn instanceof HTMLElement) {
       editBtn.onclick = () => showToast("Soon");
+    }
+
+    const setBudgetBtn = root.querySelector("#financeSetBudget");
+    if (setBudgetBtn instanceof HTMLElement) {
+      setBudgetBtn.onclick = () => {
+        if (isViewer) return;
+        financeEditing = true;
+        financeDraft = { plannedBudget: plannedBudget ?? 0, spent: spent ?? 0, currency };
+        setState({}); // rerender
+      };
+    }
+
+    const financeEditBtn = root.querySelector("#financeEdit");
+    if (financeEditBtn instanceof HTMLElement) {
+      financeEditBtn.onclick = () => {
+        if (isViewer) return;
+        financeEditing = true;
+        financeDraft = { plannedBudget, spent, currency };
+        setState({}); // rerender
+      };
+    }
+
+    const financeCancelBtn = root.querySelector("#financeCancel");
+    if (financeCancelBtn instanceof HTMLElement) {
+      financeCancelBtn.onclick = () => {
+        financeEditing = false;
+        financeDraft = null;
+        setState({});
+      };
+    }
+
+    function syncFinancePreview() {
+      const pb = root.querySelector("#financePlanned");
+      const sp = root.querySelector("#financeSpent");
+      const curEl = root.querySelector("#financeCurrency");
+      if (!(pb instanceof HTMLInputElement) || !(sp instanceof HTMLInputElement) || !(curEl instanceof HTMLSelectElement)) return;
+      const planned = pb.value.trim() === "" ? null : Number(pb.value);
+      const spentNow = sp.value.trim() === "" ? 0 : Number(sp.value);
+      const cur = String(curEl.value || "EUR").toUpperCase();
+
+      financeDraft = {
+        plannedBudget: planned === null ? null : (Number.isFinite(planned) ? planned : null),
+        spent: Number.isFinite(spentNow) && spentNow >= 0 ? spentNow : 0,
+        currency: cur,
+      };
+
+      const rem = planned === null || !Number.isFinite(planned) ? null : Math.max(0, planned - (Number.isFinite(spentNow) ? spentNow : 0));
+      const prog = planned && Number.isFinite(planned) && planned > 0 ? Math.max(0, Math.min(1, spentNow / planned)) : 0;
+
+      const remEl = root.querySelector("#financeRemaining");
+      const bar = root.querySelector("#financeProgressBar");
+      const txt = root.querySelector("#financeProgressText");
+      if (remEl instanceof HTMLElement) remEl.textContent = rem === null ? "—" : fmtMoney(rem, cur);
+      if (bar instanceof HTMLElement) bar.style.width = `${Math.round(prog * 100)}%`;
+      if (txt instanceof HTMLElement) txt.textContent = `${Math.round(prog * 100)}%`;
+    }
+
+    const financePlanned = root.querySelector("#financePlanned");
+    const financeSpent = root.querySelector("#financeSpent");
+    const financeCur = root.querySelector("#financeCurrency");
+    [financePlanned, financeSpent, financeCur].forEach((el) => {
+      if (!(el instanceof HTMLElement)) return;
+      el.oninput = () => syncFinancePreview();
+      el.onchange = () => syncFinancePreview();
+    });
+
+    const financeSaveBtn = root.querySelector("#financeSave");
+    if (financeSaveBtn instanceof HTMLElement) {
+      financeSaveBtn.onclick = async () => {
+        if (isViewer) return;
+        syncFinancePreview();
+        const draftNow = financeDraft || { plannedBudget, spent, currency };
+        const pb = draftNow.plannedBudget === null ? null : Number(draftNow.plannedBudget);
+        const sp = Number(draftNow.spent);
+        const cur = String(draftNow.currency || "EUR").toUpperCase();
+        if (pb !== null && (!Number.isFinite(pb) || pb < 0)) {
+          showToast("Invalid planned budget");
+          return;
+        }
+        if (!Number.isFinite(sp) || sp < 0) {
+          showToast("Invalid spent");
+          return;
+        }
+        if (!/^[A-Z]{3}$/.test(cur)) {
+          showToast("Invalid currency");
+          return;
+        }
+
+        try {
+          await updateCampaign(id, { plannedBudget: pb, spent: sp, currency: cur });
+          const st = getState() || {};
+          const list = Array.isArray(st.campaigns) ? st.campaigns : [];
+          const updated = list.map((c) => (c && c.id === id ? { ...c, plannedBudget: pb, spent: sp, currency: cur } : c));
+          setState({ campaigns: updated });
+          financeEditing = false;
+          financeDraft = null;
+          showToast("Budget updated");
+        } catch (e) {
+          showToast(e?.message || "Failed to update budget");
+        }
+      };
     }
 
     const addBtn = root.querySelector("#campaignTaskAdd");

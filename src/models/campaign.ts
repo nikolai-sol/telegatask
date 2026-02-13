@@ -5,7 +5,9 @@ export interface Campaign {
   teamId: string; // FK -> teams.id
   name: string;
   status: CampaignStatus;
+  plannedBudget?: number | null;
+  spent?: number;
+  currency?: string; // e.g. "EUR"
   createdAt: number; // epoch ms
   createdByUserId: string; // FK -> users.id
 }
-
