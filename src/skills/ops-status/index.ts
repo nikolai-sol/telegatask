@@ -41,6 +41,7 @@ async function buildOpsText(): Promise<string> {
   const chats = await listChatsForScan();
   const logs = await listActionLogs(80);
   const scanLogs = logs.filter((l) => l.action === "scan_executed").slice(0, 5);
+  const errorLogs = logs.filter((l) => l.action === "error").slice(0, 5);
 
   const s = scheduler;
   const lines = [
@@ -62,6 +63,9 @@ async function buildOpsText(): Promise<string> {
     ``,
     `<b>Recent scan_executed</b>: ${scanLogs.length ? "" : "—"}`,
     ...scanLogs.map((l) => `• ${fmt(l.createdAt)}: ${escapeHtml(JSON.stringify(l.payload || {}))}`),
+    ``,
+    `<b>Recent errors</b>: ${errorLogs.length ? "" : "—"}`,
+    ...errorLogs.map((l) => `• ${fmt(l.createdAt)}: ${escapeHtml(JSON.stringify(l.payload || {}))}`),
   ];
 
   return lines.join("\n");
@@ -114,4 +118,3 @@ export const opsStatusSkill: Skill = {
     return { handled: true };
   },
 };
-

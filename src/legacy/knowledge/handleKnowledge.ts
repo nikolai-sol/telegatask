@@ -21,6 +21,7 @@ import { extractFileRefFromMessage } from "../../utils/fileRef";
 import type { FileRefInfo } from "../../utils/fileRef";
 import { getCommandVariants } from "../../config/commands";
 import type { KnowledgeSourceTelegram } from "../../models/knowledge";
+import { serializeError } from "../../utils/serializeError";
 
 const K_CMD = getCommandVariants("k").map((c) => c.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
 
@@ -50,6 +51,29 @@ function safeLogAction(
   logAction({ action, ...params }).catch((err) =>
     console.error("[actionLog] failed to log", action, err)
   );
+}
+
+function safeLogError(params: {
+  where: string;
+  telegramUserId?: number | null;
+  telegramChatId?: number | null;
+  chatType?: string | null;
+  rawText?: string | null;
+  hasFileRef?: boolean;
+  sourceChatId?: string | null;
+  sourceMessageId?: number | null;
+  fileId?: string | null;
+  fileName?: string | null;
+  err: unknown;
+}): void {
+  safeLogAction("error", {
+    userId: null,
+    targetType: "knowledge",
+    payload: {
+      ...params,
+      err: serializeError(params.err),
+    },
+  });
 }
 
 function normalizeTextForSearch(text: string): string {
@@ -337,6 +361,21 @@ export async function handleKnowledgeLegacy(
     pendingKnowledgeForwards.delete(ctx.from.id);
   } catch (error) {
     console.error("Failed to handle /k command", error);
+    const msg = ctx.message as any;
+    const chat = msg && msg.chat ? msg.chat : null;
+    safeLogError({
+      where: "handleKnowledgeLegacy:/k",
+      telegramUserId: ctx.from?.id ?? null,
+      telegramChatId: chat?.id ?? null,
+      chatType: chat?.type ?? null,
+      rawText: rawText ?? null,
+      hasFileRef: Boolean(fileRef),
+      sourceChatId,
+      sourceMessageId: sourceMessageId ?? null,
+      fileId: fileRef?.fileId ?? null,
+      fileName: fileRef?.name ?? null,
+      err: error,
+    });
     await ctx.reply("Не удалось записать в базу знаний.");
   }
 

@@ -7,6 +7,7 @@ export type ActionType =
   | "task_deleted"
   | "knowledge_added"
   | "knowledge_search"
+  | "error"
   | "ask_executed"
   | "emelya_requested"
   | "team_linked"

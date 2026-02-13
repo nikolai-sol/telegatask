@@ -10,6 +10,7 @@ import { upsertUserFromTelegramPayload } from "../repositories/userRepository";
 import { upsertChatFromTelegramPayload } from "../repositories/chatRepository";
 import { addKnowledgeEntry, findKnowledgeByDedupeKey } from "../repositories/knowledgeRepository";
 import { logAction } from "../repositories/actionLogRepository";
+import { serializeError } from "../utils/serializeError";
 
 function normalizeTextForSearch(text: string): string {
   return text.trim().replace(/\s+/g, " ");
@@ -112,5 +113,22 @@ export async function autoSaveFilesToKnowledge(ctx: Context<Update>): Promise<vo
     }
   } catch (error) {
     console.error("[autoSaveFiles] Failed", error);
+    const payload = {
+      where: "autoSaveFilesToKnowledge",
+      messageId: "message_id" in message ? message.message_id : null,
+      telegramChatId: "chat" in message ? message.chat.id : null,
+      chatType: "chat" in message ? message.chat.type : null,
+      fileId: fileRef?.fileId ?? null,
+      fileName: fileRef?.name ?? null,
+      err: serializeError(error),
+    };
+    // Note: actionLogs.userId expects internal userId, but here we might not have it.
+    // Store telegramUserId in payload for debugging; internal userId can be resolved later if needed.
+    logAction({
+      action: "error",
+      userId: null,
+      targetType: "knowledge",
+      payload: { ...payload, telegramUserId: ctx.from?.id ?? null },
+    }).catch(() => {});
   }
 }

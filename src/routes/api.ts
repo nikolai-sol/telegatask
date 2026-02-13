@@ -90,6 +90,7 @@ router.get("/api/admin/ops", webAppAuthMiddleware, async (req: Request, res: Res
 
     const scanLogs = logs.filter((l) => l.action === "scan_executed").slice(0, 10);
     const digestLogs = logs.filter((l) => l.action === "digest_run").slice(0, 10);
+    const errorLogs = logs.filter((l) => l.action === "error").slice(0, 20);
 
     res.json({
       ok: true,
@@ -108,6 +109,7 @@ router.get("/api/admin/ops", webAppAuthMiddleware, async (req: Request, res: Res
       recent: {
         scan_executed: scanLogs,
         digest_run: digestLogs,
+        errors: errorLogs,
       },
     });
   } catch (err) {

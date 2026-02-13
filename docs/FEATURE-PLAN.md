@@ -44,3 +44,22 @@
 - Модель/провайдер LLM и лимиты.
 - Что значит “закрыть проект” в данных: поле status + архивирование задач/доступов?
 
+## Ops: Error Logging + Admin Dashboard
+
+### Goals
+- Логировать все runtime-ошибки бота (минимум: knowledge/tasks/scan/cron).
+- Показывать последние ошибки супер-админу (в `/ops` и `/api/admin/ops`), потом вывести в админ-дашборд Mini App.
+
+### Done
+- Логирование ошибок в `actionLogs` (action=`error`) для:
+  - Auto-save файлов в знания
+  - `/k` (добавление в знания)
+- `/ops` и `/api/admin/ops` включают recent errors.
+
+### Next
+- Mini App: экран Ops/Errors для superadmin (fetch `/api/admin/ops`, таб “Errors”).
+- Привязка ошибок к внутреннему `userId` (сейчас сохраняем `telegramUserId` в payload).
+- Расширить логирование на:
+  - API handlers (500)
+  - cron jobs (scan/reminders/digest) с причиной падения
+  - callback handlers (400 message not modified и т.п.)
