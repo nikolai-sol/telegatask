@@ -8,6 +8,7 @@ const initialState = {
   campaigns: [],
   campaignsLoading: false,
   activeTeamId: null,
+  campaignsView: "active", // "active" | "archived"
 };
 
 function ensureCampaignsState() {
@@ -35,6 +36,10 @@ function markup() {
       </header>
 
       <main>
+        <div class="segmented campaigns-segmented" role="tablist" aria-label="Campaign filter">
+          <button id="campaignsViewActive" class="segmented__btn" type="button" data-campaigns-view="active">Active</button>
+          <button id="campaignsViewArchived" class="segmented__btn" type="button" data-campaigns-view="archived">Archived</button>
+        </div>
         <div id="campaignList"></div>
       </main>
     </div>
@@ -53,10 +58,20 @@ export function mountCampaigns(root) {
 
   const ctrl = new AbortController();
   let lastActiveTeamId = (getState() || {}).activeTeamId ?? null;
+  let lastView = (getState() || {}).campaignsView ?? "active";
 
   function render() {
     const s = getState() || {};
-    const campaigns = selectors.selectCampaigns(s);
+    const view = String(s.campaignsView || "active");
+    const activeBtn = root.querySelector("#campaignsViewActive");
+    const archivedBtn = root.querySelector("#campaignsViewArchived");
+    if (activeBtn instanceof HTMLElement) activeBtn.classList.toggle("active", view === "active");
+    if (archivedBtn instanceof HTMLElement) archivedBtn.classList.toggle("active", view === "archived");
+
+    let campaigns = selectors.selectCampaigns(s);
+    if (view === "archived") {
+      campaigns = campaigns.filter((c) => c && String(c.status || "") === "archived");
+    }
     const loading = Boolean(s.campaignsLoading);
     renderCampaignList(root, campaigns, { loading });
   }
@@ -71,12 +86,28 @@ export function mountCampaigns(root) {
       actions.loadCampaigns().catch(() => {});
       return;
     }
+    const view = s.campaignsView ?? "active";
+    if (view !== lastView) {
+      lastView = view;
+      setState({ campaigns: [] });
+      actions.loadCampaigns().catch(() => {});
+      return;
+    }
     render();
   });
 
   root.addEventListener("click", (e) => {
     const target = e.target;
     if (!(target instanceof Element)) return;
+
+    const viewBtn = target.closest("[data-campaigns-view]");
+    if (viewBtn instanceof HTMLElement) {
+      const v = String(viewBtn.dataset.campaignsView || "active");
+      if (v === "active" || v === "archived") {
+        setState({ campaignsView: v });
+      }
+      return;
+    }
 
     const addBtn = target.closest("#addCampaignBtn");
     if (addBtn) {

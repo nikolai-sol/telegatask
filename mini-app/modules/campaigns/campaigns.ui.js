@@ -31,6 +31,7 @@ function statusLabel(status) {
     case "running": return "Running";
     case "paused": return "Paused";
     case "finished": return "Finished";
+    case "archived": return "Archived";
     default: return "Draft";
   }
 }

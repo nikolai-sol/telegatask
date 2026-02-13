@@ -370,7 +370,14 @@ router.get("/api/campaigns", webAppAuthMiddleware, async (req: Request, res: Res
       return;
     }
 
-    const campaigns = await listCampaignsByTeamId(activeTeamId);
+    const includeArchived =
+      String(req.query?.includeArchived || "").trim() === "1" ||
+      String(req.query?.includeArchived || "").trim().toLowerCase() === "true";
+
+    const campaignsAll = await listCampaignsByTeamId(activeTeamId);
+    const campaigns = includeArchived
+      ? campaignsAll
+      : campaignsAll.filter((c) => c && c.status !== "archived");
     res.json({ campaigns, activeTeamId });
   } catch (err) {
     console.error("[API] GET /api/campaigns error:", err);
@@ -461,7 +468,7 @@ router.patch("/api/campaigns/:id", webAppAuthMiddleware, async (req: Request, re
 
     const name = typeof req.body?.name === "string" ? req.body.name.trim() : undefined;
     const status = typeof req.body?.status === "string" ? req.body.status : undefined;
-    const valid = new Set(["draft", "planned", "running", "paused", "finished"]);
+    const valid = new Set(["draft", "planned", "running", "paused", "finished", "archived"]);
     if (status !== undefined && !valid.has(status)) {
       res.status(400).json({ error: "Invalid status" });
       return;

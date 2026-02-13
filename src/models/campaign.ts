@@ -1,4 +1,4 @@
-export type CampaignStatus = "draft" | "planned" | "running" | "paused" | "finished";
+export type CampaignStatus = "draft" | "planned" | "running" | "paused" | "finished" | "archived";
 
 export interface Campaign {
   id: string; // Firestore doc id

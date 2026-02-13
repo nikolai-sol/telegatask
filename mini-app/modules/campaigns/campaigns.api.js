@@ -1,7 +1,9 @@
 import { apiFetch } from "../../core/api.js";
 
-export async function fetchCampaigns() {
-  return apiFetch("/api/campaigns");
+export async function fetchCampaigns(opts = null) {
+  const includeArchived = Boolean(opts && opts.includeArchived);
+  const path = includeArchived ? "/api/campaigns?includeArchived=1" : "/api/campaigns";
+  return apiFetch(path);
 }
 
 export async function createCampaign(data) {

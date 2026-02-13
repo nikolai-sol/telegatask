@@ -153,6 +153,11 @@ export function mountCampaignDetails(root, ctx = {}) {
                           <div class="settings-card__title">Overview</div>
                           <div class="campaign-actions">
                             <button id="campaignEditBtn" class="btn btn--ghost" type="button">Edit name/status</button>
+                            ${
+                              isViewer || String(campaign.status || "") === "archived"
+                                ? ""
+                                : `<button id="campaignArchiveBtn" class="btn btn--danger" type="button">Archive campaign</button>`
+                            }
                           </div>
                         </section>
                       `
@@ -314,6 +319,22 @@ export function mountCampaignDetails(root, ctx = {}) {
     const editBtn = root.querySelector("#campaignEditBtn");
     if (editBtn instanceof HTMLElement) {
       editBtn.onclick = () => showToast("Soon");
+    }
+
+    const archiveBtn = root.querySelector("#campaignArchiveBtn");
+    if (archiveBtn instanceof HTMLElement) {
+      archiveBtn.onclick = async () => {
+        if (isViewer) return;
+        const ok = confirm("Archive this campaign?");
+        if (!ok) return;
+        try {
+          await updateCampaign(id, { status: "archived" });
+          showToast("Archived");
+          window.location.hash = "#/campaigns";
+        } catch (e) {
+          showToast(e?.message || "Failed to archive");
+        }
+      };
     }
 
     const setBudgetBtn = root.querySelector("#financeSetBudget");

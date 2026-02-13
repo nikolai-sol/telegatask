@@ -14,7 +14,8 @@ function setCampaigns(list) {
 export async function loadCampaigns() {
   setState({ campaignsLoading: true });
   try {
-    const res = await api.fetchCampaigns();
+    const includeArchived = Boolean((getState() || {}).campaignsView === "archived");
+    const res = await api.fetchCampaigns({ includeArchived });
     const campaigns = Array.isArray(res?.campaigns) ? res.campaigns : [];
     // Keep global state in sync with backend context.
     if (res && typeof res === "object" && "activeTeamId" in res) {

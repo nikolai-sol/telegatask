@@ -934,6 +934,7 @@ main {
 .chip--status-running { color: #2e7d32; }
 .chip--status-paused { color: #ef6c00; }
 .chip--status-finished { color: #5f6368; }
+.chip--status-archived { color: #6d4c41; }
 
 .campaign-details {
   background: var(--card);
@@ -986,6 +987,40 @@ main {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   margin: 12px 0;
   padding: 6px;
+}
+
+.segmented {
+  background: color-mix(in srgb, var(--card) 75%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  display: grid;
+  gap: 6px;
+  grid-template-columns: 1fr 1fr;
+  margin: 0 0 12px;
+  padding: 6px;
+}
+
+.segmented__btn {
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  color: var(--hint);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 650;
+  min-height: 38px;
+  padding: 6px 8px;
+}
+
+.segmented__btn.active {
+  background: var(--card);
+  box-shadow: 0 1px 6px color-mix(in srgb, var(--text) 12%, transparent);
+  color: var(--text);
+  font-weight: 750;
+}
+
+.segmented__btn:active {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
 }
 
 .campaign-tab {
