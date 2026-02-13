@@ -2,6 +2,7 @@ import { initStore, getState, subscribe } from "../../core/store.js";
 import { tasksApp, state as initialState } from "./tasks.ui.js";
 import * as selectors from "./tasks.selectors.js";
 import { cleanupTasksActions } from "./tasks.actions.js";
+import { mountBottomNav } from "../shared/bottomNav.js";
 
 function tasksMarkup() {
   // Keep markup identical to the previously working index.html body (moved here for DOM ownership).
@@ -163,6 +164,7 @@ export function mountTasks(rootEl) {
   if (!(rootEl instanceof HTMLElement)) throw new Error("mountTasks: rootEl is required");
 
   rootEl.innerHTML = tasksMarkup();
+  const unmountNav = mountBottomNav(rootEl, "tasks");
 
   // Initialize store once. For now we keep initial state colocated with tasks module.
   if (!getState()) initStore(initialState);
@@ -183,6 +185,11 @@ export function mountTasks(rootEl) {
       if (unsub) unsub();
     } finally {
       unsub = null;
+    }
+    try {
+      unmountNav && unmountNav();
+    } catch {
+      // ignore
     }
     try {
       cleanupTasksActions();

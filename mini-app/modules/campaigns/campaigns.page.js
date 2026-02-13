@@ -1,3 +1,5 @@
+import { mountBottomNav } from "../shared/bottomNav.js";
+
 export function mountCampaigns(root) {
   if (!(root instanceof HTMLElement)) return null;
 
@@ -21,6 +23,8 @@ export function mountCampaigns(root) {
     </div>
   `;
 
+  const unmountNav = mountBottomNav(root, "campaigns");
+
   const onBack = () => {
     window.location.hash = "#/tasks";
   };
@@ -37,7 +41,11 @@ export function mountCampaigns(root) {
   return () => {
     if (backBtn instanceof HTMLElement) backBtn.removeEventListener("click", onBack);
     if (newBtn instanceof HTMLElement) newBtn.removeEventListener("click", onNew);
+    try {
+      unmountNav && unmountNav();
+    } catch {
+      // ignore
+    }
     root.innerHTML = "";
   };
 }
-

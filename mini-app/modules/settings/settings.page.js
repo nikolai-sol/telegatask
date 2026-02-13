@@ -1,3 +1,5 @@
+import { mountBottomNav } from "../shared/bottomNav.js";
+
 export function mountSettings(root) {
   if (!(root instanceof HTMLElement)) return null;
 
@@ -20,6 +22,8 @@ export function mountSettings(root) {
     </div>
   `;
 
+  const unmountNav = mountBottomNav(root, "settings");
+
   const onBack = () => {
     window.location.hash = "#/tasks";
   };
@@ -28,7 +32,11 @@ export function mountSettings(root) {
 
   return () => {
     if (backBtn instanceof HTMLElement) backBtn.removeEventListener("click", onBack);
+    try {
+      unmountNav && unmountNav();
+    } catch {
+      // ignore
+    }
     root.innerHTML = "";
   };
 }
-

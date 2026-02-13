@@ -14,6 +14,8 @@
   --danger: var(--tg-theme-destructive-text-color, #d9534f);
   --border: color-mix(in srgb, var(--text) 12%, transparent);
   --chip-bg: color-mix(in srgb, var(--text) 7%, transparent);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --bottom-nav-h: 56px;
 }
 
 body {
@@ -294,7 +296,7 @@ main {
   min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(108px + var(--bottom-nav-h) + var(--safe-bottom));
 }
 
 .sticky-group-header {
@@ -594,7 +596,7 @@ main {
   background: var(--accent);
   border: 0;
   border-radius: 999px;
-  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(18px + var(--bottom-nav-h) + var(--safe-bottom));
   box-shadow: 0 10px 26px color-mix(in srgb, var(--accent) 50%, transparent);
   color: var(--tg-theme-button-text-color, #fff);
   cursor: pointer;
@@ -615,7 +617,7 @@ main {
   font-size: 18px;
   height: 48px;
   width: 48px;
-  bottom: calc(18px + 56px + 12px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(18px + 56px + 12px + var(--bottom-nav-h) + var(--safe-bottom));
 }
 
 .bulk-bar {
@@ -623,7 +625,7 @@ main {
   background: color-mix(in srgb, var(--card) 96%, transparent);
   border: 1px solid var(--border);
   border-radius: 16px;
-  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(14px + var(--bottom-nav-h) + var(--safe-bottom));
   box-shadow: 0 12px 26px color-mix(in srgb, var(--text) 14%, transparent);
   display: flex;
   gap: 10px;
@@ -633,6 +635,40 @@ main {
   position: fixed;
   transform: translateX(-50%);
   z-index: 35;
+}
+
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--bottom-nav-h) + var(--safe-bottom));
+  display: flex;
+  align-items: stretch;
+  background: color-mix(in srgb, var(--bg) 92%, #fff 8%);
+  border-top: 1px solid var(--border);
+  padding-bottom: var(--safe-bottom);
+  z-index: 30;
+}
+
+.bottom-nav button {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--hint);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+}
+
+.bottom-nav button:active {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.bottom-nav button.active {
+  color: var(--text);
+  font-weight: 750;
 }
 
 .bulk-bar__count {
