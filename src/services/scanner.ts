@@ -16,6 +16,7 @@ import { upsertUserByUsername } from "../repositories/userRepository";
 import { extractTasksWithGemini, type GeminiTaskExtractionInput } from "./gemini";
 import { logAction } from "../repositories/actionLogRepository";
 import { debugLog } from "../config/debug";
+import { getDefaultProjectIdForTelegramChat } from "../core/projects/getDefaultProjectIdForTelegramChat";
 
 /** Результат скана одного чата */
 interface ScanResult {
@@ -103,6 +104,8 @@ async function scanSingleChat(
   lastScannedAt: string | null | undefined
 ): Promise<ScanResult> {
   const now = new Date();
+  const telegramChatIdStr = String(telegramChatId);
+  const defaultProjectId = await getDefaultProjectIdForTelegramChat(telegramChatIdStr);
 
   // Период: от lastScannedAt (или 1 час назад если первый скан)
   const defaultStart = new Date(now.getTime() - 60 * 60 * 1000); // 1 час назад
@@ -200,10 +203,12 @@ async function scanSingleChat(
       for (const username of assignees) {
         const assignee = await upsertUserByUsername(username);
         const created = await createTask({
+          telegramChatId: telegramChatIdStr,
           sourceType: "scan",
           sourceChatId: chatId,
           sourceChatTitle: chatTitle,
           sourceMessageId: task.messageId,
+          projectId: defaultProjectId,
           createdByUserId: sourceMessage.fromUserId,
           assignedUserId: assignee.id,
           title: "",
@@ -222,10 +227,12 @@ async function scanSingleChat(
       }
     } else {
       const created = await createTask({
+        telegramChatId: telegramChatIdStr,
         sourceType: "scan",
         sourceChatId: chatId,
         sourceChatTitle: chatTitle,
         sourceMessageId: task.messageId,
+        projectId: defaultProjectId,
         createdByUserId: sourceMessage.fromUserId,
         assignedUserId: null,
         title: "",

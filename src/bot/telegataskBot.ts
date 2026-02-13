@@ -78,6 +78,7 @@ import { KBService } from "../core/services/kb";
 import { LLMService } from "../core/services/llm";
 import { TelegramService } from "../core/services/telegram";
 import { registerAllSkills } from "../skills/registry";
+import { getDefaultProjectIdForTelegramChat } from "../core/projects/getDefaultProjectIdForTelegramChat";
 import {
   pendingKnowledgeForwards,
   handleKnowledgeImportantFollowup,
@@ -1252,16 +1253,19 @@ async function handleChatCommand(ctx: Context<Update>): Promise<void> {
 
     const title = "";
     const dueDate = await resolveDueDate(description);
+    const telegramChatIdStr = message.chat.id.toString();
+    const defaultProjectId = await getDefaultProjectIdForTelegramChat(telegramChatIdStr);
 
     const tasks = [];
     if (resolvedAssignees.length > 0) {
 	      for (const assignee of resolvedAssignees) {
 	        const task = await createTask({
-	          telegramChatId: message.chat.id.toString(),
+	          telegramChatId: telegramChatIdStr,
 	          sourceType: "chat_command",
 	          sourceChatId: chat.id,
 	          sourceChatTitle: "title" in message.chat ? message.chat.title ?? null : null,
 	          sourceMessageId: repliedMessage?.message_id ?? message.message_id,
+	          projectId: defaultProjectId,
 	          createdByUserId: createdByUser.id,
           assignedUserId: assignee.id,
           title,
@@ -1273,11 +1277,12 @@ async function handleChatCommand(ctx: Context<Update>): Promise<void> {
       }
 	    } else {
 	      const task = await createTask({
-	        telegramChatId: message.chat.id.toString(),
+	        telegramChatId: telegramChatIdStr,
 	        sourceType: "chat_command",
 	        sourceChatId: chat.id,
 	        sourceChatTitle: "title" in message.chat ? message.chat.title ?? null : null,
 	        sourceMessageId: repliedMessage?.message_id ?? message.message_id,
+	        projectId: defaultProjectId,
 	        createdByUserId: createdByUser.id,
         assignedUserId: null,
         title,
@@ -1413,15 +1418,18 @@ async function handleAutoTaskFromChat(ctx: Context<Update>): Promise<void> {
 
     const dueDate = await resolveDueDate(description);
     const tasks = [];
+    const telegramChatIdStr = message.chat.id.toString();
+    const defaultProjectId = await getDefaultProjectIdForTelegramChat(telegramChatIdStr);
 
 	    if (resolvedAssignees.length > 0) {
 	      for (const assignee of resolvedAssignees) {
 	        const task = await createTask({
-	          telegramChatId: message.chat.id.toString(),
+	          telegramChatId: telegramChatIdStr,
 	          sourceType: "chat_auto",
 	          sourceChatId: chat.id,
 	          sourceChatTitle: chat.title,
 	          sourceMessageId: repliedMessage?.message_id ?? message.message_id,
+	          projectId: defaultProjectId,
 	          createdByUserId: createdByUser.id,
           assignedUserId: assignee.id,
           title: "",
@@ -1433,11 +1441,12 @@ async function handleAutoTaskFromChat(ctx: Context<Update>): Promise<void> {
       }
 	    } else {
 	      const task = await createTask({
-	        telegramChatId: message.chat.id.toString(),
+	        telegramChatId: telegramChatIdStr,
 	        sourceType: "chat_auto",
 	        sourceChatId: chat.id,
 	        sourceChatTitle: chat.title,
 	        sourceMessageId: repliedMessage?.message_id ?? message.message_id,
+	        projectId: defaultProjectId,
 	        createdByUserId: createdByUser.id,
         assignedUserId: null,
         title: "",
@@ -1595,16 +1604,19 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
       const description = normalizedText;
       const title = "";
       const dueDate = await resolveDueDate(description);
+      const telegramChatIdStr = message.chat.id.toString();
+      const defaultProjectId = await getDefaultProjectIdForTelegramChat(telegramChatIdStr);
 
       const tasks = [];
       if (combinedAssignees.length > 0) {
 	        for (const assignee of combinedAssignees) {
 	          const task = await createTask({
-	            telegramChatId: message.chat.id.toString(),
+	            telegramChatId: telegramChatIdStr,
 	            sourceType: "forward",
 	            sourceChatId: pending.sourceChatId,
 	            sourceChatTitle: pending.sourceChatTitle,
 	            sourceMessageId: forwardedMessage.forward_from_message_id ?? null,
+	            projectId: defaultProjectId,
 	            createdByUserId: pending.createdByUserId,
             assignedUserId: assignee.id,
             title,
@@ -1616,11 +1628,12 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
         }
 	      } else {
 	        const task = await createTask({
-	          telegramChatId: message.chat.id.toString(),
+	          telegramChatId: telegramChatIdStr,
 	          sourceType: "forward",
 	          sourceChatId: pending.sourceChatId,
 	          sourceChatTitle: pending.sourceChatTitle,
 	          sourceMessageId: forwardedMessage.forward_from_message_id ?? null,
+	          projectId: defaultProjectId,
 	          createdByUserId: pending.createdByUserId,
           assignedUserId: null,
           title,
@@ -1698,6 +1711,8 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
     const description = normalizedText;
     const title = "";
     const dueDate = await resolveDueDate(description);
+    const telegramChatIdStr = message.chat.id.toString();
+    const defaultProjectId = await getDefaultProjectIdForTelegramChat(telegramChatIdStr);
 
     const tasks = [];
     if (resolvedAssignees.length > 0) {
@@ -1723,11 +1738,12 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
 
 	      for (const assignee of resolvedAssignees) {
 	        const task = await createTask({
-	          telegramChatId: message.chat.id.toString(),
+	          telegramChatId: telegramChatIdStr,
 	          sourceType: "forward",
 	          sourceChatId,
 	          sourceChatTitle,
 	          sourceMessageId: forwardedMessage.forward_from_message_id ?? null,
+	          projectId: defaultProjectId,
 	          createdByUserId: author.id,
           assignedUserId: assignee.id,
           title,
@@ -1739,11 +1755,12 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
       }
 	    } else {
 	      const task = await createTask({
-	        telegramChatId: message.chat.id.toString(),
+	        telegramChatId: telegramChatIdStr,
 	        sourceType: "forward",
 	        sourceChatId,
 	        sourceChatTitle,
 	        sourceMessageId: forwardedMessage.forward_from_message_id ?? null,
+	        projectId: defaultProjectId,
 	        createdByUserId: author.id,
         assignedUserId: null,
         title,
@@ -2716,15 +2733,18 @@ async function handleTaskCommand(ctx: Context<Update>): Promise<boolean> {
 
     const dueDate = await resolveDueDate(description);
     const tasks = [];
+    const telegramChatIdStr = message.chat.id.toString();
+    const defaultProjectId = await getDefaultProjectIdForTelegramChat(telegramChatIdStr);
 
 	    if (resolvedAssignees.length > 0) {
 	      for (const assignee of resolvedAssignees) {
 	        const task = await createTask({
-	          telegramChatId: message.chat.id.toString(),
+	          telegramChatId: telegramChatIdStr,
 	          sourceType: "chat_command",
 	          sourceChatId,
 	          sourceChatTitle,
 	          sourceMessageId: repliedMessage?.message_id ?? message.message_id,
+	          projectId: defaultProjectId,
 	          createdByUserId: createdByUser.id,
           assignedUserId: assignee.id,
           title: "",
@@ -2736,11 +2756,12 @@ async function handleTaskCommand(ctx: Context<Update>): Promise<boolean> {
       }
 	    } else {
 	      const task = await createTask({
-	        telegramChatId: message.chat.id.toString(),
+	        telegramChatId: telegramChatIdStr,
 	        sourceType: "chat_command",
 	        sourceChatId,
 	        sourceChatTitle,
 	        sourceMessageId: repliedMessage?.message_id ?? message.message_id,
+	        projectId: defaultProjectId,
 	        createdByUserId: createdByUser.id,
         assignedUserId: null,
         title: "",
@@ -3142,6 +3163,8 @@ async function handleParseChatCallback(
 
     let createdCount = 0;
     let skippedCount = 0;
+    const telegramChatIdStr = chat.telegramChatId.toString();
+    const defaultProjectId = await getDefaultProjectIdForTelegramChat(telegramChatIdStr);
 
     for (const task of parsedTasks) {
       const sourceMessage = messageMap.get(task.messageId);
@@ -3171,11 +3194,12 @@ async function handleParseChatCallback(
         for (const username of assignees) {
           const assignee = await upsertUserByUsername(username);
 	          const created = await createTask({
-	            telegramChatId: chat.telegramChatId.toString(),
+	            telegramChatId: telegramChatIdStr,
 	            sourceType: "chat_auto",
 	            sourceChatId: chat.id,
 	            sourceChatTitle: chat.title,
 	            sourceMessageId: task.messageId,
+	            projectId: defaultProjectId,
 	            createdByUserId: sourceMessage.fromUserId,
             assignedUserId: assignee.id,
             title: "",
@@ -3193,11 +3217,12 @@ async function handleParseChatCallback(
         }
       } else {
 	        const created = await createTask({
-	          telegramChatId: chat.telegramChatId.toString(),
+	          telegramChatId: telegramChatIdStr,
 	          sourceType: "chat_auto",
 	          sourceChatId: chat.id,
 	          sourceChatTitle: chat.title,
 	          sourceMessageId: task.messageId,
+	          projectId: defaultProjectId,
 	          createdByUserId: sourceMessage.fromUserId,
           assignedUserId: null,
           title: "",
