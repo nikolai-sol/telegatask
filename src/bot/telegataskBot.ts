@@ -675,11 +675,20 @@ function buildTasksUiKeyboard(session: TasksUiSession) {
   const pages = Math.max(1, Math.ceil(total / TASKS_UI_PAGE_SIZE));
   const page = Math.min(Math.max(0, session.page), pages - 1);
 
-  const prev = Markup.button.callback("◀", "tasksui:page:prev");
-  const next = Markup.button.callback("▶", "tasksui:page:next");
-  const mid = Markup.button.callback(`${page + 1}/${pages}`, "tasksui:refresh");
+  const prevEnabled = pages > 1 && page > 0;
+  const nextEnabled = pages > 1 && page < pages - 1;
+
+  // Telegram doesn't support disabled inline buttons; use noop callbacks.
+  const prev = Markup.button.callback("◀", prevEnabled ? "tasksui:page:prev" : "tasksui:noop");
+  const next = Markup.button.callback("▶", nextEnabled ? "tasksui:page:next" : "tasksui:noop");
   const done = Markup.button.callback("✅", "tasksui:done");
   const del = Markup.button.callback("🗑", "tasksui:delete");
+
+  const miniAppUrl = process.env.MINI_APP_URL;
+  const webappBtn = miniAppUrl
+    ? // Telegraf supports web_app buttons for inline keyboards.
+      (Markup.button.webApp("📋", miniAppUrl) as any)
+    : null;
 
   const start = page * TASKS_UI_PAGE_SIZE;
   const end = Math.min(total, start + TASKS_UI_PAGE_SIZE);
@@ -696,10 +705,8 @@ function buildTasksUiKeyboard(session: TasksUiSession) {
     pickButtons.push(Markup.button.callback(label, `tasksui:select:${i + 1}`));
   }
 
-  return Markup.inlineKeyboard([
-    [prev, mid, next, done, del],
-    pickButtons,
-  ]);
+  const row1 = webappBtn ? [webappBtn, prev, next, done, del] : [prev, next, done, del];
+  return Markup.inlineKeyboard([row1, pickButtons]);
 }
 
 async function refreshTasksUiItems(session: TasksUiSession): Promise<void> {
