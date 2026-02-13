@@ -124,14 +124,15 @@ async function buildKnowledgeSource(
       ).id
     : undefined;
 
-  return {
+  const source: KnowledgeSourceTelegram = {
     kind: "telegram",
     chatId,
-    telegramChatId,
     messageId: sourceMessageId,
-    fromUserId,
-    chatUsername,
   };
+  if (telegramChatId != null) source.telegramChatId = telegramChatId;
+  if (fromUserId) source.fromUserId = fromUserId;
+  if (chatUsername) source.chatUsername = chatUsername;
+  return source;
 }
 
 export async function buildKnowledgeSourceFromPending(
@@ -257,13 +258,18 @@ export async function handleKnowledgeLegacy(
         .filter(Boolean)
         .join(", ");
       const fileText = `File: ${fileRef.name || "file"}${meta ? ` (${meta})` : ""}${fileRef.caption ? ` — ${fileRef.caption}` : ""}`;
+      const fileMeta: Record<string, unknown> = {};
+      if (fileRef.name) fileMeta.name = fileRef.name;
+      if (fileRef.size != null) fileMeta.size = fileRef.size;
+      if (fileRef.mime) fileMeta.mime = fileRef.mime;
+
       item = await kb.add({
         type: "file_ref",
         text: normalizeTextForSearch(fileText),
         tags: isImportant ? ["important"] : [],
         importance: isImportant ? "important" : "normal",
         source: sourceWithFileId,
-        fileMeta: { name: fileRef.name, size: fileRef.size, mime: fileRef.mime },
+        fileMeta: Object.keys(fileMeta).length ? (fileMeta as any) : null,
         createdByUserId: user.id,
         sourceChatId,
         sourceChatTitle,

@@ -67,23 +67,30 @@ export async function autoSaveFilesToKnowledge(ctx: Context<Update>): Promise<vo
       .join(", ");
     const fileText = `File: ${fileRef.name || "file"}${meta ? ` (${meta})` : ""}${fileRef.caption ? ` — ${fileRef.caption}` : ""}`;
 
-    const source = {
-      kind: "telegram" as const,
+    const source: Record<string, unknown> = {
+      kind: "telegram",
       chatId: sourceChatId,
       telegramChatId: chatInfo.id,
       messageId: sourceMessageId,
       fromUserId: user.id,
       fileId: fileRef.fileId,
-      chatUsername: "username" in chatInfo ? (chatInfo as { username?: string }).username : undefined,
     };
+    const chatUsername =
+      "username" in chatInfo ? (chatInfo as { username?: string }).username : undefined;
+    if (chatUsername) source.chatUsername = chatUsername;
+
+    const fileMeta: Record<string, unknown> = {};
+    if (fileRef.name) fileMeta.name = fileRef.name;
+    if (fileRef.size != null) fileMeta.size = fileRef.size;
+    if (fileRef.mime) fileMeta.mime = fileRef.mime;
 
     const item = await addKnowledgeEntry({
       type: "file_ref",
       text: normalizeTextForSearch(fileText),
       tags: [],
       importance: "normal",
-      source,
-      fileMeta: { name: fileRef.name, size: fileRef.size, mime: fileRef.mime },
+      source: source as any,
+      fileMeta: Object.keys(fileMeta).length ? (fileMeta as any) : null,
       createdByUserId: user.id,
       sourceChatId,
       sourceChatTitle,
