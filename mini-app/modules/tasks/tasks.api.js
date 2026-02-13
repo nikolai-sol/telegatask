@@ -4,8 +4,9 @@ export async function fetchTasks() {
   return apiFetch("/api/tasks");
 }
 
-export async function createTask(title) {
-  return apiFetch("/api/tasks", { method: "POST", body: { title } });
+export async function createTask(input) {
+  const payload = typeof input === "string" ? { title: input } : (input || {});
+  return apiFetch("/api/tasks", { method: "POST", body: payload });
 }
 
 export async function updateTaskStatus(taskId, status) {

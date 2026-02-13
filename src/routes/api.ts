@@ -507,6 +507,15 @@ router.post("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respon
       res.status(400).json({ error: "No active team set. Use /team or Settings to select a team." });
       return;
     }
+
+    const campaignId = typeof req.body?.campaignId === "string" ? req.body.campaignId.trim() : "";
+    if (campaignId) {
+      const campaign = await getCampaignById(campaignId);
+      if (!campaign || campaign.teamId !== activeTeamId) {
+        res.status(403).json({ error: "Access denied" });
+        return;
+      }
+    }
     const projectId = activeTeamId ? await ensureTekuchkaProject(activeTeamId) : null;
 
     const task = await createTask({
@@ -514,6 +523,7 @@ router.post("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respon
       createdByUserId: userId,
       assignedUserId,
       projectId,
+      campaignId: campaignId || null,
       title,
       description: title,
       status: assignedUserId ? "new" : "incoming",

@@ -864,6 +864,29 @@ main {
   max-width: 60%;
 }
 
+.campaign-tasks {
+  margin-top: 12px;
+}
+
+.campaign-tasks__add {
+  margin: 0;
+  padding: 8px;
+}
+
+.campaign-tasks__skeleton,
+.campaign-tasks__list {
+  margin-top: 10px;
+}
+
+.campaign-tasks__empty {
+  margin-top: 10px;
+}
+
+.campaign-task--done {
+  opacity: 0.65;
+  text-decoration: line-through;
+}
+
 .bulk-bar__count {
   color: var(--hint);
   font-size: 13px;

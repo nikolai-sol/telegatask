@@ -180,7 +180,7 @@ export function bulkDelete(taskIds) {
   });
 }
 
-export async function quickAdd(title) {
+export async function quickAdd(title, { campaignId = null } = {}) {
   const t = String(title || "").trim();
   if (!t) return;
 
@@ -189,6 +189,7 @@ export async function quickAdd(title) {
     id: tempId,
     title: t,
     description: t,
+    campaignId: campaignId ?? null,
     status: "new",
     priority: "normal",
     createdAt: new Date().toISOString(),
@@ -199,7 +200,7 @@ export async function quickAdd(title) {
   setState({ tab: "active", tasks: [tempTask, ...prevTasks] });
 
   try {
-    const data = await api.createTask(t).catch(() => null);
+    const data = await api.createTask({ title: t, campaignId: campaignId ?? null }).catch(() => null);
     const created = data?.task && data.task.id ? data.task : null;
     if (!created) {
       await loadTasks();

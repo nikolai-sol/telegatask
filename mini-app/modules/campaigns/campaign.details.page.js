@@ -2,6 +2,8 @@ import { initStore, getState, setState, subscribe } from "../../core/store.js";
 import { selectCampaignById } from "./campaigns.selectors.js";
 import { mountBottomNav } from "../shared/bottomNav.js";
 import { loadCampaigns } from "./campaigns.actions.js";
+import { loadTasks, quickAdd } from "../tasks/tasks.actions.js";
+import { showToast } from "../shared/toast.js";
 
 function escapeHtml(str) {
   return String(str || "")
@@ -23,6 +25,14 @@ function fmtCreatedAt(v) {
   }
 }
 
+function selectTasksByCampaign(state, campaignId) {
+  const s = state || {};
+  const list = Array.isArray(s.tasks) ? s.tasks : [];
+  const cid = String(campaignId || "");
+  if (!cid) return [];
+  return list.filter((t) => (t?.campaignId || null) === cid);
+}
+
 export function mountCampaignDetails(root, ctx = {}) {
   if (!(root instanceof HTMLElement)) return null;
   const id = ctx?.params?.id || "";
@@ -31,6 +41,12 @@ export function mountCampaignDetails(root, ctx = {}) {
   if (!s0) {
     initStore({ campaigns: [], campaignsLoading: false, activeTeamId: null });
   }
+  // Ensure minimal task slice exists (Tasks page will patch full state later).
+  const sBoot = getState() || {};
+  const patch = {};
+  if (sBoot.tasks === undefined) patch.tasks = [];
+  if (sBoot.loading === undefined) patch.loading = false;
+  if (Object.keys(patch).length) setState(patch);
 
   const ctrl = new AbortController();
 
@@ -38,6 +54,8 @@ export function mountCampaignDetails(root, ctx = {}) {
     const s = getState() || {};
     const campaign = selectCampaignById(s, id);
     const loading = Boolean(s.campaignsLoading) && !campaign;
+    const tasksLoading = Boolean(s.loading);
+    const tasks = selectTasksByCampaign(s, id);
 
     root.innerHTML = `
       <div class="app-shell">
@@ -66,6 +84,43 @@ export function mountCampaignDetails(root, ctx = {}) {
                     <div class="campaign-details__row"><span class="campaign-details__k">Created</span><span class="campaign-details__v">${escapeHtml(fmtCreatedAt(campaign.createdAt))}</span></div>
                     <div class="campaign-details__row"><span class="campaign-details__k">Created by</span><span class="campaign-details__v">${escapeHtml(campaign.createdByUserId || "—")}</span></div>
                   </section>
+
+                  <section class="settings-card campaign-tasks">
+                    <div class="settings-card__title">Tasks in this campaign</div>
+                    <div class="quick-add campaign-tasks__add">
+                      <input id="campaignTaskInput" class="quick-add__input" type="text" placeholder="Добавить задачу в кампанию" maxlength="280" autocomplete="off">
+                      <button id="campaignTaskAdd" class="quick-add__submit" type="button">Добавить</button>
+                    </div>
+
+                    ${
+                      tasksLoading
+                        ? `
+                          <div class="campaign-tasks__skeleton">
+                            <div class="skeleton-card"></div>
+                            <div class="skeleton-card"></div>
+                          </div>
+                        `
+                        : tasks.length
+                          ? `
+                            <div class="campaign-list campaign-tasks__list">
+                              ${tasks.map((t) => `
+                                <button class="campaign-card" type="button" data-task-id="${escapeHtml(t.id)}">
+                                  <div class="campaign-card__top">
+                                    <div class="campaign-card__name ${t.status === "done" ? "campaign-task--done" : ""}">${escapeHtml(t.title || t.description || "Untitled")}</div>
+                                    <span class="chip">${escapeHtml(t.status || "")}</span>
+                                  </div>
+                                </button>
+                              `).join("")}
+                            </div>
+                          `
+                          : `
+                            <section class="state state--empty campaign-tasks__empty">
+                              <p class="state__icon">✅</p>
+                              <p class="state__text">Пока нет задач</p>
+                            </section>
+                          `
+                    }
+                  </section>
                 `
                 : `
                   <section class="state state--empty">
@@ -76,12 +131,35 @@ export function mountCampaignDetails(root, ctx = {}) {
           }
         </main>
       </div>
+
+      <div id="toast" class="toast" hidden></div>
     `;
 
     const backBtn = root.querySelector("#campaignBack");
     if (backBtn instanceof HTMLElement) {
       backBtn.onclick = () => {
         window.location.hash = "#/campaigns";
+      };
+    }
+
+    const addBtn = root.querySelector("#campaignTaskAdd");
+    const input = root.querySelector("#campaignTaskInput");
+    if (addBtn instanceof HTMLElement && input instanceof HTMLInputElement) {
+      addBtn.onclick = async () => {
+        const title = String(input.value || "").trim();
+        if (!title) return;
+        input.value = "";
+        try {
+          await quickAdd(title, { campaignId: id });
+        } catch (e) {
+          showToast(e?.message || "Не удалось создать задачу");
+        }
+      };
+      input.onkeydown = async (ev) => {
+        if (ev.key === "Enter") {
+          ev.preventDefault();
+          addBtn.click();
+        }
       };
     }
   }
@@ -98,6 +176,9 @@ export function mountCampaignDetails(root, ctx = {}) {
       setState({ campaignsLoading: false });
     });
   }
+
+  // Load tasks for current active team; Campaign tasks are filtered client-side by campaignId.
+  loadTasks().catch(() => {});
 
   render();
 
