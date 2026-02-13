@@ -140,6 +140,7 @@ export const taskActionsSkill: Skill = {
 
       const description = item.text.slice(0, 2000);
       const task = await createTask({
+        telegramChatId: ctx.telegramChatId ? String(ctx.telegramChatId) : null,
         sourceType: "chat_command",
         sourceChatId: item.sourceChatId ?? undefined,
         sourceChatTitle: item.sourceChatTitle ?? undefined,

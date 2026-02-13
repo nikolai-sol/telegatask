@@ -129,6 +129,12 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
       return;
     }
 
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.json({ tasks: [] });
+      return;
+    }
+
     // Fetch tasks where user is assignee or creator (all statuses for Mini App)
     const allStatuses: Array<"incoming" | "new" | "in_progress" | "waiting" | "done" | "cancelled"> =
       ["incoming", "new", "in_progress", "waiting", "done", "cancelled"];
@@ -139,8 +145,8 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
     }
 
     const [assigned, created] = await Promise.all([
-      getTasksByAssigneeIds(assigneeIds, allStatuses),
-      getTasksByCreator(userId, allStatuses),
+      getTasksByAssigneeIds(assigneeIds, allStatuses, activeTeamId),
+      getTasksByCreator(userId, allStatuses, activeTeamId),
     ]);
 
     // Merge and dedupe
@@ -329,6 +335,10 @@ router.post("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respon
     }
 
     const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set. Use /team or Settings to select a team." });
+      return;
+    }
     const projectId = activeTeamId ? await ensureTekuchkaProject(activeTeamId) : null;
 
     const task = await createTask({
@@ -370,11 +380,22 @@ router.post("/api/tasks/:id/project", webAppAuthMiddleware, async (req: Request,
       return;
     }
 
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set" });
+      return;
+    }
+
     const projectId = typeof req.body?.projectId === "string" ? req.body.projectId : null;
 
     const task = await getTaskById(id);
     if (!task) {
       res.status(404).json({ error: "Task not found" });
+      return;
+    }
+
+    if (task.teamId !== activeTeamId) {
+      res.status(403).json({ error: "Access denied" });
       return;
     }
 
@@ -404,6 +425,12 @@ router.post("/api/tasks/:id/status", webAppAuthMiddleware, async (req: Request, 
       return;
     }
 
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set" });
+      return;
+    }
+
     const validStatuses = ["incoming", "new", "in_progress", "waiting", "done", "cancelled"];
     if (!validStatuses.includes(status)) {
       res.status(400).json({ error: "Invalid status" });
@@ -413,6 +440,11 @@ router.post("/api/tasks/:id/status", webAppAuthMiddleware, async (req: Request, 
     const task = await getTaskById(id);
     if (!task) {
       res.status(404).json({ error: "Task not found" });
+      return;
+    }
+
+    if (task.teamId !== activeTeamId) {
+      res.status(403).json({ error: "Access denied" });
       return;
     }
 
@@ -451,9 +483,20 @@ router.delete("/api/tasks/:id", webAppAuthMiddleware, async (req: Request, res: 
       return;
     }
 
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set" });
+      return;
+    }
+
     const task = await getTaskById(id);
     if (!task) {
       res.status(404).json({ error: "Task not found" });
+      return;
+    }
+
+    if (task.teamId !== activeTeamId) {
+      res.status(403).json({ error: "Access denied" });
       return;
     }
 
@@ -492,9 +535,20 @@ router.patch("/api/tasks/:id", webAppAuthMiddleware, async (req: Request, res: R
       return;
     }
 
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set" });
+      return;
+    }
+
     const task = await getTaskById(id);
     if (!task) {
       res.status(404).json({ error: "Task not found" });
+      return;
+    }
+
+    if (task.teamId !== activeTeamId) {
+      res.status(403).json({ error: "Access denied" });
       return;
     }
 

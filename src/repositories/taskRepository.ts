@@ -7,11 +7,14 @@ import {
   TaskFollowUp,
   TaskReminder,
 } from "../models/task";
+import { deriveTeamIdForTaskCreation } from "../core/deriveTeamIdForTaskCreation";
 
 /** Normalize Firestore doc to Task with defaults for new fields */
 function docToTask(id: string, data: FirebaseFirestore.DocumentData): Task {
   return {
     id,
+    teamId: data.teamId ?? "",
+    campaignId: data.campaignId ?? null,
     sourceType: data.sourceType ?? "chat_command",
     sourceChatId: data.sourceChatId ?? null,
     sourceChatTitle: data.sourceChatTitle ?? null,
@@ -33,6 +36,8 @@ function docToTask(id: string, data: FirebaseFirestore.DocumentData): Task {
 }
 
 export interface CreateTaskInput {
+  /** Telegram chat id as string (e.g. ctx.chat.id.toString()). Used to derive team from linked chats. */
+  telegramChatId?: string | null;
   sourceType: TaskSourceType;
   sourceChatId?: string | null;
   sourceChatTitle?: string | null;
@@ -40,6 +45,7 @@ export interface CreateTaskInput {
   projectId?: string | null;
   createdByUserId: string;
   assignedUserId?: string | null;
+  campaignId?: string | null;
   title: string;
   description: string;
   status: TaskStatus;
@@ -56,7 +62,14 @@ export async function createTask(input: CreateTaskInput): Promise<Task> {
   // Auto-generate reminders from dueDate if none provided
   const reminders = input.reminders ?? [];
 
+  const teamId = await deriveTeamIdForTaskCreation({
+    telegramChatId: input.telegramChatId ?? null,
+    userId: input.createdByUserId,
+  });
+
   const payload = {
+    teamId,
+    campaignId: input.campaignId ?? null,
     sourceType: input.sourceType,
     sourceChatId: input.sourceChatId ?? null,
     sourceChatTitle: input.sourceChatTitle ?? null,
@@ -127,16 +140,23 @@ export async function getAllTasks(
 
 export async function getTasksByAssigneeIds(
   assigneeIds: string[],
-  statuses: TaskStatus[] = ["incoming", "new", "in_progress", "waiting"]
+  statuses: TaskStatus[] = ["incoming", "new", "in_progress", "waiting"],
+  teamId?: string | null
 ): Promise<Task[]> {
   const uniqueIds = Array.from(new Set(assigneeIds));
 
   const queries = uniqueIds.map((id) =>
-    firestore
-      .collection("tasks")
-      .where("assignedUserId", "==", id)
-      .where("status", "in", statuses)
-      .get()
+    (teamId
+      ? firestore
+          .collection("tasks")
+          .where("teamId", "==", teamId)
+          .where("assignedUserId", "==", id)
+          .where("status", "in", statuses)
+      : firestore
+          .collection("tasks")
+          .where("assignedUserId", "==", id)
+          .where("status", "in", statuses)
+    ).get()
   );
 
   const snapshots = await Promise.all(queries);
@@ -154,12 +174,19 @@ export async function getTasksByAssigneeIds(
 
 export async function getTasksByCreator(
   creatorId: string,
-  statuses: TaskStatus[] = ["incoming", "new", "in_progress", "waiting"]
+  statuses: TaskStatus[] = ["incoming", "new", "in_progress", "waiting"],
+  teamId?: string | null
 ): Promise<Task[]> {
-  const query = firestore
-    .collection("tasks")
-    .where("createdByUserId", "==", creatorId)
-    .where("status", "in", statuses);
+  const query = teamId
+    ? firestore
+        .collection("tasks")
+        .where("teamId", "==", teamId)
+        .where("createdByUserId", "==", creatorId)
+        .where("status", "in", statuses)
+    : firestore
+        .collection("tasks")
+        .where("createdByUserId", "==", creatorId)
+        .where("status", "in", statuses);
 
   const snapshot = await query.get();
   return snapshot.docs.map((doc) => docToTask(doc.id, doc.data()));

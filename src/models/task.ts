@@ -29,6 +29,10 @@ export interface TaskFollowUp {
 
 export interface Task {
   id: string; // Firestore doc id
+  /** Team ownership boundary (required for all new tasks). */
+  teamId: string; // FK -> teams.id
+  /** Optional: campaign module link (MVP: null). */
+  campaignId?: string | null; // FK -> campaigns.id
   sourceType: TaskSourceType;
   sourceChatId?: string | null; // FK -> chats.id
   sourceChatTitle?: string | null;

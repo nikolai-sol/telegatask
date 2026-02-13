@@ -1255,13 +1255,14 @@ async function handleChatCommand(ctx: Context<Update>): Promise<void> {
 
     const tasks = [];
     if (resolvedAssignees.length > 0) {
-      for (const assignee of resolvedAssignees) {
-        const task = await createTask({
-          sourceType: "chat_command",
-          sourceChatId: chat.id,
-          sourceChatTitle: "title" in message.chat ? message.chat.title ?? null : null,
-          sourceMessageId: repliedMessage?.message_id ?? message.message_id,
-          createdByUserId: createdByUser.id,
+	      for (const assignee of resolvedAssignees) {
+	        const task = await createTask({
+	          telegramChatId: message.chat.id.toString(),
+	          sourceType: "chat_command",
+	          sourceChatId: chat.id,
+	          sourceChatTitle: "title" in message.chat ? message.chat.title ?? null : null,
+	          sourceMessageId: repliedMessage?.message_id ?? message.message_id,
+	          createdByUserId: createdByUser.id,
           assignedUserId: assignee.id,
           title,
           description,
@@ -1270,13 +1271,14 @@ async function handleChatCommand(ctx: Context<Update>): Promise<void> {
         });
         tasks.push(task);
       }
-    } else {
-      const task = await createTask({
-        sourceType: "chat_command",
-        sourceChatId: chat.id,
-        sourceChatTitle: "title" in message.chat ? message.chat.title ?? null : null,
-        sourceMessageId: repliedMessage?.message_id ?? message.message_id,
-        createdByUserId: createdByUser.id,
+	    } else {
+	      const task = await createTask({
+	        telegramChatId: message.chat.id.toString(),
+	        sourceType: "chat_command",
+	        sourceChatId: chat.id,
+	        sourceChatTitle: "title" in message.chat ? message.chat.title ?? null : null,
+	        sourceMessageId: repliedMessage?.message_id ?? message.message_id,
+	        createdByUserId: createdByUser.id,
         assignedUserId: null,
         title,
         description,
@@ -1412,14 +1414,15 @@ async function handleAutoTaskFromChat(ctx: Context<Update>): Promise<void> {
     const dueDate = await resolveDueDate(description);
     const tasks = [];
 
-    if (resolvedAssignees.length > 0) {
-      for (const assignee of resolvedAssignees) {
-        const task = await createTask({
-          sourceType: "chat_auto",
-          sourceChatId: chat.id,
-          sourceChatTitle: chat.title,
-          sourceMessageId: repliedMessage?.message_id ?? message.message_id,
-          createdByUserId: createdByUser.id,
+	    if (resolvedAssignees.length > 0) {
+	      for (const assignee of resolvedAssignees) {
+	        const task = await createTask({
+	          telegramChatId: message.chat.id.toString(),
+	          sourceType: "chat_auto",
+	          sourceChatId: chat.id,
+	          sourceChatTitle: chat.title,
+	          sourceMessageId: repliedMessage?.message_id ?? message.message_id,
+	          createdByUserId: createdByUser.id,
           assignedUserId: assignee.id,
           title: "",
           description,
@@ -1428,13 +1431,14 @@ async function handleAutoTaskFromChat(ctx: Context<Update>): Promise<void> {
         });
         tasks.push(task);
       }
-    } else {
-      const task = await createTask({
-        sourceType: "chat_auto",
-        sourceChatId: chat.id,
-        sourceChatTitle: chat.title,
-        sourceMessageId: repliedMessage?.message_id ?? message.message_id,
-        createdByUserId: createdByUser.id,
+	    } else {
+	      const task = await createTask({
+	        telegramChatId: message.chat.id.toString(),
+	        sourceType: "chat_auto",
+	        sourceChatId: chat.id,
+	        sourceChatTitle: chat.title,
+	        sourceMessageId: repliedMessage?.message_id ?? message.message_id,
+	        createdByUserId: createdByUser.id,
         assignedUserId: null,
         title: "",
         description,
@@ -1594,13 +1598,14 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
 
       const tasks = [];
       if (combinedAssignees.length > 0) {
-        for (const assignee of combinedAssignees) {
-          const task = await createTask({
-            sourceType: "forward",
-            sourceChatId: pending.sourceChatId,
-            sourceChatTitle: pending.sourceChatTitle,
-            sourceMessageId: forwardedMessage.forward_from_message_id ?? null,
-            createdByUserId: pending.createdByUserId,
+	        for (const assignee of combinedAssignees) {
+	          const task = await createTask({
+	            telegramChatId: message.chat.id.toString(),
+	            sourceType: "forward",
+	            sourceChatId: pending.sourceChatId,
+	            sourceChatTitle: pending.sourceChatTitle,
+	            sourceMessageId: forwardedMessage.forward_from_message_id ?? null,
+	            createdByUserId: pending.createdByUserId,
             assignedUserId: assignee.id,
             title,
             description,
@@ -1609,13 +1614,14 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
           });
           tasks.push(task);
         }
-      } else {
-        const task = await createTask({
-          sourceType: "forward",
-          sourceChatId: pending.sourceChatId,
-          sourceChatTitle: pending.sourceChatTitle,
-          sourceMessageId: forwardedMessage.forward_from_message_id ?? null,
-          createdByUserId: pending.createdByUserId,
+	      } else {
+	        const task = await createTask({
+	          telegramChatId: message.chat.id.toString(),
+	          sourceType: "forward",
+	          sourceChatId: pending.sourceChatId,
+	          sourceChatTitle: pending.sourceChatTitle,
+	          sourceMessageId: forwardedMessage.forward_from_message_id ?? null,
+	          createdByUserId: pending.createdByUserId,
           assignedUserId: null,
           title,
           description,
@@ -1715,13 +1721,14 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
         return;
       }
 
-      for (const assignee of resolvedAssignees) {
-        const task = await createTask({
-          sourceType: "forward",
-          sourceChatId,
-          sourceChatTitle,
-          sourceMessageId: forwardedMessage.forward_from_message_id ?? null,
-          createdByUserId: author.id,
+	      for (const assignee of resolvedAssignees) {
+	        const task = await createTask({
+	          telegramChatId: message.chat.id.toString(),
+	          sourceType: "forward",
+	          sourceChatId,
+	          sourceChatTitle,
+	          sourceMessageId: forwardedMessage.forward_from_message_id ?? null,
+	          createdByUserId: author.id,
           assignedUserId: assignee.id,
           title,
           description,
@@ -1730,13 +1737,14 @@ async function handleForwardedMessage(ctx: Context<Update>): Promise<void> {
         });
         tasks.push(task);
       }
-    } else {
-      const task = await createTask({
-        sourceType: "forward",
-        sourceChatId,
-        sourceChatTitle,
-        sourceMessageId: forwardedMessage.forward_from_message_id ?? null,
-        createdByUserId: author.id,
+	    } else {
+	      const task = await createTask({
+	        telegramChatId: message.chat.id.toString(),
+	        sourceType: "forward",
+	        sourceChatId,
+	        sourceChatTitle,
+	        sourceMessageId: forwardedMessage.forward_from_message_id ?? null,
+	        createdByUserId: author.id,
         assignedUserId: null,
         title,
         description,
@@ -2709,14 +2717,15 @@ async function handleTaskCommand(ctx: Context<Update>): Promise<boolean> {
     const dueDate = await resolveDueDate(description);
     const tasks = [];
 
-    if (resolvedAssignees.length > 0) {
-      for (const assignee of resolvedAssignees) {
-        const task = await createTask({
-          sourceType: "chat_command",
-          sourceChatId,
-          sourceChatTitle,
-          sourceMessageId: repliedMessage?.message_id ?? message.message_id,
-          createdByUserId: createdByUser.id,
+	    if (resolvedAssignees.length > 0) {
+	      for (const assignee of resolvedAssignees) {
+	        const task = await createTask({
+	          telegramChatId: message.chat.id.toString(),
+	          sourceType: "chat_command",
+	          sourceChatId,
+	          sourceChatTitle,
+	          sourceMessageId: repliedMessage?.message_id ?? message.message_id,
+	          createdByUserId: createdByUser.id,
           assignedUserId: assignee.id,
           title: "",
           description,
@@ -2725,13 +2734,14 @@ async function handleTaskCommand(ctx: Context<Update>): Promise<boolean> {
         });
         tasks.push(task);
       }
-    } else {
-      const task = await createTask({
-        sourceType: "chat_command",
-        sourceChatId,
-        sourceChatTitle,
-        sourceMessageId: repliedMessage?.message_id ?? message.message_id,
-        createdByUserId: createdByUser.id,
+	    } else {
+	      const task = await createTask({
+	        telegramChatId: message.chat.id.toString(),
+	        sourceType: "chat_command",
+	        sourceChatId,
+	        sourceChatTitle,
+	        sourceMessageId: repliedMessage?.message_id ?? message.message_id,
+	        createdByUserId: createdByUser.id,
         assignedUserId: null,
         title: "",
         description,
@@ -3160,12 +3170,13 @@ async function handleParseChatCallback(
       if (assignees.length > 0) {
         for (const username of assignees) {
           const assignee = await upsertUserByUsername(username);
-          const created = await createTask({
-            sourceType: "chat_auto",
-            sourceChatId: chat.id,
-            sourceChatTitle: chat.title,
-            sourceMessageId: task.messageId,
-            createdByUserId: sourceMessage.fromUserId,
+	          const created = await createTask({
+	            telegramChatId: chat.telegramChatId.toString(),
+	            sourceType: "chat_auto",
+	            sourceChatId: chat.id,
+	            sourceChatTitle: chat.title,
+	            sourceMessageId: task.messageId,
+	            createdByUserId: sourceMessage.fromUserId,
             assignedUserId: assignee.id,
             title: "",
             description,
@@ -3181,12 +3192,13 @@ async function handleParseChatCallback(
           createdCount += 1;
         }
       } else {
-        const created = await createTask({
-          sourceType: "chat_auto",
-          sourceChatId: chat.id,
-          sourceChatTitle: chat.title,
-          sourceMessageId: task.messageId,
-          createdByUserId: sourceMessage.fromUserId,
+	        const created = await createTask({
+	          telegramChatId: chat.telegramChatId.toString(),
+	          sourceType: "chat_auto",
+	          sourceChatId: chat.id,
+	          sourceChatTitle: chat.title,
+	          sourceMessageId: task.messageId,
+	          createdByUserId: sourceMessage.fromUserId,
           assignedUserId: null,
           title: "",
           description,
