@@ -1,6 +1,5 @@
 import { setApiContext } from "./core/api.js";
-import { initStore } from "./core/store.js";
-import { app, state } from "./app.legacy.js";
+import { mountTasks } from "./modules/tasks/tasks.page.js";
 
 const tg = window.Telegram?.WebApp;
 
@@ -24,9 +23,7 @@ const apiBase = detectApiBase();
 const initData = tg?.initData || "";
 
 setApiContext({ apiBase, initData });
-initStore(state);
 
 document.addEventListener("DOMContentLoaded", () => {
-  app.init();
+  mountTasks();
 });
-

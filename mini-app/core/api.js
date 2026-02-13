@@ -32,6 +32,7 @@ export async function apiFetch(path, opts = {}) {
     method,
     headers,
     body,
+    signal: opts.signal,
   });
 
   const text = await res.text().catch(() => "");
@@ -51,4 +52,3 @@ export async function apiFetch(path, opts = {}) {
 
   return data;
 }
-
