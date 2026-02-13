@@ -5,6 +5,13 @@
 const tg = window.Telegram?.WebApp;
 const INIT_DATA = tg?.initData || "";
 
+const VLIST = {
+  itemHeight: 110,
+  overscan: 6,
+  maxItems: 120,
+  measured: false,
+};
+
 const state = {
   tasks: [],
   tab: "active", // active | done | all
@@ -25,10 +32,12 @@ const state = {
   query: "",
   queryTimer: null,
   filters: { today: false, overdue: false, p1: false, nodue: false },
+  vlistTasks: [],
 };
 
 const app = {
   sheetDrag: null,
+  vlistScrollHandler: null,
   init() {
     if (tg) {
       tg.ready();
@@ -231,6 +240,14 @@ const app = {
       this.deleteWithUndo(taskId);
     });
 
+    const viewport = document.getElementById("taskListViewport");
+    if (viewport instanceof HTMLElement) {
+      this.vlistScrollHandler = this.throttle(() => {
+        this.renderVirtualList(state.vlistTasks || []);
+      }, 16);
+      viewport.addEventListener("scroll", this.vlistScrollHandler, { passive: true });
+    }
+
     document.getElementById("taskList")?.addEventListener("click", (event) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
@@ -382,8 +399,9 @@ const app = {
     const emptyEl = document.getElementById("emptyState");
     const errorEl = document.getElementById("errorState");
     const listEl = document.getElementById("taskList");
+    const viewport = document.getElementById("taskListViewport");
 
-    if (!loadingEl || !emptyEl || !errorEl || !listEl) return;
+    if (!loadingEl || !emptyEl || !errorEl || !listEl || !viewport) return;
 
     this.renderTabs();
 
@@ -391,7 +409,7 @@ const app = {
       loadingEl.hidden = false;
       emptyEl.hidden = true;
       errorEl.hidden = true;
-      listEl.hidden = true;
+      viewport.hidden = true;
       this.renderSearchUi();
       return;
     }
@@ -405,15 +423,66 @@ const app = {
     if (!tasks.length) {
       this.renderEmptyState();
       emptyEl.hidden = false;
-      listEl.hidden = true;
+      viewport.hidden = true;
       return;
     }
 
     emptyEl.hidden = true;
-    listEl.hidden = false;
-    listEl.innerHTML = tasks.map((task) => this.renderTaskCard(task)).join("");
-    this.hydrateExpandableText();
+    viewport.hidden = false;
+    state.vlistTasks = tasks;
+    this.renderVirtualList(tasks);
     this.renderBulkBar();
+  },
+
+  renderVirtualList(allTasks) {
+    const viewport = document.getElementById("taskListViewport");
+    const topSpacer = document.getElementById("topSpacer");
+    const bottomSpacer = document.getElementById("bottomSpacer");
+    const list = document.getElementById("taskList");
+
+    if (!(viewport instanceof HTMLElement)) return;
+    if (!(topSpacer instanceof HTMLElement)) return;
+    if (!(bottomSpacer instanceof HTMLElement)) return;
+    if (!(list instanceof HTMLElement)) return;
+
+    const total = Array.isArray(allTasks) ? allTasks.length : 0;
+    if (total === 0) {
+      topSpacer.style.height = "0px";
+      bottomSpacer.style.height = "0px";
+      list.innerHTML = "";
+      return;
+    }
+
+    // Measure approximate card height once (median of 1..3 cards).
+    if (!VLIST.measured) {
+      const sample = allTasks.slice(0, Math.min(3, total));
+      list.innerHTML = sample.map((t) => this.renderTaskCard(t)).join("");
+      const heights = Array.from(list.querySelectorAll(".task-swipe"))
+        .map((el) => (el instanceof HTMLElement ? el.offsetHeight : 0))
+        .filter((h) => h > 40 && h < 260)
+        .sort((a, b) => a - b);
+      if (heights.length) {
+        VLIST.itemHeight = heights[Math.floor(heights.length / 2)];
+        VLIST.measured = true;
+      }
+    }
+
+    const scrollTop = viewport.scrollTop;
+    const viewportHeight = viewport.clientHeight || window.innerHeight;
+
+    const itemsPerScreen = Math.ceil(viewportHeight / VLIST.itemHeight);
+    const windowSize = Math.min(VLIST.maxItems, itemsPerScreen + VLIST.overscan * 2);
+
+    let start = Math.floor(scrollTop / VLIST.itemHeight) - VLIST.overscan;
+    start = Math.max(0, start);
+    let end = Math.min(total, start + windowSize);
+    start = Math.max(0, end - windowSize);
+
+    topSpacer.style.height = start * VLIST.itemHeight + "px";
+    bottomSpacer.style.height = (total - end) * VLIST.itemHeight + "px";
+
+    const windowTasks = allTasks.slice(start, end);
+    list.innerHTML = windowTasks.map((t) => this.renderTaskCard(t)).join("");
   },
 
   renderTabs() {
@@ -452,12 +521,13 @@ const app = {
     const emptyEl = document.getElementById("emptyState");
     const errorEl = document.getElementById("errorState");
     const listEl = document.getElementById("taskList");
+    const viewport = document.getElementById("taskListViewport");
 
-    if (!loadingEl || !emptyEl || !errorEl || !listEl) return;
+    if (!loadingEl || !emptyEl || !errorEl || !listEl || !viewport) return;
 
     loadingEl.hidden = true;
     emptyEl.hidden = true;
-    listEl.hidden = true;
+    viewport.hidden = true;
     errorEl.hidden = false;
   },
 
@@ -518,7 +588,6 @@ const app = {
 
   renderTaskCard(task) {
     const isDone = task.status === "done" || task.status === "cancelled";
-    const isExpanded = state.expandedTaskIds.has(task.id);
     const isSelected = state.selectedTaskIds.has(task.id);
     const title = this.escapeHtml(task.title || task.description || "Без названия");
 
@@ -544,14 +613,13 @@ const app = {
           <div class="bg-left">✅ Выполнено</div>
           <div class="bg-right">🗑 Удалить</div>
         </div>
-        <article class="task-card ${isDone ? "task-card--done" : ""} ${isExpanded ? "is-expanded" : ""}" data-task-id="${task.id}">
+        <article class="task-card ${isDone ? "task-card--done" : ""}" data-task-id="${task.id}">
           <button class="task-card__check ${isSelected ? "is-done" : ""}" data-action="toggle" data-task-id="${task.id}" type="button" aria-label="${isSelected ? "Снять выбор" : "Выбрать"}">
             <span class="task-card__check-circle">${isSelected ? "✓" : ""}</span>
           </button>
 
           <div class="task-card__content">
             <p class="task-card__title ${isDone ? "is-done" : ""}" data-role="title">${title}</p>
-            <button class="task-card__expand" data-action="expand" data-task-id="${task.id}" type="button">Показать</button>
             <div class="task-card__meta">
               ${dueChip}
               ${projectChip}
@@ -1572,6 +1640,25 @@ const app = {
     this.toastTimer = setTimeout(() => {
       toast.hidden = true;
     }, durationMs);
+  },
+
+  throttle(fn, waitMs) {
+    let last = 0;
+    let timer = null;
+    return (...args) => {
+      const now = Date.now();
+      const remaining = waitMs - (now - last);
+      if (remaining <= 0) {
+        last = now;
+        fn(...args);
+        return;
+      }
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        last = Date.now();
+        fn(...args);
+      }, remaining);
+    };
   },
 
   escapeHtml(value) {

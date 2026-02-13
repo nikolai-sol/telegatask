@@ -26,7 +26,10 @@ body {
 .app-shell {
   margin: 0 auto;
   max-width: 600px;
-  padding: 12px 14px calc(88px + env(safe-area-inset-bottom, 0px));
+  padding: 12px 14px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .app-header {
@@ -34,6 +37,11 @@ body {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
+}
+
+main {
+  flex: 1;
+  min-height: 0;
 }
 
 .app-header__eyebrow {
@@ -277,6 +285,18 @@ body {
   gap: 10px;
 }
 
+#taskListViewport {
+  height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px));
+}
+
+#topSpacer,
+#bottomSpacer {
+  height: 0px;
+}
+
 .task-swipe {
   background: var(--card);
   border: 1px solid var(--border);
@@ -406,21 +426,8 @@ body {
   text-decoration: line-through;
 }
 
-.task-card__expand {
-  background: transparent;
-  border: 0;
-  color: var(--accent);
-  cursor: pointer;
-  display: none;
-  font-size: 12px;
-  font-weight: 600;
-  margin-top: 4px;
-  padding: 2px 0;
-}
-
-.task-card__expand.is-visible {
-  display: inline-flex;
-}
+/* Expand/collapse is disabled in virtual list to keep card height stable. */
+.task-card__expand { display: none !important; }
 
 .task-card__meta {
   align-items: center;

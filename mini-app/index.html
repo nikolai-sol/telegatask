@@ -64,7 +64,11 @@
         <button id="retryButton" class="btn" type="button">Повторить</button>
       </section>
 
-      <section id="taskList" class="task-list" aria-live="polite"></section>
+      <div id="taskListViewport" aria-label="Список задач">
+        <div id="topSpacer"></div>
+        <div id="taskList" class="task-list" aria-live="polite"></div>
+        <div id="bottomSpacer"></div>
+      </div>
     </main>
   </div>
 
