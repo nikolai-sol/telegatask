@@ -223,6 +223,17 @@ export async function quickAdd(title, { campaignId = null } = {}) {
   const t = String(title || "").trim();
   if (!t) return;
 
+  if (campaignId) {
+    const s = getState() || {};
+    const campaigns = Array.isArray(s.campaigns) ? s.campaigns : [];
+    const c = campaigns.find((x) => x && x.id === campaignId);
+    const planned = c && typeof c.plannedBudget === "number" ? c.plannedBudget : null;
+    const spent = c && typeof c.spent === "number" ? c.spent : 0;
+    if (planned !== null && Number.isFinite(spent) && spent >= planned) {
+      showToast("This campaign is over budget");
+    }
+  }
+
   const tempId = `tmp-${Date.now()}`;
   const tempTask = {
     id: tempId,

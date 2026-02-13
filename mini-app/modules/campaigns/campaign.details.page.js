@@ -100,6 +100,8 @@ export function mountCampaignDetails(root, ctx = {}) {
       plannedBudget === null ? null : Math.max(0, plannedBudget - (Number.isFinite(spent) ? spent : 0));
     const progress =
       plannedBudget && plannedBudget > 0 ? Math.max(0, Math.min(1, spent / plannedBudget)) : 0;
+    const isOverBudget =
+      plannedBudget !== null && Number.isFinite(spent) && spent >= plannedBudget;
 
     const draft = financeDraft || { plannedBudget, spent, currency };
     const draftPlanned = draft.plannedBudget === null ? null : Number(draft.plannedBudget);
@@ -129,6 +131,7 @@ export function mountCampaignDetails(root, ctx = {}) {
               `
               : campaign
                 ? `
+                  ${isOverBudget ? `<div class="campaign-warning">Budget exceeded</div>` : ""}
                   <section class="campaign-details">
                     <div class="campaign-details__name">${escapeHtml(campaign.name || "Untitled")}</div>
                     <div class="campaign-details__row"><span class="campaign-details__k">Status</span><span class="campaign-details__v">${escapeHtml(campaign.status || "draft")}</span></div>
@@ -161,6 +164,7 @@ export function mountCampaignDetails(root, ctx = {}) {
                       ? `
                         <section class="settings-card campaign-tasks">
                           <div class="settings-card__title">Tasks</div>
+                          ${isOverBudget ? `<div class="campaign-warning">Budget exceeded</div>` : ""}
                           <div class="quick-add campaign-tasks__add">
                             <input id="campaignTaskInput" class="quick-add__input" type="text" placeholder="Добавить задачу в кампанию" maxlength="280" autocomplete="off">
                             <button id="campaignTaskAdd" class="quick-add__submit" type="button">+ Add task</button>
@@ -204,6 +208,7 @@ export function mountCampaignDetails(root, ctx = {}) {
                       ? `
                         <section class="settings-card">
                           <div class="settings-card__title">Finance</div>
+                          ${isOverBudget ? `<div class="campaign-warning">Budget exceeded</div>` : ""}
                           ${
                             financeEditing
                               ? `
