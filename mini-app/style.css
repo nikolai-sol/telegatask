@@ -882,6 +882,42 @@ main {
   margin-top: 8px;
 }
 
+.campaign-budget {
+  display: grid;
+  gap: 6px;
+}
+
+.campaign-budget--empty {
+  color: var(--hint);
+  font-weight: 650;
+}
+
+.campaign-budget__rows {
+  display: grid;
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.campaign-mini-progress {
+  background: color-mix(in srgb, var(--border) 70%, transparent);
+  border-radius: 999px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.campaign-mini-progress__fill {
+  background: var(--accent);
+  height: 100%;
+  width: 0%;
+  transition: width 160ms ease-out;
+}
+
+.campaign-mini-progress__fill--over {
+  background: var(--danger);
+}
+
 .chip--status-draft { color: var(--hint); }
 .chip--status-planned { color: #1565c0; }
 .chip--status-running { color: #2e7d32; }
