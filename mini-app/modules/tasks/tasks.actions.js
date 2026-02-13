@@ -39,7 +39,10 @@ export async function loadTasks(opts = {}) {
     const data = await api.fetchTasks({ scope });
     const tasks = Array.isArray(data?.tasks) ? data.tasks : [];
     const activeTeamRole = data?.activeTeamRole || null;
-    setState({ tasks, activeTeamRole, loading: false, tasksScope: data?.scope || scope });
+    const usersById = (data && typeof data === "object" && data.usersById && typeof data.usersById === "object")
+      ? data.usersById
+      : {};
+    setState({ tasks, usersById, activeTeamRole, loading: false, tasksScope: data?.scope || scope });
 
     // In Team scope, preload campaign names for grouping.
     if ((data?.scope || scope) === "team") {
@@ -59,6 +62,7 @@ export async function loadTasks(opts = {}) {
         const data = await api.fetchTasks({ scope: "my" });
         setState({
           tasks: Array.isArray(data?.tasks) ? data.tasks : [],
+          usersById: (data && typeof data === "object" && data.usersById && typeof data.usersById === "object") ? data.usersById : {},
           activeTeamRole: data?.activeTeamRole || null,
           loading: false,
           tasksScope: "my",

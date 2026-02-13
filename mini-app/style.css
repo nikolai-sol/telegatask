@@ -550,6 +550,12 @@ main {
   color: var(--danger);
 }
 
+.chip--assignee {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  color: color-mix(in srgb, var(--accent) 72%, var(--text) 28%);
+}
+
 .task-card__menu {
   align-items: center;
   background: transparent;

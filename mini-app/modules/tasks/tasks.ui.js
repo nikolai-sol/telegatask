@@ -65,6 +65,7 @@ const state = {
   tasks: [],
   tasksScope: "my", // my | team
   activeTeamRole: null, // "owner"|"account"|"project"|"viewer" (from backend)
+  usersById: {}, // { [userId]: { displayName, username } }
   tab: "active", // active | done | all
   loading: false,
   actionSheetTaskId: null,
@@ -779,6 +780,25 @@ const tasksApp = {
       ? `<span class="chip chip--priority-${task.priority}">${this.priorityLabel(task.priority)}</span>`
       : "";
 
+    const scope = String((getState() || state)?.tasksScope || "my").trim().toLowerCase() || "my";
+    let assigneeChip = "";
+    if (scope === "team") {
+      const usersById = (getState() || state)?.usersById || {};
+      const aid = task.assignedUserId ? String(task.assignedUserId) : "";
+      if (!aid) {
+        assigneeChip = `<span class="chip chip--assignee">Unassigned</span>`;
+      } else {
+        const u = usersById && typeof usersById === "object" ? usersById[aid] : null;
+        const username = u && u.username ? String(u.username).replace(/^@/, "") : "";
+        const displayName = u && u.displayName ? String(u.displayName) : "";
+        const labelRaw =
+          displayName ||
+          (username ? `@${username}` : "") ||
+          (aid.startsWith("username-") ? `@${aid.slice("username-".length)}` : aid.slice(0, 8));
+        assigneeChip = `<span class="chip chip--assignee">${this.escapeHtml(labelRaw)}</span>`;
+      }
+    }
+
     return `
       <div class="task-swipe" data-task-id="${task.id}">
         <div class="task-swipe-bg" aria-hidden="true">
@@ -794,6 +814,7 @@ const tasksApp = {
             <p class="task-card__title ${isDone ? "is-done" : ""}" data-role="title">${title}</p>
             <div class="task-card__meta">
               ${dueChip}
+              ${assigneeChip}
               ${projectChip}
               ${priorityChip}
             </div>

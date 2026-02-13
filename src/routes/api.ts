@@ -147,6 +147,20 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
 
     const role = await getUserRoleInTeam(userId, activeTeamId);
 
+    async function buildUsersById(tasks: any[]) {
+      const ids = new Set<string>();
+      (tasks || []).forEach((t) => {
+        if (t?.createdByUserId) ids.add(String(t.createdByUserId));
+        if (t?.assignedUserId) ids.add(String(t.assignedUserId));
+      });
+      const users = await getUsersByIds(Array.from(ids));
+      const usersById: Record<string, { displayName: string; username: string | null }> = {};
+      users.forEach((u) => {
+        usersById[u.id] = { displayName: u.displayName || `user-${u.id}`, username: u.username ?? null };
+      });
+      return usersById;
+    }
+
     if (scope === "team") {
       if (role === "viewer") {
         res.status(403).json({ error: "Access denied" });
@@ -174,7 +188,8 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       });
 
-      res.json({ tasks, scope, activeTeamId, activeTeamRole: role });
+      const usersById = await buildUsersById(tasks);
+      res.json({ tasks, usersById, scope, activeTeamId, activeTeamRole: role });
       return;
     }
 
@@ -218,7 +233,8 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
-    res.json({ tasks, scope: "my", activeTeamId, activeTeamRole: role });
+    const usersById = await buildUsersById(tasks);
+    res.json({ tasks, usersById, scope: "my", activeTeamId, activeTeamRole: role });
   } catch (err) {
     console.error("[API] GET /api/tasks error:", err);
     res.status(500).json({ error: "Internal error" });
