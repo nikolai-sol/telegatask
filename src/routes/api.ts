@@ -27,6 +27,8 @@ import { listTeamsByMemberId } from "../repositories/teamRepository";
 import { createProject, listProjectsByTeamId } from "../repositories/projectRepository";
 import { listChatsForScan } from "../repositories/chatRepository";
 import { getSchedulerStats } from "../services/scheduler";
+import { createCampaign, deleteCampaign, getCampaignById, listCampaignsByTeamId, updateCampaign } from "../repositories/campaignRepository";
+import { getRolePermissions, getUserRoleInTeam } from "../core/permissions/campaignPermissions";
 
 const router = Router();
 
@@ -264,6 +266,172 @@ router.get("/api/projects", webAppAuthMiddleware, async (req: Request, res: Resp
     });
   } catch (err) {
     console.error("[API] GET /api/projects error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
+// ─── GET /api/campaigns ───
+router.get("/api/campaigns", webAppAuthMiddleware, async (req: Request, res: Response) => {
+  try {
+    const tgUser = req.webAppData!.user;
+    const userId = await resolveUserId(tgUser.id);
+    if (!userId) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.json({ campaigns: [], activeTeamId: null });
+      return;
+    }
+
+    const role = await getUserRoleInTeam(userId, activeTeamId);
+    if (role === "viewer") {
+      // MVP: viewer sees nothing until we implement campaignMembers
+      res.json({ campaigns: [], activeTeamId });
+      return;
+    }
+
+    const campaigns = await listCampaignsByTeamId(activeTeamId);
+    res.json({ campaigns, activeTeamId });
+  } catch (err) {
+    console.error("[API] GET /api/campaigns error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
+// ─── POST /api/campaigns ───
+router.post("/api/campaigns", webAppAuthMiddleware, async (req: Request, res: Response) => {
+  try {
+    const tgUser = req.webAppData!.user;
+    const userId = await resolveUserId(tgUser.id);
+    if (!userId) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set" });
+      return;
+    }
+
+    const role = await getUserRoleInTeam(userId, activeTeamId);
+    const perms = getRolePermissions(role);
+    if (!perms.edit) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    const name = typeof req.body?.name === "string" ? req.body.name.trim() : "";
+    if (!name) {
+      res.status(400).json({ error: "Missing name" });
+      return;
+    }
+
+    const campaign = await createCampaign({
+      teamId: activeTeamId,
+      name,
+      status: "draft",
+      createdByUserId: userId,
+    });
+
+    res.json({ ok: true, campaign });
+  } catch (err) {
+    console.error("[API] POST /api/campaigns error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
+// ─── PATCH /api/campaigns/:id ───
+router.patch("/api/campaigns/:id", webAppAuthMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const tgUser = req.webAppData!.user;
+    const userId = await resolveUserId(tgUser.id);
+    if (!userId) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set" });
+      return;
+    }
+
+    const campaign = await getCampaignById(id);
+    if (!campaign) {
+      res.status(404).json({ error: "Campaign not found" });
+      return;
+    }
+
+    if (campaign.teamId !== activeTeamId) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    const role = await getUserRoleInTeam(userId, activeTeamId);
+    const perms = getRolePermissions(role);
+    if (!perms.edit) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    const name = typeof req.body?.name === "string" ? req.body.name.trim() : undefined;
+    const status = typeof req.body?.status === "string" ? req.body.status : undefined;
+    const valid = new Set(["draft", "planned", "running", "paused", "finished"]);
+    if (status !== undefined && !valid.has(status)) {
+      res.status(400).json({ error: "Invalid status" });
+      return;
+    }
+
+    await updateCampaign(id, { name, status: status as any });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("[API] PATCH /api/campaigns/:id error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
+// ─── DELETE /api/campaigns/:id ───
+router.delete("/api/campaigns/:id", webAppAuthMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const tgUser = req.webAppData!.user;
+    const userId = await resolveUserId(tgUser.id);
+    if (!userId) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set" });
+      return;
+    }
+
+    const campaign = await getCampaignById(id);
+    if (!campaign) {
+      res.status(404).json({ error: "Campaign not found" });
+      return;
+    }
+    if (campaign.teamId !== activeTeamId) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    const role = await getUserRoleInTeam(userId, activeTeamId);
+    if (!(role === "owner" || role === "account")) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    await deleteCampaign(id);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("[API] DELETE /api/campaigns/:id error:", err);
     res.status(500).json({ error: "Internal error" });
   }
 });
