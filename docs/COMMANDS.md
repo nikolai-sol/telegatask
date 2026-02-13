@@ -31,6 +31,7 @@
 | `/help` | `/помощь` |
 | `/projects` | `/проекты` |
 | `/setproject` | `/проект` |
+| `/project_manage` | — (UI-кнопка “Проекты”) |
 | `/team` | `/команда` |
 | `/link_team` | `/привязать_команду` |
 | `/admin` | `/админ` |
@@ -43,5 +44,6 @@
 | `/analyze` | `/анализ` |
 | `/digest` | `/дайджест` |
 | `/newtask` | `/новая` |
+| `/emelya` | — (UI-кнопка “Емеля”) |
 
 *Источник:* `src/config/commands.ts` — `COMMAND_RU_ALIASES`

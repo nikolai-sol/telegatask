@@ -8,6 +8,7 @@ export type ActionType =
   | "knowledge_added"
   | "knowledge_search"
   | "ask_executed"
+  | "emelya_requested"
   | "team_linked"
   | "role_set"
   | "permission_updated"
