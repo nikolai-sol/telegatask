@@ -13,6 +13,32 @@ const VLIST = {
   measured: false,
 };
 
+const COLLAPSE_LS_KEY = "telegatask:collapsedGroups";
+
+function loadCollapsedGroups() {
+  try {
+    const raw = localStorage.getItem(COLLAPSE_LS_KEY);
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return new Set(parsed.filter((x) => typeof x === "string"));
+    if (parsed && typeof parsed === "object") {
+      const keys = Object.keys(parsed).filter((k) => parsed[k]);
+      return new Set(keys);
+    }
+    return new Set();
+  } catch {
+    return new Set();
+  }
+}
+
+function saveCollapsedGroups(set) {
+  try {
+    localStorage.setItem(COLLAPSE_LS_KEY, JSON.stringify(Array.from(set)));
+  } catch {
+    // ignore
+  }
+}
+
 const state = {
   tasks: [],
   tab: "active", // active | done | all
@@ -36,6 +62,7 @@ const state = {
   vlistItems: [],
   vlistPrefix: null,
   vlistTotal: 0,
+  collapsedGroups: loadCollapsedGroups(), // Set<string>
 };
 
 const app = {
@@ -268,6 +295,13 @@ const app = {
     document.getElementById("taskList")?.addEventListener("click", (event) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
+
+      const groupHeader = target.closest(".group-header");
+      if (groupHeader instanceof HTMLElement) {
+        const key = groupHeader.dataset.groupKey;
+        if (key) this.toggleGroupCollapsed(key);
+        return;
+      }
 
       const cardEl = target.closest(".task-card");
       if (cardEl instanceof HTMLElement) {
@@ -550,13 +584,15 @@ const app = {
     const firstIndex = Math.min(items.length - 1, Math.max(0, this.lowerBound(prefix, viewport.scrollTop)));
     let i = firstIndex;
     if (items[i] && items[i].type === "header") {
-      sticky.textContent = items[i].title;
+      const c = Number.isFinite(items[i].count) ? items[i].count : 0;
+      sticky.textContent = `${items[i].title} (${c})`;
       sticky.hidden = false;
       return;
     }
     while (i >= 0) {
       if (items[i].type === "header") {
-        sticky.textContent = items[i].title;
+        const c = Number.isFinite(items[i].count) ? items[i].count : 0;
+        sticky.textContent = `${items[i].title} (${c})`;
         sticky.hidden = false;
         return;
       }
@@ -760,8 +796,18 @@ const app = {
   },
 
   renderGroupHeader(item) {
+    const key = String(item.key || "");
     const title = this.escapeHtml(item.title || "");
-    return `<div class="group-header" data-group-key="${this.escapeHtml(item.key || "")}">${title}</div>`;
+    const count = Number.isFinite(item.count) ? item.count : 0;
+    const isCollapsed = state.collapsedGroups && state.collapsedGroups.has(key);
+    const caret = isCollapsed ? "▸" : "▾";
+    const label = `${title} (${count})`;
+    return `
+      <button class="group-header" type="button" data-group-key="${this.escapeHtml(key)}" aria-expanded="${isCollapsed ? "false" : "true"}">
+        <span class="group-header__label">${label}</span>
+        <span class="group-header__caret" aria-hidden="true">${caret}</span>
+      </button>
+    `;
   },
 
   groupTasks(tasks) {
@@ -797,11 +843,14 @@ const app = {
   flattenGroupedTasks(tasks) {
     const groups = this.groupTasks(tasks);
     const result = [];
+    const collapsed = state.collapsedGroups || new Set();
 
     function pushGroup(key, title) {
-      if (groups[key].length) {
-        result.push({ type: "header", key, title });
-        groups[key].forEach((task) => result.push({ type: "task", task }));
+      const arr = groups[key] || [];
+      if (arr.length) {
+        result.push({ type: "header", key, title, count: arr.length });
+        if (collapsed.has(key)) return;
+        arr.forEach((task) => result.push({ type: "task", task }));
       }
     }
 
@@ -812,6 +861,15 @@ const app = {
     pushGroup("nodue", "Без даты");
 
     return result;
+  },
+
+  toggleGroupCollapsed(key) {
+    if (!state.collapsedGroups) state.collapsedGroups = new Set();
+    if (state.collapsedGroups.has(key)) state.collapsedGroups.delete(key);
+    else state.collapsedGroups.add(key);
+    saveCollapsedGroups(state.collapsedGroups);
+    this.haptic("light");
+    this.render();
   },
 
   buildPrefixHeights(items) {
