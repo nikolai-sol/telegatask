@@ -9,6 +9,24 @@ import * as actions from "./tasks.actions.js";
 const tg = window.Telegram?.WebApp;
 const INIT_DATA = tg?.initData || "";
 
+function $id(id) {
+  const root = tasksApp.root;
+  if (root instanceof HTMLElement) return root.querySelector(`#${id}`);
+  return document.getElementById(id);
+}
+
+function $one(sel) {
+  const root = tasksApp.root;
+  if (root instanceof HTMLElement) return root.querySelector(sel);
+  return document.querySelector(sel);
+}
+
+function $all(sel) {
+  const root = tasksApp.root;
+  if (root instanceof HTMLElement) return root.querySelectorAll(sel);
+  return document.querySelectorAll(sel);
+}
+
 const VLIST = {
   taskHeight: 110,
   headerHeight: 40,
@@ -72,7 +90,19 @@ const state = {
 const tasksApp = {
   sheetDrag: null,
   vlistScrollHandler: null,
-  init() {
+  root: null,
+  abort: null,
+  init(rootEl) {
+    if (rootEl instanceof HTMLElement) this.root = rootEl;
+    if (this.abort) {
+      try {
+        this.abort.abort();
+      } catch {
+        // ignore
+      }
+    }
+    this.abort = new AbortController();
+
     if (tg) {
       tg.ready();
       tg.expand();
@@ -82,6 +112,36 @@ const tasksApp = {
     this.bindUi();
     // Initial UI comes from store.subscribe() when loadTasks sets loading=true.
     this.loadTasks();
+  },
+  destroy() {
+    try {
+      if (this.abort) this.abort.abort();
+    } catch {
+      // ignore
+    } finally {
+      this.abort = null;
+    }
+
+    // best-effort timers cleanup (avoid leaks across router pages)
+    try {
+      if (state.queryTimer) clearTimeout(state.queryTimer);
+      if (state.suggestTimer) clearTimeout(state.suggestTimer);
+      if (state.taskSheetTimer) clearTimeout(state.taskSheetTimer);
+      state.queryTimer = null;
+      state.suggestTimer = null;
+      state.taskSheetTimer = null;
+    } catch {
+      // ignore
+    }
+
+    try {
+      if (state.suggestAbort) state.suggestAbort.abort();
+      state.suggestAbort = null;
+    } catch {
+      // ignore
+    }
+
+    this.root = null;
   },
 
   detectApiBase() {
@@ -111,7 +171,8 @@ const tasksApp = {
   },
 
   bindUi() {
-    const tabs = document.querySelectorAll(".tab");
+    const signal = this.abort?.signal;
+    const tabs = $all(".tab");
     tabs.forEach((tabBtn) => {
       tabBtn.addEventListener("click", () => {
         // Keep search/query/filters, but reset selection when switching tabs.
@@ -120,25 +181,25 @@ const tasksApp = {
         }
         setState({ tab: tabBtn.dataset.tab || "active" });
         this.haptic("light");
-      });
+      }, signal ? { signal } : undefined);
     });
 
-    document.getElementById("retryButton")?.addEventListener("click", () => {
+    $id("retryButton")?.addEventListener("click", () => {
       this.loadTasks();
-    });
+    }, signal ? { signal } : undefined);
 
-    document.getElementById("fabAdd")?.addEventListener("click", () => {
+    $id("fabAdd")?.addEventListener("click", () => {
       this.openQuickAdd();
-    });
+    }, signal ? { signal } : undefined);
 
-    document.getElementById("fabSearch")?.addEventListener("click", () => {
+    $id("fabSearch")?.addEventListener("click", () => {
       this.toggleSearchPanel();
-    });
+    }, signal ? { signal } : undefined);
 
-    document.getElementById("searchInput")?.addEventListener("input", () => {
+    $id("searchInput")?.addEventListener("input", () => {
       this.onSearchInput();
-    });
-    document.getElementById("searchInput")?.addEventListener("keydown", (event) => {
+    }, signal ? { signal } : undefined);
+    $id("searchInput")?.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         event.preventDefault();
         this.applySearchAndClose();
@@ -146,28 +207,28 @@ const tasksApp = {
       if (event.key === "Escape") {
         this.closeSearchPanel();
       }
-    });
-    document.getElementById("searchClear")?.addEventListener("click", () => {
+    }, signal ? { signal } : undefined);
+    $id("searchClear")?.addEventListener("click", () => {
       this.clearSearch();
-    });
-    document.getElementById("filterChips")?.addEventListener("click", (event) => {
+    }, signal ? { signal } : undefined);
+    $id("filterChips")?.addEventListener("click", (event) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
       const btn = target.closest("[data-filter]");
       if (!(btn instanceof HTMLElement)) return;
       const key = btn.dataset.filter || "";
       this.toggleFilter(key);
-    });
+    }, signal ? { signal } : undefined);
 
-    document.getElementById("filterMenuButton")?.addEventListener("click", () => {
+    $id("filterMenuButton")?.addEventListener("click", () => {
       this.openFilterMenu();
-    });
+    }, signal ? { signal } : undefined);
 
-    document.getElementById("quickAddSubmit")?.addEventListener("click", () => {
+    $id("quickAddSubmit")?.addEventListener("click", () => {
       this.submitQuickAdd();
-    });
+    }, signal ? { signal } : undefined);
 
-    document.getElementById("quickAddInput")?.addEventListener("keydown", (event) => {
+    $id("quickAddInput")?.addEventListener("keydown", (event) => {
       if (event.key === "Enter") {
         event.preventDefault();
         this.submitQuickAdd();
@@ -175,94 +236,94 @@ const tasksApp = {
       if (event.key === "Escape") {
         this.closeQuickAdd();
       }
-    });
-    document.getElementById("quickAddInput")?.addEventListener("input", () => {
+    }, signal ? { signal } : undefined);
+    $id("quickAddInput")?.addEventListener("input", () => {
       this.onQuickAddInput();
-    });
+    }, signal ? { signal } : undefined);
     document.addEventListener("click", (event) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
       if (target.closest("#mentionSuggest") || target.closest("#quickAdd")) return;
       this.hideSuggest();
-    });
+    }, signal ? { signal } : undefined);
 
-    document.getElementById("mentionSuggest")?.addEventListener("click", (event) => {
+    $id("mentionSuggest")?.addEventListener("click", (event) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
       const item = target.closest("[data-username]");
       if (!(item instanceof HTMLElement)) return;
       const username = item.dataset.username;
       if (username) this.applyMention(username);
-    });
+    }, signal ? { signal } : undefined);
 
-    document.getElementById("sheetBackdrop")?.addEventListener("click", () => {
+    $id("sheetBackdrop")?.addEventListener("click", () => {
       this.closeActionSheet();
-    });
-    document.getElementById("sheetCancel")?.addEventListener("click", () => {
+    }, signal ? { signal } : undefined);
+    $id("sheetCancel")?.addEventListener("click", () => {
       this.closeActionSheet();
-    });
-    document.getElementById("sheetToggleDone")?.addEventListener("click", () => {
+    }, signal ? { signal } : undefined);
+    $id("sheetToggleDone")?.addEventListener("click", () => {
       const taskId = state.actionSheetTaskId;
       this.closeActionSheet();
       if (taskId) actions.toggleDone(taskId);
-    });
-    document.getElementById("sheetDelete")?.addEventListener("click", () => {
+    }, signal ? { signal } : undefined);
+    $id("sheetDelete")?.addEventListener("click", () => {
       const taskId = state.actionSheetTaskId;
       this.closeActionSheet();
       if (taskId) actions.deleteTask(taskId, { withUndo: true });
-    });
-    document.getElementById("sheetMove")?.addEventListener("click", () => {
+    }, signal ? { signal } : undefined);
+    $id("sheetMove")?.addEventListener("click", () => {
       const taskId = state.actionSheetTaskId;
       this.closeActionSheet();
       if (taskId) this.openProjectPicker([taskId]);
-    });
+    }, signal ? { signal } : undefined);
 
-    document.getElementById("bulkCancel")?.addEventListener("click", () => {
+    $id("bulkCancel")?.addEventListener("click", () => {
       this.clearSelection();
-    });
-    document.getElementById("bulkDone")?.addEventListener("click", () => {
+    }, signal ? { signal } : undefined);
+    $id("bulkDone")?.addEventListener("click", () => {
       const ids = Array.from(state.selectedTaskIds);
       if (!ids.length) return;
       state.selectedTaskIds.clear();
       actions.bulkDone(ids);
-    });
-    document.getElementById("bulkMove")?.addEventListener("click", () => {
+    }, signal ? { signal } : undefined);
+    $id("bulkMove")?.addEventListener("click", () => {
       const ids = Array.from(state.selectedTaskIds);
       if (!ids.length) return;
       this.openProjectPicker(ids);
-    });
-    document.getElementById("bulkDelete")?.addEventListener("click", () => {
+    }, signal ? { signal } : undefined);
+    $id("bulkDelete")?.addEventListener("click", () => {
       const ids = Array.from(state.selectedTaskIds);
       if (!ids.length) return;
       state.selectedTaskIds.clear();
       actions.bulkDelete(ids);
-    });
+    }, signal ? { signal } : undefined);
 
-    document.getElementById("projectBackdrop")?.addEventListener("click", () => {
+    $id("projectBackdrop")?.addEventListener("click", () => {
       this.closeProjectPicker();
-    });
-    document.getElementById("projectCancel")?.addEventListener("click", () => {
+    }, signal ? { signal } : undefined);
+    $id("projectCancel")?.addEventListener("click", () => {
       this.closeProjectPicker();
-    });
-    document.getElementById("projectList")?.addEventListener("click", (event) => {
+    }, signal ? { signal } : undefined);
+    $id("projectList")?.addEventListener("click", (event) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
       const btn = target.closest("[data-project-id]");
       if (!(btn instanceof HTMLElement)) return;
       const projectId = btn.dataset.projectId || "";
       this.applyProjectToPickedTasks(projectId || null);
-    });
+    }, signal ? { signal } : undefined);
 
-    document.getElementById("sheetOverlay")?.addEventListener("click", () => {
+    $id("sheetOverlay")?.addEventListener("click", () => {
       this.closeTaskSheet();
-    });
-    document.getElementById("taskSheetClose")?.addEventListener("click", () => {
+    }, signal ? { signal } : undefined);
+    $id("taskSheetClose")?.addEventListener("click", () => {
       this.closeTaskSheet();
-    });
-    document.getElementById("taskSheetTitle")?.addEventListener("input", () => {
+    }, signal ? { signal } : undefined);
+    $id("taskSheetTitle")?.addEventListener("input", () => {
       this.onTaskSheetChangeDebounced();
-    });
-    document.getElementById("taskSheet")?.addEventListener("click", (event) => {
+    }, signal ? { signal } : undefined);
+    $id("taskSheet")?.addEventListener("click", (event) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
 
@@ -280,27 +341,27 @@ const tasksApp = {
         return;
       }
     });
-    document.getElementById("taskSheetDone")?.addEventListener("click", () => {
+    $id("taskSheetDone")?.addEventListener("click", () => {
       const taskId = state.taskSheetTaskId;
       if (taskId) actions.toggleDone(taskId);
-    });
-    document.getElementById("taskSheetDelete")?.addEventListener("click", () => {
+    }, signal ? { signal } : undefined);
+    $id("taskSheetDelete")?.addEventListener("click", () => {
       const taskId = state.taskSheetTaskId;
       if (!taskId) return;
       this.closeTaskSheet();
       actions.deleteTask(taskId, { withUndo: true });
-    });
+    }, signal ? { signal } : undefined);
 
-    const viewport = document.getElementById("taskListViewport");
+    const viewport = $id("taskListViewport");
     if (viewport instanceof HTMLElement) {
       this.vlistScrollHandler = this.throttle(() => {
         this.renderVirtualList(state.vlistItems || []);
         this.updateStickyGroupHeader();
       }, 16);
-      viewport.addEventListener("scroll", this.vlistScrollHandler, { passive: true });
+      viewport.addEventListener("scroll", this.vlistScrollHandler, signal ? { passive: true, signal } : { passive: true });
     }
 
-    document.getElementById("taskList")?.addEventListener("click", (event) => {
+    $id("taskList")?.addEventListener("click", (event) => {
       const target = event.target;
       if (!(target instanceof Element)) return;
 
@@ -344,18 +405,18 @@ const tasksApp = {
       }
     });
 
-    const list = document.getElementById("taskList");
-    list?.addEventListener("pointerdown", (event) => this.onSwipePointerDown(event));
-    list?.addEventListener("pointermove", (event) => this.onSwipePointerMove(event));
-    list?.addEventListener("pointerup", (event) => this.onSwipePointerUp(event));
-    list?.addEventListener("pointercancel", (event) => this.onSwipePointerUp(event));
+    const list = $id("taskList");
+    list?.addEventListener("pointerdown", (event) => this.onSwipePointerDown(event), signal ? { signal } : undefined);
+    list?.addEventListener("pointermove", (event) => this.onSwipePointerMove(event), signal ? { signal } : undefined);
+    list?.addEventListener("pointerup", (event) => this.onSwipePointerUp(event), signal ? { signal } : undefined);
+    list?.addEventListener("pointercancel", (event) => this.onSwipePointerUp(event), signal ? { signal } : undefined);
 
     // Swipe down to close details sheet (optional)
-    const sheet = document.getElementById("taskSheet");
-    sheet?.addEventListener("pointerdown", (event) => this.onSheetPointerDown(event));
-    sheet?.addEventListener("pointermove", (event) => this.onSheetPointerMove(event));
-    sheet?.addEventListener("pointerup", (event) => this.onSheetPointerUp(event));
-    sheet?.addEventListener("pointercancel", (event) => this.onSheetPointerUp(event));
+    const sheet = $id("taskSheet");
+    sheet?.addEventListener("pointerdown", (event) => this.onSheetPointerDown(event), signal ? { signal } : undefined);
+    sheet?.addEventListener("pointermove", (event) => this.onSheetPointerMove(event), signal ? { signal } : undefined);
+    sheet?.addEventListener("pointerup", (event) => this.onSheetPointerUp(event), signal ? { signal } : undefined);
+    sheet?.addEventListener("pointercancel", (event) => this.onSheetPointerUp(event), signal ? { signal } : undefined);
   },
 
   async loadTasks() {
@@ -372,12 +433,12 @@ const tasksApp = {
     const visibleTasks = view?.visibleTasks || [];
     const items = view?.items || [];
     const emptyText = view?.emptyText;
-    const loadingEl = document.getElementById("loadingState");
-    const emptyEl = document.getElementById("emptyState");
-    const errorEl = document.getElementById("errorState");
-    const listEl = document.getElementById("taskList");
-    const viewport = document.getElementById("taskListViewport");
-    const sticky = document.getElementById("stickyGroupHeader");
+    const loadingEl = $id("loadingState");
+    const emptyEl = $id("emptyState");
+    const errorEl = $id("errorState");
+    const listEl = $id("taskList");
+    const viewport = $id("taskListViewport");
+    const sticky = $id("stickyGroupHeader");
 
     if (!loadingEl || !emptyEl || !errorEl || !listEl || !viewport || !sticky) return;
 
@@ -417,10 +478,10 @@ const tasksApp = {
   },
 
   renderVirtualList(flatList) {
-    const viewport = document.getElementById("taskListViewport");
-    const topSpacer = document.getElementById("topSpacer");
-    const bottomSpacer = document.getElementById("bottomSpacer");
-    const list = document.getElementById("taskList");
+    const viewport = $id("taskListViewport");
+    const topSpacer = $id("topSpacer");
+    const bottomSpacer = $id("bottomSpacer");
+    const list = $id("taskList");
 
     if (!(viewport instanceof HTMLElement)) return;
     if (!(topSpacer instanceof HTMLElement)) return;
@@ -488,8 +549,8 @@ const tasksApp = {
   },
 
   updateStickyGroupHeader() {
-    const sticky = document.getElementById("stickyGroupHeader");
-    const viewport = document.getElementById("taskListViewport");
+    const sticky = $id("stickyGroupHeader");
+    const viewport = $id("taskListViewport");
     if (!(sticky instanceof HTMLElement) || !(viewport instanceof HTMLElement)) return;
 
     const items = state.vlistItems || [];
@@ -526,23 +587,23 @@ const tasksApp = {
   },
 
   renderTabs() {
-    document.querySelectorAll(".tab").forEach((tabBtn) => {
+    $all(".tab").forEach((tabBtn) => {
       tabBtn.classList.toggle("active", tabBtn.dataset.tab === state.tab);
     });
   },
 
   renderEmptyState(emptyText) {
-    const textEl = document.getElementById("emptyStateText");
+    const textEl = $id("emptyStateText");
     if (!textEl) return;
     textEl.textContent = String(emptyText || "Нет задач");
   },
 
   showErrorState() {
-    const loadingEl = document.getElementById("loadingState");
-    const emptyEl = document.getElementById("emptyState");
-    const errorEl = document.getElementById("errorState");
-    const listEl = document.getElementById("taskList");
-    const viewport = document.getElementById("taskListViewport");
+    const loadingEl = $id("loadingState");
+    const emptyEl = $id("emptyState");
+    const errorEl = $id("errorState");
+    const listEl = $id("taskList");
+    const viewport = $id("taskListViewport");
 
     if (!loadingEl || !emptyEl || !errorEl || !listEl || !viewport) return;
 
@@ -553,8 +614,8 @@ const tasksApp = {
   },
 
   renderSearchUi() {
-    const input = document.getElementById("searchInput");
-    const clear = document.getElementById("searchClear");
+    const input = $id("searchInput");
+    const clear = $id("searchClear");
     if (input instanceof HTMLInputElement) {
       if (input.value !== state.query && document.activeElement !== input) {
         // keep input in sync when changed elsewhere
@@ -566,7 +627,7 @@ const tasksApp = {
       clear.hidden = !has;
     }
 
-    document.querySelectorAll("#filterChips [data-filter]").forEach((el) => {
+    $all("#filterChips [data-filter]").forEach((el) => {
       if (!(el instanceof HTMLElement)) return;
       const k = el.dataset.filter;
       if (!k) return;
@@ -575,8 +636,8 @@ const tasksApp = {
   },
 
   openSearchPanel() {
-    const panel = document.getElementById("searchPanel");
-    const input = document.getElementById("searchInput");
+    const panel = $id("searchPanel");
+    const input = $id("searchInput");
     if (!(panel instanceof HTMLElement)) return;
 
     // Avoid stacking top panels.
@@ -592,22 +653,22 @@ const tasksApp = {
   },
 
   closeSearchPanel() {
-    const panel = document.getElementById("searchPanel");
-    const input = document.getElementById("searchInput");
+    const panel = $id("searchPanel");
+    const input = $id("searchInput");
     if (!(panel instanceof HTMLElement)) return;
     panel.hidden = true;
     if (input instanceof HTMLInputElement) input.blur();
   },
 
   toggleSearchPanel() {
-    const panel = document.getElementById("searchPanel");
+    const panel = $id("searchPanel");
     if (!(panel instanceof HTMLElement)) return;
     if (panel.hidden) this.openSearchPanel();
     else this.closeSearchPanel();
   },
 
   applySearchAndClose() {
-    const input = document.getElementById("searchInput");
+    const input = $id("searchInput");
     if (!(input instanceof HTMLInputElement)) {
       this.closeSearchPanel();
       return;
@@ -620,11 +681,11 @@ const tasksApp = {
   },
 
   onSearchInput() {
-    const input = document.getElementById("searchInput");
+    const input = $id("searchInput");
     if (!(input instanceof HTMLInputElement)) return;
     const next = input.value;
 
-    const clear = document.getElementById("searchClear");
+    const clear = $id("searchClear");
     if (clear instanceof HTMLElement) clear.hidden = next.trim().length === 0;
 
     clearTimeout(state.queryTimer);
@@ -634,7 +695,7 @@ const tasksApp = {
   },
 
   clearSearch() {
-    const input = document.getElementById("searchInput");
+    const input = $id("searchInput");
     if (input instanceof HTMLInputElement) {
       input.value = "";
       input.focus();
@@ -752,10 +813,10 @@ const tasksApp = {
 
     state.taskSheetTaskId = taskId;
 
-    const overlay = document.getElementById("sheetOverlay");
-    const sheet = document.getElementById("taskSheet");
-    const titleInput = document.getElementById("taskSheetTitle");
-    const projectEl = document.getElementById("taskSheetProject");
+    const overlay = $id("sheetOverlay");
+    const sheet = $id("taskSheet");
+    const titleInput = $id("taskSheetTitle");
+    const projectEl = $id("taskSheetProject");
 
     if (!(overlay instanceof HTMLElement) || !(sheet instanceof HTMLElement)) return;
     if (titleInput instanceof HTMLInputElement) {
@@ -777,8 +838,8 @@ const tasksApp = {
   },
 
   closeTaskSheet() {
-    const overlay = document.getElementById("sheetOverlay");
-    const sheet = document.getElementById("taskSheet");
+    const overlay = $id("sheetOverlay");
+    const sheet = $id("taskSheet");
     if (!(overlay instanceof HTMLElement) || !(sheet instanceof HTMLElement)) return;
     sheet.classList.remove("is-open");
     setTimeout(() => {
@@ -789,7 +850,7 @@ const tasksApp = {
   },
 
   syncTaskSheetChips(task) {
-    const sheet = document.getElementById("taskSheet");
+    const sheet = $id("taskSheet");
     if (!(sheet instanceof HTMLElement)) return;
 
     const due = this.getDueKind(task.dueDate);
@@ -865,7 +926,7 @@ const tasksApp = {
     const task = (Array.isArray(s.tasks) ? s.tasks : []).find((t) => t.id === taskId);
     if (!task) return;
 
-    const titleEl = document.getElementById("taskSheetTitle");
+    const titleEl = $id("taskSheetTitle");
     const title = titleEl instanceof HTMLInputElement ? titleEl.value.trim() : (task.title || task.description || "");
 
     await actions.updateTask(taskId, {
@@ -878,7 +939,7 @@ const tasksApp = {
 
   onSheetPointerDown(event) {
     if (!(event instanceof PointerEvent)) return;
-    const sheet = document.getElementById("taskSheet");
+    const sheet = $id("taskSheet");
     if (!(sheet instanceof HTMLElement) || sheet.hidden) return;
     // Only if started on header/handle area
     if (!event.target || !(event.target instanceof Element)) return;
@@ -889,7 +950,7 @@ const tasksApp = {
 
   onSheetPointerMove(event) {
     if (!(event instanceof PointerEvent)) return;
-    const sheet = document.getElementById("taskSheet");
+    const sheet = $id("taskSheet");
     if (!(sheet instanceof HTMLElement)) return;
     const s = this.sheetDrag;
     if (!s || s.id !== event.pointerId) return;
@@ -904,7 +965,7 @@ const tasksApp = {
 
   onSheetPointerUp(event) {
     if (!(event instanceof PointerEvent)) return;
-    const sheet = document.getElementById("taskSheet");
+    const sheet = $id("taskSheet");
     if (!(sheet instanceof HTMLElement)) return;
     const s = this.sheetDrag;
     if (!s || s.id !== event.pointerId) return;
@@ -940,8 +1001,8 @@ const tasksApp = {
     state.projectPicker = { taskIds: [...taskIds] };
     await this.loadProjects();
 
-    const sheet = document.getElementById("projectSheet");
-    const listEl = document.getElementById("projectList");
+    const sheet = $id("projectSheet");
+    const listEl = $id("projectList");
     if (!(sheet instanceof HTMLElement) || !(listEl instanceof HTMLElement)) return;
 
     const projects = state.projects?.list || [];
@@ -957,7 +1018,7 @@ const tasksApp = {
   },
 
   closeProjectPicker() {
-    const sheet = document.getElementById("projectSheet");
+    const sheet = $id("projectSheet");
     if (sheet) sheet.hidden = true;
     state.projectPicker = null;
   },
@@ -975,7 +1036,7 @@ const tasksApp = {
   },
 
   hydrateExpandableText() {
-    const cards = document.querySelectorAll(".task-card");
+    const cards = $all(".task-card");
 
     cards.forEach((card) => {
       const titleEl = card.querySelector("[data-role='title']");
@@ -1181,8 +1242,8 @@ const tasksApp = {
   },
 
   renderBulkBar() {
-    const bar = document.getElementById("bulkBar");
-    const countEl = document.getElementById("bulkCount");
+    const bar = $id("bulkBar");
+    const countEl = $id("bulkCount");
     if (!(bar instanceof HTMLElement) || !(countEl instanceof HTMLElement)) return;
     const n = state.selectedTaskIds.size;
     bar.hidden = n === 0;
@@ -1212,8 +1273,8 @@ const tasksApp = {
 
     state.actionSheetTaskId = taskId;
 
-    const toggleBtn = document.getElementById("sheetToggleDone");
-    const sheet = document.getElementById("actionSheet");
+    const toggleBtn = $id("sheetToggleDone");
+    const sheet = $id("actionSheet");
     if (toggleBtn) {
       const done = task.status === "done" || task.status === "cancelled";
       toggleBtn.textContent = done ? "Вернуть в активные" : "Отметить выполненной";
@@ -1222,14 +1283,14 @@ const tasksApp = {
   },
 
   closeActionSheet() {
-    const sheet = document.getElementById("actionSheet");
+    const sheet = $id("actionSheet");
     if (sheet) sheet.hidden = true;
     state.actionSheetTaskId = null;
   },
 
   openQuickAdd() {
-    const wrap = document.getElementById("quickAdd");
-    const input = document.getElementById("quickAddInput");
+    const wrap = $id("quickAdd");
+    const input = $id("quickAddInput");
     if (!(wrap instanceof HTMLElement) || !(input instanceof HTMLInputElement)) return;
 
     state.quickAddOpen = true;
@@ -1238,8 +1299,8 @@ const tasksApp = {
   },
 
   closeQuickAdd() {
-    const wrap = document.getElementById("quickAdd");
-    const input = document.getElementById("quickAddInput");
+    const wrap = $id("quickAdd");
+    const input = $id("quickAddInput");
     if (!(wrap instanceof HTMLElement) || !(input instanceof HTMLInputElement)) return;
 
     input.value = "";
@@ -1248,7 +1309,7 @@ const tasksApp = {
   },
 
   async submitQuickAdd() {
-    const input = document.getElementById("quickAddInput");
+    const input = $id("quickAddInput");
     if (!(input instanceof HTMLInputElement)) return;
 
     const title = input.value.trim();
@@ -1263,7 +1324,7 @@ const tasksApp = {
   },
 
   onQuickAddInput() {
-    const input = document.getElementById("quickAddInput");
+    const input = $id("quickAddInput");
     if (!(input instanceof HTMLInputElement)) return;
 
     const ctx = this.getMentionContext(input.value, input.selectionStart ?? input.value.length);
@@ -1306,7 +1367,7 @@ const tasksApp = {
   },
 
   renderSuggest(users) {
-    const box = document.getElementById("mentionSuggest");
+    const box = $id("mentionSuggest");
     if (!(box instanceof HTMLElement)) return;
     if (!users.length) {
       box.hidden = true;
@@ -1326,14 +1387,14 @@ const tasksApp = {
   },
 
   hideSuggest() {
-    const box = document.getElementById("mentionSuggest");
+    const box = $id("mentionSuggest");
     if (!(box instanceof HTMLElement)) return;
     box.hidden = true;
     box.innerHTML = "";
   },
 
   applyMention(username) {
-    const input = document.getElementById("quickAddInput");
+    const input = $id("quickAddInput");
     if (!(input instanceof HTMLInputElement)) return;
 
     const pos = input.selectionStart ?? input.value.length;

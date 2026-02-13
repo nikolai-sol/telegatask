@@ -23,6 +23,14 @@ function setTasks(tasks) {
 
 const inFlight = new Map(); // taskId -> true
 
+export function cleanupTasksActions() {
+  if (pendingDelete) {
+    clearTimeout(pendingDelete.timerId);
+    pendingDelete = null;
+  }
+  inFlight.clear();
+}
+
 export async function loadTasks() {
   setState({ loading: true });
   try {
