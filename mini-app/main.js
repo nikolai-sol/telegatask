@@ -1,6 +1,7 @@
 import { setApiContext } from "./core/api.js";
 import { mountTasks } from "./modules/tasks/tasks.page.js";
 import { mountCampaigns } from "./modules/campaigns/campaigns.page.js";
+import { mountCampaignDetails } from "./modules/campaigns/campaign.details.page.js";
 import { mountSettings } from "./modules/settings/settings.page.js";
 import { startRouter } from "./core/router.js";
 
@@ -37,6 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     routes: {
       "#/tasks": (el) => mountTasks(el),
       "#/campaigns": (el) => mountCampaigns(el),
+      "#/campaigns/:id": (el, ctx) => mountCampaignDetails(el, ctx),
       "#/settings": (el) => mountSettings(el),
     },
   });

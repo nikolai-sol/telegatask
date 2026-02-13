@@ -1,4 +1,4 @@
-import { initStore, getState, subscribe } from "../../core/store.js";
+import { initStore, getState, setState, subscribe } from "../../core/store.js";
 import { tasksApp, state as initialState } from "./tasks.ui.js";
 import * as selectors from "./tasks.selectors.js";
 import { cleanupTasksActions } from "./tasks.actions.js";
@@ -167,7 +167,16 @@ export function mountTasks(rootEl) {
   const unmountNav = mountBottomNav(rootEl, "tasks");
 
   // Initialize store once. For now we keep initial state colocated with tasks module.
-  if (!getState()) initStore(initialState);
+  const existing = getState();
+  if (!existing) {
+    initStore(initialState);
+  } else {
+    const patch = {};
+    for (const [k, v] of Object.entries(initialState)) {
+      if (existing[k] === undefined) patch[k] = v;
+    }
+    if (Object.keys(patch).length) setState(patch);
+  }
 
   unsub = subscribe(() => {
     try {
