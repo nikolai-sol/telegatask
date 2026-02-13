@@ -130,10 +130,6 @@ main {
   backdrop-filter: blur(8px);
 }
 
-.search-bar {
-  margin-bottom: 10px;
-}
-
 .search-bar__field {
   align-items: center;
   background: var(--card);
@@ -170,6 +166,12 @@ main {
 
 .search-bar__clear:active {
   background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+
+.search-panel {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .filter-chips {
@@ -579,6 +581,17 @@ main {
   position: fixed;
   right: calc(18px + env(safe-area-inset-right, 0px));
   width: 56px;
+}
+
+.fab--secondary {
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--text) 10%, transparent);
+  color: var(--text);
+  font-size: 18px;
+  height: 48px;
+  width: 48px;
+  bottom: calc(18px + 56px + 12px + env(safe-area-inset-bottom, 0px));
 }
 
 .bulk-bar {

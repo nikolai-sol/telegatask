@@ -102,8 +102,21 @@ const app = {
       this.openQuickAdd();
     });
 
+    document.getElementById("fabSearch")?.addEventListener("click", () => {
+      this.toggleSearchPanel();
+    });
+
     document.getElementById("searchInput")?.addEventListener("input", () => {
       this.onSearchInput();
+    });
+    document.getElementById("searchInput")?.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        this.applySearchAndClose();
+      }
+      if (event.key === "Escape") {
+        this.closeSearchPanel();
+      }
     });
     document.getElementById("searchClear")?.addEventListener("click", () => {
       this.clearSearch();
@@ -618,6 +631,52 @@ const app = {
       if (!k) return;
       el.classList.toggle("is-active", Boolean(state.filters && state.filters[k]));
     });
+  },
+
+  openSearchPanel() {
+    const panel = document.getElementById("searchPanel");
+    const input = document.getElementById("searchInput");
+    if (!(panel instanceof HTMLElement)) return;
+
+    // Avoid stacking top panels.
+    this.closeQuickAdd();
+    this.hideSuggest();
+
+    panel.hidden = false;
+    if (input instanceof HTMLInputElement) {
+      input.value = state.query || "";
+      setTimeout(() => input.focus(), 30);
+    }
+    this.renderSearchUi();
+  },
+
+  closeSearchPanel() {
+    const panel = document.getElementById("searchPanel");
+    const input = document.getElementById("searchInput");
+    if (!(panel instanceof HTMLElement)) return;
+    panel.hidden = true;
+    if (input instanceof HTMLInputElement) input.blur();
+  },
+
+  toggleSearchPanel() {
+    const panel = document.getElementById("searchPanel");
+    if (!(panel instanceof HTMLElement)) return;
+    if (panel.hidden) this.openSearchPanel();
+    else this.closeSearchPanel();
+  },
+
+  applySearchAndClose() {
+    const input = document.getElementById("searchInput");
+    if (!(input instanceof HTMLInputElement)) {
+      this.closeSearchPanel();
+      return;
+    }
+
+    const next = input.value;
+    clearTimeout(state.queryTimer);
+    state.query = next;
+    this.render();
+    this.closeSearchPanel();
   },
 
   onSearchInput() {
@@ -1547,6 +1606,7 @@ const app = {
     }
 
     this.hideSuggest();
+    this.closeQuickAdd();
 
     const tempId = `tmp-${Date.now()}`;
     const tempTask = {
@@ -1558,7 +1618,6 @@ const app = {
       createdAt: new Date().toISOString(),
     };
 
-    input.value = "";
     state.tab = "active";
     state.tasks.unshift(tempTask);
     this.haptic("light");

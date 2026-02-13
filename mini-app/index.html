@@ -24,21 +24,20 @@
       <div id="mentionSuggest" class="suggest" hidden></div>
     </section>
 
-    <div class="sticky-top">
-      <section class="search-bar" aria-label="Поиск">
-        <div class="search-bar__field">
-          <input id="searchInput" class="search-bar__input" type="search" placeholder="Поиск задач…" autocomplete="off">
-          <button id="searchClear" class="search-bar__clear" type="button" aria-label="Очистить" hidden>✕</button>
-        </div>
-      </section>
-
+    <section id="searchPanel" class="search-panel" aria-label="Поиск" hidden>
+      <div class="search-bar__field">
+        <input id="searchInput" class="search-bar__input" type="search" placeholder="Поиск задач…" autocomplete="off">
+        <button id="searchClear" class="search-bar__clear" type="button" aria-label="Очистить" hidden>✕</button>
+      </div>
       <section id="filterChips" class="filter-chips" aria-label="Фильтры">
         <button class="chip-toggle" type="button" data-filter="today">Today</button>
         <button class="chip-toggle" type="button" data-filter="overdue">Overdue</button>
         <button class="chip-toggle" type="button" data-filter="p1">P1</button>
         <button class="chip-toggle" type="button" data-filter="nodue">No due</button>
       </section>
+    </section>
 
+    <div class="sticky-top">
       <nav class="tabs" aria-label="Вкладки задач">
         <button class="tab active" data-tab="active" type="button">Активные</button>
         <button class="tab" data-tab="done" type="button">Выполненные</button>
@@ -74,6 +73,7 @@
     </main>
   </div>
 
+  <button id="fabSearch" class="fab fab--secondary" type="button" aria-label="Поиск">🔍</button>
   <button id="fabAdd" class="fab" type="button" aria-label="Добавить задачу">+</button>
 
   <div id="actionSheet" class="sheet" hidden>
