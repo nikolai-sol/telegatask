@@ -22,6 +22,7 @@ import { teamAdminSkill } from "./team-admin";
 import { opsStatusSkill } from "./ops-status";
 import { projectAdminSkill } from "./project-admin";
 import { emelyaSkill } from "./emelya";
+import { agencySkill } from "./agency";
 
 /**
  * Зарегистрировать все скиллы.
@@ -40,8 +41,8 @@ export function registerAllSkills(router: SkillRouter): void {
   router.register(projectAdminSkill);
   router.register(emelyaSkill);
 
-  // Добавляй новые скиллы здесь:
-  // router.register(myNewSkill);
+  // Agency OS: /tender, /campaign, /task, /status
+  router.register(agencySkill);
 
   console.log(`[registry] ${router.getSkills().length} skills registered`);
 }

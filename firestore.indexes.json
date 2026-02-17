@@ -39,6 +39,46 @@
         {"fieldPath": "sourceChatId", "order": "ASCENDING"},
         {"fieldPath": "sourceMessageId", "order": "ASCENDING"}
       ]
+    },
+    {
+      "collectionGroup": "companies",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "type", "order": "ASCENDING"},
+        {"fieldPath": "updatedAt", "order": "DESCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "agency_tasks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "companyId", "order": "ASCENDING"},
+        {"fieldPath": "createdAt", "order": "DESCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "agency_tasks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "companyId", "order": "ASCENDING"},
+        {"fieldPath": "status", "order": "ASCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "agency_tasks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "isFire", "order": "ASCENDING"},
+        {"fieldPath": "status", "order": "ASCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "ai_contexts",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "companyId", "order": "ASCENDING"},
+        {"fieldPath": "mode", "order": "ASCENDING"}
+      ]
     }
   ],
   "fieldOverrides": []

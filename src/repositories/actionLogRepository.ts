@@ -20,7 +20,11 @@ export type ActionType =
   | "unanswered_mention_sent"
   | "brief_sent"
   | "digest_sent"
-  | "digest_run";
+  | "digest_run"
+  | "scribe_tg_in"
+  | "scribe_tg_out"
+  | "scribe_api_req"
+  | "scribe_api_res";
 
 export interface ActionLogEntry {
   id: string;
