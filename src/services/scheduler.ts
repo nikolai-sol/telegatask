@@ -1,7 +1,7 @@
 /**
  * Scheduler — управляет всеми cron-задачами.
  *
- * - Auto-scan чатов: каждые 30 мин
+ * - Auto-scan чатов: каждые 2 часа
  * - Deadline reminders: каждые 5 мин
  * - Follow-up: каждые 30 мин
  * - Unanswered mentions: каждые 15 мин
@@ -89,9 +89,9 @@ export function startScheduler(bot: Telegraf): void {
   console.log("[scheduler] Starting cron jobs...");
   stats.startedAt = new Date().toISOString();
 
-  // 1. Auto-scan чатов — каждые 30 мин
+  // 1. Auto-scan чатов — каждые 2 часа
   jobs.push(
-    cron.schedule("*/30 * * * *", async () => {
+    cron.schedule("0 */2 * * *", async () => {
       debugLog("[scheduler] Running auto-scan...");
       stats.lastRunAt.auto_scan = new Date().toISOString();
       try {
