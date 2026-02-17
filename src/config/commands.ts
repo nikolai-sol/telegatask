@@ -23,7 +23,7 @@ export const COMMAND_RU_ALIASES: Record<string, string[]> = {
   chats: ["чаты"],
   scan_on: ["скан_вкл"],
   scan_off: ["скан_выкл"],
-  k: ["знания", "в_знания"],
+  k: ["знания", "в_знания", "к"],
   ksearch: ["поиск"],
   ask: ["спроси", "вопрос"],
   status: ["статус"],

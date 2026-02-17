@@ -115,3 +115,37 @@ export async function getProjectById(
     updatedAt: data.updatedAt,
   };
 }
+
+export async function getProjectsByIds(projectIds: string[]): Promise<Project[]> {
+  const unique = Array.from(new Set((projectIds || []).filter(Boolean)));
+  if (unique.length === 0) return [];
+
+  // Keep chunks at <= 10 to follow Firestore "in" mental model and avoid large batches.
+  // We use getAll on refs, but still chunk for safety.
+  const chunkSize = 10;
+  const result: Project[] = [];
+
+  for (let i = 0; i < unique.length; i += chunkSize) {
+    const chunk = unique.slice(i, i + chunkSize);
+    const refs = chunk.map((id) => collection.doc(id));
+    // @ts-ignore - typings for getAll are present on firestore instance.
+    const snaps = await firestore.getAll(...refs);
+    for (const snap of snaps) {
+      if (!snap.exists) continue;
+      const data = snap.data();
+      if (!data) continue;
+      result.push({
+        id: snap.id,
+        name: data.name,
+        description: data.description ?? null,
+        teamId: data.teamId ?? null,
+        chatIds: data.chatIds ?? [],
+        allowedMemberIds: data.allowedMemberIds ?? null,
+        createdAt: data.createdAt,
+        updatedAt: data.updatedAt,
+      });
+    }
+  }
+
+  return result;
+}

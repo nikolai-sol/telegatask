@@ -5,6 +5,7 @@ import path from "path";
 import healthRouter from "./routes/health";
 import debugRouter from "./routes/debug";
 import apiRouter from "./routes/api";
+import agencyRouter from "./api/routes";
 import {
   initTelegataskBot,
   stopTelegataskBot,
@@ -27,6 +28,7 @@ app.use("/mini-app", express.static(miniAppDir));
 app.use(healthRouter);
 app.use(debugRouter);
 app.use(apiRouter);
+app.use('/agency', agencyRouter);
 
 const PORT = process.env.PORT || 3000;
 

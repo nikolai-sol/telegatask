@@ -7,6 +7,7 @@ import { webAppAuthMiddleware } from "../middleware/validateWebApp";
 import {
   getTasksByAssigneeIds,
   getTasksByCreator,
+  getTasksByTeamId,
   getTaskById,
   updateTaskStatus,
   deleteTask,
@@ -24,9 +25,11 @@ import {
 } from "../repositories/userRepository";
 import { logAction, listActionLogs } from "../repositories/actionLogRepository";
 import { listTeamsByMemberId } from "../repositories/teamRepository";
-import { createProject, listProjectsByTeamId } from "../repositories/projectRepository";
+import { createProject, getProjectsByIds, listProjectsByTeamId } from "../repositories/projectRepository";
 import { listChatsForScan } from "../repositories/chatRepository";
 import { getSchedulerStats } from "../services/scheduler";
+import { createCampaign, deleteCampaign, getCampaignById, listCampaignsByTeamId, updateCampaign } from "../repositories/campaignRepository";
+import { getRolePermissions, getUserRoleInTeam } from "../core/permissions/campaignPermissions";
 
 const router = Router();
 
@@ -90,6 +93,7 @@ router.get("/api/admin/ops", webAppAuthMiddleware, async (req: Request, res: Res
 
     const scanLogs = logs.filter((l) => l.action === "scan_executed").slice(0, 10);
     const digestLogs = logs.filter((l) => l.action === "digest_run").slice(0, 10);
+    const errorLogs = logs.filter((l) => l.action === "error").slice(0, 20);
 
     res.json({
       ok: true,
@@ -108,6 +112,7 @@ router.get("/api/admin/ops", webAppAuthMiddleware, async (req: Request, res: Res
       recent: {
         scan_executed: scanLogs,
         digest_run: digestLogs,
+        errors: errorLogs,
       },
     });
   } catch (err) {
@@ -127,6 +132,84 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
       return;
     }
 
+    const scopeRaw = typeof req.query?.scope === "string" ? req.query.scope : "";
+    const scope = (scopeRaw || "my").trim().toLowerCase();
+    if (scope !== "my" && scope !== "team") {
+      res.status(400).json({ error: "Invalid scope" });
+      return;
+    }
+
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.json({ tasks: [], scope: "my", activeTeamId: null, activeTeamRole: "viewer" });
+      return;
+    }
+
+    const role = await getUserRoleInTeam(userId, activeTeamId);
+
+    async function buildUsersById(tasks: any[]) {
+      const ids = new Set<string>();
+      (tasks || []).forEach((t) => {
+        if (t?.createdByUserId) ids.add(String(t.createdByUserId));
+        if (t?.assignedUserId) ids.add(String(t.assignedUserId));
+      });
+      const users = await getUsersByIds(Array.from(ids));
+      const usersById: Record<string, { displayName: string; username: string | null }> = {};
+      users.forEach((u) => {
+        usersById[u.id] = { displayName: u.displayName || `user-${u.id}`, username: u.username ?? null };
+      });
+      return usersById;
+    }
+
+    async function buildProjectsById(tasks: any[]) {
+      const ids = new Set<string>();
+      (tasks || []).forEach((t) => {
+        if (t?.projectId) ids.add(String(t.projectId));
+      });
+      if (ids.size === 0) return {};
+      const projects = await getProjectsByIds(Array.from(ids));
+      const projectsById: Record<string, { name: string }> = {};
+      projects.forEach((p) => {
+        projectsById[p.id] = { name: p.name || `project-${p.id}` };
+      });
+      return projectsById;
+    }
+
+    if (scope === "team") {
+      if (role === "viewer") {
+        res.status(403).json({ error: "Access denied" });
+        return;
+      }
+
+      const allStatuses: Array<"incoming" | "new" | "in_progress" | "waiting" | "done" | "cancelled"> =
+        ["incoming", "new", "in_progress", "waiting", "done", "cancelled"];
+
+      const tasks = await getTasksByTeamId(activeTeamId, allStatuses, 600);
+
+      // Sort: active first, then by priority, then by date
+      const prioOrder: Record<string, number> = { urgent: 0, high: 1, normal: 2, low: 3 };
+      const activeStatuses = new Set(["incoming", "new", "in_progress", "waiting"]);
+
+      tasks.sort((a, b) => {
+        const aActive = activeStatuses.has(a.status) ? 0 : 1;
+        const bActive = activeStatuses.has(b.status) ? 0 : 1;
+        if (aActive !== bActive) return aActive - bActive;
+
+        const pa = prioOrder[a.priority] ?? 2;
+        const pb = prioOrder[b.priority] ?? 2;
+        if (pa !== pb) return pa - pb;
+
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+
+      const [usersById, projectsById] = await Promise.all([
+        buildUsersById(tasks),
+        buildProjectsById(tasks),
+      ]);
+      res.json({ tasks, usersById, projectsById, scope, activeTeamId, activeTeamRole: role });
+      return;
+    }
+
     // Fetch tasks where user is assignee or creator (all statuses for Mini App)
     const allStatuses: Array<"incoming" | "new" | "in_progress" | "waiting" | "done" | "cancelled"> =
       ["incoming", "new", "in_progress", "waiting", "done", "cancelled"];
@@ -137,8 +220,8 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
     }
 
     const [assigned, created] = await Promise.all([
-      getTasksByAssigneeIds(assigneeIds, allStatuses),
-      getTasksByCreator(userId, allStatuses),
+      getTasksByAssigneeIds(assigneeIds, allStatuses, activeTeamId),
+      getTasksByCreator(userId, allStatuses, activeTeamId),
     ]);
 
     // Merge and dedupe
@@ -167,7 +250,11 @@ router.get("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respons
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
 
-    res.json({ tasks });
+    const [usersById, projectsById] = await Promise.all([
+      buildUsersById(tasks),
+      buildProjectsById(tasks),
+    ]);
+    res.json({ tasks, usersById, projectsById, scope: "my", activeTeamId, activeTeamRole: role });
   } catch (err) {
     console.error("[API] GET /api/tasks error:", err);
     res.status(500).json({ error: "Internal error" });
@@ -187,7 +274,7 @@ router.get("/api/teams", webAppAuthMiddleware, async (req: Request, res: Respons
     const teams = await listTeamsByMemberId(userId, 50);
     const user = await getUserById(userId);
     res.json({
-      teams: teams.map((t) => ({ id: t.id, name: t.name })),
+      teams: teams.map((t) => ({ id: t.id, name: t.name, role: t.roles?.[userId] ?? null })),
       activeTeamId: user?.activeTeamId ?? null,
     });
   } catch (err) {
@@ -260,6 +347,239 @@ router.get("/api/projects", webAppAuthMiddleware, async (req: Request, res: Resp
   }
 });
 
+// ─── GET /api/campaigns ───
+router.get("/api/campaigns", webAppAuthMiddleware, async (req: Request, res: Response) => {
+  try {
+    const tgUser = req.webAppData!.user;
+    const userId = await resolveUserId(tgUser.id);
+    if (!userId) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.json({ campaigns: [], activeTeamId: null });
+      return;
+    }
+
+    const role = await getUserRoleInTeam(userId, activeTeamId);
+    if (role === "viewer") {
+      // MVP: viewer sees nothing until we implement campaignMembers
+      res.json({ campaigns: [], activeTeamId });
+      return;
+    }
+
+    const includeArchived =
+      String(req.query?.includeArchived || "").trim() === "1" ||
+      String(req.query?.includeArchived || "").trim().toLowerCase() === "true";
+
+    const campaignsAll = await listCampaignsByTeamId(activeTeamId);
+    const campaigns = includeArchived
+      ? campaignsAll
+      : campaignsAll.filter((c) => c && c.status !== "archived");
+    res.json({ campaigns, activeTeamId });
+  } catch (err) {
+    console.error("[API] GET /api/campaigns error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
+// ─── POST /api/campaigns ───
+router.post("/api/campaigns", webAppAuthMiddleware, async (req: Request, res: Response) => {
+  try {
+    const tgUser = req.webAppData!.user;
+    const userId = await resolveUserId(tgUser.id);
+    if (!userId) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set" });
+      return;
+    }
+
+    const role = await getUserRoleInTeam(userId, activeTeamId);
+    const perms = getRolePermissions(role);
+    if (!perms.edit) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    const name = typeof req.body?.name === "string" ? req.body.name.trim() : "";
+    if (!name) {
+      res.status(400).json({ error: "Missing name" });
+      return;
+    }
+
+    const campaign = await createCampaign({
+      teamId: activeTeamId,
+      name,
+      status: "draft",
+      plannedBudget: null,
+      spent: 0,
+      currency: "EUR",
+      createdByUserId: userId,
+    });
+
+    res.json({ ok: true, campaign });
+  } catch (err) {
+    console.error("[API] POST /api/campaigns error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
+// ─── PATCH /api/campaigns/:id ───
+router.patch("/api/campaigns/:id", webAppAuthMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const tgUser = req.webAppData!.user;
+    const userId = await resolveUserId(tgUser.id);
+    if (!userId) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set" });
+      return;
+    }
+
+    const campaign = await getCampaignById(id);
+    if (!campaign) {
+      res.status(404).json({ error: "Campaign not found" });
+      return;
+    }
+
+    if (campaign.teamId !== activeTeamId) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    const role = await getUserRoleInTeam(userId, activeTeamId);
+    const perms = getRolePermissions(role);
+    if (!perms.edit) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    const name = typeof req.body?.name === "string" ? req.body.name.trim() : undefined;
+    const status = typeof req.body?.status === "string" ? req.body.status : undefined;
+    const valid = new Set(["draft", "planned", "running", "paused", "finished", "archived"]);
+    if (status !== undefined && !valid.has(status)) {
+      res.status(400).json({ error: "Invalid status" });
+      return;
+    }
+
+    function parseNonNegNumber(v: unknown): number | undefined {
+      if (v === undefined) return undefined;
+      if (v === null) return undefined;
+      const n = typeof v === "number" ? v : Number(String(v).trim());
+      if (!Number.isFinite(n)) return undefined;
+      if (n < 0) return undefined;
+      return n;
+    }
+
+    // plannedBudget: allow null to clear, or non-negative number.
+    const plannedBudgetRaw = (req.body && "plannedBudget" in req.body) ? req.body.plannedBudget : undefined;
+    const spentRaw = (req.body && "spent" in req.body) ? req.body.spent : undefined;
+    const currencyRaw = (req.body && "currency" in req.body) ? req.body.currency : undefined;
+
+    const wantsFinanceUpdate = plannedBudgetRaw !== undefined || spentRaw !== undefined || currencyRaw !== undefined;
+    if (wantsFinanceUpdate && role !== "owner" && role !== "account") {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    const plannedBudget =
+      plannedBudgetRaw === null
+        ? null
+        : plannedBudgetRaw === undefined
+          ? undefined
+          : parseNonNegNumber(plannedBudgetRaw);
+
+    const spent = spentRaw === undefined ? undefined : parseNonNegNumber(spentRaw);
+
+    const currency =
+      typeof currencyRaw === "string" && currencyRaw.trim()
+        ? currencyRaw.trim().toUpperCase()
+        : currencyRaw === undefined
+          ? undefined
+          : "";
+
+    if (plannedBudgetRaw !== undefined && plannedBudgetRaw !== null && plannedBudget === undefined) {
+      res.status(400).json({ error: "Invalid plannedBudget" });
+      return;
+    }
+    if (spentRaw !== undefined && spent === undefined) {
+      res.status(400).json({ error: "Invalid spent" });
+      return;
+    }
+    if (currencyRaw !== undefined) {
+      if (!currency || !/^[A-Z]{3}$/.test(currency)) {
+        res.status(400).json({ error: "Invalid currency" });
+        return;
+      }
+    }
+
+    await updateCampaign(id, {
+      name,
+      status: status as any,
+      plannedBudget: plannedBudget === undefined ? undefined : plannedBudget,
+      spent: spent === undefined ? undefined : spent,
+      currency: currencyRaw === undefined ? undefined : currency,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("[API] PATCH /api/campaigns/:id error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
+// ─── DELETE /api/campaigns/:id ───
+router.delete("/api/campaigns/:id", webAppAuthMiddleware, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const tgUser = req.webAppData!.user;
+    const userId = await resolveUserId(tgUser.id);
+    if (!userId) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set" });
+      return;
+    }
+
+    const campaign = await getCampaignById(id);
+    if (!campaign) {
+      res.status(404).json({ error: "Campaign not found" });
+      return;
+    }
+    if (campaign.teamId !== activeTeamId) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    const role = await getUserRoleInTeam(userId, activeTeamId);
+    if (!(role === "owner" || role === "account")) {
+      res.status(403).json({ error: "Access denied" });
+      return;
+    }
+
+    await deleteCampaign(id);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("[API] DELETE /api/campaigns/:id error:", err);
+    res.status(500).json({ error: "Internal error" });
+  }
+});
+
 // ─── GET /api/users/suggest?q=... ───
 router.get("/api/users/suggest", webAppAuthMiddleware, async (req: Request, res: Response) => {
   try {
@@ -327,6 +647,19 @@ router.post("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respon
     }
 
     const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set. Use /team or Settings to select a team." });
+      return;
+    }
+
+    const campaignId = typeof req.body?.campaignId === "string" ? req.body.campaignId.trim() : "";
+    if (campaignId) {
+      const campaign = await getCampaignById(campaignId);
+      if (!campaign || campaign.teamId !== activeTeamId) {
+        res.status(403).json({ error: "Access denied" });
+        return;
+      }
+    }
     const projectId = activeTeamId ? await ensureTekuchkaProject(activeTeamId) : null;
 
     const task = await createTask({
@@ -334,6 +667,7 @@ router.post("/api/tasks", webAppAuthMiddleware, async (req: Request, res: Respon
       createdByUserId: userId,
       assignedUserId,
       projectId,
+      campaignId: campaignId || null,
       title,
       description: title,
       status: assignedUserId ? "new" : "incoming",
@@ -368,11 +702,22 @@ router.post("/api/tasks/:id/project", webAppAuthMiddleware, async (req: Request,
       return;
     }
 
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set" });
+      return;
+    }
+
     const projectId = typeof req.body?.projectId === "string" ? req.body.projectId : null;
 
     const task = await getTaskById(id);
     if (!task) {
       res.status(404).json({ error: "Task not found" });
+      return;
+    }
+
+    if (task.teamId !== activeTeamId) {
+      res.status(403).json({ error: "Access denied" });
       return;
     }
 
@@ -402,6 +747,12 @@ router.post("/api/tasks/:id/status", webAppAuthMiddleware, async (req: Request, 
       return;
     }
 
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set" });
+      return;
+    }
+
     const validStatuses = ["incoming", "new", "in_progress", "waiting", "done", "cancelled"];
     if (!validStatuses.includes(status)) {
       res.status(400).json({ error: "Invalid status" });
@@ -411,6 +762,11 @@ router.post("/api/tasks/:id/status", webAppAuthMiddleware, async (req: Request, 
     const task = await getTaskById(id);
     if (!task) {
       res.status(404).json({ error: "Task not found" });
+      return;
+    }
+
+    if (task.teamId !== activeTeamId) {
+      res.status(403).json({ error: "Access denied" });
       return;
     }
 
@@ -449,9 +805,20 @@ router.delete("/api/tasks/:id", webAppAuthMiddleware, async (req: Request, res: 
       return;
     }
 
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set" });
+      return;
+    }
+
     const task = await getTaskById(id);
     if (!task) {
       res.status(404).json({ error: "Task not found" });
+      return;
+    }
+
+    if (task.teamId !== activeTeamId) {
+      res.status(403).json({ error: "Access denied" });
       return;
     }
 
@@ -490,9 +857,20 @@ router.patch("/api/tasks/:id", webAppAuthMiddleware, async (req: Request, res: R
       return;
     }
 
+    const activeTeamId = await resolveActiveTeamId(userId);
+    if (!activeTeamId) {
+      res.status(400).json({ error: "No active team set" });
+      return;
+    }
+
     const task = await getTaskById(id);
     if (!task) {
       res.status(404).json({ error: "Task not found" });
+      return;
+    }
+
+    if (task.teamId !== activeTeamId) {
+      res.status(403).json({ error: "Access denied" });
       return;
     }
 

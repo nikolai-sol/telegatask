@@ -14,7 +14,7 @@ export const knowledgeAddSkill: Skill = {
     name: "Knowledge Add",
     description: "Добавить в базу знаний (текст, reply, forward, файл)",
     version: "1.0.0",
-    triggers: [{ type: "command", command: "k", aliases: ["знания", "в_знания"] }],
+    triggers: [{ type: "command", command: "k", aliases: ["знания", "в_знания", "к"] }],
     permissions: {
       minPlan: "free",
       chatType: "any",

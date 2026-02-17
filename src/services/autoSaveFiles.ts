@@ -10,6 +10,7 @@ import { upsertUserFromTelegramPayload } from "../repositories/userRepository";
 import { upsertChatFromTelegramPayload } from "../repositories/chatRepository";
 import { addKnowledgeEntry, findKnowledgeByDedupeKey } from "../repositories/knowledgeRepository";
 import { logAction } from "../repositories/actionLogRepository";
+import { serializeError } from "../utils/serializeError";
 
 function normalizeTextForSearch(text: string): string {
   return text.trim().replace(/\s+/g, " ");
@@ -67,23 +68,30 @@ export async function autoSaveFilesToKnowledge(ctx: Context<Update>): Promise<vo
       .join(", ");
     const fileText = `File: ${fileRef.name || "file"}${meta ? ` (${meta})` : ""}${fileRef.caption ? ` — ${fileRef.caption}` : ""}`;
 
-    const source = {
-      kind: "telegram" as const,
+    const source: Record<string, unknown> = {
+      kind: "telegram",
       chatId: sourceChatId,
       telegramChatId: chatInfo.id,
       messageId: sourceMessageId,
       fromUserId: user.id,
       fileId: fileRef.fileId,
-      chatUsername: "username" in chatInfo ? (chatInfo as { username?: string }).username : undefined,
     };
+    const chatUsername =
+      "username" in chatInfo ? (chatInfo as { username?: string }).username : undefined;
+    if (chatUsername) source.chatUsername = chatUsername;
+
+    const fileMeta: Record<string, unknown> = {};
+    if (fileRef.name) fileMeta.name = fileRef.name;
+    if (fileRef.size != null) fileMeta.size = fileRef.size;
+    if (fileRef.mime) fileMeta.mime = fileRef.mime;
 
     const item = await addKnowledgeEntry({
       type: "file_ref",
       text: normalizeTextForSearch(fileText),
       tags: [],
       importance: "normal",
-      source,
-      fileMeta: { name: fileRef.name, size: fileRef.size, mime: fileRef.mime },
+      source: source as any,
+      fileMeta: Object.keys(fileMeta).length ? (fileMeta as any) : null,
       createdByUserId: user.id,
       sourceChatId,
       sourceChatTitle,
@@ -105,5 +113,22 @@ export async function autoSaveFilesToKnowledge(ctx: Context<Update>): Promise<vo
     }
   } catch (error) {
     console.error("[autoSaveFiles] Failed", error);
+    const payload = {
+      where: "autoSaveFilesToKnowledge",
+      messageId: "message_id" in message ? message.message_id : null,
+      telegramChatId: "chat" in message ? message.chat.id : null,
+      chatType: "chat" in message ? message.chat.type : null,
+      fileId: fileRef?.fileId ?? null,
+      fileName: fileRef?.name ?? null,
+      err: serializeError(error),
+    };
+    // Note: actionLogs.userId expects internal userId, but here we might not have it.
+    // Store telegramUserId in payload for debugging; internal userId can be resolved later if needed.
+    logAction({
+      action: "error",
+      userId: null,
+      targetType: "knowledge",
+      payload: { ...payload, telegramUserId: ctx.from?.id ?? null },
+    }).catch(() => {});
   }
 }

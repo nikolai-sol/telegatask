@@ -16,6 +16,7 @@ import {
 } from "../../repositories/taskRepository";
 import { logAction } from "../../repositories/actionLogRepository";
 import { checkUsageLimit, incrementUsage } from "../../core/usage";
+import { getDefaultProjectIdForTelegramChat } from "../../core/projects/getDefaultProjectIdForTelegramChat";
 
 export const taskActionsSkill: Skill = {
   meta: {
@@ -139,11 +140,17 @@ export const taskActionsSkill: Skill = {
       }
 
       const description = item.text.slice(0, 2000);
+      const telegramChatIdStr = ctx.telegramChatId ? String(ctx.telegramChatId) : "";
+      const defaultProjectId = telegramChatIdStr
+        ? await getDefaultProjectIdForTelegramChat(telegramChatIdStr)
+        : null;
       const task = await createTask({
+        telegramChatId: telegramChatIdStr || null,
         sourceType: "chat_command",
         sourceChatId: item.sourceChatId ?? undefined,
         sourceChatTitle: item.sourceChatTitle ?? undefined,
         sourceMessageId: item.sourceMessageId ?? undefined,
+        projectId: defaultProjectId,
         createdByUserId: ctx.user.id,
         assignedUserId: null,
         title: "",
