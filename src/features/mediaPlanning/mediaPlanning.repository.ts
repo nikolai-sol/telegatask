@@ -59,13 +59,24 @@ function toHistory(raw: unknown): MediaPlanHistoryItem[] {
 
 function defaultSummary(): MediaBriefSummary {
   return {
-    target_audience: "не указано",
-    budget: { total: 0, currency: "RUB" },
-    geo: [],
+    target_audience: {
+      description: null,
+      age: null,
+      gender: null,
+      interests: [],
+      income: null,
+    },
+    budget: { total: null, currency: "RUB", note: null },
+    geo: {
+      cities: [],
+      regions: [],
+      type: null,
+    },
     channels: [],
-    goal: "не указано",
-    timing: { start: null, end: null },
+    goal: null,
+    timing: { start: null, end: null, duration_weeks: null },
     kpi: [],
+    product: null,
     unclear: [],
   };
 }
@@ -73,25 +84,78 @@ function defaultSummary(): MediaBriefSummary {
 function toSummary(raw: unknown): MediaBriefSummary {
   if (!raw || typeof raw !== "object") return defaultSummary();
   const obj = raw as Record<string, unknown>;
+
+  const targetAudienceObj =
+    obj.target_audience && typeof obj.target_audience === "object"
+      ? (obj.target_audience as Record<string, unknown>)
+      : null;
   const budgetObj = obj.budget && typeof obj.budget === "object" ? (obj.budget as Record<string, unknown>) : {};
+
+  const geoObj = obj.geo && typeof obj.geo === "object" ? (obj.geo as Record<string, unknown>) : null;
   const timingObj = obj.timing && typeof obj.timing === "object" ? (obj.timing as Record<string, unknown>) : {};
-  const total = Number(budgetObj.total);
+
+  const totalRaw = Number(budgetObj.total);
+  const total = Number.isFinite(totalRaw) && totalRaw >= 0 ? totalRaw : null;
+  const durationRaw = Number(timingObj.duration_weeks);
+  const durationWeeks = Number.isFinite(durationRaw) && durationRaw >= 0 ? durationRaw : null;
   const currency = String(budgetObj.currency || "RUB").toUpperCase();
+  const gender = String(targetAudienceObj?.gender || "").toLowerCase();
+  const geoType = String(geoObj?.type || "").toLowerCase();
+
+  const targetAudienceLegacy =
+    typeof obj.target_audience === "string" && obj.target_audience.trim()
+      ? obj.target_audience.trim()
+      : null;
+  const geoLegacy = Array.isArray(obj.geo) ? obj.geo.map((x) => String(x)).filter(Boolean) : [];
 
   return {
-    target_audience: typeof obj.target_audience === "string" ? obj.target_audience : "не указано",
-    budget: {
-      total: Number.isFinite(total) && total >= 0 ? total : 0,
-      currency: currency === "USD" || currency === "EUR" ? currency : "RUB",
+    target_audience: {
+      description:
+        typeof targetAudienceObj?.description === "string" && targetAudienceObj.description.trim()
+          ? targetAudienceObj.description
+          : targetAudienceLegacy,
+      age:
+        typeof targetAudienceObj?.age === "string" && targetAudienceObj.age.trim()
+          ? targetAudienceObj.age
+          : null,
+      gender: gender === "all" || gender === "male" || gender === "female" ? gender : null,
+      interests: Array.isArray(targetAudienceObj?.interests)
+        ? targetAudienceObj.interests.map((x) => String(x)).filter(Boolean)
+        : [],
+      income:
+        typeof targetAudienceObj?.income === "string" && targetAudienceObj.income.trim()
+          ? targetAudienceObj.income
+          : null,
     },
-    geo: Array.isArray(obj.geo) ? obj.geo.map((x) => String(x)).filter(Boolean) : [],
+    budget: {
+      total,
+      currency: currency === "USD" || currency === "EUR" ? currency : "RUB",
+      note: typeof budgetObj.note === "string" && budgetObj.note.trim() ? budgetObj.note : null,
+    },
+    geo: {
+      cities: geoObj
+        ? Array.isArray(geoObj.cities)
+          ? geoObj.cities.map((x) => String(x)).filter(Boolean)
+          : []
+        : geoLegacy,
+      regions:
+        geoObj && Array.isArray(geoObj.regions)
+          ? geoObj.regions.map((x) => String(x)).filter(Boolean)
+          : [],
+      type:
+        geoType === "national" || geoType === "regional" || geoType === "local"
+          ? geoType
+          : null,
+    },
     channels: Array.isArray(obj.channels) ? obj.channels.map((x) => String(x)).filter(Boolean) : [],
-    goal: typeof obj.goal === "string" ? obj.goal : "не указано",
+    goal: typeof obj.goal === "string" && obj.goal.trim() ? obj.goal : null,
     timing: {
       start: typeof timingObj.start === "string" && timingObj.start ? timingObj.start : null,
       end: typeof timingObj.end === "string" && timingObj.end ? timingObj.end : null,
+      duration_weeks: durationWeeks,
     },
     kpi: Array.isArray(obj.kpi) ? obj.kpi.map((x) => String(x)).filter(Boolean) : [],
+    product: typeof obj.product === "string" && obj.product.trim() ? obj.product : null,
     unclear: Array.isArray(obj.unclear) ? obj.unclear.map((x) => String(x)).filter(Boolean) : [],
   };
 }

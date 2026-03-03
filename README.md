@@ -15,6 +15,9 @@ npm install
 ```
 TELEGRAM_BOT_TOKEN=...
 GEMINI_API_KEY=...        # для /ask, parse_today, парсинга дат
+ANTHROPIC_API_KEY=...     # для /mediaplan (Claude)
+MEDIA_PLAN_FAST_MODEL=claude-haiku-4-5
+MEDIA_PLAN_THINKING_MODEL=claude-opus-4-5
 GOOGLE_APPLICATION_CREDENTIALS=./serviceAccountKey.json
 ```
 

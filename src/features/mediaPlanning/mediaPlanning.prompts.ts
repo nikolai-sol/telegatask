@@ -1,70 +1,142 @@
 export type MediaBriefSummary = {
-  target_audience: string;
-  budget: {
-    total: number;
-    currency: "RUB" | "USD" | "EUR";
+  target_audience: {
+    description: string | null;
+    age: string | null;
+    gender: "all" | "male" | "female" | null;
+    interests: string[];
+    income: string | null;
   };
-  geo: string[];
+  budget: {
+    total: number | null;
+    currency: "RUB" | "USD" | "EUR";
+    note: string | null;
+  };
+  geo: {
+    cities: string[];
+    regions: string[];
+    type: "national" | "regional" | "local" | null;
+  };
   channels: string[];
-  goal: string;
+  goal: string | null;
   timing: {
     start: string | null;
     end: string | null;
+    duration_weeks: number | null;
   };
   kpi: string[];
+  product: string | null;
   unclear: string[];
 };
 
 export const STAGE1_SYSTEM = `
-You are a media planning assistant. Extract from the brief ONLY valid JSON (no markdown, no explanation):
+You are a media planning analyst at a top advertising agency.
+Your job: extract structured data from a client brief.
+
+CRITICAL: Return ONLY valid JSON. Zero prose, zero markdown, no backticks.
+
+JSON schema:
 {
-  "target_audience": "description",
-  "budget": { "total": number, "currency": "RUB|USD|EUR" },
-  "geo": ["city or region"],
-  "channels": ["channel names if mentioned"],
-  "goal": "campaign goal",
-  "timing": { "start": "date or null", "end": "date or null" },
-  "kpi": ["metrics if mentioned"],
-  "unclear": ["list anything missing or unclear"]
+  "target_audience": {
+    "description": "who they are",
+    "age": "range or null",
+    "gender": "all|male|female|null",
+    "interests": ["list"],
+    "income": "description or null"
+  },
+  "budget": {
+    "total": number or null,
+    "currency": "RUB|USD|EUR",
+    "note": "any budget caveats"
+  },
+  "geo": {
+    "cities": ["list"],
+    "regions": ["list"],
+    "type": "national|regional|local"
+  },
+  "channels": ["only what's explicitly mentioned"],
+  "goal": "primary campaign goal in one sentence",
+  "timing": {
+    "start": "YYYY-MM-DD or null",
+    "end": "YYYY-MM-DD or null",
+    "duration_weeks": number or null
+  },
+  "kpi": ["list of metrics mentioned"],
+  "product": "what's being advertised",
+  "unclear": ["critical missing info that blocks planning"]
 }
+
+If something is not mentioned - use null. Never invent data.
 `;
 
-export const STAGE1_FORMAT = (summary: MediaBriefSummary) => `
-📋 *Вот что я понял из брифа:*
+export const formatSummary = (s: MediaBriefSummary) => `
+📋 *Анализ брифа:*
 
-👥 *ЦА:* ${summary.target_audience || "не указано"}
-💰 *Бюджет:* ${Number.isFinite(summary.budget?.total) ? summary.budget.total : 0} ${summary.budget?.currency || "RUB"}
-📍 *Гео:* ${summary.geo.length ? summary.geo.join(", ") : "не указано"}
-📺 *Каналы:* ${summary.channels.length ? summary.channels.join(", ") : "не указаны"}
-🎯 *Цель:* ${summary.goal || "не указано"}
-📅 *Сроки:* ${summary.timing.start || "?"} — ${summary.timing.end || "?"}
-📊 *KPI:* ${summary.kpi.length ? summary.kpi.join(", ") : "не указаны"}
-${summary.unclear.length ? `\n⚠️ *Не хватает:* ${summary.unclear.join(", ")}` : ""}
+🛍 *Продукт:* ${s.product || "не указан"}
+👥 *ЦА:* ${s.target_audience?.description || "—"}${s.target_audience?.age ? `, ${s.target_audience.age}` : ""}
+💰 *Бюджет:* ${Number.isFinite(s.budget?.total) ? `${Number(s.budget.total).toLocaleString("ru-RU")} ${s.budget.currency}` : "не указан"}
+📍 *Гео:* ${[...(s.geo?.cities || []), ...(s.geo?.regions || [])].join(", ") || s.geo?.type || "—"}
+📺 *Каналы в брифе:* ${s.channels?.length ? s.channels.join(", ") : "не указаны - подберем сами"}
+🎯 *Цель:* ${s.goal || "—"}
+📅 *Сроки:* ${s.timing?.start || "?"} — ${s.timing?.end || "?"}${s.timing?.duration_weeks ? ` (${s.timing.duration_weeks} нед)` : ""}
+📊 *KPI:* ${s.kpi?.length ? s.kpi.join(", ") : "не указаны"}
+${s.unclear?.length ? `\n⚠️ *Нужно уточнить:* ${s.unclear.join("; ")}` : "✅ Данных достаточно для планирования"}
 
 Всё верно?
 `;
 
 export const STAGE2_SYSTEM = `
-You are a senior media strategist at a top Russian advertising agency.
-Given a validated media brief, create a complete media strategy.
-Write in Russian. Be specific, professional, data-driven.
-Use exact platform names (VK, MyTarget, Яндекс.Директ, YouTube, OLV, OOH, etc.)
-Structure your response with these exact sections using markdown:
+You are a senior media strategist with 15+ years experience in Russian advertising market.
+You know exact CPM/CPC benchmarks, audience sizes, and platform capabilities.
 
-## Целевая аудитория
-## Каналы и обоснование
-## Бюджетное распределение
-(include a markdown table: Канал | Бюджет | % от общего | Обоснование)
-## Флайты и тайминг
-## KPI и метрики
-## Следующие шаги
+You receive a validated client brief. Create a complete, actionable media strategy.
+
+RULES:
+- Write in Russian
+- Be specific: use real platform names (VK Реклама, MyTarget, Яндекс.Директ, Яндекс.OLV,
+  YouTube, TikTok, Telegram Ads, programmatic DSPs, OOH, TV, radio - only what fits the brief)
+- Every channel recommendation must have a budget % and clear justification
+- Budget table must be precise and sum to 100%
+- KPIs must be measurable with realistic benchmarks for Russian market
+- If budget seems low for stated goals - say so diplomatically
+
+STRUCTURE (use these exact headers):
+
+## 🎯 Целевая аудитория
+Refined TA description with insights beyond what client stated.
+
+## 📺 Рекомендуемые каналы
+For each channel: why it fits this TA and goal.
+
+## 💰 Бюджетное распределение
+| Канал | Бюджет (руб) | % | Обоснование |
+|-------|-------------|---|-------------|
+...
+| **Итого** | **X руб** | **100%** | |
+
+## 📅 Флайты и тайминг
+Week-by-week or phase breakdown.
+
+## 📊 KPI и прогнозные метрики
+Realistic benchmarks for each channel.
+
+## ⚠️ Риски и рекомендации
+Key risks and how to mitigate.
+
+## ✅ Следующие шаги
+Concrete next 3-5 actions for the agency.
 `;
 
-export const STAGE2_CORRECTION = (previousStrategy: string, correction: string) => `
-Previous strategy:
+export const STAGE2_CORRECTION_PREFIX = (previousStrategy: string, correction: string) => `
+Текущая стратегия:
+---
 ${previousStrategy}
+---
 
-User correction: ${correction}
+Корректировка от клиента: "${correction}"
 
-Apply the correction and return the updated full strategy. Keep all sections.
+Обнови стратегию с учётом корректировки. Верни полную стратегию со всеми секциями.
+Если корректировка влияет на бюджетное распределение - пересчитай таблицу.
 `;
+
+export const STAGE1_FORMAT = formatSummary;
+export const STAGE2_CORRECTION = STAGE2_CORRECTION_PREFIX;
