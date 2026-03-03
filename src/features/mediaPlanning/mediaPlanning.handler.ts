@@ -1,0 +1,424 @@
+import { Context, Markup } from "telegraf";
+import type { Message, Update } from "telegraf/typings/core/types/typegram";
+import { deriveTeamIdForTaskCreation } from "../../core/deriveTeamIdForTaskCreation";
+import { upsertUserFromTelegramPayload } from "../../repositories/userRepository";
+import {
+  createMediaPlan,
+  findActiveMediaPlanByUser,
+  getMediaPlanById,
+  updateMediaPlan,
+  type MediaPlanDoc,
+  type MediaPlanHistoryItem,
+} from "./mediaPlanning.repository";
+import {
+  generateStrategy,
+  parseBrief,
+  regenerateStrategyWithCorrection,
+  updateBriefSummary,
+} from "./mediaPlanning.service";
+import { STAGE1_FORMAT, type MediaBriefSummary } from "./mediaPlanning.prompts";
+
+type MediaPlanningHandlers = {
+  handleMessage: (ctx: Context<Update>) => Promise<boolean>;
+  handleCallback: (ctx: Context<Update>) => Promise<boolean>;
+};
+
+const MSG_ERROR = "Произошла ошибка, попробуй ещё раз 🔄";
+const MP_CMD_RE = /^\/mediaplan(?:@\S+)?(?:\s+([\s\S]*))?$/i;
+
+function escapeMd(text: string): string {
+  return String(text || "").replace(/([_*\[\]()`])/g, "\\$1");
+}
+
+function formatSummaryMarkdown(summary: MediaBriefSummary): string {
+  const safe: MediaBriefSummary = {
+    target_audience: escapeMd(summary.target_audience || "не указано"),
+    budget: {
+      total: Number.isFinite(summary.budget?.total) ? summary.budget.total : 0,
+      currency: summary.budget?.currency || "RUB",
+    },
+    geo: (summary.geo || []).map((x) => escapeMd(x)),
+    channels: (summary.channels || []).map((x) => escapeMd(x)),
+    goal: escapeMd(summary.goal || "не указано"),
+    timing: {
+      start: summary.timing?.start ? escapeMd(summary.timing.start) : null,
+      end: summary.timing?.end ? escapeMd(summary.timing.end) : null,
+    },
+    kpi: (summary.kpi || []).map((x) => escapeMd(x)),
+    unclear: (summary.unclear || []).map((x) => escapeMd(x)),
+  };
+
+  return STAGE1_FORMAT(safe).trim();
+}
+
+function getMessageText(message: Message | undefined): string {
+  if (!message) return "";
+  if ("text" in message && typeof message.text === "string") return message.text;
+  if ("caption" in message && typeof message.caption === "string") return message.caption;
+  return "";
+}
+
+function isForwardedMessage(message: Message): boolean {
+  const raw = message as unknown as Record<string, unknown>;
+  return Boolean(raw.forward_date || raw.forward_origin || raw.is_automatic_forward);
+}
+
+function stage1Keyboard(planId: string) {
+  return Markup.inlineKeyboard([
+    [Markup.button.callback("✅ Всё верно, отправляй", `mp_confirm:${planId}`)],
+    [Markup.button.callback("✏️ Хочу уточнить", `mp_edit:${planId}`)],
+  ]);
+}
+
+function stage2Keyboard(planId: string) {
+  return Markup.inlineKeyboard([
+    [Markup.button.callback("✅ Стратегия готова", `mp_strategy_ok:${planId}`)],
+    [Markup.button.callback("✏️ Скорректировать", `mp_strategy_edit:${planId}`)],
+  ]);
+}
+
+async function replyMarkdown(ctx: Context<Update>, text: string, extra: any = {}): Promise<void> {
+  try {
+    await ctx.reply(text, { parse_mode: "Markdown", ...(extra as any) });
+  } catch {
+    await ctx.reply(text, extra as any);
+  }
+}
+
+async function editMarkdown(ctx: Context<Update>, text: string, extra: any = {}): Promise<void> {
+  try {
+    await ctx.editMessageText(text, { parse_mode: "Markdown", ...(extra as any) });
+  } catch {
+    try {
+      await ctx.editMessageText(text, extra as any);
+    } catch {
+      await replyMarkdown(ctx, text, extra);
+    }
+  }
+}
+
+function parseCallback(data: string): { action: string; planId: string | null } | null {
+  const allowed = new Set(["mp_confirm", "mp_edit", "mp_strategy_ok", "mp_strategy_edit"]);
+  const [action, rawId] = String(data || "").split(":");
+  if (!allowed.has(action)) return null;
+  return { action, planId: rawId ? rawId.trim() : null };
+}
+
+function historyLines(plan: MediaPlanDoc): string[] {
+  return (plan.conversationHistory || []).slice(-10).map((h) => `${h.role}: ${h.content}`);
+}
+
+function isPrivateChat(ctx: Context<Update>): boolean {
+  const message = ctx.message;
+  if (!message || !("chat" in message)) return false;
+  return message.chat.type === "private";
+}
+
+async function resolveUserAndTeam(ctx: Context<Update>): Promise<{ userId: string; teamId: string } | null> {
+  const from = ctx.from;
+  const message = ctx.message;
+  if (!from || !message || !("chat" in message)) return null;
+
+  const user = await upsertUserFromTelegramPayload({
+    id: from.id,
+    username: from.username ?? undefined,
+    first_name: from.first_name ?? undefined,
+    last_name: from.last_name ?? undefined,
+  });
+
+  const teamId = await deriveTeamIdForTaskCreation({
+    telegramChatId: String(message.chat.id),
+    userId: user.id,
+  });
+
+  return { userId: user.id, teamId };
+}
+
+async function renderStage1(ctx: Context<Update>, plan: MediaPlanDoc): Promise<void> {
+  const summaryText = formatSummaryMarkdown(plan.briefSummary);
+  await replyMarkdown(ctx, summaryText, stage1Keyboard(plan.id));
+}
+
+async function renderStrategy(ctx: Context<Update>, planId: string, strategyText: string): Promise<void> {
+  await replyMarkdown(ctx, strategyText, stage2Keyboard(planId));
+}
+
+async function ensureOwnPlan(userId: string, planId: string | null): Promise<MediaPlanDoc | null> {
+  if (planId) {
+    const byId = await getMediaPlanById(planId);
+    if (byId && byId.createdByUserId === userId) return byId;
+    return null;
+  }
+
+  const active = await findActiveMediaPlanByUser(userId);
+  return active && active.createdByUserId === userId ? active : null;
+}
+
+async function startOrRestartPlan(
+  ctx: Context<Update>,
+  userId: string,
+  teamId: string,
+  briefRaw: string,
+  existingPlan: MediaPlanDoc | null
+): Promise<void> {
+  const summary = await parseBrief(briefRaw);
+
+  const conversationHistory: MediaPlanHistoryItem[] = [
+    { role: "user", content: briefRaw },
+    { role: "model", content: JSON.stringify(summary) },
+  ];
+
+  if (existingPlan) {
+    await updateMediaPlan(existingPlan.id, {
+      teamId,
+      status: "stage1",
+      briefRaw,
+      briefSummary: summary,
+      conversationHistory,
+      finalStrategy: null,
+      awaitingInput: null,
+    });
+    const updated = await getMediaPlanById(existingPlan.id);
+    if (updated) {
+      await renderStage1(ctx, updated);
+      return;
+    }
+  }
+
+  const plan = await createMediaPlan({
+    teamId,
+    createdByUserId: userId,
+    briefRaw,
+    briefSummary: summary,
+    conversationHistory,
+  });
+
+  await renderStage1(ctx, plan);
+}
+
+async function applyStage1Correction(ctx: Context<Update>, plan: MediaPlanDoc, correction: string): Promise<void> {
+  const summary = await updateBriefSummary(plan.briefSummary, correction, plan.briefRaw);
+  const history: MediaPlanHistoryItem[] = [
+    ...(plan.conversationHistory || []),
+    { role: "user", content: correction },
+    { role: "model", content: JSON.stringify(summary) },
+  ];
+
+  await updateMediaPlan(plan.id, {
+    status: "stage1",
+    briefSummary: summary,
+    conversationHistory: history,
+    awaitingInput: null,
+  });
+
+  const updated = await getMediaPlanById(plan.id);
+  if (updated) {
+    await renderStage1(ctx, updated);
+  }
+}
+
+async function confirmStage1AndGenerateStrategy(ctx: Context<Update>, plan: MediaPlanDoc): Promise<void> {
+  const historyBefore: MediaPlanHistoryItem[] = [
+    ...(plan.conversationHistory || []),
+    { role: "user", content: "Подтверждаю summary" },
+  ];
+  await updateMediaPlan(plan.id, { conversationHistory: historyBefore, awaitingInput: null });
+
+  await editMarkdown(ctx, "✅ Принял. Готовлю стратегию...");
+
+  const strategy = await generateStrategy(plan.briefSummary, historyLines(plan));
+  const historyAfter: MediaPlanHistoryItem[] = [...historyBefore, { role: "model", content: strategy }];
+
+  await updateMediaPlan(plan.id, {
+    status: "stage2",
+    finalStrategy: strategy,
+    conversationHistory: historyAfter,
+    awaitingInput: null,
+  });
+
+  await renderStrategy(ctx, plan.id, strategy);
+}
+
+async function applyStage2Correction(ctx: Context<Update>, plan: MediaPlanDoc, correction: string): Promise<void> {
+  const strategy = await regenerateStrategyWithCorrection(
+    plan.briefSummary,
+    plan.finalStrategy || "",
+    correction,
+    historyLines(plan)
+  );
+
+  const history: MediaPlanHistoryItem[] = [
+    ...(plan.conversationHistory || []),
+    { role: "user", content: correction },
+    { role: "model", content: strategy },
+  ];
+
+  await updateMediaPlan(plan.id, {
+    status: "stage2",
+    finalStrategy: strategy,
+    conversationHistory: history,
+    awaitingInput: null,
+  });
+
+  await renderStrategy(ctx, plan.id, strategy);
+}
+
+export function registerMediaPlanningHandlers(): MediaPlanningHandlers {
+  return {
+    async handleCallback(ctx: Context<Update>): Promise<boolean> {
+      const callback = ctx.callbackQuery;
+      if (!callback || !("data" in callback)) return false;
+
+      const parsed = parseCallback(String(callback.data || ""));
+      if (!parsed) return false;
+
+      try {
+        const from = ctx.from;
+        if (!from) {
+          await ctx.answerCbQuery("Нет пользователя").catch(() => {});
+          return true;
+        }
+
+        const user = await upsertUserFromTelegramPayload({
+          id: from.id,
+          username: from.username ?? undefined,
+          first_name: from.first_name ?? undefined,
+          last_name: from.last_name ?? undefined,
+        });
+
+        const plan = await ensureOwnPlan(user.id, parsed.planId);
+        if (!plan) {
+          await ctx.answerCbQuery("План не найден").catch(() => {});
+          return true;
+        }
+
+        if (parsed.action === "mp_edit") {
+          await updateMediaPlan(plan.id, { awaitingInput: "stage1" });
+          await editMarkdown(
+            ctx,
+            "✏️ Напиши, что исправить в брифе одним сообщением. Я обновлю summary и покажу снова."
+          );
+          await ctx.answerCbQuery("Ок").catch(() => {});
+          return true;
+        }
+
+        if (parsed.action === "mp_confirm") {
+          await ctx.answerCbQuery("Готовлю стратегию...").catch(() => {});
+          await confirmStage1AndGenerateStrategy(ctx, plan);
+          return true;
+        }
+
+        if (parsed.action === "mp_strategy_edit") {
+          await updateMediaPlan(plan.id, { awaitingInput: "stage2" });
+          await editMarkdown(
+            ctx,
+            "✏️ Напиши, что скорректировать в стратегии. Я пересоберу полный вариант."
+          );
+          await ctx.answerCbQuery("Ок").catch(() => {});
+          return true;
+        }
+
+        if (parsed.action === "mp_strategy_ok") {
+          await updateMediaPlan(plan.id, { status: "done", awaitingInput: null });
+          await editMarkdown(ctx, "✅ Медиаплан сохранён 💾");
+          await ctx.answerCbQuery("Сохранено").catch(() => {});
+          return true;
+        }
+
+        return false;
+      } catch (error) {
+        console.error("[mediaplan] callback failed", error);
+        await ctx.answerCbQuery("Ошибка").catch(() => {});
+        await replyMarkdown(ctx, MSG_ERROR);
+        return true;
+      }
+    },
+
+    async handleMessage(ctx: Context<Update>): Promise<boolean> {
+      const message = ctx.message;
+      if (!message || !("chat" in message)) return false;
+
+      const textRaw = getMessageText(message).trim();
+      const isMediaplanCommand = MP_CMD_RE.test(textRaw);
+
+      // MVP scope: only in private chat to avoid intercepting group workstreams.
+      if (!isPrivateChat(ctx) && !isMediaplanCommand) {
+        return false;
+      }
+
+      // Let other commands pass through when flow is active.
+      if (textRaw.startsWith("/") && !isMediaplanCommand) {
+        return false;
+      }
+
+      try {
+        const resolved = await resolveUserAndTeam(ctx);
+        if (!resolved) return false;
+        const { userId, teamId } = resolved;
+
+        const active = await findActiveMediaPlanByUser(userId);
+
+        // 1) /mediaplan [brief]
+        const cmdMatch = textRaw.match(MP_CMD_RE);
+        if (cmdMatch) {
+          const inlineBrief = (cmdMatch[1] || "").trim();
+          let brief = inlineBrief;
+
+          if (!brief && "reply_to_message" in message) {
+            brief = getMessageText(message.reply_to_message as Message).trim();
+          }
+
+          if (!brief) {
+            await replyMarkdown(
+              ctx,
+              "Отправь бриф после команды `/mediaplan` или просто перешли бриф в личку бота."
+            );
+            return true;
+          }
+
+          await startOrRestartPlan(ctx, userId, teamId, brief, active);
+          return true;
+        }
+
+        // 2) Forwarded brief starts flow when no active plan.
+        if (!active && isForwardedMessage(message) && textRaw) {
+          await startOrRestartPlan(ctx, userId, teamId, textRaw, null);
+          return true;
+        }
+
+        if (!active) return false;
+
+        // 3) Active flow continuation.
+        if (active.status === "stage1") {
+          if (!textRaw) {
+            await replyMarkdown(ctx, "Пришли уточнение текстом, и я обновлю summary.");
+            return true;
+          }
+          await applyStage1Correction(ctx, active, textRaw);
+          return true;
+        }
+
+        if (active.status === "stage2") {
+          if (active.awaitingInput !== "stage2") {
+            await replyMarkdown(ctx, "Чтобы изменить стратегию, нажми кнопку ✏️ *Скорректировать* под последним вариантом.");
+            return true;
+          }
+
+          if (!textRaw) {
+            await replyMarkdown(ctx, "Напиши текстом, что нужно скорректировать.");
+            return true;
+          }
+
+          await applyStage2Correction(ctx, active, textRaw);
+          return true;
+        }
+
+        return false;
+      } catch (error) {
+        console.error("[mediaplan] message flow failed", error);
+        await replyMarkdown(ctx, MSG_ERROR);
+        return true;
+      }
+    },
+  };
+}

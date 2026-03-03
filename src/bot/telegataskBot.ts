@@ -79,12 +79,14 @@ import { LLMService } from "../core/services/llm";
 import { TelegramService } from "../core/services/telegram";
 import { registerAllSkills } from "../skills/registry";
 import { getDefaultProjectIdForTelegramChat } from "../core/projects/getDefaultProjectIdForTelegramChat";
+import { registerMediaPlanningHandlers } from "../features/mediaPlanning/mediaPlanning.handler";
 import {
   pendingKnowledgeForwards,
   handleKnowledgeImportantFollowup,
 } from "../legacy/knowledge/handleKnowledge";
 
 let skillRouter: SkillRouter | null = null;
+const mediaPlanningHandlers = registerMediaPlanningHandlers();
 
 type SortMode = "date" | "project";
 type CachedList = {
@@ -4209,6 +4211,7 @@ const BOT_COMMANDS = [
   { command: "ksearch", description: "Поиск по знаниям" },
   { command: "ask", description: "Вопрос по базе (RAG)" },
   { command: "digest", description: "Дайджест по чату" },
+  { command: "mediaplan", description: "Собрать медиастратегию" },
   { command: "status", description: "Статус бота" },
   { command: "info", description: "Справка" },
 ];
@@ -4237,6 +4240,7 @@ const BOT_COMMANDS_RU = [
   { command: "ksearch", description: "Поиск по знаниям" },
   { command: "ask", description: "Вопрос по базе (RAG)" },
   { command: "digest", description: "Дайджест по чату" },
+  { command: "mediaplan", description: "Собрать медиастратегию" },
   { command: "status", description: "Статус бота" },
   { command: "info", description: "Справка" },
 ];
@@ -4275,6 +4279,9 @@ export function initTelegataskBot(): void {
         if (handled) return;
       }
 
+      const handledMediaPlanning = await mediaPlanningHandlers.handleCallback(ctx);
+      if (handledMediaPlanning) return;
+
       const handledTasksUi = await handleTasksUiCallback(ctx);
       if (handledTasksUi) return;
 
@@ -4302,6 +4309,11 @@ export function initTelegataskBot(): void {
       if (skillRouter) {
         const handled = await skillRouter.handleMessage(ctx);
         if (handled) return;
+      }
+
+      const handledMediaPlanning = await mediaPlanningHandlers.handleMessage(ctx);
+      if (handledMediaPlanning) {
+        return;
       }
 
       const handledInfo = await handleInfo(ctx);
