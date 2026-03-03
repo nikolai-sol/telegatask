@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import {
   STAGE1_SYSTEM,
   STAGE2_CORRECTION,
@@ -5,20 +6,64 @@ import {
   type MediaBriefSummary,
 } from "./mediaPlanning.prompts";
 
-export const FAST_MODEL = "gemini-2.0-flash";
-export const THINKING_MODEL = "gemini-2.5-pro";
+export const FAST_MODEL = process.env.MEDIAPLAN_FAST_MODEL || "claude-3-5-haiku-latest";
+export const THINKING_MODEL = process.env.MEDIAPLAN_THINKING_MODEL || "claude-3-opus-latest";
 
-type GeminiContentPart = { text?: string };
-type GeminiCandidate = { content?: { parts?: GeminiContentPart[] } };
+const PROMPT_CACHE_TTL_MS = Number(process.env.MEDIAPLAN_PROMPT_CACHE_TTL_MS || 10 * 60 * 1000);
+const promptCache = new Map<string, { value: string; expiresAt: number }>();
 
-type GeminiCallOptions = {
+type ClaudeContentBlock = {
+  type: string;
+  text?: string;
+};
+
+type ClaudeResponse = {
+  content?: ClaudeContentBlock[];
+};
+
+type ClaudeCallOptions = {
   model: string;
   systemInstruction: string;
   userPrompt: string;
-  responseJson?: boolean;
   temperature?: number;
   maxOutputTokens?: number;
 };
+
+function getClaudeApiKey(): string | null {
+  const key =
+    process.env.ANTHROPIC_API_KEY ||
+    process.env.CLAUDE_API_KEY ||
+    process.env.CLAUDET_API_KEY ||
+    process.env.GEMINI_API_KEY ||
+    null;
+  return key && String(key).trim() ? String(key).trim() : null;
+}
+
+function buildCacheKey(options: ClaudeCallOptions): string {
+  const raw = [
+    options.model,
+    String(options.temperature ?? 0.4),
+    String(options.maxOutputTokens ?? 4096),
+    options.systemInstruction,
+    options.userPrompt,
+  ].join("\n---\n");
+
+  return crypto.createHash("sha256").update(raw).digest("hex");
+}
+
+function getCachedValue(key: string): string | null {
+  const item = promptCache.get(key);
+  if (!item) return null;
+  if (item.expiresAt < Date.now()) {
+    promptCache.delete(key);
+    return null;
+  }
+  return item.value;
+}
+
+function setCachedValue(key: string, value: string): void {
+  promptCache.set(key, { value, expiresAt: Date.now() + PROMPT_CACHE_TTL_MS });
+}
 
 function extractJsonPayload(text: string): string | null {
   const trimmed = text.trim();
@@ -70,60 +115,78 @@ function normalizeSummary(raw: unknown): MediaBriefSummary {
   };
 }
 
-async function callGemini(options: GeminiCallOptions): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY;
+async function callClaude(options: ClaudeCallOptions): Promise<string> {
+  const apiKey = getClaudeApiKey();
   if (!apiKey) {
-    throw new Error("GEMINI_API_KEY not set");
+    throw new Error("ANTHROPIC_API_KEY (or CLAUDE_API_KEY) not set");
   }
 
-  const model = options.model;
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: options.systemInstruction }] },
-        contents: [{ role: "user", parts: [{ text: options.userPrompt }] }],
-        generationConfig: options.responseJson
-          ? {
-              responseMimeType: "application/json",
-              temperature: options.temperature ?? 0.2,
-            }
-          : {
-              temperature: options.temperature ?? 0.5,
-              maxOutputTokens: options.maxOutputTokens ?? 4096,
+  const cacheKey = buildCacheKey(options);
+  const cached = getCachedValue(cacheKey);
+  if (cached !== null) return cached;
+
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "anthropic-beta": "prompt-caching-2024-07-31",
+    },
+    body: JSON.stringify({
+      model: options.model,
+      max_tokens: options.maxOutputTokens ?? 4096,
+      temperature: options.temperature ?? 0.4,
+      system: [
+        {
+          type: "text",
+          text: options.systemInstruction,
+          cache_control: { type: "ephemeral" },
+        },
+      ],
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: options.userPrompt,
+              cache_control: { type: "ephemeral" },
             },
-      }),
-    }
-  );
+          ],
+        },
+      ],
+    }),
+  });
 
   if (!res.ok) {
     const errBody = await res.text();
-    throw new Error(`Gemini API error ${res.status}: ${errBody.slice(0, 300)}`);
+    throw new Error(`Claude API error ${res.status}: ${errBody.slice(0, 300)}`);
   }
 
-  const data = (await res.json()) as { candidates?: GeminiCandidate[] };
+  const data = (await res.json()) as ClaudeResponse;
   const text =
-    data.candidates?.[0]?.content?.parts
-      ?.map((part) => part.text ?? "")
+    (data.content || [])
+      .map((block) => (block.type === "text" ? block.text || "" : ""))
       .join("")
-      .trim() ?? "";
+      .trim() || "";
 
   if (!text) {
-    throw new Error("Gemini returned empty response");
+    throw new Error("Claude returned empty response");
   }
 
+  setCachedValue(cacheKey, text);
   return text;
 }
 
 export async function parseBrief(text: string): Promise<MediaBriefSummary> {
   try {
-    const raw = await callGemini({
+    const raw = await callClaude({
       model: FAST_MODEL,
       systemInstruction: STAGE1_SYSTEM,
       userPrompt: text,
-      responseJson: true,
+      temperature: 0.1,
+      maxOutputTokens: 1200,
     });
 
     const jsonText = extractJsonPayload(raw);
@@ -157,11 +220,12 @@ export async function updateBriefSummary(
       "Return only corrected JSON in the same schema.",
     ].join("\n");
 
-    const raw = await callGemini({
+    const raw = await callClaude({
       model: FAST_MODEL,
       systemInstruction: STAGE1_SYSTEM,
       userPrompt: prompt,
-      responseJson: true,
+      temperature: 0.1,
+      maxOutputTokens: 1400,
     });
 
     const jsonText = extractJsonPayload(raw);
@@ -185,12 +249,11 @@ export async function generateStrategy(summary: MediaBriefSummary, history: stri
 
     const prompt = `Validated media brief JSON:\n${JSON.stringify(summary, null, 2)}${historyBlock}`;
 
-    return await callGemini({
+    return await callClaude({
       model: THINKING_MODEL,
       systemInstruction: STAGE2_SYSTEM,
       userPrompt: prompt,
-      responseJson: false,
-      temperature: 0.4,
+      temperature: 0.35,
       maxOutputTokens: 4096,
     });
   } catch (error) {
@@ -214,12 +277,11 @@ export async function regenerateStrategyWithCorrection(
         ? `\n\nConversation history:\n${history.map((h, i) => `${i + 1}. ${h}`).join("\n")}`
         : "");
 
-    return await callGemini({
+    return await callClaude({
       model: THINKING_MODEL,
       systemInstruction: STAGE2_SYSTEM,
       userPrompt: prompt,
-      responseJson: false,
-      temperature: 0.4,
+      temperature: 0.35,
       maxOutputTokens: 4096,
     });
   } catch (error) {
