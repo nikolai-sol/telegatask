@@ -6,6 +6,16 @@
 
 Telegatask уже работает как team-first платформа (бот + mini app), а не как ранний single-user MVP.
 
+## Инфраструктура (as-is)
+
+- Backend API + Telegram bot запускаются единым процессом из `src/index.ts`.
+- Production deploy backend/бота: TimeWeb VPS через `scripts/deploy.sh` (SSH `2222`, PM2 процесс `telegatask`).
+- Mini App основной: GitHub Pages (`.github/workflows/deploy-miniapp.yml`, trigger по `mini-app/**`).
+- Mini App fallback: backend отдает статику по `/mini-app`.
+- Bot WebApp URL управляется через `MINI_APP_URL`.
+- Mini App -> API авторизация через `X-Telegram-Init-Data` с backend валидацией подписи.
+- Данные: Firestore (`firebase-admin`, `src/config/firebase.ts`).
+
 ### Реализовано в `main`
 
 - Team isolation на backend:
@@ -156,5 +166,6 @@ Telegatask уже работает как team-first платформа (бот 
 
 - По фичам: `docs/CHANGELOG.md`
 - По плану: `docs/ROADMAP.md`
+- По инфраструктуре/деплою: `docs/MINIAPP-SETUP.md`, `scripts/deploy.sh`, `.github/workflows/deploy-miniapp.yml`
 - По API/реализации: `src/routes/api.ts`, `src/repositories/*`
 - По mini app: `mini-app/modules/*`

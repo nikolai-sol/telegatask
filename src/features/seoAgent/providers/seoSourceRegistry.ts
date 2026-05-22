@@ -1,0 +1,93 @@
+import type { SeoSourceName } from "../types";
+import { MockSeoDataProvider } from "./mockSeoDataProvider";
+import { SeoProviderNotConfiguredError, type SeoDataProvider } from "./seoDataProvider";
+import { SistrixSeoDataProvider } from "./sistrixSeoDataProvider";
+
+const ALL_SOURCE_NAMES: SeoSourceName[] = ["mock", "sistrix", "pagespeed", "crawler", "gsc"];
+
+const SOURCE_ALIASES: Record<string, SeoSourceName> = {
+  mock: "mock",
+  sistrix: "sistrix",
+  pagespeed: "pagespeed",
+  psi: "pagespeed",
+  crawler: "crawler",
+  gsc: "gsc",
+  search_console: "gsc",
+  google_search_console: "gsc",
+  owned_search_console: "gsc",
+};
+
+export type SeoSourceMode = "single" | "multi";
+
+export type SeoSourceSelection = {
+  mode: SeoSourceMode;
+  selectedSources: SeoSourceName[];
+  allSources: SeoSourceName[];
+};
+
+function normalizeRequestedSources(values: string[]): SeoSourceName[] {
+  const deduped = new Set<SeoSourceName>();
+
+  for (const value of values) {
+    const source = SOURCE_ALIASES[String(value || "").trim().toLowerCase()];
+    if (!source) {
+      throw new SeoProviderNotConfiguredError(`Unsupported SEO data source: ${String(value || "").trim()}`);
+    }
+    deduped.add(source);
+  }
+
+  return Array.from(deduped);
+}
+
+function parseEnvSourceList(raw: string): string[] {
+  return String(raw || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+export function resolveSeoSourceSelection(explicitSources?: string[]): SeoSourceSelection {
+  if (Array.isArray(explicitSources) && explicitSources.length > 0) {
+    return {
+      mode: "multi",
+      selectedSources: normalizeRequestedSources(explicitSources),
+      allSources: ALL_SOURCE_NAMES,
+    };
+  }
+
+  const envSources = parseEnvSourceList(process.env.SEO_DATA_SOURCES || "");
+  if (envSources.length > 0) {
+    return {
+      mode: "multi",
+      selectedSources: normalizeRequestedSources(envSources),
+      allSources: ALL_SOURCE_NAMES,
+    };
+  }
+
+  const provider = String(process.env.SEO_DATA_PROVIDER || "mock").trim().toLowerCase();
+  if (!provider || provider === "mock") {
+    return {
+      mode: "single",
+      selectedSources: ["mock"],
+      allSources: ALL_SOURCE_NAMES,
+    };
+  }
+  if (provider === "sistrix") {
+    return {
+      mode: "single",
+      selectedSources: ["sistrix"],
+      allSources: ALL_SOURCE_NAMES,
+    };
+  }
+
+  throw new SeoProviderNotConfiguredError(`Unsupported SEO_DATA_PROVIDER: ${provider}`);
+}
+
+export function isRankingSource(source: SeoSourceName): source is "mock" | "sistrix" {
+  return source === "mock" || source === "sistrix";
+}
+
+export function createRankingProvider(source: "mock" | "sistrix"): SeoDataProvider {
+  if (source === "mock") return new MockSeoDataProvider();
+  return new SistrixSeoDataProvider();
+}

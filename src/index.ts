@@ -6,6 +6,7 @@ import healthRouter from "./routes/health";
 import debugRouter from "./routes/debug";
 import apiRouter from "./routes/api";
 import agencyRouter from "./api/routes";
+import seoAgentRouter from "./features/seoAgent/routes";
 import {
   initTelegataskBot,
   stopTelegataskBot,
@@ -27,6 +28,7 @@ app.use("/mini-app", express.static(miniAppDir));
 
 app.use(healthRouter);
 app.use(debugRouter);
+app.use(seoAgentRouter);
 app.use(apiRouter);
 app.use('/agency', agencyRouter);
 

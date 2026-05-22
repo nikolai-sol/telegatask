@@ -80,6 +80,7 @@ import { TelegramService } from "../core/services/telegram";
 import { registerAllSkills } from "../skills/registry";
 import { getDefaultProjectIdForTelegramChat } from "../core/projects/getDefaultProjectIdForTelegramChat";
 import { registerMediaPlanningHandlers } from "../features/mediaPlanning/mediaPlanning.handler";
+import { warmupOllama } from "../features/mediaPlanning/ollamaService";
 import {
   pendingKnowledgeForwards,
   handleKnowledgeImportantFollowup,
@@ -169,6 +170,48 @@ function safeLogAction(
 }
 
 const STOP_WORDS = new Set(["и", "в", "на", "с", "по", "для", "из", "к", "о", "у", "это", "что", "как", "the", "a", "an", "is", "are", "of", "to", "in"]);
+
+function parseTelegramIdSet(value: string): Set<number> {
+  return new Set(
+    String(value || "")
+      .split(",")
+      .map((x) => Number(x.trim()))
+      .filter((n) => Number.isInteger(n) && n > 0)
+  );
+}
+
+const BOT_ALLOWED_TG_IDS = parseTelegramIdSet(process.env.BOT_ALLOWED_TG_IDS || "");
+const MEDIAPLAN_ONLY_TG_IDS = parseTelegramIdSet(
+  process.env.MEDIAPLAN_ONLY_TG_IDS || "234913866"
+);
+
+function isAllowedTelegramUser(telegramUserId?: number): boolean {
+  if (!telegramUserId) return false;
+  if (BOT_ALLOWED_TG_IDS.size === 0) return true;
+  return BOT_ALLOWED_TG_IDS.has(telegramUserId);
+}
+
+function isMediaplanOnlyUser(telegramUserId?: number): boolean {
+  if (!telegramUserId) return false;
+  return MEDIAPLAN_ONLY_TG_IDS.has(telegramUserId);
+}
+
+function isMediaPlanningCallbackData(data: string): boolean {
+  return String(data || "").startsWith("mp_");
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function isLaunchRetryable(error: unknown): boolean {
+  const message = String((error as { message?: unknown })?.message || "");
+  if (message.includes("TimeoutError")) return true;
+  if (message.includes("ETELEGRAM: 409")) return true;
+  if (message.toLowerCase().includes("conflict")) return true;
+  if (message.toLowerCase().includes("timed out")) return true;
+  return false;
+}
 
 function extractSearchKeywords(query: string): string[] {
   return query
@@ -4274,6 +4317,18 @@ export function initTelegataskBot(): void {
   bot.start(handleStart);
   bot.on("callback_query", async (ctx) => {
     try {
+      if (!isAllowedTelegramUser(ctx.from?.id)) {
+        await ctx.answerCbQuery("Доступ к боту ограничен").catch(() => {});
+        return;
+      }
+
+      const callbackData =
+        ctx.callbackQuery && "data" in ctx.callbackQuery ? String(ctx.callbackQuery.data || "") : "";
+      if (isMediaplanOnlyUser(ctx.from?.id) && !isMediaPlanningCallbackData(callbackData)) {
+        await ctx.answerCbQuery("Доступен только flow медиапланирования").catch(() => {});
+        return;
+      }
+
       if (skillRouter) {
         const handled = await skillRouter.handleCallback(ctx);
         if (handled) return;
@@ -4301,19 +4356,31 @@ export function initTelegataskBot(): void {
     }
   });
   bot.on("message", async (ctx) => {
+    if (!isAllowedTelegramUser(ctx.from?.id)) {
+      return;
+    }
+
     logIncomingMessage(ctx);
     await storeIncomingMessage(ctx);
     await autoSaveFilesToKnowledge(ctx);
     try {
+      const handledMediaPlanning = await mediaPlanningHandlers.handleMessage(ctx);
+      if (handledMediaPlanning) {
+        return;
+      }
+
+      if (isMediaplanOnlyUser(ctx.from?.id)) {
+        const message = ctx.message;
+        if (message && "chat" in message && message.chat.type === "private") {
+          await ctx.reply("Для этого аккаунта сейчас доступен только flow медиапланирования.");
+        }
+        return;
+      }
+
       // Try skill router first (for migrated commands)
       if (skillRouter) {
         const handled = await skillRouter.handleMessage(ctx);
         if (handled) return;
-      }
-
-      const handledMediaPlanning = await mediaPlanningHandlers.handleMessage(ctx);
-      if (handledMediaPlanning) {
-        return;
       }
 
       const handledInfo = await handleInfo(ctx);
@@ -4509,20 +4576,45 @@ export function initTelegataskBot(): void {
     }
   });
 
-  bot
-    .launch()
-    .then(async () => {
-      console.log("telegatask bot launched (long polling)");
-      await setBotCommandsMenu();
-      if (skillRouter) {
-        await skillRouter.initAll();
-        console.log("[skills] All skills initialized");
+  // TODO: re-enable webhook for remote production deployment if needed.
+  void (async () => {
+    const launchRetries = Math.max(1, Number(process.env.BOT_LAUNCH_RETRIES || 5));
+    const baseDelayMs = Math.max(1000, Number(process.env.BOT_LAUNCH_RETRY_BASE_MS || 3000));
+
+    for (let attempt = 1; attempt <= launchRetries; attempt += 1) {
+      try {
+        await bot!.telegram.deleteWebhook().catch((error) => {
+          console.warn("[bot] deleteWebhook skipped", error);
+        });
+
+        await bot!.launch({
+          allowedUpdates: ["message", "callback_query", "inline_query"],
+        });
+
+        console.log("telegatask bot launched (long polling)");
+        void warmupOllama();
+        await setBotCommandsMenu();
+        if (skillRouter) {
+          await skillRouter.initAll();
+          console.log("[skills] All skills initialized");
+        }
+        startScheduler(bot!);
+        return;
+      } catch (error) {
+        if (!isLaunchRetryable(error) || attempt >= launchRetries) {
+          console.error("Failed to launch telegatask bot", error);
+          return;
+        }
+
+        const delayMs = baseDelayMs * 2 ** (attempt - 1);
+        console.warn(
+          `[bot] launch retry ${attempt}/${launchRetries} in ${delayMs}ms`,
+          error
+        );
+        await sleep(delayMs);
       }
-      startScheduler(bot!);
-    })
-    .catch((error) => {
-      console.error("Failed to launch telegatask bot", error);
-    });
+    }
+  })();
 }
 
 export async function stopTelegataskBot(): Promise<void> {

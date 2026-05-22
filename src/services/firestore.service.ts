@@ -3,6 +3,36 @@ import type { Company, AgencyTask, AIContext, CompanyType, AIMode } from '../typ
 
 const db = getFirestore();
 
+function toDate(value: unknown): Date | undefined {
+  if (!value) return undefined;
+  if (value instanceof Date) return value;
+  if (typeof value === 'object' && value && typeof (value as { toDate?: () => Date }).toDate === 'function') {
+    return (value as { toDate: () => Date }).toDate();
+  }
+  const parsed = new Date(String(value));
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed;
+}
+
+function docToAgencyTask(id: string, data: Record<string, unknown>): AgencyTask {
+  return {
+    id,
+    teamId: typeof data.teamId === 'string' ? data.teamId : undefined,
+    companyId: typeof data.companyId === 'string' ? data.companyId : undefined,
+    visibility: data.visibility === 'team' ? 'team' : 'private',
+    assignedTo: typeof data.assignedTo === 'string' ? data.assignedTo : undefined,
+    createdBy: String(data.createdBy || ''),
+    title: String(data.title || ''),
+    description: typeof data.description === 'string' ? data.description : undefined,
+    status: (data.status as AgencyTask['status']) ?? 'todo',
+    priority: (data.priority as AgencyTask['priority']) ?? 'normal',
+    isFire: Boolean(data.isFire),
+    dueDate: toDate(data.dueDate),
+    completedAt: toDate(data.completedAt),
+    createdAt: toDate(data.createdAt) ?? new Date(0),
+    updatedAt: toDate(data.updatedAt) ?? new Date(0),
+  };
+}
+
 // ============================================================
 // Companies
 // ============================================================
@@ -88,9 +118,20 @@ export async function createAgencyTask(
 ): Promise<AgencyTask> {
   const ref = db.collection('agency_tasks').doc();
   const now = Timestamp.now();
-  const task = { ...data, createdAt: now, updatedAt: now };
+  const task = {
+    ...data,
+    visibility: data.visibility ?? (data.companyId ? 'team' : 'private'),
+    createdAt: now,
+    updatedAt: now,
+  };
   await ref.set(task);
-  return { id: ref.id, ...task, createdAt: now.toDate(), updatedAt: now.toDate() };
+  return docToAgencyTask(ref.id, { ...task, createdAt: now.toDate(), updatedAt: now.toDate() });
+}
+
+export async function getAgencyTaskById(id: string): Promise<AgencyTask | null> {
+  const doc = await db.collection('agency_tasks').doc(id).get();
+  if (!doc.exists) return null;
+  return docToAgencyTask(doc.id, (doc.data() || {}) as Record<string, unknown>);
 }
 
 export async function getTasksByCompany(companyId: string): Promise<AgencyTask[]> {
@@ -99,7 +140,7 @@ export async function getTasksByCompany(companyId: string): Promise<AgencyTask[]
     .where('companyId', '==', companyId)
     .orderBy('createdAt', 'desc')
     .get();
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }) as AgencyTask);
+  return snap.docs.map(d => docToAgencyTask(d.id, (d.data() || {}) as Record<string, unknown>));
 }
 
 export async function getInboxTasks(): Promise<AgencyTask[]> {
@@ -111,7 +152,7 @@ export async function getInboxTasks(): Promise<AgencyTask[]> {
     .orderBy('status')
     .orderBy('createdAt', 'desc')
     .get();
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }) as AgencyTask);
+  return snap.docs.map(d => docToAgencyTask(d.id, (d.data() || {}) as Record<string, unknown>));
 }
 
 export async function getFireAgencyTasks(): Promise<AgencyTask[]> {
@@ -120,7 +161,7 @@ export async function getFireAgencyTasks(): Promise<AgencyTask[]> {
     .where('isFire', '==', true)
     .where('status', '!=', 'done')
     .get();
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }) as AgencyTask);
+  return snap.docs.map(d => docToAgencyTask(d.id, (d.data() || {}) as Record<string, unknown>));
 }
 
 export async function updateAgencyTaskStatus(id: string, status: string): Promise<void> {

@@ -48,7 +48,9 @@ export type TaskPriority = 'low' | 'normal' | 'high' | 'fire';
 
 export interface AgencyTask {
   id: string;
+  teamId?: string;
   companyId?: string;  // undefined = Ops / Inbox задача
+  visibility?: 'private' | 'team';
   assignedTo?: string;
   createdBy: string;
   title: string;

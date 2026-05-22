@@ -1,34 +1,85 @@
-# Mini App и домен pldata.io
+# Mini App / Backend Deployment (Actual)
 
-## Что сейчас сделано
+Обновлено: 2026-03-03
 
-### Mini App (менеджер задач)
-- **Фронтенд:** HTML + CSS + JS (без фреймворков), Telegram Web App SDK.
-- **Хостинг:** GitHub Pages, кастомный домен **https://taskbot.pldata.io** (CNAME в Cloudflare → nikolai-sol.github.io).
-- **Функции:** список задач (активные / выполненные / все), кнопки «Выполнено» и «Удалить», фильтры, тосты, тема Telegram.
+## Фактическая схема
 
-### API бота для Mini App
-- **Эндпоинты:** `GET /api/tasks`, `POST /api/tasks/:id/status`, `DELETE /api/tasks/:id`.
-- **Авторизация:** проверка Telegram WebApp `initData` (HMAC-SHA256).
-- **Сервер:** Nginx на порту 80 проксирует **api.pldata.io** на Node (порт 3000). HTTPS — через Cloudflare (режим Flexible).
+- Backend API и Telegram-бот запускаются из одного entrypoint: `src/index.ts`.
+- Прод деплой backend/бота идет на TimeWeb VPS через `scripts/deploy.sh`.
+- PM2 процесс: `telegatask`.
+- Mini App деплоится в GitHub Pages через workflow `.github/workflows/deploy-miniapp.yml`.
+- Если GitHub Pages недоступен, backend отдает mini app статику по `/mini-app`.
 
-### Домен и DNS (Cloudflare)
-- **api.pldata.io** — A → 147.45.132.90, **Proxied** (HTTPS для пользователя).
-- **taskbot.pldata.io** — CNAME → nikolai-sol.github.io, **DNS only**.
-- **pldata.io / www** — A → 185.215.4.10 (Тильда), **DNS only** (избегаем редирект-лупа).
-- **autodiscover, email, lyncdiscover, msoid, sip** — **DNS only** (почта/Microsoft).
+## Backend + Bot (TimeWeb)
 
-### Бот
-- В списке задач (/l, «Мои задачи») кнопка **«Открыть менеджер задач»** (WebApp) — если в `.env` задано `MINI_APP_URL=https://taskbot.pldata.io`.
+Источник: `scripts/deploy.sh`.
 
----
+- Хост: `root@147.45.132.90`
+- SSH порт: `2222`
+- Директория на сервере: `/opt/telegatask`
+- Что делает скрипт:
+  - синхронизирует проект на сервер;
+  - копирует `.env` и `serviceAccountKey.json`;
+  - ставит зависимости и собирает проект;
+  - перезапускает PM2 процесс `telegatask`.
 
-## Как это было настроено (справка)
+Команда локального деплоя:
 
-1. **HTTPS для API:** домен pldata.io в Cloudflare, для записи **api** — Proxied, SSL/TLS → **Flexible** (чтобы Cloudflare ходил на origin по HTTP:80, а не на 443 где Xray).
-2. **Кнопка в боте:** в `.env` на сервере `MINI_APP_URL=https://taskbot.pldata.io`, перезапуск бота.
+```bash
+./scripts/deploy.sh
+```
 
-## Проверка
+Проверка на сервере:
 
-- Mini App: https://taskbot.pldata.io/
-- API health: https://api.pldata.io/health → `{"status":"ok","service":"telegatask-backend"}`
+```bash
+pm2 status
+pm2 logs telegatask
+curl http://localhost:3000/health
+```
+
+## Mini App
+
+### Основной вариант: GitHub Pages
+
+Источник: `.github/workflows/deploy-miniapp.yml`.
+
+- Триггер: push в `main` при изменениях в `mini-app/**`.
+- Публикует директорию `mini-app`.
+- Перед публикацией может инжектить API base URL через GitHub variable `MINIAPP_API_URL` (meta `api-base` в `mini-app/index.html`).
+
+### Fallback: статика с backend
+
+Источник: `src/index.ts`.
+
+- Статика mini app монтируется на `/mini-app`.
+- Редирект `/mini-app` -> `/mini-app/` для корректной загрузки.
+
+## Связка Bot <-> Mini App
+
+- Bot WebApp URL задается через `MINI_APP_URL` в `.env`.
+- Кнопки WebApp формируются в `src/bot/telegataskBot.ts`.
+
+## Связка Mini App <-> API
+
+- Mini app отправляет заголовок `X-Telegram-Init-Data` (см. `mini-app/core/api.js`).
+- Backend валидирует Telegram initData подпись в `src/middleware/validateWebApp.ts`.
+
+## Данные и доступ
+
+- Хранилище: Firestore через `firebase-admin`.
+- Конфиг Firebase: `src/config/firebase.ts`.
+- Credentials:
+  - предпочтительно `GOOGLE_APPLICATION_CREDENTIALS`;
+  - fallback: локальный `serviceAccountKey.json`.
+
+## Обязательные env для production
+
+```env
+TELEGRAM_BOT_TOKEN=...
+GEMINI_API_KEY=...
+ANTHROPIC_API_KEY=...
+MEDIA_PLAN_FAST_MODEL=claude-haiku-4-5
+MEDIA_PLAN_THINKING_MODEL=claude-opus-4-5
+GOOGLE_APPLICATION_CREDENTIALS=/opt/telegatask/serviceAccountKey.json
+MINI_APP_URL=https://taskbot.pldata.io
+```

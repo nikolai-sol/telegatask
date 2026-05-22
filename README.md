@@ -16,8 +16,16 @@ npm install
 TELEGRAM_BOT_TOKEN=...
 GEMINI_API_KEY=...        # для /ask, parse_today, парсинга дат
 ANTHROPIC_API_KEY=...     # для /mediaplan (Claude)
+OLLAMA_URL=http://localhost:11434
+OLLAMA_MODEL=qwen3-fast:latest
+OLLAMA_TIMEOUT_MS=90000
 MEDIA_PLAN_FAST_MODEL=claude-haiku-4-5
 MEDIA_PLAN_THINKING_MODEL=claude-opus-4-5
+MEDIA_PLAN_RESEARCH_MODEL=claude-haiku-4-5
+MEDIA_PLAN_STRATEGY_MODEL=claude-opus-4-6
+MEDIA_PLAN_TEST_GROUP_ID=-5275318533
+MEDIA_PLAN_CLAUDE_RETRY_ATTEMPTS=4
+MEDIA_PLAN_CLAUDE_RETRY_BASE_MS=1200
 GOOGLE_APPLICATION_CREDENTIALS=./serviceAccountKey.json
 ```
 
@@ -26,6 +34,38 @@ GOOGLE_APPLICATION_CREDENTIALS=./serviceAccountKey.json
 ```bash
 npm run dev   # разработка
 npm run build && npm run start   # прод
+```
+
+## Deployment Topology
+
+- Backend API + Telegram bot запускаются одним процессом из `src/index.ts`.
+- Production деплой backend/бота: TimeWeb VPS через [`scripts/deploy.sh`](/Volumes/Elements/telegatask/scripts/deploy.sh) (SSH `2222`, PM2 процесс `telegatask`).
+- Mini App:
+  - основной вариант: GitHub Pages workflow [`deploy-miniapp.yml`](/Volumes/Elements/telegatask/.github/workflows/deploy-miniapp.yml);
+  - fallback: статика от backend по пути `/mini-app` (см. `src/index.ts`).
+- Бот открывает Mini App по `MINI_APP_URL` из `.env`.
+- Mini App ходит в API с `X-Telegram-Init-Data`, backend валидирует подпись WebApp initData.
+
+Минимальные переменные для прода:
+
+```
+TELEGRAM_BOT_TOKEN=...
+GEMINI_API_KEY=...
+ANTHROPIC_API_KEY=...
+MEDIA_PLAN_FAST_MODEL=claude-haiku-4-5
+MEDIA_PLAN_THINKING_MODEL=claude-opus-4-5
+GOOGLE_APPLICATION_CREDENTIALS=/opt/telegatask/serviceAccountKey.json
+MINI_APP_URL=https://taskbot.pldata.io
+```
+
+Mac Mini (PM2) first-time setup:
+
+```bash
+npm run build
+pm2 start ecosystem.config.js
+pm2 save
+pm2 startup
+# выполнить команду, которую выведет pm2 startup
 ```
 
 ## Ручная проверка (Knowledge 2.0)
