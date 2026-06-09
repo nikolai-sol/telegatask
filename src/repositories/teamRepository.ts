@@ -101,7 +101,9 @@ export async function setRole(
     {
       memberIds: admin.firestore.FieldValue.arrayUnion(userId),
       updatedAt: new Date().toISOString(),
-      [`roles.${userId}`]: role,
+      roles: {
+        [userId]: role,
+      },
     } as any,
     { merge: true }
   );
@@ -117,7 +119,9 @@ export async function updatePermissions(
     {
       memberIds: admin.firestore.FieldValue.arrayUnion(userId),
       updatedAt: new Date().toISOString(),
-      [`permissions.${userId}`]: payload,
+      permissions: {
+        [userId]: payload,
+      },
     } as any,
     { merge: true }
   );
@@ -128,15 +132,12 @@ export async function removeMember(
   userId: string
 ): Promise<void> {
   const ref = collection.doc(teamId);
-  await ref.set(
-    {
-      memberIds: admin.firestore.FieldValue.arrayRemove(userId),
-      updatedAt: new Date().toISOString(),
-      [`roles.${userId}`]: admin.firestore.FieldValue.delete(),
-      [`permissions.${userId}`]: admin.firestore.FieldValue.delete(),
-    } as any,
-    { merge: true }
-  );
+  await ref.update({
+    memberIds: admin.firestore.FieldValue.arrayRemove(userId),
+    updatedAt: new Date().toISOString(),
+    [`roles.${userId}`]: admin.firestore.FieldValue.delete(),
+    [`permissions.${userId}`]: admin.firestore.FieldValue.delete(),
+  } as any);
 }
 
 export async function listTeamsByMemberId(userId: string, limitCount: number = 50): Promise<Team[]> {

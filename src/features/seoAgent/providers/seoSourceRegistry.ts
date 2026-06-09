@@ -3,7 +3,15 @@ import { MockSeoDataProvider } from "./mockSeoDataProvider";
 import { SeoProviderNotConfiguredError, type SeoDataProvider } from "./seoDataProvider";
 import { SistrixSeoDataProvider } from "./sistrixSeoDataProvider";
 
-const ALL_SOURCE_NAMES: SeoSourceName[] = ["mock", "sistrix", "pagespeed", "crawler", "gsc"];
+const ALL_SOURCE_NAMES: SeoSourceName[] = [
+  "mock",
+  "sistrix",
+  "pagespeed",
+  "crawler",
+  "gsc",
+  "google_serp_rank",
+  "yandex_serp_rank",
+];
 
 const SOURCE_ALIASES: Record<string, SeoSourceName> = {
   mock: "mock",
@@ -11,10 +19,17 @@ const SOURCE_ALIASES: Record<string, SeoSourceName> = {
   pagespeed: "pagespeed",
   psi: "pagespeed",
   crawler: "crawler",
+  basic_crawler: "crawler",
   gsc: "gsc",
   search_console: "gsc",
   google_search_console: "gsc",
   owned_search_console: "gsc",
+  google_serp_rank: "google_serp_rank",
+  google_rank: "google_serp_rank",
+  google_rank_tracking: "google_serp_rank",
+  yandex_serp_rank: "yandex_serp_rank",
+  yandex_rank: "yandex_serp_rank",
+  yandex_rank_tracking: "yandex_serp_rank",
 };
 
 export type SeoSourceMode = "single" | "multi";
@@ -56,10 +71,12 @@ export function resolveSeoSourceSelection(explicitSources?: string[]): SeoSource
   }
 
   const envSources = parseEnvSourceList(process.env.SEO_DATA_SOURCES || "");
-  if (envSources.length > 0) {
+  const enabledSources = parseEnvSourceList(process.env.SEO_ENABLED_SOURCES || "");
+  const effectiveSources = enabledSources.length > 0 ? enabledSources : envSources;
+  if (effectiveSources.length > 0) {
     return {
       mode: "multi",
-      selectedSources: normalizeRequestedSources(envSources),
+      selectedSources: normalizeRequestedSources(effectiveSources),
       allSources: ALL_SOURCE_NAMES,
     };
   }

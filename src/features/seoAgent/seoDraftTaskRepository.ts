@@ -1,5 +1,5 @@
 import { firestore } from "../../config/firebase";
-import type { SeoDraftTask, SeoDraftTaskStatus } from "./types";
+import type { SeoDraftTask, SeoDraftTaskStatus, SeoEvidence } from "./types";
 
 const collection = firestore.collection("seoDraftTasks");
 
@@ -16,15 +16,43 @@ function normalizeStatus(value: unknown): SeoDraftTaskStatus {
   return "draft";
 }
 
+function normalizeEvidence(value: unknown): SeoEvidence[] {
+  if (!Array.isArray(value)) return [];
+  const evidence: SeoEvidence[] = [];
+  for (const item of value) {
+    const data = item && typeof item === "object" ? (item as Record<string, unknown>) : {};
+    const source = String(data.source || "").trim() as SeoEvidence["source"];
+    const message = String(data.message || "").trim();
+    if (!source || !message) continue;
+    evidence.push({
+      source,
+      ...(typeof data.metric === "string" && data.metric.trim() ? { metric: data.metric.trim() } : {}),
+      ...(data.value !== undefined && (typeof data.value === "string" || typeof data.value === "number" || typeof data.value === "boolean" || data.value === null)
+        ? { value: data.value }
+        : {}),
+      ...(typeof data.url === "string" && data.url.trim() ? { url: data.url.trim() } : {}),
+      ...(typeof data.query === "string" && data.query.trim() ? { query: data.query.trim() } : {}),
+      message,
+      ...(typeof data.collectedAt === "string" || typeof data.collectedAt === "number" ? { collectedAt: data.collectedAt } : {}),
+    });
+  }
+  return evidence;
+}
+
 function docToSeoDraftTask(id: string, data: FirebaseFirestore.DocumentData): SeoDraftTask {
   const now = new Date().toISOString();
   return {
     id,
     teamId: String(data.teamId || ""),
+    companyId: String(data.companyId || data.suggestedCompanyId || ""),
     runId: String(data.runId || ""),
     domain: String(data.domain || ""),
     sourceType: data.sourceType === "recommendation" ? "recommendation" : "opportunity",
     sourceId: typeof data.sourceId === "string" && data.sourceId.trim() ? data.sourceId.trim() : null,
+    sourceFindingId:
+      typeof data.sourceFindingId === "string" && data.sourceFindingId.trim() ? data.sourceFindingId.trim() : null,
+    evidence: normalizeEvidence(data.evidence),
+    labels: Array.isArray(data.labels) ? data.labels : [],
     title: String(data.title || ""),
     description: String(data.description || ""),
     priority: data.priority === "priority" || data.priority === "fire" ? data.priority : "normal",
@@ -51,8 +79,13 @@ export async function createSeoDraftTasks(input: {
 }): Promise<SeoDraftTask[]> {
   const created = await Promise.all(
     input.tasks.map(async (task) => {
-      const ref = await collection.add(task);
-      return { id: ref.id, ...task };
+      const safeTask = {
+        ...task,
+        teamId: input.teamId,
+        companyId: task.companyId || task.suggestedCompanyId || "",
+      };
+      const ref = await collection.add(safeTask);
+      return { id: ref.id, ...safeTask };
     })
   );
   return created;

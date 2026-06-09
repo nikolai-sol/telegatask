@@ -43,7 +43,7 @@ export class PageSpeedSeoSource {
 
     if (!response.ok) {
       throw new SeoProviderError({
-        category: "pagespeed_http_error",
+        category: response.status === 429 ? "pagespeed_rate_limit" : "pagespeed_http_error",
         safeMessage:
           response.status === 429
             ? "PageSpeed Insights rate limit reached"

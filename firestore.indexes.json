@@ -79,6 +79,30 @@
         {"fieldPath": "companyId", "order": "ASCENDING"},
         {"fieldPath": "mode", "order": "ASCENDING"}
       ]
+    },
+    {
+      "collectionGroup": "seoAnalysisRuns",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "teamId", "order": "ASCENDING"},
+        {"fieldPath": "createdAt", "order": "DESCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "seoDraftTasks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "teamId", "order": "ASCENDING"},
+        {"fieldPath": "runId", "order": "ASCENDING"}
+      ]
+    },
+    {
+      "collectionGroup": "seoCompanyConfigs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {"fieldPath": "teamId", "order": "ASCENDING"},
+        {"fieldPath": "companyId", "order": "ASCENDING"}
+      ]
     }
   ],
   "fieldOverrides": []

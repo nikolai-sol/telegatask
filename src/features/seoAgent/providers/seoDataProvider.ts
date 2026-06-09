@@ -1,5 +1,6 @@
 import type {
   SeoAnalysisMode,
+  SeoDeviceType,
   SeoEffort,
   SeoImpact,
   SeoOpportunityType,
@@ -10,10 +11,16 @@ export type SeoProviderInput = {
   teamId: string;
   companyId: string;
   domain: string;
+  gscSiteUrl: string | null;
+  targetDomainAliases: string[];
   market: string;
   language: string;
   competitors: string[];
   importantSections: string[];
+  trackingKeywords: string[];
+  location: string | null;
+  region: string | null;
+  device: SeoDeviceType;
   mode: SeoAnalysisMode;
 };
 

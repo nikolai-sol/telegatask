@@ -156,11 +156,28 @@ Analyze now also accepts optional source override input:
 }
 ```
 
+For one-off WGD HTML reports, do not use `pagespeed` by default. PageSpeed Insights can hit API quota limits and turn the speed block into `PAGESPEED_RATE_LIMIT`.
+
+Preferred manual WGD speed-test path:
+
+```bash
+npx lighthouse "https://example.com/path/" \
+  --quiet \
+  --output=json \
+  --output-path=stdout \
+  --preset=desktop \
+  --throttling-method=provided \
+  --only-categories=performance,accessibility,best-practices,seo \
+  --chrome-flags="--headless=new --no-sandbox --disable-gpu"
+```
+
+Then store that local Lighthouse result separately in the report JSON/HTML. Keep `pagespeed` out of the WGD `sources` array unless a dedicated PSI API key/quota is intentionally being tested.
+
 ## Limitations
 
 - full end-to-end route QA was not executed here because that path writes analysis runs and depends on the active Firestore/team environment
 - GSC auth is still a placeholder
-- PageSpeed may rate-limit unauthenticated requests
+- PageSpeed may rate-limit requests; one-off WGD HTML reports should use local Lighthouse instead
 - crawler and PageSpeed are homepage-only
 - no AI synthesis yet
 
@@ -169,6 +186,6 @@ Analyze now also accepts optional source override input:
 Stage 07 is ready as infrastructure work. The next safe step is to build richer multi-source synthesis on top of:
 
 - owned GSC query data
-- PageSpeed metrics
+- PageSpeed metrics for API-backed production runs, or local Lighthouse metrics for one-off WGD HTML reports
 - crawler findings
 - existing ranking/competitor sources

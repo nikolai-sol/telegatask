@@ -2,6 +2,7 @@ import { setApiContext } from "./core/api.js";
 import { mountTasks } from "./modules/tasks/tasks.page.js";
 import { mountCampaigns } from "./modules/campaigns/campaigns.page.js";
 import { mountCampaignDetails } from "./modules/campaigns/campaign.details.page.js";
+import { mountSeoDashboard } from "./modules/seo-dashboard/seo.page.js";
 import { mountSettings } from "./modules/settings/settings.page.js";
 import { startRouter } from "./core/router.js";
 
@@ -39,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
       "#/tasks": (el) => mountTasks(el),
       "#/campaigns": (el) => mountCampaigns(el),
       "#/campaigns/:id": (el, ctx) => mountCampaignDetails(el, ctx),
+      "#/seo": (el) => mountSeoDashboard(el),
       "#/settings": (el) => mountSettings(el),
     },
   });

@@ -1,7 +1,8 @@
 import {
   createSeoAnalysisRun,
   findSeoAnalysisRunById,
-  updateSeoAnalysisRunStatus,
+  findSeoAnalysisRunByTeamAndId,
+  updateSeoAnalysisRunStatusForTeam,
 } from "./seoAnalysisRunRepository";
 import {
   createSeoDraftTasks,
@@ -11,8 +12,10 @@ import {
   updateSeoDraftTaskStatus as persistSeoDraftTaskStatus,
 } from "./seoDraftTaskRepository";
 import { BasicCrawlerSeoSource } from "./providers/basicCrawlerSeoSource";
+import { GoogleSerpRankSource } from "./providers/googleSerpRankSource";
 import { GoogleSearchConsoleSeoSource } from "./providers/googleSearchConsoleSeoSource";
 import { PageSpeedSeoSource } from "./providers/pageSpeedSeoSource";
+import { YandexSerpRankSource } from "./providers/yandexSerpRankSource";
 import {
   normalizeProviderDomain,
   SeoProviderNotConfiguredError,
@@ -28,28 +31,39 @@ import {
   isRankingSource,
   resolveSeoSourceSelection,
 } from "./providers/seoSourceRegistry";
+import { generateGscOpportunities } from "./gscOpportunityEngine";
 import type {
   SeoAnalysisInput,
   SeoAnalysisRun,
   SeoCompetitorInsight,
   SeoConfidence,
   SeoCrawlerSnapshot,
+  SeoDeviceType,
   SeoConvertDraftTaskPriority,
   SeoDraftTaskConversionOptions,
   SeoDraftTask,
   SeoDraftTaskPriority,
   SeoDraftTaskStatus,
   SeoDraftTaskVisibility,
+  SeoEvidence,
+  SeoFinding,
+  SeoHarnessDraftTask,
+  GoogleRankCheck,
   SeoKeywordInsight,
   SeoOpportunity,
   SeoPageSpeedSnapshot,
   SeoPriority,
+  SeoRankProviderStatus,
+  SeoRankTrackingSnapshot,
   SeoRecommendation,
   SeoSearchConsoleSnapshot,
   SeoSourceName,
+  SeoSourceLabel,
   SeoSourceStatus,
   SeoTechnicalSnapshot,
+  YandexRankCheck,
 } from "./types";
+import { runSeoHarness } from "./harness/seoHarness";
 import { getCompanyById } from "../../repositories/companyRepository";
 import { getTeamMemberRecord } from "../../repositories/teamMemberRepository";
 import { createAgencyTask, getAgencyTaskById } from "../../services/firestore.service";
@@ -82,19 +96,53 @@ type ExecutedSourceResult =
   | {
       source: SeoSourceName;
       status: "success";
-      data?: RankingSourcePayload | SeoSearchConsoleSnapshot | SeoPageSpeedSnapshot | SeoCrawlerSnapshot;
+      message: string;
+      collectedAt: number;
+      metricsSummary?: Record<string, string | number | boolean | null>;
+      data?:
+        | RankingSourcePayload
+        | SeoSearchConsoleSnapshot
+        | SeoPageSpeedSnapshot
+        | SeoCrawlerSnapshot
+        | {
+            provider: "dataforseo" | "yandex_search_api";
+            checks: GoogleRankCheck[] | YandexRankCheck[];
+            status: SeoRankProviderStatus;
+          };
     }
   | {
       source: SeoSourceName;
-      status: "failed" | "not_configured";
-      safeMessage: string;
+      status: "partial" | "failed" | "skipped";
+      message: string;
+      errorCode?: string;
+      collectedAt: number;
+      metricsSummary?: Record<string, string | number | boolean | null>;
+      data?: {
+        provider: "dataforseo" | "yandex_search_api";
+        checks: GoogleRankCheck[] | YandexRankCheck[];
+        status: SeoRankProviderStatus;
+      };
     };
 
-const KNOWN_SOURCE_NAMES: SeoSourceName[] = ["mock", "sistrix", "pagespeed", "crawler", "gsc"];
+const KNOWN_SOURCE_NAMES: SeoSourceName[] = [
+  "mock",
+  "sistrix",
+  "pagespeed",
+  "crawler",
+  "gsc",
+  "google_serp_rank",
+  "yandex_serp_rank",
+];
 
 function emptySearchConsoleSnapshot(): SeoSearchConsoleSnapshot {
   return {
+    property: null,
     siteUrl: null,
+    dateRange: {
+      startDate: null,
+      endDate: null,
+      days: null,
+    },
     clicks: null,
     impressions: null,
     ctr: null,
@@ -118,6 +166,10 @@ function emptyPageSpeedSnapshot(): SeoPageSpeedSnapshot {
     interactionToNextPaintMs: null,
     totalBlockingTimeMs: null,
   };
+}
+
+function emptyRankTrackingSnapshot(): SeoRankTrackingSnapshot {
+  return {};
 }
 
 function emptyCrawlerSnapshot(): SeoCrawlerSnapshot {
@@ -166,6 +218,160 @@ function uniqueStrings(values: string[]): string[] {
         .filter(Boolean)
     )
   );
+}
+
+function labelsFromEvidence(evidence: SeoEvidence[], includeHeuristic = false): SeoSourceLabel[] {
+  const labels = new Set<SeoSourceLabel>();
+  for (const item of evidence) {
+    if (item.source === "gsc") labels.add("Google Search Console data");
+    if (item.source === "crawler") labels.add("Technical crawler data");
+    if (item.source === "pagespeed") labels.add("PageSpeed data");
+    if (item.source === "harness") labels.add("AI heuristic, not Google ranking data");
+  }
+  if (includeHeuristic) labels.add("AI heuristic, not Google ranking data");
+  return Array.from(labels);
+}
+
+function sourceCollectedAt(): number {
+  return Date.now();
+}
+
+function readTargetDevice(value: SeoDeviceType | null | undefined): SeoDeviceType {
+  return value === "mobile" ? "mobile" : "desktop";
+}
+
+function providerErrorCode(err: SeoProviderError): string {
+  if (err.category === "pagespeed_rate_limit") return "PAGESPEED_RATE_LIMIT";
+  return err.category
+    .trim()
+    .replace(/[^a-zA-Z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .toUpperCase();
+}
+
+function crawlerMetricsSummary(snapshot: SeoCrawlerSnapshot): Record<string, string | number | boolean | null> {
+  return {
+    homepageStatusCode: snapshot.httpStatus,
+    titleExists: snapshot.hasTitle,
+    metaDescriptionExists: snapshot.hasMetaDescription,
+    h1Exists: snapshot.hasH1,
+    canonicalExists: snapshot.hasCanonical,
+    robotsTxtAvailable: snapshot.robotsTxtReachable,
+    sitemapXmlAvailable: snapshot.sitemapXmlReachable,
+    isIndexable: snapshot.isIndexable,
+  };
+}
+
+function pageSpeedMetricsSummary(snapshot: SeoPageSpeedSnapshot): Record<string, string | number | boolean | null> {
+  return {
+    pageUrl: snapshot.pageUrl,
+    performanceScore: snapshot.performanceScore,
+    accessibilityScore: snapshot.accessibilityScore,
+    bestPracticesScore: snapshot.bestPracticesScore,
+    seoScore: snapshot.seoScore,
+    largestContentfulPaintMs: snapshot.largestContentfulPaintMs,
+    cumulativeLayoutShift: snapshot.cumulativeLayoutShift,
+    interactionToNextPaintMs: snapshot.interactionToNextPaintMs,
+    totalBlockingTimeMs: snapshot.totalBlockingTimeMs,
+  };
+}
+
+function gscMetricsSummary(snapshot: SeoSearchConsoleSnapshot): Record<string, string | number | boolean | null> {
+  return {
+    property: snapshot.property ?? snapshot.siteUrl,
+    startDate: snapshot.dateRange.startDate,
+    endDate: snapshot.dateRange.endDate,
+    impressions: snapshot.impressions,
+    clicks: snapshot.clicks,
+    ctr: snapshot.ctr,
+    averagePosition: snapshot.averagePosition,
+    topQueryCount: snapshot.topQueries.length,
+    topPageCount: snapshot.topPages.length,
+  };
+}
+
+function rankTrackingMetricsSummary(status: SeoRankProviderStatus): Record<string, string | number | boolean | null> {
+  return {
+    providerState: status.state,
+    ...(status.metricsSummary || {}),
+  };
+}
+
+function readRankTrackingMaxKeywords(): number {
+  const parsed = Number(process.env.SEO_RANK_TRACKING_MAX_KEYWORDS || "");
+  if (!Number.isFinite(parsed) || parsed <= 0) return 5;
+  return Math.min(20, Math.floor(parsed));
+}
+
+function readRankTrackingMaxQueryLength(): number {
+  const parsed = Number(process.env.SEO_RANK_TRACKING_MAX_QUERY_LENGTH || "");
+  if (!Number.isFinite(parsed) || parsed <= 0) return 100;
+  return Math.min(200, Math.floor(parsed));
+}
+
+function normalizeRankTrackingKeywords(input: string[]): string[] {
+  const maxLength = readRankTrackingMaxQueryLength();
+  const seen = new Set<string>();
+  const normalized: string[] = [];
+
+  for (const rawValue of input) {
+    const keyword = String(rawValue || "").trim();
+    if (!keyword) continue;
+    if (keyword.length > maxLength) continue;
+    const dedupeKey = keyword.toLocaleLowerCase("en-US");
+    if (seen.has(dedupeKey)) continue;
+    seen.add(dedupeKey);
+    normalized.push(keyword);
+  }
+
+  return normalized;
+}
+
+function selectRankTrackingKeywords(input: {
+  requestKeywords?: string[];
+  configTrackingKeywords: string[];
+  configBrandKeywords: string[];
+  gscTopQueries?: string[];
+}): string[] {
+  const maxKeywords = readRankTrackingMaxKeywords();
+  const selected = normalizeRankTrackingKeywords([
+    ...nonEmptyArray(input.requestKeywords),
+    ...nonEmptyArray(input.configTrackingKeywords),
+    ...nonEmptyArray(input.gscTopQueries),
+    ...nonEmptyArray(input.configBrandKeywords),
+  ]);
+  return selected.slice(0, maxKeywords);
+}
+
+function isoNow(): string {
+  return new Date().toISOString();
+}
+
+function rankTrackingProviderStatusFromError(input: {
+  source: "google_serp_rank" | "yandex_serp_rank";
+  error: SeoProviderError;
+}): SeoRankProviderStatus {
+  const isLimitExceeded =
+    input.error.category.includes("limit_exceeded") ||
+    input.error.category.includes("rate_limit") ||
+    input.error.category.includes("quota");
+
+  return {
+    state: isLimitExceeded ? "limit_exceeded" : "provider_error",
+    message: input.error.safeMessage,
+    errorCode: providerErrorCode(input.error),
+    checkedAt: isoNow(),
+  };
+}
+
+function rankingMetricsSummary(payload: RankingSourcePayload): Record<string, string | number | boolean | null> {
+  return {
+    source: payload.source,
+    visibilityIndex: payload.overview.visibilityIndex ?? null,
+    keywordCount: payload.keywordItems.length,
+    competitorCount: payload.competitorItems.length,
+    urlOpportunityCount: payload.urlItems.length,
+  };
 }
 
 function priorityFromSignals(params: {
@@ -411,7 +617,11 @@ function createRecommendations(input: {
     recommendations.push(item);
   };
 
-  if (input.keywords.length > 0) {
+  const hasRankingSource = input.sourceStatuses.some(
+    (item) => (item.source === "mock" || item.source === "sistrix") && item.status === "success"
+  );
+
+  if (hasRankingSource && input.keywords.length > 0) {
     const topKeyword = input.keywords[0];
     push({
       type: "content",
@@ -423,7 +633,7 @@ function createRecommendations(input: {
     });
   }
 
-  if (input.competitors.length > 0) {
+  if (hasRankingSource && input.competitors.length > 0) {
     const topCompetitor = input.competitors[0];
     push({
       type: "competitive",
@@ -479,6 +689,20 @@ function createRecommendations(input: {
       title: "Improve rankings for existing query demand",
       description:
         "Search Console data shows impressions but average positions remain weak. Prioritize query-to-page mapping and on-page improvements.",
+      priority: "medium",
+    });
+  }
+
+  if (
+    input.searchConsole.averagePosition !== null &&
+    input.searchConsole.averagePosition >= 8 &&
+    input.searchConsole.averagePosition <= 20
+  ) {
+    push({
+      type: "content",
+      title: "Push queries ranking in positions 8-20",
+      description:
+        "Search Console data shows existing query demand near page-one range. Prioritize query-to-page alignment, internal links, and tighter on-page targeting for terms already close to stronger rankings.",
       priority: "medium",
     });
   }
@@ -575,7 +799,7 @@ function createRecommendations(input: {
   }
 
   const gscStatus = input.sourceStatuses.find((item) => item.source === "gsc");
-  if (!gscStatus || gscStatus.status === "skipped" || gscStatus.status === "not_configured") {
+  if (!gscStatus || gscStatus.status === "skipped" || gscStatus.status === "failed") {
     push({
       type: "tracking",
       title: "Connect Google Search Console for real query data",
@@ -586,13 +810,32 @@ function createRecommendations(input: {
   }
 
   const pagespeedStatus = input.sourceStatuses.find((item) => item.source === "pagespeed");
-  if (!pagespeedStatus || pagespeedStatus.status === "skipped" || pagespeedStatus.status === "not_configured") {
+  if (!pagespeedStatus || pagespeedStatus.status === "skipped") {
     push({
       type: "tracking",
       title: "Run PageSpeed audit for technical performance data",
       description:
         "PageSpeed data is missing for this run. Add the PageSpeed source to capture homepage performance and technical SEO signals.",
       priority: "low",
+    });
+  }
+
+  if (pagespeedStatus?.status === "partial" && pagespeedStatus.errorCode === "PAGESPEED_RATE_LIMIT") {
+    push({
+      type: "tracking",
+      title: "Retry PageSpeed after API rate limit",
+      description:
+        "PageSpeed Insights was rate-limited in this run. Retry later or add a dedicated API key/quota so technical performance data is consistently available.",
+      priority: "low",
+    });
+  }
+
+  if (!hasRankingSource) {
+    push({
+      type: "tracking",
+      title: "Add a ranking source for visibility scoring",
+      description: "Visibility and competitor scoring require ranking source such as SISTRIX.",
+      priority: "medium",
     });
   }
 
@@ -607,6 +850,221 @@ function createRecommendations(input: {
   }
 
   return recommendations;
+}
+
+function sourceStatusEvidence(status: SeoSourceStatus): SeoEvidence {
+  return {
+    source: status.source,
+    metric: "source_status",
+    value: status.status,
+    message: `${status.source} source status: ${status.status}. ${status.message}`,
+    collectedAt: status.collectedAt,
+  };
+}
+
+function crawlerEvidence(crawler: SeoCrawlerSnapshot): SeoEvidence[] {
+  const evidence: SeoEvidence[] = [];
+  if (crawler.httpStatus !== null) {
+    evidence.push({
+      source: "crawler",
+      metric: "http_status",
+      value: crawler.httpStatus,
+      url: crawler.finalUrl || crawler.pageUrl,
+      message: `Crawler returned HTTP ${crawler.httpStatus}.`,
+    });
+  }
+  if (crawler.hasTitle !== null) {
+    evidence.push({ source: "crawler", metric: "has_title", value: crawler.hasTitle, url: crawler.finalUrl || crawler.pageUrl, message: `Crawler title presence: ${crawler.hasTitle}.` });
+  }
+  if (crawler.hasMetaDescription !== null) {
+    evidence.push({ source: "crawler", metric: "has_meta_description", value: crawler.hasMetaDescription, url: crawler.finalUrl || crawler.pageUrl, message: `Crawler meta description presence: ${crawler.hasMetaDescription}.` });
+  }
+  if (crawler.hasH1 !== null) {
+    evidence.push({ source: "crawler", metric: "has_h1", value: crawler.hasH1, url: crawler.finalUrl || crawler.pageUrl, message: `Crawler H1 presence: ${crawler.hasH1}.` });
+  }
+  if (crawler.hasCanonical !== null) {
+    evidence.push({ source: "crawler", metric: "has_canonical", value: crawler.hasCanonical, url: crawler.finalUrl || crawler.pageUrl, message: `Crawler canonical presence: ${crawler.hasCanonical}.` });
+  }
+  if (crawler.robotsTxtReachable !== null) {
+    evidence.push({ source: "crawler", metric: "robots_txt_reachable", value: crawler.robotsTxtReachable, message: `robots.txt reachable: ${crawler.robotsTxtReachable}.` });
+  }
+  if (crawler.sitemapXmlReachable !== null) {
+    evidence.push({ source: "crawler", metric: "sitemap_xml_reachable", value: crawler.sitemapXmlReachable, message: `sitemap.xml reachable: ${crawler.sitemapXmlReachable}.` });
+  }
+  if (crawler.isIndexable !== null) {
+    evidence.push({ source: "crawler", metric: "is_indexable", value: crawler.isIndexable, url: crawler.finalUrl || crawler.pageUrl, message: `Crawler indexability: ${crawler.isIndexable}.` });
+  }
+  return evidence;
+}
+
+function pageSpeedEvidence(pagespeed: SeoPageSpeedSnapshot): SeoEvidence[] {
+  const metrics: Array<[string, number | null]> = [
+    ["performance_score", pagespeed.performanceScore],
+    ["seo_score", pagespeed.seoScore],
+    ["largest_contentful_paint_ms", pagespeed.largestContentfulPaintMs],
+    ["cumulative_layout_shift", pagespeed.cumulativeLayoutShift],
+    ["interaction_to_next_paint_ms", pagespeed.interactionToNextPaintMs],
+    ["total_blocking_time_ms", pagespeed.totalBlockingTimeMs],
+  ];
+  return metrics
+    .filter(([, value]) => value !== null)
+    .map(([metric, value]) => ({
+      source: "pagespeed" as const,
+      metric,
+      value,
+      url: pagespeed.pageUrl,
+      message: `PageSpeed ${metric}: ${value}.`,
+    }));
+}
+
+function searchConsoleEvidence(searchConsole: SeoSearchConsoleSnapshot): SeoEvidence[] {
+  const evidence: SeoEvidence[] = [];
+  if (searchConsole.impressions !== null) {
+    evidence.push({ source: "gsc", metric: "impressions", value: searchConsole.impressions, message: `GSC impressions: ${searchConsole.impressions}.` });
+  }
+  if (searchConsole.clicks !== null) {
+    evidence.push({ source: "gsc", metric: "clicks", value: searchConsole.clicks, message: `GSC clicks: ${searchConsole.clicks}.` });
+  }
+  if (searchConsole.ctr !== null) {
+    evidence.push({ source: "gsc", metric: "ctr", value: searchConsole.ctr, message: `GSC CTR: ${searchConsole.ctr}.` });
+  }
+  if (searchConsole.averagePosition !== null) {
+    evidence.push({ source: "gsc", metric: "average_position", value: searchConsole.averagePosition, message: `GSC average position: ${searchConsole.averagePosition}.` });
+  }
+  for (const query of searchConsole.topQueries.slice(0, 3)) {
+    evidence.push({ source: "gsc", metric: "top_query", query, message: `GSC top query: ${query}.` });
+  }
+  for (const url of searchConsole.topPages.slice(0, 3)) {
+    evidence.push({ source: "gsc", metric: "top_page", url, message: `GSC top page: ${url}.` });
+  }
+  return evidence;
+}
+
+function recommendationEvidence(input: {
+  recommendation: SeoRecommendation;
+  sourceStatuses: SeoSourceStatus[];
+  searchConsole: SeoSearchConsoleSnapshot;
+  pagespeed: SeoPageSpeedSnapshot;
+  crawler: SeoCrawlerSnapshot;
+}): SeoEvidence[] {
+  const text = `${input.recommendation.type} ${input.recommendation.title} ${input.recommendation.description}`.toLowerCase();
+  const evidence: SeoEvidence[] = [];
+  if (text.includes("search console") || text.includes("ctr") || text.includes("impression") || text.includes("query")) {
+    evidence.push(...searchConsoleEvidence(input.searchConsole));
+    const gsc = input.sourceStatuses.find((item) => item.source === "gsc");
+    if (gsc) evidence.push(sourceStatusEvidence(gsc));
+  }
+  if (text.includes("pagespeed") || text.includes("performance") || text.includes("web vitals")) {
+    evidence.push(...pageSpeedEvidence(input.pagespeed));
+    const pagespeed = input.sourceStatuses.find((item) => item.source === "pagespeed");
+    if (pagespeed) evidence.push(sourceStatusEvidence(pagespeed));
+  }
+  if (
+    text.includes("crawler") ||
+    text.includes("title") ||
+    text.includes("description") ||
+    text.includes("h1") ||
+    text.includes("canonical") ||
+    text.includes("index") ||
+    text.includes("robots") ||
+    text.includes("sitemap")
+  ) {
+    evidence.push(...crawlerEvidence(input.crawler));
+    const crawler = input.sourceStatuses.find((item) => item.source === "crawler");
+    if (crawler) evidence.push(sourceStatusEvidence(crawler));
+  }
+  if (evidence.length === 0) {
+    const relevantStatus =
+      input.sourceStatuses.find((item) => item.source === "sistrix" && item.status === "success") ||
+      input.sourceStatuses.find((item) => item.source === "mock" && item.status === "success") ||
+      input.sourceStatuses.find((item) => item.source === "crawler" && item.status === "success") ||
+      input.sourceStatuses.find((item) => item.status === "failed" || item.status === "partial");
+    if (relevantStatus) evidence.push(sourceStatusEvidence(relevantStatus));
+  }
+  return evidence;
+}
+
+function buildHarnessFindings(input: {
+  teamId: string;
+  companyId: string;
+  domain: string;
+  opportunities: SeoOpportunity[];
+  recommendations: SeoRecommendation[];
+  sourceStatuses: SeoSourceStatus[];
+  searchConsole: SeoSearchConsoleSnapshot;
+  pagespeed: SeoPageSpeedSnapshot;
+  crawler: SeoCrawlerSnapshot;
+}): SeoFinding[] {
+  const opportunityFindings = input.opportunities.map((opportunity, index): SeoFinding => {
+    const providerSource =
+      input.sourceStatuses.find(
+        (status) => (status.source === "sistrix" || status.source === "mock") && status.status === "success"
+      )?.source || "harness";
+    const evidence: SeoEvidence[] = opportunity.evidence?.length ? opportunity.evidence : [
+      {
+        source: opportunity.source === "provider" ? providerSource : "harness",
+        metric: "opportunity",
+        value: opportunity.priority,
+        url: opportunity.targetUrl || null,
+        message: opportunity.reasoning || opportunity.description,
+      },
+    ];
+    return {
+      id: `opportunity-${index + 1}-${slugify(opportunity.title)}`,
+      teamId: input.teamId,
+      companyId: input.companyId,
+      domain: input.domain,
+      url: opportunity.targetUrl || null,
+      type: opportunity.opportunityType || opportunity.type,
+      category: opportunity.type,
+      title: opportunity.title,
+      description: opportunity.description,
+      source: evidence[0].source,
+      severity: opportunity.priority,
+      confidence: opportunity.confidence,
+      evidence,
+      recommendation: opportunity.recommendedAction || opportunity.description,
+      labels: labelsFromEvidence(evidence, opportunity.source === "heuristic"),
+      recommendedAction: opportunity.recommendedAction,
+      targetKeywords: opportunity.targetKeywords,
+      sourceType: "opportunity",
+      sourceId: draftTaskSourceId("opportunity", opportunity.title, opportunity.targetKeywords),
+    };
+  });
+
+  const recommendationFindings = input.recommendations.map((recommendation, index): SeoFinding => {
+    const evidence = recommendation.evidence?.length
+      ? recommendation.evidence
+      : recommendationEvidence({
+          recommendation,
+          sourceStatuses: input.sourceStatuses,
+          searchConsole: input.searchConsole,
+          pagespeed: input.pagespeed,
+          crawler: input.crawler,
+        });
+    return {
+      id: `recommendation-${index + 1}-${slugify(recommendation.title)}`,
+      teamId: input.teamId,
+      companyId: input.companyId,
+      domain: input.domain,
+      url: evidence.find((item) => item.url)?.url || null,
+      type: recommendation.type,
+      category: recommendation.type,
+      title: recommendation.title,
+      description: recommendation.description,
+      source: evidence[0]?.source || "harness",
+      severity: recommendation.priority,
+      confidence: recommendation.confidence || "medium",
+      evidence,
+      recommendation: recommendation.description,
+      labels: labelsFromEvidence(evidence, true),
+      targetKeywords: [],
+      sourceType: "recommendation",
+      sourceId: draftTaskSourceId("recommendation", recommendation.title, []),
+    };
+  });
+
+  return [...opportunityFindings, ...recommendationFindings];
 }
 
 function createSummary(input: {
@@ -674,7 +1132,9 @@ function average(values: number[]): number | null {
 function scoreCompetitorPressure(input: {
   competitors: SeoCompetitorInsight[];
   domainVisibilityIndex: number | null;
+  hasRankingSource: boolean;
 }): number | null {
+  if (!input.hasRankingSource) return null;
   if (input.competitors.length === 0) return null;
 
   const countScore = Math.min(60, input.competitors.length * 15);
@@ -764,24 +1224,37 @@ function buildDraftTaskFromOpportunity(input: {
   if (input.opportunity.type === "keyword" && keywords.length === 0) return null;
 
   let mappedTitle = title;
-  let description = input.opportunity.description || "Review this SEO opportunity and decide on the next action.";
+  let description =
+    input.opportunity.recommendedAction ||
+    input.opportunity.description ||
+    "Review this SEO opportunity and decide on the next action.";
 
   if (input.opportunity.type === "keyword") {
     const keyword = keywords[0];
-    mappedTitle = `Evaluate SEO keyword opportunity: ${keyword}`;
-    description = "Review current ranking, search intent, and content coverage for this keyword.";
+    mappedTitle = input.opportunity.title || `Evaluate SEO keyword opportunity: ${keyword}`;
+    description =
+      input.opportunity.recommendedAction ||
+      "Review current ranking, search intent, and content coverage for this keyword.";
   } else if (input.opportunity.type === "competitor") {
     const competitor = title.replace(/^Review competitor gap:\s*/i, "").replace(/^Review organic competitor:\s*/i, "").trim();
     mappedTitle = competitor
       ? `Review organic SEO competitor: ${competitor}`
       : "Review organic SEO competitor";
-    description = "Analyze why this domain appears as an organic competitor and identify content or keyword gaps.";
+    description =
+      input.opportunity.recommendedAction ||
+      "Analyze why this domain appears as an organic competitor and identify content or keyword gaps.";
   } else if (input.opportunity.type === "technical") {
     mappedTitle = title;
-    description = input.opportunity.description || "Review the technical SEO issue and document the required fixes.";
+    description =
+      input.opportunity.recommendedAction ||
+      input.opportunity.description ||
+      "Review the technical SEO issue and document the required fixes.";
   } else if (input.opportunity.type === "content") {
     mappedTitle = title;
-    description = input.opportunity.description || "Review content coverage and define the next SEO action.";
+    description =
+      input.opportunity.recommendedAction ||
+      input.opportunity.description ||
+      "Review content coverage and define the next SEO action.";
   }
 
   if (!mappedTitle.trim()) return null;
@@ -789,10 +1262,30 @@ function buildDraftTaskFromOpportunity(input: {
   const now = new Date().toISOString();
   return {
     teamId: input.teamId,
+    companyId: input.run.companyId,
     runId: input.run.id,
     domain: input.run.domain,
     sourceType: "opportunity",
     sourceId: draftTaskSourceId("opportunity", mappedTitle, keywords),
+    sourceFindingId: input.opportunity.sourceFindingId || draftTaskSourceId("opportunity", mappedTitle, keywords),
+    evidence: input.opportunity.evidence || [
+      {
+        source: input.opportunity.source === "provider" ? "sistrix" : "harness",
+        metric: "opportunity",
+        value: input.opportunity.priority,
+        url: input.opportunity.targetUrl || null,
+        message: input.opportunity.reasoning || input.opportunity.description,
+      },
+    ],
+    labels: labelsFromEvidence(
+      input.opportunity.evidence || [
+        {
+          source: input.opportunity.source === "provider" ? "sistrix" : "harness",
+          message: input.opportunity.reasoning || input.opportunity.description,
+        },
+      ],
+      input.opportunity.source === "heuristic"
+    ),
     title: mappedTitle,
     description,
     priority: mapRunPriorityToDraftPriority(input.opportunity.priority),
@@ -826,10 +1319,21 @@ function buildDraftTaskFromRecommendation(input: {
   const now = new Date().toISOString();
   return {
     teamId: input.teamId,
+    companyId: input.run.companyId,
     runId: input.run.id,
     domain: input.run.domain,
     sourceType: "recommendation",
     sourceId: draftTaskSourceId("recommendation", title, []),
+    sourceFindingId: input.recommendation.sourceFindingId || draftTaskSourceId("recommendation", title, []),
+    evidence: input.recommendation.evidence || [
+      {
+        source: "harness",
+        metric: "recommendation",
+        value: input.recommendation.priority,
+        message: input.recommendation.description || title,
+      },
+    ],
+    labels: labelsFromEvidence(input.recommendation.evidence || [], true),
     title,
     description,
     priority: mapRunPriorityToDraftPriority(input.recommendation.priority),
@@ -858,6 +1362,40 @@ function dedupeDraftTasks(tasks: Array<Omit<SeoDraftTask, "id">>): Array<Omit<Se
   return deduped;
 }
 
+function buildDraftTaskFromHarness(input: {
+  teamId: string;
+  run: SeoAnalysisRun;
+  task: SeoHarnessDraftTask;
+}): Omit<SeoDraftTask, "id"> | null {
+  if (input.task.teamId !== input.teamId || input.task.companyId !== input.run.companyId) return null;
+  if (!input.task.sourceFindingId || input.task.evidence.length === 0) return null;
+  const title = input.task.title.trim();
+  if (!title) return null;
+  const now = new Date().toISOString();
+  return {
+    teamId: input.teamId,
+    companyId: input.run.companyId,
+    runId: input.run.id,
+    domain: input.run.domain,
+    sourceType: input.task.sourceType,
+    sourceId: input.task.sourceId,
+    sourceFindingId: input.task.sourceFindingId,
+    evidence: input.task.evidence,
+    labels: labelsFromEvidence(input.task.evidence, true),
+    title,
+    description: input.task.description || "Review this SEO draft task and approve before execution.",
+    priority: input.task.priority === "fire" ? "priority" : input.task.priority,
+    status: "draft",
+    targetKeywords: normalizeKeywords(input.task.targetKeywords),
+    suggestedCompanyId: input.run.companyId || null,
+    realTaskId: null,
+    convertedAt: null,
+    convertedByUserId: null,
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
 function isSuccessSourceResult(
   item: ExecutedSourceResult
 ): item is Extract<ExecutedSourceResult, { status: "success" }> {
@@ -869,18 +1407,28 @@ function toSourceStatus(result: ExecutedSourceResult, selectedSources: SeoSource
     return {
       source: result.source,
       status: "skipped",
-      safeMessage: "Source not selected for this run",
+      message: "Source not selected for this run",
+      collectedAt: sourceCollectedAt(),
     };
   }
 
   if (result.status === "success") {
-    return { source: result.source, status: "success" };
+    return {
+      source: result.source,
+      status: "success",
+      message: result.message,
+      collectedAt: result.collectedAt,
+      ...(result.metricsSummary ? { metricsSummary: result.metricsSummary } : {}),
+    };
   }
 
   return {
     source: result.source,
     status: result.status,
-    safeMessage: result.safeMessage,
+    message: result.message,
+    collectedAt: result.collectedAt,
+    ...(result.errorCode ? { errorCode: result.errorCode } : {}),
+    ...(result.metricsSummary ? { metricsSummary: result.metricsSummary } : {}),
   };
 }
 
@@ -900,6 +1448,15 @@ async function runRankingSource(
     return {
       source,
       status: "success",
+      message: `${source} source completed successfully`,
+      collectedAt: sourceCollectedAt(),
+      metricsSummary: rankingMetricsSummary({
+        source,
+        overview,
+        keywordItems: nonEmptyArray(keywordItems),
+        competitorItems: nonEmptyArray(competitorItems),
+        urlItems: nonEmptyArray(urlItems),
+      }),
       data: {
         source,
         overview,
@@ -912,15 +1469,19 @@ async function runRankingSource(
     if (err instanceof SeoProviderNotConfiguredError) {
       return {
         source,
-        status: "not_configured",
-        safeMessage: err.message,
+        status: "failed",
+        message: err.message,
+        errorCode: `${source.toUpperCase()}_NOT_CONFIGURED`,
+        collectedAt: sourceCollectedAt(),
       };
     }
     if (err instanceof SeoProviderError) {
       return {
         source,
         status: "failed",
-        safeMessage: err.safeMessage,
+        message: err.safeMessage,
+        errorCode: providerErrorCode(err),
+        collectedAt: sourceCollectedAt(),
       };
     }
     throw err;
@@ -933,21 +1494,28 @@ async function runPageSpeedSource(domain: string): Promise<ExecutedSourceResult>
     return {
       source: "pagespeed",
       status: "success",
+      message: "pagespeed source completed successfully",
+      collectedAt: sourceCollectedAt(),
+      metricsSummary: pageSpeedMetricsSummary(snapshot),
       data: snapshot,
     };
   } catch (err) {
     if (err instanceof SeoProviderNotConfiguredError) {
       return {
         source: "pagespeed",
-        status: "not_configured",
-        safeMessage: err.message,
+        status: "failed",
+        message: err.message,
+        errorCode: "PAGESPEED_NOT_CONFIGURED",
+        collectedAt: sourceCollectedAt(),
       };
     }
     if (err instanceof SeoProviderError) {
       return {
         source: "pagespeed",
-        status: "failed",
-        safeMessage: err.safeMessage,
+        status: err.category === "pagespeed_rate_limit" ? "partial" : "failed",
+        message: err.safeMessage,
+        errorCode: providerErrorCode(err),
+        collectedAt: sourceCollectedAt(),
       };
     }
     throw err;
@@ -960,48 +1528,203 @@ async function runCrawlerSource(domain: string): Promise<ExecutedSourceResult> {
     return {
       source: "crawler",
       status: "success",
+      message: "crawler source completed successfully",
+      collectedAt: sourceCollectedAt(),
+      metricsSummary: crawlerMetricsSummary(snapshot),
       data: snapshot,
     };
   } catch (err) {
     if (err instanceof SeoProviderNotConfiguredError) {
       return {
         source: "crawler",
-        status: "not_configured",
-        safeMessage: err.message,
+        status: "failed",
+        message: err.message,
+        errorCode: "CRAWLER_NOT_CONFIGURED",
+        collectedAt: sourceCollectedAt(),
       };
     }
     if (err instanceof SeoProviderError) {
       return {
         source: "crawler",
         status: "failed",
-        safeMessage: err.safeMessage,
+        message: err.safeMessage,
+        errorCode: providerErrorCode(err),
+        collectedAt: sourceCollectedAt(),
       };
     }
     throw err;
   }
 }
 
-async function runGscSource(domain: string): Promise<ExecutedSourceResult> {
+async function runGscSource(providerInput: Pick<SeoProviderInput, "domain" | "teamId" | "gscSiteUrl">): Promise<ExecutedSourceResult> {
   try {
-    const snapshot = await new GoogleSearchConsoleSeoSource().getSnapshot(domain);
+    const snapshot = await new GoogleSearchConsoleSeoSource().getSnapshot(providerInput.domain, {
+      teamId: providerInput.teamId,
+      siteUrl: providerInput.gscSiteUrl,
+    });
     return {
       source: "gsc",
       status: "success",
+      message: "gsc source completed successfully",
+      collectedAt: sourceCollectedAt(),
+      metricsSummary: gscMetricsSummary(snapshot),
       data: snapshot,
     };
   } catch (err) {
     if (err instanceof SeoProviderNotConfiguredError) {
       return {
         source: "gsc",
-        status: "not_configured",
-        safeMessage: err.message,
+        status: "failed",
+        message: err.message,
+        errorCode: "GSC_NOT_CONFIGURED",
+        collectedAt: sourceCollectedAt(),
       };
     }
     if (err instanceof SeoProviderError) {
       return {
         source: "gsc",
         status: "failed",
-        safeMessage: err.safeMessage,
+        message: err.safeMessage,
+        errorCode: providerErrorCode(err),
+        collectedAt: sourceCollectedAt(),
+      };
+    }
+    throw err;
+  }
+}
+
+async function runGoogleSerpRankSource(providerInput: SeoProviderInput): Promise<ExecutedSourceResult> {
+  try {
+    const result = await new GoogleSerpRankSource().run({
+      targetDomain: providerInput.domain,
+      targetDomainAliases: providerInput.targetDomainAliases,
+      keywords: providerInput.trackingKeywords,
+      location: providerInput.location,
+      language: providerInput.language,
+      device: providerInput.device,
+    });
+
+    const collectedAt = sourceCollectedAt();
+    if (result.status.state === "connected") {
+      return {
+        source: "google_serp_rank",
+        status: "success",
+        message: result.status.message,
+        collectedAt,
+        metricsSummary: rankTrackingMetricsSummary(result.status),
+        data: {
+          provider: "dataforseo",
+          checks: result.checks,
+          status: result.status,
+        },
+      };
+    }
+
+    return {
+      source: "google_serp_rank",
+      status:
+        result.status.state === "partial_success"
+          ? "partial"
+          : result.status.state === "missing_credentials" || result.status.state === "no_keywords"
+            ? "skipped"
+            : "failed",
+      message: result.status.message,
+      collectedAt,
+      ...(result.status.errorCode ? { errorCode: result.status.errorCode } : {}),
+      metricsSummary: rankTrackingMetricsSummary(result.status),
+      data: {
+        provider: "dataforseo",
+        checks: result.checks,
+        status: result.status,
+      },
+    };
+  } catch (err) {
+    if (err instanceof SeoProviderError) {
+      const status = rankTrackingProviderStatusFromError({
+        source: "google_serp_rank",
+        error: err,
+      });
+      return {
+        source: "google_serp_rank",
+        status: status.state === "limit_exceeded" ? "partial" : "failed",
+        message: status.message,
+        collectedAt: sourceCollectedAt(),
+        ...(status.errorCode ? { errorCode: status.errorCode } : {}),
+        metricsSummary: rankTrackingMetricsSummary(status),
+        data: {
+          provider: "dataforseo",
+          checks: [],
+          status,
+        },
+      };
+    }
+    throw err;
+  }
+}
+
+async function runYandexSerpRankSource(providerInput: SeoProviderInput): Promise<ExecutedSourceResult> {
+  try {
+    const result = await new YandexSerpRankSource().run({
+      targetDomain: providerInput.domain,
+      targetDomainAliases: providerInput.targetDomainAliases,
+      keywords: providerInput.trackingKeywords,
+      region: providerInput.region,
+      language: providerInput.language,
+      device: providerInput.device,
+    });
+
+    const collectedAt = sourceCollectedAt();
+    if (result.status.state === "connected") {
+      return {
+        source: "yandex_serp_rank",
+        status: "success",
+        message: result.status.message,
+        collectedAt,
+        metricsSummary: rankTrackingMetricsSummary(result.status),
+        data: {
+          provider: "yandex_search_api",
+          checks: result.checks,
+          status: result.status,
+        },
+      };
+    }
+
+    return {
+      source: "yandex_serp_rank",
+      status:
+        result.status.state === "partial_success"
+          ? "partial"
+          : result.status.state === "missing_credentials" || result.status.state === "no_keywords"
+            ? "skipped"
+            : "failed",
+      message: result.status.message,
+      collectedAt,
+      ...(result.status.errorCode ? { errorCode: result.status.errorCode } : {}),
+      metricsSummary: rankTrackingMetricsSummary(result.status),
+      data: {
+        provider: "yandex_search_api",
+        checks: result.checks,
+        status: result.status,
+      },
+    };
+  } catch (err) {
+    if (err instanceof SeoProviderError) {
+      const status = rankTrackingProviderStatusFromError({
+        source: "yandex_serp_rank",
+        error: err,
+      });
+      return {
+        source: "yandex_serp_rank",
+        status: status.state === "limit_exceeded" ? "partial" : "failed",
+        message: status.message,
+        collectedAt: sourceCollectedAt(),
+        ...(status.errorCode ? { errorCode: status.errorCode } : {}),
+        metricsSummary: rankTrackingMetricsSummary(status),
+        data: {
+          provider: "yandex_search_api",
+          checks: [],
+          status,
+        },
       };
     }
     throw err;
@@ -1017,25 +1740,68 @@ async function executeSelectedSource(
   }
   if (source === "pagespeed") return runPageSpeedSource(providerInput.domain);
   if (source === "crawler") return runCrawlerSource(providerInput.domain);
-  return runGscSource(providerInput.domain);
+  if (source === "google_serp_rank") return runGoogleSerpRankSource(providerInput);
+  if (source === "yandex_serp_rank") return runYandexSerpRankSource(providerInput);
+  return runGscSource(providerInput);
 }
 
 export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalysisRun> {
+  const selection = resolveSeoSourceSelection(input.sources);
+  const shouldPreloadGscKeywords =
+    selection.selectedSources.includes("gsc") &&
+    selection.selectedSources.some((source) => source === "google_serp_rank" || source === "yandex_serp_rank") &&
+    normalizeRankTrackingKeywords([
+      ...nonEmptyArray(input.keywords),
+      ...input.config.trackingKeywords,
+      ...input.config.brandKeywords,
+    ]).length === 0;
+
+  const preExecuted: ExecutedSourceResult[] = [];
+  let gscSeedQueries: string[] = [];
+  if (shouldPreloadGscKeywords) {
+    const gscSeed = await runGscSource({
+      domain: normalizeProviderDomain(input.config.domain),
+      teamId: input.teamId,
+      gscSiteUrl: input.config.gscSiteUrl,
+    });
+    preExecuted.push(gscSeed);
+    if (gscSeed.status === "success" && gscSeed.data) {
+      gscSeedQueries = (gscSeed.data as SeoSearchConsoleSnapshot).topQueries;
+    }
+  }
+
   const providerInput: SeoProviderInput = {
     teamId: input.teamId,
     companyId: input.companyId,
     domain: normalizeProviderDomain(input.config.domain),
+    gscSiteUrl: input.config.gscSiteUrl,
+    targetDomainAliases:
+      input.config.targetDomainAliases.length > 0
+        ? input.config.targetDomainAliases
+        : [input.config.domain, `www.${normalizeProviderDomain(input.config.domain)}`],
     market: input.config.markets[0] || "AT",
-    language: input.config.languages[0] || "de",
+    language: String(input.language || "").trim() || input.config.languages[0] || "de",
     competitors: input.config.competitors,
     importantSections: input.config.importantSections,
+    trackingKeywords: selectRankTrackingKeywords({
+      requestKeywords: input.keywords,
+      configTrackingKeywords: input.config.trackingKeywords,
+      configBrandKeywords: input.config.brandKeywords,
+      gscTopQueries: gscSeedQueries,
+    }),
+    location: String(input.location || "").trim() || input.config.targetLocation || input.config.markets[0] || null,
+    region: String(input.region || "").trim() || input.config.targetRegion || input.config.markets[0] || null,
+    device: readTargetDevice(input.device ?? input.config.targetDevice),
     mode: input.mode,
   };
 
-  const selection = resolveSeoSourceSelection(input.sources);
-  const executed = await Promise.all(
-    selection.selectedSources.map((source) => executeSelectedSource(source, providerInput))
+  const remainingSources = selection.selectedSources.filter(
+    (source) => !(shouldPreloadGscKeywords && source === "gsc")
   );
+  const executed = [
+    ...preExecuted,
+    ...(await Promise.all(remainingSources.map((source) => executeSelectedSource(source, providerInput)))),
+  ];
 
   const sourceStatuses = KNOWN_SOURCE_NAMES.map((source) => {
     const result = executed.find((item) => item.source === source);
@@ -1044,7 +1810,8 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
         {
           source,
           status: "failed",
-          safeMessage: "Source execution missing",
+          message: "Source execution missing",
+          collectedAt: sourceCollectedAt(),
         },
         selection.selectedSources
       );
@@ -1068,22 +1835,49 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
   const crawler =
     (successfulResults.find((item) => item.source === "crawler")?.data as SeoCrawlerSnapshot | undefined) ??
     emptyCrawlerSnapshot();
+  const googleRankResult = executed.find((item) => item.source === "google_serp_rank");
+  const yandexRankResult = executed.find((item) => item.source === "yandex_serp_rank");
+  const rankTracking: SeoRankTrackingSnapshot = {
+    ...(googleRankResult?.data &&
+    "provider" in googleRankResult.data &&
+    googleRankResult.data.provider === "dataforseo"
+      ? {
+          google: {
+            provider: "dataforseo",
+            checks: googleRankResult.data.checks as GoogleRankCheck[],
+            status: googleRankResult.data.status,
+          },
+        }
+      : {}),
+    ...(yandexRankResult?.data &&
+    "provider" in yandexRankResult.data &&
+    yandexRankResult.data.provider === "yandex_search_api"
+      ? {
+          yandex: {
+            provider: "yandex_search_api",
+            checks: yandexRankResult.data.checks as YandexRankCheck[],
+            status: yandexRankResult.data.status,
+          },
+        }
+      : {}),
+  };
 
   const overview = rankingPayloads[0]?.overview ?? null;
   const keywordItems = rankingPayloads.flatMap((item) => item.keywordItems);
   const competitorItems = rankingPayloads.flatMap((item) => item.competitorItems);
   const urlItems = rankingPayloads.flatMap((item) => item.urlItems);
 
+  const usableSources = sourceStatuses.filter((item) => item.status === "success" || item.status === "partial");
   const successfulSources = sourceStatuses.filter((item) => item.status === "success");
-  if (successfulSources.length === 0) {
+  const hasRankingSource = successfulSources.some(
+    (item) => item.source === "mock" || item.source === "sistrix"
+  );
+  if (usableSources.length === 0) {
     const primaryFailure = executed[0];
-    if (selection.mode === "single" && primaryFailure?.status === "not_configured") {
-      throw new SeoProviderNotConfiguredError(primaryFailure.safeMessage);
-    }
-    if (selection.mode === "single" && primaryFailure?.status === "failed") {
+    if (selection.mode === "single" && (primaryFailure?.status === "failed" || primaryFailure?.status === "partial")) {
       throw new SeoProviderError({
         category: "seo_source_failed",
-        safeMessage: primaryFailure.safeMessage,
+        safeMessage: primaryFailure.message,
         statusCode: 503,
       });
     }
@@ -1096,10 +1890,17 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
 
   const keywords = normalizeKeywordInsights(keywordItems);
   const competitors = normalizeCompetitorInsights(competitorItems);
+  const gscOpportunities = generateGscOpportunities({
+    domain: providerInput.domain,
+    market: providerInput.market,
+    language: providerInput.language,
+    snapshot: searchConsole,
+  });
   const opportunities = dedupeOpportunities([
     ...createKeywordOpportunities(keywordItems),
     ...createCompetitorOpportunities(competitorItems),
     ...createUrlOpportunities(urlItems),
+    ...gscOpportunities,
   ]);
   const recommendations = dedupeRecommendations(
     createRecommendations({
@@ -1118,7 +1919,10 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
   const visibility = {
     visibilityIndex: summary.visibilityIndex,
     trend: overview?.trend ?? "unknown",
-    notes: uniqueStrings(rankingPayloads.flatMap((item) => nonEmptyArray(item.overview.notes))),
+    notes: uniqueStrings([
+      ...rankingPayloads.flatMap((item) => nonEmptyArray(item.overview.notes)),
+      ...(hasRankingSource ? [] : ["Visibility and competitor scoring require ranking source such as SISTRIX."]),
+    ]),
   } as const;
   const technical = createTechnicalSnapshot({ crawler, pagespeed });
   const visibilityScore = scoreVisibility(summary.visibilityIndex);
@@ -1126,6 +1930,7 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
   const competitorPressureScore = scoreCompetitorPressure({
     competitors,
     domainVisibilityIndex: summary.visibilityIndex,
+    hasRankingSource,
   });
   const scores = {
     visibilityScore,
@@ -1137,8 +1942,36 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
       competitorPressureScore,
     }),
   };
+  const harnessResult = runSeoHarness({
+    domain: providerInput.domain,
+    teamId: input.teamId,
+    companyId: input.companyId,
+    sourceStatuses,
+    normalizedSourceOutputs: {
+      searchConsole,
+      pagespeed,
+      crawler,
+      rankTracking,
+      keywords,
+      opportunities,
+      recommendations,
+      technical,
+      sourceStatuses,
+    },
+    llmFindings: buildHarnessFindings({
+      teamId: input.teamId,
+      companyId: input.companyId,
+      domain: providerInput.domain,
+      opportunities,
+      recommendations,
+      sourceStatuses,
+      searchConsole,
+      pagespeed,
+      crawler,
+    }),
+  });
 
-  return createSeoAnalysisRun({
+  const run = await createSeoAnalysisRun({
     teamId: input.teamId,
     companyId: input.companyId,
     configId: input.config.id,
@@ -1153,26 +1986,35 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
     competitors,
     technical,
     searchConsole,
+    rankTracking,
     pagespeed,
     crawler,
+    findings: harnessResult.findings,
     opportunities,
     recommendations,
+    harness: {
+      selectedSkills: harnessResult.selectedSkills,
+      warnings: harnessResult.warnings,
+      blockedActions: harnessResult.blockedActions,
+      confidenceSummary: harnessResult.confidenceSummary,
+      draftTasks: harnessResult.draftTasks,
+    },
     scores,
     createdByUserId: input.createdByUserId,
   });
+  await generateSeoDraftTasksForRun(input.teamId, run.id);
+  return run;
 }
 
-export async function approveSeoRun(runId: string): Promise<void> {
-  await updateSeoAnalysisRunStatus(runId, "approved");
+export async function approveSeoRun(teamId: string, runId: string): Promise<void> {
+  const updated = await updateSeoAnalysisRunStatusForTeam(teamId, runId, "approved");
+  if (!updated) throw new SeoDraftTaskError("SEO analysis run not found", 404);
 }
 
 export async function generateSeoDraftTasksForRun(teamId: string, runId: string): Promise<SeoDraftTask[]> {
-  const run = await findSeoAnalysisRunById(runId);
+  const run = await findSeoAnalysisRunByTeamAndId(teamId, runId);
   if (!run) {
     throw new SeoDraftTaskError("SEO analysis run not found", 404);
-  }
-  if (run.teamId !== teamId) {
-    throw new SeoDraftTaskError("Access denied", 403);
   }
   if (run.status === "failed") {
     throw new SeoDraftTaskError("Cannot generate draft tasks for a failed SEO analysis run", 400);
@@ -1180,6 +2022,15 @@ export async function generateSeoDraftTasksForRun(teamId: string, runId: string)
 
   const existing = await listSeoDraftTasksByRun(teamId, runId);
   if (existing.length > 0) return existing;
+
+  if (run.harness.draftTasks.length > 0) {
+    const harnessGenerated = dedupeDraftTasks(
+      run.harness.draftTasks
+        .map((task) => buildDraftTaskFromHarness({ teamId, run, task }))
+        .filter(Boolean) as Array<Omit<SeoDraftTask, "id">>
+    );
+    if (harnessGenerated.length > 0) return createSeoDraftTasks({ teamId, tasks: harnessGenerated });
+  }
 
   const generated = dedupeDraftTasks([
     ...run.opportunities
@@ -1195,12 +2046,9 @@ export async function generateSeoDraftTasksForRun(teamId: string, runId: string)
 }
 
 export async function listSeoDraftTasksForRun(teamId: string, runId: string): Promise<SeoDraftTask[]> {
-  const run = await findSeoAnalysisRunById(runId);
+  const run = await findSeoAnalysisRunByTeamAndId(teamId, runId);
   if (!run) {
     throw new SeoDraftTaskError("SEO analysis run not found", 404);
-  }
-  if (run.teamId !== teamId) {
-    throw new SeoDraftTaskError("Access denied", 403);
   }
 
   return listSeoDraftTasksByRun(teamId, runId);
@@ -1242,40 +2090,32 @@ export async function convertSeoDraftTaskToRealTask(input: {
 
   if (draftTask.realTaskId) {
     const existingTask = await getAgencyTaskById(draftTask.realTaskId);
-    if (existingTask) {
+    if (existingTask && existingTask.teamId === input.teamId && existingTask.companyId === draftTask.companyId) {
       return { draftTask, task: existingTask };
     }
     throw new SeoDraftTaskError("SEO draft task is already linked to a real task", 409);
   }
 
-  const rawCompanyId = input.options.companyId;
   const requestedCompanyId =
-    typeof rawCompanyId === "string" ? rawCompanyId.trim() : rawCompanyId === null ? null : undefined;
-  const explicitHomeTask = requestedCompanyId === null || (!requestedCompanyId && input.options.visibility === "private");
-  const fallbackCompanyId = draftTask.suggestedCompanyId || "";
-  const selectedCompanyId = explicitHomeTask ? "" : typeof requestedCompanyId === "string" ? requestedCompanyId : fallbackCompanyId;
-
-  let resolvedCompanyId: string | null = null;
-  if (selectedCompanyId) {
-    const company = await getCompanyById(selectedCompanyId);
-    if (!company) {
-      throw new SeoDraftTaskError("Company not found", 404);
-    }
-    if (company.teamId !== input.teamId) {
-      throw new SeoDraftTaskError("Access denied", 403);
-    }
-    resolvedCompanyId = company.id;
+    typeof input.options.companyId === "string" ? input.options.companyId.trim() : draftTask.companyId;
+  if (!requestedCompanyId || requestedCompanyId !== draftTask.companyId) {
+    throw new SeoDraftTaskError("SEO draft tasks must be created for their analysis Company", 400);
+  }
+  const company = await getCompanyById(requestedCompanyId);
+  if (!company) {
+    throw new SeoDraftTaskError("Company not found", 404);
+  }
+  if (company.teamId !== input.teamId) {
+    throw new SeoDraftTaskError("Access denied", 403);
   }
 
+  const resolvedCompanyId = company.id;
   const visibility = input.options.visibility ?? defaultVisibility(resolvedCompanyId);
   if (visibility !== "private" && visibility !== "team") {
     throw new SeoDraftTaskError("Invalid visibility", 400);
   }
   if (resolvedCompanyId && visibility !== "team") {
     throw new SeoDraftTaskError("Company SEO tasks must use team visibility", 400);
-  }
-  if (!resolvedCompanyId && visibility !== "private") {
-    throw new SeoDraftTaskError("Home SEO tasks must use private visibility", 400);
   }
 
   const assignedUserId =
@@ -1299,6 +2139,7 @@ export async function convertSeoDraftTaskToRealTask(input: {
     "Created from SEO analysis draft task.",
     `Domain: ${draftTask.domain}`,
     keywordLine,
+    draftTask.labels.length ? `Labels: ${draftTask.labels.join("; ")}` : "",
   ]
     .filter(Boolean)
     .join("\n");

@@ -12,6 +12,7 @@ export function mountBottomNav(root, currentTab) {
   nav.innerHTML = `
     <button type="button" data-route="#/tasks" class="${tab === "tasks" ? "active" : ""}">Tasks</button>
     <button type="button" data-route="#/campaigns" class="${tab === "campaigns" ? "active" : ""}">Campaigns</button>
+    <button type="button" data-route="#/seo" class="${tab === "seo" ? "active" : ""}">SEO</button>
     <button type="button" data-route="#/settings" class="${tab === "settings" ? "active" : ""}">Settings</button>
   `;
 
@@ -33,4 +34,3 @@ export function mountBottomNav(root, currentTab) {
     nav.remove();
   };
 }
-
