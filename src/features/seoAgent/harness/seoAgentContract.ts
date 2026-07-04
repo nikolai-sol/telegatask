@@ -8,6 +8,7 @@ export const ALLOWED_SEO_SOURCES: SeoSourceName[] = [
   "pagespeed",
   "crawler",
   "gsc",
+  "yandex_webmaster",
   "google_serp_rank",
   "yandex_serp_rank",
 ];

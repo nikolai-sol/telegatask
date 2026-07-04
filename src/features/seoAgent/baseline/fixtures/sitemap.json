@@ -1,0 +1,67 @@
+{
+  "sitemapUrl": "https://zaruku.ru/sitemap.xml",
+  "status": 200,
+  "urlCount": 4636,
+  "sampledUrls": [
+    "https://zaruku.ru/",
+    "https://zaruku.ru/map/",
+    "https://zaruku.ru/map/odincovo/organization_32/",
+    "https://zaruku.ru/map/moskva/organization_355/",
+    "https://zaruku.ru/map/moskva/organization_356/",
+    "https://zaruku.ru/map/moskva/organization_357/",
+    "https://zaruku.ru/map/moskva/organization_358/",
+    "https://zaruku.ru/map/moskva/organization_359/",
+    "https://zaruku.ru/map/moskva/organization_360/",
+    "https://zaruku.ru/map/moskva/organization_361/"
+  ],
+  "sectionCounts": [
+    {
+      "section": "/map/",
+      "count": 4039
+    },
+    {
+      "section": "/obshie-temy/",
+      "count": 104
+    },
+    {
+      "section": "/rak-lyogkogo/",
+      "count": 95
+    },
+    {
+      "section": "/rak-mochevogo-puzyrya/",
+      "count": 68
+    },
+    {
+      "section": "/rak-pecheni/",
+      "count": 68
+    },
+    {
+      "section": "/rak-molochnoj-zhelezy/",
+      "count": 65
+    },
+    {
+      "section": "/medialib/",
+      "count": 50
+    },
+    {
+      "section": "/melanoma/",
+      "count": 43
+    },
+    {
+      "section": "/authors/",
+      "count": 26
+    },
+    {
+      "section": "/limfoma/",
+      "count": 20
+    },
+    {
+      "section": "/pitanie/",
+      "count": 20
+    },
+    {
+      "section": "/genomnoe-profilirovanie/",
+      "count": 17
+    }
+  ]
+}

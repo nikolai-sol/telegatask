@@ -28,6 +28,9 @@ Date: 2026-05-22
 - `pagespeed`
 - `crawler`
 - `gsc`
+- `google_serp_rank`
+- `yandex_serp_rank`
+- `yandex_webmaster`
 
 ## Env Examples
 
@@ -48,7 +51,7 @@ SISTRIX_API_BASE_URL=https://api.sistrix.com
 Multi-source free-first:
 
 ```bash
-SEO_DATA_SOURCES=crawler,pagespeed,gsc
+SEO_DATA_SOURCES=crawler,pagespeed,gsc,yandex_webmaster
 ```
 
 Mixed multi-source:
@@ -64,6 +67,23 @@ GSC_ENABLED=true
 GSC_SITE_URL=https://annavisas.com/
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials.json
 ```
+
+Yandex Webmaster placeholder:
+
+```bash
+YANDEX_WEBMASTER_ENABLED=true
+YANDEX_WEBMASTER_CLIENT_ID=...
+YANDEX_WEBMASTER_CLIENT_SECRET=...
+YANDEX_WEBMASTER_REDIRECT_URI=https://oauth.yandex.ru/verification_code
+YANDEX_WEBMASTER_OAUTH_TOKEN=
+YANDEX_WEBMASTER_REFRESH_TOKEN=
+YANDEX_WEBMASTER_DEFAULT_DATE_RANGE_DAYS=7
+```
+
+Notes:
+
+- Yandex Webmaster is owner-authorized query performance data, not external SERP rank tracking.
+- Client ID/secret alone are not enough for live reads; the pipeline also needs an OAuth access token or refresh token for the verified site owner.
 
 ## QA Results
 

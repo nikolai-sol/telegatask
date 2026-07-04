@@ -28,11 +28,13 @@ export type SeoSourceName =
   | "pagespeed"
   | "crawler"
   | "gsc"
+  | "yandex_webmaster"
   | "google_serp_rank"
   | "yandex_serp_rank";
 export type SeoSourceStatusType = "success" | "partial" | "failed" | "skipped";
 export type SeoSourceLabel =
   | "Google Search Console data"
+  | "Yandex Webmaster data"
   | "Technical crawler data"
   | "PageSpeed data"
   | "AI heuristic, not Google ranking data";
@@ -373,6 +375,7 @@ export type SeoAnalysisRun = {
   competitors: SeoCompetitorInsight[];
   technical: SeoTechnicalSnapshot;
   searchConsole: SeoSearchConsoleSnapshot;
+  yandexWebmaster: SeoSearchConsoleSnapshot;
   rankTracking: SeoRankTrackingSnapshot;
   pagespeed: SeoPageSpeedSnapshot;
   crawler: SeoCrawlerSnapshot;

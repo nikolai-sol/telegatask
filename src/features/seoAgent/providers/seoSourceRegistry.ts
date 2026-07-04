@@ -9,6 +9,7 @@ const ALL_SOURCE_NAMES: SeoSourceName[] = [
   "pagespeed",
   "crawler",
   "gsc",
+  "yandex_webmaster",
   "google_serp_rank",
   "yandex_serp_rank",
 ];
@@ -24,6 +25,9 @@ const SOURCE_ALIASES: Record<string, SeoSourceName> = {
   search_console: "gsc",
   google_search_console: "gsc",
   owned_search_console: "gsc",
+  yandex_webmaster: "yandex_webmaster",
+  yandex_webmaster_tools: "yandex_webmaster",
+  yandex_search_console: "yandex_webmaster",
   google_serp_rank: "google_serp_rank",
   google_rank: "google_serp_rank",
   google_rank_tracking: "google_serp_rank",

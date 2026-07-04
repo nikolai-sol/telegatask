@@ -1,0 +1,643 @@
+{
+  "id": "<id>",
+  "teamId": "qa-seo-team-1",
+  "companyId": "qa-seo-company-zaruku",
+  "configId": "<config-id>",
+  "mode": "quick_audit",
+  "status": "draft",
+  "provider": "multi_source",
+  "sources": [
+    "crawler",
+    "yandex_webmaster",
+    "yandex_serp_rank"
+  ],
+  "sourceStatuses": [
+    {
+      "source": "mock",
+      "status": "skipped",
+      "message": "Source not selected for this run",
+      "collectedAt": 0
+    },
+    {
+      "source": "sistrix",
+      "status": "skipped",
+      "message": "Source not selected for this run",
+      "collectedAt": 0
+    },
+    {
+      "source": "pagespeed",
+      "status": "skipped",
+      "message": "Source not selected for this run",
+      "collectedAt": 0
+    },
+    {
+      "source": "crawler",
+      "status": "success",
+      "message": "crawler source completed successfully",
+      "collectedAt": 0,
+      "metricsSummary": {
+        "homepageStatusCode": 200,
+        "titleExists": true,
+        "metaDescriptionExists": true,
+        "h1Exists": true,
+        "canonicalExists": true,
+        "robotsTxtAvailable": true,
+        "sitemapXmlAvailable": true,
+        "isIndexable": true
+      }
+    },
+    {
+      "source": "gsc",
+      "status": "skipped",
+      "message": "Source not selected for this run",
+      "collectedAt": 0
+    },
+    {
+      "source": "yandex_webmaster",
+      "status": "success",
+      "message": "Yandex Webmaster source completed successfully",
+      "collectedAt": 0,
+      "metricsSummary": {
+        "host": "https:zaruku.ru:443",
+        "startDate": "2026-06-17",
+        "endDate": "2026-06-23",
+        "impressions": 23939,
+        "clicks": 1050,
+        "ctr": 4.386148126488157,
+        "averagePosition": 8.936505284264172,
+        "topQueryCount": 10
+      }
+    },
+    {
+      "source": "google_serp_rank",
+      "status": "skipped",
+      "message": "Source not selected for this run",
+      "collectedAt": 0
+    },
+    {
+      "source": "yandex_serp_rank",
+      "status": "partial",
+      "message": "Yandex rank tracking partially succeeded",
+      "collectedAt": 0,
+      "errorCode": "YANDEX_SEARCH_PARTIAL",
+      "metricsSummary": {
+        "providerState": "partial_success",
+        "queryCount": 12,
+        "foundCount": 2,
+        "missingCount": 9,
+        "failedCount": 1
+      }
+    }
+  ],
+  "domain": "zaruku.ru",
+  "summary": {
+    "visibilityIndex": null,
+    "keywordCount": null,
+    "competitorCount": null
+  },
+  "visibility": {
+    "visibilityIndex": null,
+    "trend": "unknown",
+    "notes": [
+      "Visibility and competitor scoring require ranking source such as SISTRIX."
+    ]
+  },
+  "keywords": [],
+  "competitors": [],
+  "technical": {
+    "issueCount": null,
+    "highlights": []
+  },
+  "searchConsole": {
+    "property": null,
+    "siteUrl": null,
+    "dateRange": {
+      "startDate": null,
+      "endDate": null,
+      "days": null
+    },
+    "clicks": null,
+    "impressions": null,
+    "ctr": null,
+    "averagePosition": null,
+    "topQueries": [],
+    "topPages": [],
+    "countries": [],
+    "devices": []
+  },
+  "yandexWebmaster": {
+    "property": "https:zaruku.ru:443",
+    "siteUrl": "https://zaruku.ru/",
+    "dateRange": {
+      "startDate": "2026-06-17",
+      "endDate": "2026-06-23",
+      "days": 7
+    },
+    "clicks": 1050,
+    "impressions": 23939,
+    "ctr": 4.386148126488157,
+    "averagePosition": 8.936505284264172,
+    "topQueries": [
+      "гемотест орел победа 1",
+      "гемотест тихвин",
+      "подногтевая меланома фото",
+      "ситилаб углич",
+      "гемотест апатиты",
+      "гемотест нерюнгри",
+      "восстановление после рмж",
+      "ситилаб южа",
+      "сколково онкологический центр адрес",
+      "ситилаб нерехта"
+    ],
+    "topPages": [],
+    "countries": [],
+    "devices": [
+      "ALL"
+    ]
+  },
+  "rankTracking": {
+    "yandex": {
+      "provider": "yandex_search_api",
+      "checks": [
+        {
+          "query": "за руку",
+          "searchEngine": "yandex",
+          "provider": "yandex_search_api",
+          "targetDomain": "zaruku.ru",
+          "found": true,
+          "position": 1,
+          "matchedUrl": "https://zaruku.ru/",
+          "title": "«<hlword>За</hlword> <hlword>руку</hlword>» – социальный медиа проект для людей...",
+          "serpFeatures": [],
+          "topResultDomains": [
+            "zaruku.ru",
+            "gramota.ru",
+            "gramota.ru",
+            "gramota.ru",
+            "translate.ru"
+          ],
+          "region": "225",
+          "language": "ru",
+          "device": "desktop",
+          "checkedAt": "<iso-timestamp>"
+        },
+        {
+          "query": "заруку",
+          "searchEngine": "yandex",
+          "provider": "yandex_search_api",
+          "targetDomain": "zaruku.ru",
+          "found": true,
+          "position": 1,
+          "matchedUrl": "https://zaruku.ru/",
+          "title": "«За руку» – социальный медиа проект для людей...",
+          "snippet": "Онлайн-платформа поддержки онкопациентов и их близких: достоверная информация о раке, инновационные подходы к лечению, карта онкоцентров, психологическая и юридическая поддержка.",
+          "serpFeatures": [],
+          "topResultDomains": [
+            "zaruku.ru",
+            "zaruku.ru",
+            "zaruku.ru",
+            "zaruku.ru",
+            "vk.com"
+          ],
+          "region": "225",
+          "language": "ru",
+          "device": "desktop",
+          "checkedAt": "<iso-timestamp>"
+        },
+        {
+          "query": "рак симптомы",
+          "searchEngine": "yandex",
+          "provider": "yandex_search_api",
+          "targetDomain": "zaruku.ru",
+          "found": false,
+          "serpFeatures": [],
+          "topResultDomains": [
+            "gemotest.ru",
+            "citilab.ru",
+            "megapteka.ru",
+            "gemotest.ru",
+            "gemotest.ru"
+          ],
+          "region": "225",
+          "language": "ru",
+          "device": "desktop",
+          "checkedAt": "<iso-timestamp>"
+        },
+        {
+          "query": "рак лечение",
+          "searchEngine": "yandex",
+          "provider": "yandex_search_api",
+          "targetDomain": "zaruku.ru",
+          "found": false,
+          "serpFeatures": [],
+          "topResultDomains": [
+            "gemotest.ru",
+            "citilab.ru",
+            "new.nmicr.ru",
+            "niioncologii.ru",
+            "niioncologii.ru"
+          ],
+          "region": "225",
+          "language": "ru",
+          "device": "desktop",
+          "checkedAt": "<iso-timestamp>"
+        }
+      ],
+      "status": {
+        "state": "partial_success",
+        "message": "Yandex rank tracking partially succeeded",
+        "checkedAt": "<iso-timestamp>",
+        "errorCode": "YANDEX_SEARCH_PARTIAL",
+        "metricsSummary": {
+          "queryCount": 12,
+          "foundCount": 2,
+          "missingCount": 9,
+          "failedCount": 1
+        }
+      }
+    }
+  },
+  "pagespeed": {
+    "pageUrl": null,
+    "performanceScore": null,
+    "accessibilityScore": null,
+    "bestPracticesScore": null,
+    "seoScore": null,
+    "largestContentfulPaintMs": null,
+    "cumulativeLayoutShift": null,
+    "interactionToNextPaintMs": null,
+    "totalBlockingTimeMs": null
+  },
+  "crawler": {
+    "pageUrl": "https://zaruku.ru/",
+    "finalUrl": "https://zaruku.ru/",
+    "httpStatus": 200,
+    "hasTitle": true,
+    "hasMetaDescription": true,
+    "hasH1": true,
+    "hasCanonical": true,
+    "robotsTxtReachable": true,
+    "sitemapXmlReachable": true,
+    "isIndexable": true
+  },
+  "findings": [
+    {
+      "id": "<id>",
+      "teamId": "qa-seo-team-1",
+      "companyId": "qa-seo-company-zaruku",
+      "domain": "zaruku.ru",
+      "url": null,
+      "type": "content",
+      "category": "content",
+      "title": "Improve Yandex rankings for existing demand",
+      "description": "Yandex Webmaster data shows impressions but average positions remain weak. Prioritize query-to-page mapping and Yandex-specific on-page improvements.",
+      "source": "yandex_webmaster",
+      "severity": "medium",
+      "confidence": "low",
+      "evidence": [
+        {
+          "source": "yandex_webmaster",
+          "metric": "impressions",
+          "value": 23939,
+          "message": "Yandex Webmaster impressions: 23939."
+        },
+        {
+          "source": "yandex_webmaster",
+          "metric": "clicks",
+          "value": 1050,
+          "message": "Yandex Webmaster clicks: 1050."
+        },
+        {
+          "source": "yandex_webmaster",
+          "metric": "ctr",
+          "value": 4.386148126488157,
+          "message": "Yandex Webmaster CTR: 4.386148126488157."
+        },
+        {
+          "source": "yandex_webmaster",
+          "metric": "average_position",
+          "value": 8.936505284264172,
+          "message": "Yandex Webmaster average position: 8.936505284264172."
+        },
+        {
+          "source": "yandex_webmaster",
+          "metric": "top_query",
+          "query": "гемотест орел победа 1",
+          "message": "Yandex Webmaster top query: гемотест орел победа 1."
+        },
+        {
+          "source": "yandex_webmaster",
+          "metric": "top_query",
+          "query": "гемотест тихвин",
+          "message": "Yandex Webmaster top query: гемотест тихвин."
+        },
+        {
+          "source": "yandex_webmaster",
+          "metric": "top_query",
+          "query": "подногтевая меланома фото",
+          "message": "Yandex Webmaster top query: подногтевая меланома фото."
+        },
+        {
+          "source": "yandex_webmaster",
+          "metric": "source_status",
+          "value": "success",
+          "message": "yandex_webmaster source status: success. Yandex Webmaster source completed successfully",
+          "collectedAt": 0
+        }
+      ],
+      "recommendation": "Yandex Webmaster data shows impressions but average positions remain weak. Prioritize query-to-page mapping and Yandex-specific on-page improvements.",
+      "labels": [
+        "Yandex Webmaster data",
+        "AI heuristic, not Google ranking data"
+      ],
+      "targetKeywords": [],
+      "sourceType": "recommendation",
+      "sourceId": "recommendation:improve-yandex-rankings-for-existing-demand:none"
+    },
+    {
+      "id": "<id>",
+      "teamId": "qa-seo-team-1",
+      "companyId": "qa-seo-company-zaruku",
+      "domain": "zaruku.ru",
+      "url": null,
+      "type": "tracking",
+      "category": "tracking",
+      "title": "Connect Google Search Console for real query data",
+      "description": "Search Console is not connected for this run. Connect it to access clicks, impressions, CTR, and average position data.",
+      "source": "gsc",
+      "severity": "medium",
+      "confidence": "medium",
+      "evidence": [
+        {
+          "source": "gsc",
+          "metric": "source_status",
+          "value": "skipped",
+          "message": "gsc source status: skipped. Source not selected for this run",
+          "collectedAt": 0
+        }
+      ],
+      "recommendation": "Search Console is not connected for this run. Connect it to access clicks, impressions, CTR, and average position data.",
+      "labels": [
+        "Google Search Console data",
+        "AI heuristic, not Google ranking data"
+      ],
+      "targetKeywords": [],
+      "sourceType": "recommendation",
+      "sourceId": "recommendation:connect-google-search-console-for-real-query-data:none"
+    },
+    {
+      "id": "<id>",
+      "teamId": "qa-seo-team-1",
+      "companyId": "qa-seo-company-zaruku",
+      "domain": "zaruku.ru",
+      "url": null,
+      "type": "tracking",
+      "category": "tracking",
+      "title": "Run PageSpeed audit for technical performance data",
+      "description": "PageSpeed data is missing for this run. Add the PageSpeed source to capture homepage performance and technical SEO signals.",
+      "source": "pagespeed",
+      "severity": "low",
+      "confidence": "low",
+      "evidence": [
+        {
+          "source": "pagespeed",
+          "metric": "source_status",
+          "value": "skipped",
+          "message": "pagespeed source status: skipped. Source not selected for this run",
+          "collectedAt": 0
+        }
+      ],
+      "recommendation": "PageSpeed data is missing for this run. Add the PageSpeed source to capture homepage performance and technical SEO signals.",
+      "labels": [
+        "PageSpeed data",
+        "AI heuristic, not Google ranking data"
+      ],
+      "targetKeywords": [],
+      "sourceType": "recommendation",
+      "sourceId": "recommendation:run-pagespeed-audit-for-technical-performance-data:none"
+    },
+    {
+      "id": "<id>",
+      "teamId": "qa-seo-team-1",
+      "companyId": "qa-seo-company-zaruku",
+      "domain": "zaruku.ru",
+      "url": null,
+      "type": "tracking",
+      "category": "tracking",
+      "title": "Add a ranking source for visibility scoring",
+      "description": "Visibility and competitor scoring require ranking source such as SISTRIX.",
+      "source": "crawler",
+      "severity": "medium",
+      "confidence": "low",
+      "evidence": [
+        {
+          "source": "crawler",
+          "metric": "source_status",
+          "value": "success",
+          "message": "crawler source status: success. crawler source completed successfully",
+          "collectedAt": 0
+        }
+      ],
+      "recommendation": "Visibility and competitor scoring require ranking source such as SISTRIX.",
+      "labels": [
+        "Technical crawler data",
+        "AI heuristic, not Google ranking data"
+      ],
+      "targetKeywords": [],
+      "sourceType": "recommendation",
+      "sourceId": "recommendation:add-a-ranking-source-for-visibility-scoring:none"
+    }
+  ],
+  "opportunities": [],
+  "recommendations": [
+    {
+      "type": "content",
+      "title": "Improve Yandex rankings for existing demand",
+      "description": "Yandex Webmaster data shows impressions but average positions remain weak. Prioritize query-to-page mapping and Yandex-specific on-page improvements.",
+      "priority": "medium"
+    },
+    {
+      "type": "tracking",
+      "title": "Connect Google Search Console for real query data",
+      "description": "Search Console is not connected for this run. Connect it to access clicks, impressions, CTR, and average position data.",
+      "priority": "medium"
+    },
+    {
+      "type": "tracking",
+      "title": "Run PageSpeed audit for technical performance data",
+      "description": "PageSpeed data is missing for this run. Add the PageSpeed source to capture homepage performance and technical SEO signals.",
+      "priority": "low"
+    },
+    {
+      "type": "tracking",
+      "title": "Add a ranking source for visibility scoring",
+      "description": "Visibility and competitor scoring require ranking source such as SISTRIX.",
+      "priority": "medium"
+    }
+  ],
+  "harness": {
+    "selectedSkills": [
+      {
+        "id": "<id>",
+        "title": "High impressions / low CTR diagnosis",
+        "score": 14
+      },
+      {
+        "id": "<id>",
+        "title": "Thin content / weak landing page content",
+        "score": 8
+      },
+      {
+        "id": "<id>",
+        "title": "Low mobile LCP diagnosis",
+        "score": 5
+      }
+    ],
+    "warnings": [
+      "Source yandex_serp_rank returned partial data: Yandex rank tracking partially succeeded",
+      "Run contains many low-confidence findings; use source evidence review before approving draft tasks."
+    ],
+    "blockedActions": [],
+    "confidenceSummary": {
+      "high": 0,
+      "medium": 1,
+      "low": 3
+    },
+    "draftTasks": [
+      {
+        "teamId": "qa-seo-team-1",
+        "companyId": "qa-seo-company-zaruku",
+        "domain": "zaruku.ru",
+        "sourceFindingId": "recommendation-2-connect-google-search-console-for-real-query-data",
+        "sourceType": "recommendation",
+        "sourceId": "recommendation:connect-google-search-console-for-real-query-data:none",
+        "title": "Connect Google Search Console for real query data",
+        "description": "Search Console is not connected for this run. Connect it to access clicks, impressions, CTR, and average position data.",
+        "priority": "normal",
+        "targetKeywords": [],
+        "evidence": [
+          {
+            "source": "gsc",
+            "metric": "source_status",
+            "value": "skipped",
+            "message": "gsc source status: skipped. Source not selected for this run",
+            "collectedAt": 0
+          }
+        ]
+      },
+      {
+        "teamId": "qa-seo-team-1",
+        "companyId": "qa-seo-company-zaruku",
+        "domain": "zaruku.ru",
+        "sourceFindingId": "recommendation-1-improve-yandex-rankings-for-existing-demand",
+        "sourceType": "recommendation",
+        "sourceId": "recommendation:improve-yandex-rankings-for-existing-demand:none",
+        "title": "Improve Yandex rankings for existing demand",
+        "description": "Yandex Webmaster data shows impressions but average positions remain weak. Prioritize query-to-page mapping and Yandex-specific on-page improvements.",
+        "priority": "normal",
+        "targetKeywords": [],
+        "evidence": [
+          {
+            "source": "yandex_webmaster",
+            "metric": "impressions",
+            "value": 23939,
+            "message": "Yandex Webmaster impressions: 23939."
+          },
+          {
+            "source": "yandex_webmaster",
+            "metric": "clicks",
+            "value": 1050,
+            "message": "Yandex Webmaster clicks: 1050."
+          },
+          {
+            "source": "yandex_webmaster",
+            "metric": "ctr",
+            "value": 4.386148126488157,
+            "message": "Yandex Webmaster CTR: 4.386148126488157."
+          },
+          {
+            "source": "yandex_webmaster",
+            "metric": "average_position",
+            "value": 8.936505284264172,
+            "message": "Yandex Webmaster average position: 8.936505284264172."
+          },
+          {
+            "source": "yandex_webmaster",
+            "metric": "top_query",
+            "query": "гемотест орел победа 1",
+            "message": "Yandex Webmaster top query: гемотест орел победа 1."
+          },
+          {
+            "source": "yandex_webmaster",
+            "metric": "top_query",
+            "query": "гемотест тихвин",
+            "message": "Yandex Webmaster top query: гемотест тихвин."
+          },
+          {
+            "source": "yandex_webmaster",
+            "metric": "top_query",
+            "query": "подногтевая меланома фото",
+            "message": "Yandex Webmaster top query: подногтевая меланома фото."
+          },
+          {
+            "source": "yandex_webmaster",
+            "metric": "source_status",
+            "value": "success",
+            "message": "yandex_webmaster source status: success. Yandex Webmaster source completed successfully",
+            "collectedAt": 0
+          }
+        ]
+      },
+      {
+        "teamId": "qa-seo-team-1",
+        "companyId": "qa-seo-company-zaruku",
+        "domain": "zaruku.ru",
+        "sourceFindingId": "recommendation-4-add-a-ranking-source-for-visibility-scoring",
+        "sourceType": "recommendation",
+        "sourceId": "recommendation:add-a-ranking-source-for-visibility-scoring:none",
+        "title": "Add a ranking source for visibility scoring",
+        "description": "Visibility and competitor scoring require ranking source such as SISTRIX.",
+        "priority": "normal",
+        "targetKeywords": [],
+        "evidence": [
+          {
+            "source": "crawler",
+            "metric": "source_status",
+            "value": "success",
+            "message": "crawler source status: success. crawler source completed successfully",
+            "collectedAt": 0
+          }
+        ]
+      },
+      {
+        "teamId": "qa-seo-team-1",
+        "companyId": "qa-seo-company-zaruku",
+        "domain": "zaruku.ru",
+        "sourceFindingId": "recommendation-3-run-pagespeed-audit-for-technical-performance-data",
+        "sourceType": "recommendation",
+        "sourceId": "recommendation:run-pagespeed-audit-for-technical-performance-data:none",
+        "title": "Run PageSpeed audit for technical performance data",
+        "description": "PageSpeed data is missing for this run. Add the PageSpeed source to capture homepage performance and technical SEO signals.",
+        "priority": "normal",
+        "targetKeywords": [],
+        "evidence": [
+          {
+            "source": "pagespeed",
+            "metric": "source_status",
+            "value": "skipped",
+            "message": "pagespeed source status: skipped. Source not selected for this run",
+            "collectedAt": 0
+          }
+        ]
+      }
+    ]
+  },
+  "scores": {
+    "visibilityScore": null,
+    "opportunityScore": null,
+    "competitorPressureScore": null,
+    "overallSeoScore": null
+  },
+  "createdAt": 0,
+  "createdByUserId": "qa-seo-user"
+}

@@ -1,0 +1,95 @@
+[
+  {
+    "type": "keyword",
+    "opportunityType": "keyword_quick_win",
+    "intent": "unknown",
+    "title": "Improve GSC rankings for \"рак лечение\"",
+    "description": "Improve the page/query match for \"рак лечение\" and add internal links from relevant pages. GSC query \"рак лечение\" has 500 impressions and average position 12. Source rank: 1.",
+    "targetUrl": "https://zaruku.ru/rak/",
+    "targetKeywords": [
+      "рак лечение"
+    ],
+    "market": "RU",
+    "language": "ru",
+    "impact": "high",
+    "effort": "medium",
+    "urgency": "high",
+    "priority": "high",
+    "confidence": "medium",
+    "source": "provider",
+    "recommendedAction": "Improve the page/query match for \"рак лечение\" and add internal links from relevant pages.",
+    "reasoning": "GSC query \"рак лечение\" has 500 impressions and average position 12. Source rank: 1.",
+    "evidence": [
+      {
+        "source": "gsc",
+        "metric": "search_performance",
+        "value": 500,
+        "query": "рак лечение",
+        "url": "https://zaruku.ru/rak/",
+        "message": "GSC query \"рак лечение\" has 500 impressions and average position 12. Source rank: 1."
+      }
+    ]
+  },
+  {
+    "type": "content",
+    "opportunityType": "content_optimization",
+    "intent": "unknown",
+    "title": "Improve GSC CTR for \"за руку\"",
+    "description": "Improve title, description, and snippet intent alignment for \"за руку\". GSC query \"за руку\" has 400 impressions, CTR 1, and average position 3. Source rank: 2.",
+    "targetUrl": "https://zaruku.ru/",
+    "targetKeywords": [
+      "за руку"
+    ],
+    "market": "RU",
+    "language": "ru",
+    "impact": "high",
+    "effort": "medium",
+    "urgency": "high",
+    "priority": "high",
+    "confidence": "medium",
+    "source": "provider",
+    "recommendedAction": "Improve title, description, and snippet intent alignment for \"за руку\".",
+    "reasoning": "GSC query \"за руку\" has 400 impressions, CTR 1, and average position 3. Source rank: 2.",
+    "evidence": [
+      {
+        "source": "gsc",
+        "metric": "search_performance",
+        "value": 400,
+        "query": "за руку",
+        "url": "https://zaruku.ru/",
+        "message": "GSC query \"за руку\" has 400 impressions, CTR 1, and average position 3. Source rank: 2."
+      }
+    ]
+  },
+  {
+    "type": "keyword",
+    "opportunityType": "keyword_quick_win",
+    "intent": "unknown",
+    "title": "Improve Yandex Webmaster rankings for \"рак лечение\"",
+    "description": "Improve the page/query match for \"рак лечение\" and add internal links from relevant pages. Yandex Webmaster query \"рак лечение\" has 160 impressions and average position 9. Source rank: 1.",
+    "targetUrl": null,
+    "targetKeywords": [
+      "рак лечение"
+    ],
+    "market": "RU",
+    "language": "ru",
+    "impact": "medium",
+    "effort": "medium",
+    "urgency": "medium",
+    "priority": "medium",
+    "confidence": "medium",
+    "source": "provider",
+    "recommendedAction": "Improve the page/query match for \"рак лечение\" and add internal links from relevant pages.",
+    "reasoning": "Yandex Webmaster query \"рак лечение\" has 160 impressions and average position 9. Source rank: 1.",
+    "evidence": [
+      {
+        "source": "yandex_webmaster",
+        "metric": "search_performance",
+        "value": 160,
+        "query": "рак лечение",
+        "url": null,
+        "message": "Yandex Webmaster query \"рак лечение\" has 160 impressions and average position 9. Source rank: 1."
+      }
+    ]
+  }
+]

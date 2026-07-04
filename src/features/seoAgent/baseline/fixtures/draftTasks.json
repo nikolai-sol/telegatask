@@ -1,0 +1,180 @@
+[
+  {
+    "id": "<id>",
+    "teamId": "qa-seo-team-1",
+    "companyId": "qa-seo-company-zaruku",
+    "runId": "<run-id>",
+    "domain": "zaruku.ru",
+    "sourceType": "recommendation",
+    "sourceId": "recommendation:connect-google-search-console-for-real-query-data:none",
+    "sourceFindingId": "recommendation-2-connect-google-search-console-for-real-query-data",
+    "evidence": [
+      {
+        "source": "gsc",
+        "metric": "source_status",
+        "value": "skipped",
+        "message": "gsc source status: skipped. Source not selected for this run",
+        "collectedAt": 0
+      }
+    ],
+    "labels": [
+      "Google Search Console data",
+      "AI heuristic, not Google ranking data"
+    ],
+    "title": "Connect Google Search Console for real query data",
+    "description": "Search Console is not connected for this run. Connect it to access clicks, impressions, CTR, and average position data.",
+    "priority": "normal",
+    "status": "draft",
+    "targetKeywords": [],
+    "suggestedCompanyId": "qa-seo-company-zaruku",
+    "realTaskId": null,
+    "convertedAt": null,
+    "convertedByUserId": null,
+    "createdAt": "<iso-timestamp>",
+    "updatedAt": "<iso-timestamp>"
+  },
+  {
+    "id": "<id>",
+    "teamId": "qa-seo-team-1",
+    "companyId": "qa-seo-company-zaruku",
+    "runId": "<run-id>",
+    "domain": "zaruku.ru",
+    "sourceType": "recommendation",
+    "sourceId": "recommendation:run-pagespeed-audit-for-technical-performance-data:none",
+    "sourceFindingId": "recommendation-3-run-pagespeed-audit-for-technical-performance-data",
+    "evidence": [
+      {
+        "source": "pagespeed",
+        "metric": "source_status",
+        "value": "skipped",
+        "message": "pagespeed source status: skipped. Source not selected for this run",
+        "collectedAt": 0
+      }
+    ],
+    "labels": [
+      "PageSpeed data",
+      "AI heuristic, not Google ranking data"
+    ],
+    "title": "Run PageSpeed audit for technical performance data",
+    "description": "PageSpeed data is missing for this run. Add the PageSpeed source to capture homepage performance and technical SEO signals.",
+    "priority": "normal",
+    "status": "draft",
+    "targetKeywords": [],
+    "suggestedCompanyId": "qa-seo-company-zaruku",
+    "realTaskId": null,
+    "convertedAt": null,
+    "convertedByUserId": null,
+    "createdAt": "<iso-timestamp>",
+    "updatedAt": "<iso-timestamp>"
+  },
+  {
+    "id": "<id>",
+    "teamId": "qa-seo-team-1",
+    "companyId": "qa-seo-company-zaruku",
+    "runId": "<run-id>",
+    "domain": "zaruku.ru",
+    "sourceType": "recommendation",
+    "sourceId": "recommendation:add-a-ranking-source-for-visibility-scoring:none",
+    "sourceFindingId": "recommendation-4-add-a-ranking-source-for-visibility-scoring",
+    "evidence": [
+      {
+        "source": "crawler",
+        "metric": "source_status",
+        "value": "success",
+        "message": "crawler source status: success. crawler source completed successfully",
+        "collectedAt": 0
+      }
+    ],
+    "labels": [
+      "Technical crawler data",
+      "AI heuristic, not Google ranking data"
+    ],
+    "title": "Add a ranking source for visibility scoring",
+    "description": "Visibility and competitor scoring require ranking source such as SISTRIX.",
+    "priority": "normal",
+    "status": "draft",
+    "targetKeywords": [],
+    "suggestedCompanyId": "qa-seo-company-zaruku",
+    "realTaskId": null,
+    "convertedAt": null,
+    "convertedByUserId": null,
+    "createdAt": "<iso-timestamp>",
+    "updatedAt": "<iso-timestamp>"
+  },
+  {
+    "id": "<id>",
+    "teamId": "qa-seo-team-1",
+    "companyId": "qa-seo-company-zaruku",
+    "runId": "<run-id>",
+    "domain": "zaruku.ru",
+    "sourceType": "recommendation",
+    "sourceId": "recommendation:improve-yandex-rankings-for-existing-demand:none",
+    "sourceFindingId": "recommendation-1-improve-yandex-rankings-for-existing-demand",
+    "evidence": [
+      {
+        "source": "yandex_webmaster",
+        "metric": "impressions",
+        "value": 23939,
+        "message": "Yandex Webmaster impressions: 23939."
+      },
+      {
+        "source": "yandex_webmaster",
+        "metric": "clicks",
+        "value": 1050,
+        "message": "Yandex Webmaster clicks: 1050."
+      },
+      {
+        "source": "yandex_webmaster",
+        "metric": "ctr",
+        "value": 4.386148126488157,
+        "message": "Yandex Webmaster CTR: 4.386148126488157."
+      },
+      {
+        "source": "yandex_webmaster",
+        "metric": "average_position",
+        "value": 8.936505284264172,
+        "message": "Yandex Webmaster average position: 8.936505284264172."
+      },
+      {
+        "source": "yandex_webmaster",
+        "metric": "top_query",
+        "query": "гемотест орел победа 1",
+        "message": "Yandex Webmaster top query: гемотест орел победа 1."
+      },
+      {
+        "source": "yandex_webmaster",
+        "metric": "top_query",
+        "query": "гемотест тихвин",
+        "message": "Yandex Webmaster top query: гемотест тихвин."
+      },
+      {
+        "source": "yandex_webmaster",
+        "metric": "top_query",
+        "query": "подногтевая меланома фото",
+        "message": "Yandex Webmaster top query: подногтевая меланома фото."
+      },
+      {
+        "source": "yandex_webmaster",
+        "metric": "source_status",
+        "value": "success",
+        "message": "yandex_webmaster source status: success. Yandex Webmaster source completed successfully",
+        "collectedAt": 0
+      }
+    ],
+    "labels": [
+      "Yandex Webmaster data",
+      "AI heuristic, not Google ranking data"
+    ],
+    "title": "Improve Yandex rankings for existing demand",
+    "description": "Yandex Webmaster data shows impressions but average positions remain weak. Prioritize query-to-page mapping and Yandex-specific on-page improvements.",
+    "priority": "normal",
+    "status": "draft",
+    "targetKeywords": [],
+    "suggestedCompanyId": "qa-seo-company-zaruku",
+    "realTaskId": null,
+    "convertedAt": null,
+    "convertedByUserId": null,
+    "createdAt": "<iso-timestamp>",
+    "updatedAt": "<iso-timestamp>"
+  }
+]

@@ -1,0 +1,197 @@
+[
+  {
+    "channel": "Yandex Search API generative response",
+    "status": "checked",
+    "query": "Что такое портал За руку zaruku.ru для онкопациентов?",
+    "result": "**«За руку»** (zaruku.ru) — **портал для людей с онкологическими заболеваниями, их близких и всех, кто находится в группе риска развития рака**. [1][2] \n\nНа сайте представлены **ответы на вопросы, касающиеся онкозаболеваний в целом, а также конкретных видов рака**: рака лёгкого, молочной железы, печени, мочевого пузыря, меланомы, лимфомы. [1] \n\n**Некоторые разделы портала:**\n\n* профилактика онкозаболеваний; [1]\n* диагностика; [1]\n* лечение; [1]\n* личный опыт; [1]\n* жизнь с раком и после него; [1",
+    "sources": [
+      "https://zaruku.ru/about/",
+      "https://zaruku.ru/",
+      "https://blokhinfond.ru/news/tpost/ojf8bex2o1-za-ruku-media-dlya-onkopatsientov-ih-bli",
+      "https://www.vidal.ru/novosti/v-rossii-nachal-rabotu-informatsionnyj-portal-9368",
+      "http://sevfizdispan.ru/434-za-ruku-v-seti-poyavilsya-informatsionnyj-portal-dlya-onkopatsientov-i-ikh-blizkikh.html"
+    ],
+    "sourceDetails": [
+      {
+        "url": "https://zaruku.ru/about/",
+        "title": "О проекте | Портал для людей с онкозаболеваниями и их близких",
+        "used": true
+      },
+      {
+        "url": "https://zaruku.ru/",
+        "title": "«За руку» – социальный медиа проект для людей с онкозаболеваниями и их близких",
+        "used": true
+      },
+      {
+        "url": "https://blokhinfond.ru/news/tpost/ojf8bex2o1-za-ruku-media-dlya-onkopatsientov-ih-bli",
+        "title": "«ЗА РУКУ» — МЕДИА ДЛЯ ОНКОПАЦИЕНТОВ, ИХ БЛИЗКИХ И ВСЕХ, КТО НАХОДИТСЯ В ГРУППЕ РИСКА РАЗВИТИЯ РАКА",
+        "used": false
+      },
+      {
+        "url": "https://www.vidal.ru/novosti/v-rossii-nachal-rabotu-informatsionnyj-portal-9368",
+        "title": "В России начал работу информационный портал, направленный на поддержку людей с онкозаболеваниями и их близких - Новости Видаль - cправочник лекарственных препаратов",
+        "used": false
+      },
+      {
+        "url": "http://sevfizdispan.ru/434-za-ruku-v-seti-poyavilsya-informatsionnyj-portal-dlya-onkopatsientov-i-ikh-blizkikh.html",
+        "title": "«За руку»: в сети появился информационный портал для онкопациентов и их близких",
+        "used": false
+      }
+    ],
+    "usedSources": [
+      "https://zaruku.ru/about/",
+      "https://zaruku.ru/"
+    ],
+    "targetFound": true,
+    "targetUsed": true,
+    "sourcePosition": 1,
+    "usedSourcePosition": 1
+  },
+  {
+    "channel": "Yandex Search API generative response",
+    "status": "checked",
+    "query": "Где искать поддержку онкопациентам и их близким в России?",
+    "result": "Несколько организаций в России, которые оказывают поддержку онкопациентам и их близким:\n\n* **«Здравствуй!»**. [1][5] Ассоциация онкологических пациентов, которая помогает найти врача и медучреждение, предоставляет сведения о диагнозе и лечении. [5] Предлагает бесплатные юридические и психологические консультации. [5] Телефон горячей линии: 8 800 301-02-09. [5]\n* **«Движение против рака»**. [1][5] Межрегиональное общественное движение, которое помогает людям с онкозаболеваниями отстаивать свои пр",
+    "sources": [
+      "https://ilovelifefund.ru/articles/sbor-sredstv/fondy-pomoshchi-onkologicheskim-patsientam/",
+      "https://gemotest.ru/info/spravochnik/zabolevaniya/blagotvoritelnye-fondy/",
+      "https://vk.com/wall-206143268_906",
+      "https://nenaprasno.ru/media/articles/keysy/gde-vzroslye-lyudi-s-onkozabolevaniyami-mogut-poluchit-finansovuyu-pomoshch/",
+      "https://t-j.ru/short/onko-help/"
+    ],
+    "sourceDetails": [
+      {
+        "url": "https://ilovelifefund.ru/articles/sbor-sredstv/fondy-pomoshchi-onkologicheskim-patsientam/",
+        "title": "Фонды помощи онкологическим пациентам",
+        "used": true
+      },
+      {
+        "url": "https://gemotest.ru/info/spravochnik/zabolevaniya/blagotvoritelnye-fondy/",
+        "title": "Благотворительные фонды по борьбе с раком",
+        "used": true
+      },
+      {
+        "url": "https://vk.com/wall-206143268_906",
+        "title": "Какие благотворительные фонды помогают взрослым онкологическим пациентам с лечением (и не только) 🙂Сохраняйте.. 2026 | ВКонтакте",
+        "used": false
+      },
+      {
+        "url": "https://nenaprasno.ru/media/articles/keysy/gde-vzroslye-lyudi-s-onkozabolevaniyami-mogut-poluchit-finansovuyu-pomoshch/",
+        "title": "Где взрослые люди с онкозаболеваниями могут получить финансовую помощь: подборка благотворительных фондов",
+        "used": false
+      },
+      {
+        "url": "https://t-j.ru/short/onko-help/",
+        "title": "Помощь онкобольным в 2026: список благотворительных фондов, помогающих детям и взрослым",
+        "used": true
+      }
+    ],
+    "usedSources": [
+      "https://ilovelifefund.ru/articles/sbor-sredstv/fondy-pomoshchi-onkologicheskim-patsientam/",
+      "https://gemotest.ru/info/spravochnik/zabolevaniya/blagotvoritelnye-fondy/",
+      "https://t-j.ru/short/onko-help/"
+    ],
+    "targetFound": false,
+    "targetUsed": false,
+    "sourcePosition": null,
+    "usedSourcePosition": null
+  },
+  {
+    "channel": "Yandex Search API generative response",
+    "status": "checked",
+    "query": "Восстановление после рака молочной железы: что важно знать пациенту?",
+    "result": "**Важно подробно обсудить с медицинской командой все аспекты процесса восстановления** после операции по удалению рака молочной железы. [1] Нужно узнать о потенциальных побочных эффектах, предполагаемых сроках восстановления и послеоперационном уходе. [1]\n\n**Некоторые рекомендации по восстановлению:**\n\n* **Отдых**. [1] Организму нужно время на заживление, поэтому не следует перенапрягаться. [1] Однако нужно часто менять положение тела, чтобы предотвратить пролежни. [1]\n* **Уход за раной**. [1] Н",
+    "sources": [
+      "https://www.medanta.org/ru/patient-education-blog/tips-for-breast-cancer-surgery-recovery",
+      "https://varikoz.ru/articles/reabilitaciya-posle-raka-molochnoj-zhelezy.html",
+      "https://fomin-clinic.ru/blog/reabilitatsiya-posle-raka-molochnoy-zhelezy/",
+      "https://www.emcmos.ru/directions/reabilitatsiya-posle-raka-molochnoy-zhelezy/",
+      "https://azbyka.ru/zdorovie/reabilitaciya-posle-udaleniya-rakovoj-opuholi-molochnoj-zhelezy-mastektomii"
+    ],
+    "sourceDetails": [
+      {
+        "url": "https://www.medanta.org/ru/patient-education-blog/tips-for-breast-cancer-surgery-recovery",
+        "title": "Советы по восстановлению после операции по удалению рака груди",
+        "used": true
+      },
+      {
+        "url": "https://varikoz.ru/articles/reabilitaciya-posle-raka-molochnoj-zhelezy.html",
+        "title": "Реабилитация после мастэктомии молочной железы | Статьи от Центра Флебологии",
+        "used": false
+      },
+      {
+        "url": "https://fomin-clinic.ru/blog/reabilitatsiya-posle-raka-molochnoy-zhelezy/",
+        "title": "Реабилитация после рака молочной железы — этапы восстановления",
+        "used": true
+      },
+      {
+        "url": "https://www.emcmos.ru/directions/reabilitatsiya-posle-raka-molochnoy-zhelezy/",
+        "title": "Реабилитация после рака молочной железы: индивидуальная программа восстановления и лечения в Москве",
+        "used": true
+      },
+      {
+        "url": "https://azbyka.ru/zdorovie/reabilitaciya-posle-udaleniya-rakovoj-opuholi-molochnoj-zhelezy-mastektomii",
+        "title": "Реабилитация после удаления раковой опухоли молочной железы (мастэктомии) - Азбука здоровья",
+        "used": false
+      }
+    ],
+    "usedSources": [
+      "https://www.medanta.org/ru/patient-education-blog/tips-for-breast-cancer-surgery-recovery",
+      "https://fomin-clinic.ru/blog/reabilitatsiya-posle-raka-molochnoy-zhelezy/",
+      "https://www.emcmos.ru/directions/reabilitatsiya-posle-raka-molochnoy-zhelezy/"
+    ],
+    "targetFound": false,
+    "targetUsed": false,
+    "sourcePosition": null,
+    "usedSourcePosition": null
+  },
+  {
+    "channel": "Yandex Search API generative response",
+    "status": "checked",
+    "query": "Рак легкого симптомы диагностика лечение для пациента",
+    "result": "При подозрении на рак лёгкого необходимо обратиться к онкологу. [2]\n\n**Некоторые симптомы рака лёгкого**:\n\n* длительный кашель, чаще сухой, который ухудшается со временем; [3]\n* боли в груди; [3]\n* кровохарканье; [3]\n* одышка с нарушением ритма и частоты дыхания; [3]\n* отёк лица и верхних конечностей; [3]\n* потеря веса без очевидной на то причины; [3]\n* рецидивирующее воспаление лёгких. [3]\n\n**Для диагностики** рака лёгкого используют, например:\n\n* **Рентгенографию**. [2][10] Опухоль на снимке в",
+    "sources": [
+      "https://www.medicina.ru/patsientam/zabolevanija/rak-legkih/",
+      "https://gemotest.ru/info/spravochnik/zabolevaniya/rak-lyegkikh/",
+      "https://fnkc-fmba.ru/zabolevaniya/rak-legkogo/",
+      "https://apteka.ru/blog/articles/pro-zdorovie/rak-lgkogo-ot-simptomov-k-lecheniyu/",
+      "https://www.invitro.ru/library/bolezni/26301/"
+    ],
+    "sourceDetails": [
+      {
+        "url": "https://www.medicina.ru/patsientam/zabolevanija/rak-legkih/",
+        "title": "Рак легких: симптомы, признаки, лечение, стадии злокачественной опухоли легких",
+        "used": false
+      },
+      {
+        "url": "https://gemotest.ru/info/spravochnik/zabolevaniya/rak-lyegkikh/",
+        "title": "Рак лёгких",
+        "used": true
+      },
+      {
+        "url": "https://fnkc-fmba.ru/zabolevaniya/rak-legkogo/",
+        "title": "Рак легких - симптомы, признаки, стадии, виды, методы лечения рака легкого",
+        "used": true
+      },
+      {
+        "url": "https://apteka.ru/blog/articles/pro-zdorovie/rak-lgkogo-ot-simptomov-k-lecheniyu/",
+        "title": "Рак легких: симптомы, признаки, стадии, лечение злокачественной опухоли",
+        "used": false
+      },
+      {
+        "url": "https://www.invitro.ru/library/bolezni/26301/",
+        "title": "Рак легкого",
+        "used": true
+      }
+    ],
+    "usedSources": [
+      "https://gemotest.ru/info/spravochnik/zabolevaniya/rak-lyegkikh/",
+      "https://fnkc-fmba.ru/zabolevaniya/rak-legkogo/",
+      "https://www.invitro.ru/library/bolezni/26301/"
+    ],
+    "targetFound": false,
+    "targetUsed": false,
+    "sourcePosition": null,
+    "usedSourcePosition": null
+  }
+]

@@ -64,6 +64,7 @@ function normalizeSources(value: unknown): SeoSourceName[] {
         item === "pagespeed" ||
         item === "crawler" ||
         item === "gsc" ||
+        item === "yandex_webmaster" ||
         item === "google_serp_rank" ||
         item === "yandex_serp_rank"
     );
@@ -82,6 +83,7 @@ function normalizeSourceStatuses(value: unknown): SeoSourceStatus[] {
           source !== "pagespeed" &&
           source !== "crawler" &&
           source !== "gsc" &&
+          source !== "yandex_webmaster" &&
           source !== "google_serp_rank" &&
           source !== "yandex_serp_rank") ||
         (status !== "success" &&
@@ -440,6 +442,7 @@ function docToSeoAnalysisRun(id: string, data: FirebaseFirestore.DocumentData): 
     competitors: Array.isArray(data.competitors) ? (data.competitors as SeoCompetitorInsight[]) : [],
     technical: normalizeTechnical(data.technical),
     searchConsole: normalizeSearchConsole(data.searchConsole),
+    yandexWebmaster: normalizeSearchConsole(data.yandexWebmaster),
     rankTracking: normalizeRankTracking(data.rankTracking),
     pagespeed: normalizePageSpeed(data.pagespeed),
     crawler: normalizeCrawler(data.crawler),
@@ -468,6 +471,7 @@ export async function createSeoAnalysisRun(input: {
   competitors: SeoCompetitorInsight[];
   technical: SeoTechnicalSnapshot;
   searchConsole: SeoSearchConsoleSnapshot;
+  yandexWebmaster: SeoSearchConsoleSnapshot;
   rankTracking: SeoRankTrackingSnapshot;
   pagespeed: SeoPageSpeedSnapshot;
   crawler: SeoCrawlerSnapshot;
@@ -494,6 +498,7 @@ export async function createSeoAnalysisRun(input: {
     competitors: input.competitors,
     technical: input.technical,
     searchConsole: input.searchConsole,
+    yandexWebmaster: input.yandexWebmaster,
     rankTracking: input.rankTracking,
     pagespeed: input.pagespeed,
     crawler: input.crawler,

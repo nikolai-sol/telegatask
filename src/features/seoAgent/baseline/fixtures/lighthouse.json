@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "message": "Local Lighthouse desktop/provided completed successfully",
+  "pageUrl": "https://zaruku.ru/",
+  "performanceScore": 76,
+  "accessibilityScore": 76,
+  "bestPracticesScore": 73,
+  "seoScore": 100,
+  "firstContentfulPaintMs": 1328.111,
+  "largestContentfulPaintMs": 2164.696,
+  "cumulativeLayoutShift": 0.011184224073467084,
+  "totalBlockingTimeMs": 0,
+  "speedIndexMs": 4649,
+  "totalByteWeight": "Total size was 5,147 KiB"
+}

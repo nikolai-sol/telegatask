@@ -55,6 +55,7 @@ Supported Stage 07 source names:
 - `google_serp_rank`
 - `yandex_serp_rank`
 - `gsc`
+- `yandex_webmaster`
 
 Alias support:
 
@@ -351,6 +352,56 @@ Provider states:
 - `provider_error`
 - `limit_exceeded`
 - `partial_success`
+
+### `yandex_webmaster`
+
+Yandex Webmaster provider for owned Yandex query performance data.
+
+Current behavior:
+
+- active source shell and live API client
+- uses Yandex OAuth access token or refresh-token flow
+- resolves the current Company domain against verified Yandex Webmaster hosts
+- selected Yandex Webmaster failures do not fail the whole run if another source succeeds
+
+Normalized fields:
+
+- dateRange
+- clicks
+- impressions
+- ctr
+- averagePosition
+- topQueries
+- devices
+
+Required env:
+
+```bash
+YANDEX_WEBMASTER_ENABLED=true
+YANDEX_WEBMASTER_CLIENT_ID=...
+YANDEX_WEBMASTER_CLIENT_SECRET=...
+YANDEX_WEBMASTER_REDIRECT_URI=https://oauth.yandex.ru/verification_code
+YANDEX_WEBMASTER_OAUTH_TOKEN=
+YANDEX_WEBMASTER_REFRESH_TOKEN=
+YANDEX_WEBMASTER_HOST_ID=
+YANDEX_WEBMASTER_DEFAULT_DATE_RANGE_DAYS=7
+YANDEX_WEBMASTER_DEVICE_TYPE=ALL
+```
+
+OAuth setup:
+
+- Client ID and client secret identify the Yandex OAuth application.
+- The redirect URI must match the value configured in Yandex OAuth.
+- The source can use `YANDEX_WEBMASTER_OAUTH_TOKEN` directly.
+- If `YANDEX_WEBMASTER_REFRESH_TOKEN` is present, the source refreshes an access token with the configured client credentials.
+- With only client ID/secret/redirect URI and no access or refresh token, the source is safely skipped as not configured.
+
+Security rules:
+
+- never expose or log access tokens
+- never expose or log refresh tokens
+- never expose or log client secrets
+- never return raw Yandex API errors in API output
 
 ## External Rank Tracking vs Owner-Authorized Data
 

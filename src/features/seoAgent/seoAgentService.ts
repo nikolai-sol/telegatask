@@ -15,6 +15,7 @@ import { BasicCrawlerSeoSource } from "./providers/basicCrawlerSeoSource";
 import { GoogleSerpRankSource } from "./providers/googleSerpRankSource";
 import { GoogleSearchConsoleSeoSource } from "./providers/googleSearchConsoleSeoSource";
 import { PageSpeedSeoSource } from "./providers/pageSpeedSeoSource";
+import { YandexWebmasterSeoSource } from "./providers/yandexWebmasterSeoSource";
 import { YandexSerpRankSource } from "./providers/yandexSerpRankSource";
 import {
   normalizeProviderDomain,
@@ -130,6 +131,7 @@ const KNOWN_SOURCE_NAMES: SeoSourceName[] = [
   "pagespeed",
   "crawler",
   "gsc",
+  "yandex_webmaster",
   "google_serp_rank",
   "yandex_serp_rank",
 ];
@@ -224,6 +226,7 @@ function labelsFromEvidence(evidence: SeoEvidence[], includeHeuristic = false): 
   const labels = new Set<SeoSourceLabel>();
   for (const item of evidence) {
     if (item.source === "gsc") labels.add("Google Search Console data");
+    if (item.source === "yandex_webmaster") labels.add("Yandex Webmaster data");
     if (item.source === "crawler") labels.add("Technical crawler data");
     if (item.source === "pagespeed") labels.add("PageSpeed data");
     if (item.source === "harness") labels.add("AI heuristic, not Google ranking data");
@@ -287,6 +290,19 @@ function gscMetricsSummary(snapshot: SeoSearchConsoleSnapshot): Record<string, s
     averagePosition: snapshot.averagePosition,
     topQueryCount: snapshot.topQueries.length,
     topPageCount: snapshot.topPages.length,
+  };
+}
+
+function yandexWebmasterMetricsSummary(snapshot: SeoSearchConsoleSnapshot): Record<string, string | number | boolean | null> {
+  return {
+    host: snapshot.property ?? snapshot.siteUrl,
+    startDate: snapshot.dateRange.startDate,
+    endDate: snapshot.dateRange.endDate,
+    impressions: snapshot.impressions,
+    clicks: snapshot.clicks,
+    ctr: snapshot.ctr,
+    averagePosition: snapshot.averagePosition,
+    topQueryCount: snapshot.topQueries.length,
   };
 }
 
@@ -604,6 +620,7 @@ function createRecommendations(input: {
   overview: SeoDomainOverview | null;
   sourceStatuses: SeoSourceStatus[];
   searchConsole: SeoSearchConsoleSnapshot;
+  yandexWebmaster: SeoSearchConsoleSnapshot;
   pagespeed: SeoPageSpeedSnapshot;
   crawler: SeoCrawlerSnapshot;
 }): SeoRecommendation[] {
@@ -660,6 +677,8 @@ function createRecommendations(input: {
     input.opportunities.length <= 1 &&
     input.overview?.visibilityIndex === undefined &&
     input.overview?.keywordCount === undefined &&
+    input.searchConsole.impressions === null &&
+    input.yandexWebmaster.impressions === null &&
     input.pagespeed.performanceScore === null &&
     input.crawler.httpStatus === null;
 
@@ -703,6 +722,36 @@ function createRecommendations(input: {
       title: "Push queries ranking in positions 8-20",
       description:
         "Search Console data shows existing query demand near page-one range. Prioritize query-to-page alignment, internal links, and tighter on-page targeting for terms already close to stronger rankings.",
+      priority: "medium",
+    });
+  }
+
+  if (
+    input.yandexWebmaster.impressions !== null &&
+    input.yandexWebmaster.impressions > 0 &&
+    input.yandexWebmaster.ctr !== null &&
+    input.yandexWebmaster.ctr < 2
+  ) {
+    push({
+      type: "content",
+      title: "Improve low-CTR Yandex snippets",
+      description:
+        "Yandex Webmaster data shows impressions with weak click-through rate. Review titles, meta descriptions, and snippet intent alignment for Yandex search demand.",
+      priority: "medium",
+    });
+  }
+
+  if (
+    input.yandexWebmaster.impressions !== null &&
+    input.yandexWebmaster.impressions >= 100 &&
+    input.yandexWebmaster.averagePosition !== null &&
+    input.yandexWebmaster.averagePosition > 8
+  ) {
+    push({
+      type: "content",
+      title: "Improve Yandex rankings for existing demand",
+      description:
+        "Yandex Webmaster data shows impressions but average positions remain weak. Prioritize query-to-page mapping and Yandex-specific on-page improvements.",
       priority: "medium",
     });
   }
@@ -805,6 +854,17 @@ function createRecommendations(input: {
       title: "Connect Google Search Console for real query data",
       description:
         "Search Console is not connected for this run. Connect it to access clicks, impressions, CTR, and average position data.",
+      priority: "medium",
+    });
+  }
+
+  const yandexWebmasterStatus = input.sourceStatuses.find((item) => item.source === "yandex_webmaster");
+  if (!yandexWebmasterStatus || yandexWebmasterStatus.status === "skipped" || yandexWebmasterStatus.status === "failed") {
+    push({
+      type: "tracking",
+      title: "Connect Yandex Webmaster for owned Yandex data",
+      description:
+        "Yandex Webmaster is not connected for this run. Connect it to access Yandex clicks, impressions, CTR, average position, and query data.",
       priority: "medium",
     });
   }
@@ -940,19 +1000,46 @@ function searchConsoleEvidence(searchConsole: SeoSearchConsoleSnapshot): SeoEvid
   return evidence;
 }
 
+function yandexWebmasterEvidence(snapshot: SeoSearchConsoleSnapshot): SeoEvidence[] {
+  const evidence: SeoEvidence[] = [];
+  if (snapshot.impressions !== null) {
+    evidence.push({ source: "yandex_webmaster", metric: "impressions", value: snapshot.impressions, message: `Yandex Webmaster impressions: ${snapshot.impressions}.` });
+  }
+  if (snapshot.clicks !== null) {
+    evidence.push({ source: "yandex_webmaster", metric: "clicks", value: snapshot.clicks, message: `Yandex Webmaster clicks: ${snapshot.clicks}.` });
+  }
+  if (snapshot.ctr !== null) {
+    evidence.push({ source: "yandex_webmaster", metric: "ctr", value: snapshot.ctr, message: `Yandex Webmaster CTR: ${snapshot.ctr}.` });
+  }
+  if (snapshot.averagePosition !== null) {
+    evidence.push({ source: "yandex_webmaster", metric: "average_position", value: snapshot.averagePosition, message: `Yandex Webmaster average position: ${snapshot.averagePosition}.` });
+  }
+  for (const query of snapshot.topQueries.slice(0, 3)) {
+    evidence.push({ source: "yandex_webmaster", metric: "top_query", query, message: `Yandex Webmaster top query: ${query}.` });
+  }
+  return evidence;
+}
+
 function recommendationEvidence(input: {
   recommendation: SeoRecommendation;
   sourceStatuses: SeoSourceStatus[];
   searchConsole: SeoSearchConsoleSnapshot;
+  yandexWebmaster: SeoSearchConsoleSnapshot;
   pagespeed: SeoPageSpeedSnapshot;
   crawler: SeoCrawlerSnapshot;
 }): SeoEvidence[] {
   const text = `${input.recommendation.type} ${input.recommendation.title} ${input.recommendation.description}`.toLowerCase();
   const evidence: SeoEvidence[] = [];
-  if (text.includes("search console") || text.includes("ctr") || text.includes("impression") || text.includes("query")) {
+  const mentionsYandex = text.includes("yandex") || text.includes("webmaster");
+  if (text.includes("search console") || (!mentionsYandex && (text.includes("ctr") || text.includes("impression") || text.includes("query")))) {
     evidence.push(...searchConsoleEvidence(input.searchConsole));
     const gsc = input.sourceStatuses.find((item) => item.source === "gsc");
     if (gsc) evidence.push(sourceStatusEvidence(gsc));
+  }
+  if (mentionsYandex) {
+    evidence.push(...yandexWebmasterEvidence(input.yandexWebmaster));
+    const yandexWebmaster = input.sourceStatuses.find((item) => item.source === "yandex_webmaster");
+    if (yandexWebmaster) evidence.push(sourceStatusEvidence(yandexWebmaster));
   }
   if (text.includes("pagespeed") || text.includes("performance") || text.includes("web vitals")) {
     evidence.push(...pageSpeedEvidence(input.pagespeed));
@@ -992,6 +1079,7 @@ function buildHarnessFindings(input: {
   recommendations: SeoRecommendation[];
   sourceStatuses: SeoSourceStatus[];
   searchConsole: SeoSearchConsoleSnapshot;
+  yandexWebmaster: SeoSearchConsoleSnapshot;
   pagespeed: SeoPageSpeedSnapshot;
   crawler: SeoCrawlerSnapshot;
 }): SeoFinding[] {
@@ -1039,6 +1127,7 @@ function buildHarnessFindings(input: {
           recommendation,
           sourceStatuses: input.sourceStatuses,
           searchConsole: input.searchConsole,
+          yandexWebmaster: input.yandexWebmaster,
           pagespeed: input.pagespeed,
           crawler: input.crawler,
         });
@@ -1574,7 +1663,7 @@ async function runGscSource(providerInput: Pick<SeoProviderInput, "domain" | "te
     if (err instanceof SeoProviderNotConfiguredError) {
       return {
         source: "gsc",
-        status: "failed",
+        status: "skipped",
         message: err.message,
         errorCode: "GSC_NOT_CONFIGURED",
         collectedAt: sourceCollectedAt(),
@@ -1583,6 +1672,44 @@ async function runGscSource(providerInput: Pick<SeoProviderInput, "domain" | "te
     if (err instanceof SeoProviderError) {
       return {
         source: "gsc",
+        status: "failed",
+        message: err.safeMessage,
+        errorCode: providerErrorCode(err),
+        collectedAt: sourceCollectedAt(),
+      };
+    }
+    throw err;
+  }
+}
+
+async function runYandexWebmasterSource(
+  providerInput: Pick<SeoProviderInput, "domain" | "device">
+): Promise<ExecutedSourceResult> {
+  try {
+    const snapshot = await new YandexWebmasterSeoSource().getSnapshot(providerInput.domain, {
+      device: providerInput.device,
+    });
+    return {
+      source: "yandex_webmaster",
+      status: "success",
+      message: "Yandex Webmaster source completed successfully",
+      collectedAt: sourceCollectedAt(),
+      metricsSummary: yandexWebmasterMetricsSummary(snapshot),
+      data: snapshot,
+    };
+  } catch (err) {
+    if (err instanceof SeoProviderNotConfiguredError) {
+      return {
+        source: "yandex_webmaster",
+        status: "skipped",
+        message: err.message,
+        errorCode: "YANDEX_WEBMASTER_NOT_CONFIGURED",
+        collectedAt: sourceCollectedAt(),
+      };
+    }
+    if (err instanceof SeoProviderError) {
+      return {
+        source: "yandex_webmaster",
         status: "failed",
         message: err.safeMessage,
         errorCode: providerErrorCode(err),
@@ -1740,6 +1867,7 @@ async function executeSelectedSource(
   }
   if (source === "pagespeed") return runPageSpeedSource(providerInput.domain);
   if (source === "crawler") return runCrawlerSource(providerInput.domain);
+  if (source === "yandex_webmaster") return runYandexWebmasterSource(providerInput);
   if (source === "google_serp_rank") return runGoogleSerpRankSource(providerInput);
   if (source === "yandex_serp_rank") return runYandexSerpRankSource(providerInput);
   return runGscSource(providerInput);
@@ -1829,6 +1957,9 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
   const searchConsole =
     (successfulResults.find((item) => item.source === "gsc")?.data as SeoSearchConsoleSnapshot | undefined) ??
     emptySearchConsoleSnapshot();
+  const yandexWebmaster =
+    (successfulResults.find((item) => item.source === "yandex_webmaster")?.data as SeoSearchConsoleSnapshot | undefined) ??
+    emptySearchConsoleSnapshot();
   const pagespeed =
     (successfulResults.find((item) => item.source === "pagespeed")?.data as SeoPageSpeedSnapshot | undefined) ??
     emptyPageSpeedSnapshot();
@@ -1911,6 +2042,7 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
       overview,
       sourceStatuses,
       searchConsole,
+      yandexWebmaster,
       pagespeed,
       crawler,
     })
@@ -1949,6 +2081,7 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
     sourceStatuses,
     normalizedSourceOutputs: {
       searchConsole,
+      yandexWebmaster,
       pagespeed,
       crawler,
       rankTracking,
@@ -1966,6 +2099,7 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
       recommendations,
       sourceStatuses,
       searchConsole,
+      yandexWebmaster,
       pagespeed,
       crawler,
     }),
@@ -1986,6 +2120,7 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
     competitors,
     technical,
     searchConsole,
+    yandexWebmaster,
     rankTracking,
     pagespeed,
     crawler,

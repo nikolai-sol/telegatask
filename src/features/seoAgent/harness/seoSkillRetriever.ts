@@ -13,6 +13,7 @@ import { SEO_SKILL_LIBRARY, type SeoProceduralSkill } from "./seoSkillLibrary";
 
 export type NormalizedSeoSourceOutputs = {
   searchConsole?: SeoSearchConsoleSnapshot;
+  yandexWebmaster?: SeoSearchConsoleSnapshot;
   pagespeed?: SeoPageSpeedSnapshot;
   crawler?: SeoCrawlerSnapshot;
   rankTracking?: SeoRankTrackingSnapshot;
@@ -42,6 +43,8 @@ function textParts(input: { domain: string; outputs: NormalizedSeoSourceOutputs 
   for (const item of outputs.recommendations || []) parts.push(item.title, item.description, item.type);
   for (const query of outputs.searchConsole?.topQueries || []) parts.push(query);
   for (const page of outputs.searchConsole?.topPages || []) parts.push(page);
+  for (const query of outputs.yandexWebmaster?.topQueries || []) parts.push(query);
+  for (const page of outputs.yandexWebmaster?.topPages || []) parts.push(page);
 
   const crawler = outputs.crawler;
   if (crawler) {
@@ -62,6 +65,14 @@ function textParts(input: { domain: string; outputs: NormalizedSeoSourceOutputs 
   if ((outputs.searchConsole?.impressions || 0) > 0) parts.push("gsc impressions search console");
   if (outputs.searchConsole?.ctr !== null && outputs.searchConsole?.ctr !== undefined && outputs.searchConsole.ctr < 2) {
     parts.push("low ctr snippet");
+  }
+  if ((outputs.yandexWebmaster?.impressions || 0) > 0) parts.push("yandex webmaster impressions search demand");
+  if (
+    outputs.yandexWebmaster?.ctr !== null &&
+    outputs.yandexWebmaster?.ctr !== undefined &&
+    outputs.yandexWebmaster.ctr < 2
+  ) {
+    parts.push("low yandex ctr snippet");
   }
 
   return parts;

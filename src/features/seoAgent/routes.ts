@@ -226,6 +226,15 @@ function buildSeoDashboardSteps(run: SeoAnalysisRun, draftTasks: SeoDraftTask[])
           : "No Search Console data",
     },
     {
+      id: "yandex-webmaster",
+      title: "Yandex WM",
+      status: sourceStepStatus(run, "yandex_webmaster"),
+      detail:
+        run.yandexWebmaster.impressions !== null
+          ? `${run.yandexWebmaster.impressions} impressions`
+          : "No Yandex Webmaster data",
+    },
+    {
       id: "rank",
       title: "Rank",
       status:

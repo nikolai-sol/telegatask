@@ -1,0 +1,112 @@
+[
+  {
+    "source": "gsc",
+    "searchEngine": "google",
+    "property": "sc-domain:zaruku.ru",
+    "siteUrl": "sc-domain:zaruku.ru",
+    "dateRange": {
+      "startDate": "2026-06-01",
+      "endDate": "2026-06-28",
+      "days": 28
+    },
+    "dimension": "summary",
+    "key": null,
+    "query": null,
+    "page": null,
+    "country": null,
+    "device": null,
+    "clicks": 42,
+    "impressions": 900,
+    "ctr": 4.6666666667,
+    "averagePosition": 7.8,
+    "sourceRank": null
+  },
+  {
+    "source": "gsc",
+    "searchEngine": "google",
+    "property": "sc-domain:zaruku.ru",
+    "siteUrl": "sc-domain:zaruku.ru",
+    "dateRange": {
+      "startDate": "2026-06-01",
+      "endDate": "2026-06-28",
+      "days": 28
+    },
+    "dimension": "query",
+    "key": "рак лечение",
+    "query": "рак лечение",
+    "page": "https://zaruku.ru/rak/",
+    "country": null,
+    "device": null,
+    "clicks": 20,
+    "impressions": 500,
+    "ctr": 4,
+    "averagePosition": 12,
+    "sourceRank": 1
+  },
+  {
+    "source": "gsc",
+    "searchEngine": "google",
+    "property": "sc-domain:zaruku.ru",
+    "siteUrl": "sc-domain:zaruku.ru",
+    "dateRange": {
+      "startDate": "2026-06-01",
+      "endDate": "2026-06-28",
+      "days": 28
+    },
+    "dimension": "query",
+    "key": "за руку",
+    "query": "за руку",
+    "page": "https://zaruku.ru/",
+    "country": null,
+    "device": null,
+    "clicks": 4,
+    "impressions": 400,
+    "ctr": 1,
+    "averagePosition": 3,
+    "sourceRank": 2
+  },
+  {
+    "source": "yandex_webmaster",
+    "searchEngine": "yandex",
+    "property": "https:zaruku.ru:443",
+    "siteUrl": "https://zaruku.ru/",
+    "dateRange": {
+      "startDate": "2026-06-17",
+      "endDate": "2026-06-23",
+      "days": 7
+    },
+    "dimension": "query",
+    "key": "рак лечение",
+    "query": "рак лечение",
+    "page": null,
+    "country": null,
+    "device": "ALL",
+    "clicks": 6,
+    "impressions": 160,
+    "ctr": 3.75,
+    "averagePosition": 9,
+    "sourceRank": 1
+  },
+  {
+    "source": "yandex_webmaster",
+    "searchEngine": "yandex",
+    "property": "https:zaruku.ru:443",
+    "siteUrl": "https://zaruku.ru/",
+    "dateRange": {
+      "startDate": "2026-06-17",
+      "endDate": "2026-06-23",
+      "days": 7
+    },
+    "dimension": "query",
+    "key": "поддержка онкопациентов",
+    "query": "поддержка онкопациентов",
+    "page": null,
+    "country": null,
+    "device": "ALL",
+    "clicks": 3,
+    "impressions": 90,
+    "ctr": 3.3333333333,
+    "averagePosition": 10,
+    "sourceRank": 2
+  }
+]
