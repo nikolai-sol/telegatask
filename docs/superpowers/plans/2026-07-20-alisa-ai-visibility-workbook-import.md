@@ -16,10 +16,11 @@
 - `presence_rate` is `mentions / query_count`, rounded to four decimal places.
 - `total_source_citations` counts all non-empty `Сайт N` cells.
 - `zaruku_source_citations` counts target-domain source cells.
+- `citation_concentration` is the top Zaruku URL's share of `zaruku_source_citations`, rounded to four decimal places.
 - `--period YYYY-MM` and `--captured-at <ISO-8601>` are explicit required inputs.
 - Normalize duplicate queries with trim, lowercase, collapsed whitespace, and `ё` to `е`.
 - Normalize `www.zaruku.ru` to `zaruku.ru`; query strings, hashes, and trailing slashes must not change target-host recognition.
-- Preserve `engine=alisa_ai` and `provenance=wm_alisa_manual` for the existing dashboard row key.
+- Write `engine=alisa_ai` and `provenance=wm_alisa_workbook`; preserve the separate `wm_alisa_manual` chart-SoV baseline row unchanged.
 - Do not change dashboard UI, Opportunity Engine inputs, recommendation logic, scheduler behavior, Firestore, or Telegram.
 - Do not execute MySQL until the dry-run evidence has been reviewed and matches `155 / 89 / 155 / 0.5742` with no validation errors.
 
@@ -87,6 +88,7 @@ describe("Alisa AI visibility workbook rows", () => {
       presence_rate: 0.5,
       total_source_citations: 3,
       zaruku_source_citations: 1,
+      citation_concentration: 1,
     });
     expect(result.missing_queries).toEqual([
       { query: "Запрос два", alisa_answer_url: "https://yandex.ru/search/?text=2" },
@@ -122,6 +124,7 @@ export type AlisaAiVisibilityMetrics = {
   presence_rate: number;
   total_source_citations: number;
   zaruku_source_citations: number;
+  citation_concentration: number;
 };
 
 export type AlisaAiVisibilityAnalysis = {
@@ -163,6 +166,9 @@ const metrics = {
   presence_rate: presenceRate,
   total_source_citations: totalSourceCitations,
   zaruku_source_citations: zarukuSourceCitations,
+  citation_concentration: zarukuSourceCitations
+    ? Number((topZarukuCitationCount / zarukuSourceCitations).toFixed(4))
+    : 0,
 };
 ```
 
@@ -359,7 +365,7 @@ const record: SeoAiVisibilityRecord = {
   mentions: workbook.analysis.metrics.mentions,
   citations: workbook.analysis.metrics.citations,
   presenceRate: workbook.analysis.metrics.presence_rate,
-  provenance: "wm_alisa_manual",
+  provenance: "wm_alisa_workbook",
   capturedAt: options.capturedAt,
   raw: {
     source: "neurostatistics_workbook",
@@ -370,6 +376,7 @@ const record: SeoAiVisibilityRecord = {
     queryCount: workbook.analysis.metrics.query_count,
     totalSourceCitations: workbook.analysis.metrics.total_source_citations,
     zarukuSourceCitations: workbook.analysis.metrics.zaruku_source_citations,
+    citationConcentration: workbook.analysis.metrics.citation_concentration,
   },
 };
 ```
@@ -480,7 +487,7 @@ jq '{metrics, validation, missing_query_count: (.missing_queries | length), zaru
 4. Confirm `query_count=155`, `mentions=89`, `citations=155`, `presence_rate=0.5742`, `validation.errors=[]`, and sane evidence lists.
 5. Run the exact authorized live command.
 6. Run the supplied verification SQL.
-7. Refresh the existing ReportingDash dashboard and verify the AI visibility card is approximately `57.4%`.
+7. Refresh the existing ReportingDash dashboard and verify the headline AI visibility card remains the distinct `wm_alisa_manual` chart-SoV value of `44%`; the workbook sample is secondary evidence (`89/155`) under `wm_alisa_workbook`.
 8. Retain workbook, dry evidence, live evidence, and SQL as the audit trail.
 
 State explicitly that the same monthly MySQL row is updated by later weekly captures while dated artifacts retain history.
@@ -490,7 +497,7 @@ State explicitly that the same monthly MySQL row is updated by later weekly capt
 Run:
 
 ```bash
-rg -n "155|89|0\.5742|validation|--execute|SEO_MYSQL_DASHBOARD_EXPORT|SELECT|57\.4|Opportunity Engine" docs/seo-ai-visibility-weekly-import.md
+rg -n "155|89|0\.5742|0\.6742|validation|--execute|SEO_MYSQL_DASHBOARD_EXPORT|SELECT|44%|Opportunity Engine" docs/seo-ai-visibility-weekly-import.md
 git diff --check -- docs/seo-ai-visibility-weekly-import.md
 ```
 
@@ -561,6 +568,7 @@ citations = 155
 presence_rate = 0.5742
 total_source_citations = 1313
 zaruku_source_citations = 89
+citation_concentration = 60 / 89 = 0.6742
 validation.errors = []
 ```
 
@@ -601,11 +609,11 @@ WHERE engine = 'alisa_ai'
 ORDER BY period DESC;
 ```
 
-Require the `2026-07` row to contain `89`, `155`, `0.5742`, `wm_alisa_manual`, and the `2026-07-20` capture time.
+Require a `2026-07` row containing `89`, `155`, `0.5742`, `wm_alisa_workbook`, and the `2026-07-20` capture time. Also require the separate `wm_alisa_manual` row to remain at `presence_rate=0.4400`.
 
 - [ ] **Step 6: Refresh and verify the existing dashboard without changing UI code**
 
-Open the existing ReportingDash deployment using the available browser session, refresh it, and verify the `AI-видимость` card displays approximately `57.4%`. Record the observed value; do not edit dashboard source or configuration.
+Open the existing ReportingDash deployment using the available browser session, refresh it, and verify the headline `AI-видимость` card still displays the distinct chart-SoV baseline of `44%`. Confirm the workbook sample is available as secondary `89/155` evidence where the read-model contract exposes it. Record the observed values; do not edit dashboard source or configuration.
 
 - [ ] **Step 7: Perform the final scope and repository audit**
 
@@ -619,22 +627,6 @@ git log --oneline 5107dbf..HEAD
 
 Confirm changed source files are limited to the importer, its tests, dependency metadata, the MySQL isolation test, and runbook. Generated evidence/SQL are audit artifacts. No dashboard UI, Opportunity Engine, recommendation, scheduler, Firestore, or Telegram file changed.
 
-- [ ] **Step 8: Create the separate follow-up Codex task**
+- [ ] **Step 8: Record the deferred follow-up gate**
 
-Only after Steps 1-7 pass, create a new user-owned task with this prompt:
-
-```text
-Use imported AI visibility evidence as a read-only recommendation signal.
-
-Input:
-- seo_ai_visibility aggregate
-- evidence artifact from import
-
-Goal:
-- identify missing high-value Alisa queries
-- do not auto-create tasks
-- produce candidate AI visibility opportunities for review
-- keep dashboard contract unchanged
-```
-
-Return the created task link/directive separately from the completed import summary.
+Do not create or implement the AI visibility recommendation-signal task. Record that it remains deferred until the TASK-058 Level 1 closure preconditions are met.

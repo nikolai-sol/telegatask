@@ -29,6 +29,7 @@ The current `seo_ai_visibility` dashboard contract uses the following meanings:
 - `presence_rate`: `mentions / query_count`, rounded to four decimal places for MySQL.
 - `total_source_citations`: count of all non-empty cells across the `Сайт N` columns.
 - `zaruku_source_citations`: count of source cells whose normalized hostname is `zaruku.ru`.
+- `citation_concentration`: the most-cited Zaruku URL's citation count divided by `zaruku_source_citations`, rounded to four decimal places. This is a diversification measurement hook; lower concentration is the future target.
 
 For the supplied workbook, the expected tuple is:
 
@@ -39,6 +40,7 @@ citations = 155
 presence_rate = 89 / 155 = 0.5742
 total_source_citations = 1313
 zaruku_source_citations = 89
+citation_concentration = 60 / 89 = 0.6742
 ```
 
 `total_source_citations` and `zaruku_source_citations` are evidence metrics. The existing MySQL table receives `mentions`, `citations`, and `presence_rate` without a schema change.
@@ -103,7 +105,7 @@ Add `scripts/importAlisaAiVisibilityWorkbook.ts` with this contract:
 --execute                                   optional
 ```
 
-The command fixes `engine=alisa_ai` and defaults `provenance=wm_alisa_manual` so it idempotently corrects and replaces the existing manual row for the same dashboard period instead of creating a competing duplicate row. The workbook origin is recorded in `raw_json` and the evidence artifact.
+The command fixes `engine=alisa_ai` and `provenance=wm_alisa_workbook`. This creates an idempotent workbook-sample row for the dashboard period without overwriting `provenance=wm_alisa_manual`, whose `presence_rate=0.4400` is the distinct Yandex-computed WM chart SoV baseline. The workbook origin is recorded in `raw_json` and the evidence artifact.
 
 The existing manual `scripts/runSeoAiVisibilityImport.ts` command remains available and unchanged for backward compatibility.
 
@@ -124,7 +126,7 @@ The JSON evidence artifact is written for both dry runs and live attempts. It co
 
 - schema version and generation timestamp;
 - absolute source path, filename, SHA-256 checksum, sheet name, filename timestamp, explicit `captured_at`, and explicit dashboard period;
-- complete metric tuple, including `query_count`, `total_source_citations`, and `zaruku_source_citations`;
+- complete metric tuple, including `query_count`, `total_source_citations`, `zaruku_source_citations`, and `citation_concentration`;
 - every missing query with its Alice answer URL;
 - every normalized Zaruku URL with citation count, query count, and contributing queries;
 - every external competitor/source domain with citation count, query count, and representative source URLs;
@@ -132,7 +134,9 @@ The JSON evidence artifact is written for both dry runs and live attempts. It co
 - generated MySQL plan summary, execution status, and safe side-effect flags;
 - the compact MySQL record that was built from the workbook.
 
-The `seo_ai_visibility.raw_json` value remains compact. It includes the workbook filename and SHA-256, evidence artifact path, query count, total and Zaruku source citation counts, sheet name, and import mode. It does not embed the complete evidence artifact.
+The `seo_ai_visibility.raw_json` value remains compact. It includes the workbook filename and SHA-256, evidence artifact path, query count, total and Zaruku source citation counts, citation concentration, sheet name, and import mode. It does not embed the complete evidence artifact.
+
+The dashboard read-model contract treats `wm_alisa_manual` chart SoV as the headline AI visibility metric and `wm_alisa_workbook` as secondary sample evidence displayed as checked examples such as `89/155`. This task records that distinction in the read-model contract but does not change dashboard UI code.
 
 Artifact filenames in the weekly workflow include the capture date or timestamp so later imports in the same monthly dashboard period do not overwrite earlier evidence. MySQL intentionally retains the latest capture for the period through its existing idempotent key.
 
@@ -170,7 +174,7 @@ The runbook will document this operator sequence:
 4. Review the checksum, metric tuple, validation section, missing queries, Zaruku URLs, and top external domains.
 5. Re-run the same input with `SEO_MYSQL_DASHBOARD_EXPORT=1` and `--execute`, writing a separate live evidence artifact.
 6. Confirm `status=exported` and `sideEffects.mysqlWrites=true`.
-7. Query `seo_ai_visibility` by analytics account, engine, period, and provenance; verify `mentions`, `citations`, `presence_rate`, `captured_at`, and the workbook checksum in `raw_json`.
+7. Query `seo_ai_visibility` by analytics account, engine, period, and provenance; verify that the `wm_alisa_workbook` row contains the sample metrics while the `wm_alisa_manual` row remains `presence_rate=0.4400`. Verify citation concentration and the workbook checksum in `raw_json`.
 8. Retain the original workbook, dry-run evidence, live evidence, and SQL file as the weekly audit trail.
 
 The standard live command shape is:
@@ -187,4 +191,4 @@ SEO_MYSQL_DASHBOARD_EXPORT=1 npx ts-node --transpile-only scripts/importAlisaAiV
 
 ## Deferred Follow-Up
 
-The next task may add AI visibility as an explicit Opportunity Engine input and recommendation signal. That follow-up must define freshness, period selection, thresholds, weighting, missing-data behavior, and recommendation evidence separately. No part of that integration is implemented or pre-wired here.
+The next task may add AI visibility as an explicit Opportunity Engine input and recommendation signal only after the TASK-058 Level 1 closure preconditions are met. That follow-up must define freshness, period selection, thresholds, weighting, missing-data behavior, and recommendation evidence separately. No part of that integration is implemented, pre-wired, or created as a follow-up task here.
