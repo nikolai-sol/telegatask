@@ -1,0 +1,28 @@
+[
+  {
+    "clusterId": "query_cluster_001",
+    "primaryQuery": "подногтевая меланома фото",
+    "intentClass": "medical_informational",
+    "memberQueries": [
+      "подногтевая меланома фото",
+      "подногтевая меланома на большом пальце ноги фото"
+    ]
+  },
+  {
+    "clusterId": "query_cluster_002",
+    "primaryQuery": "онкологический центр в сколково адрес",
+    "intentClass": "facility_navigational",
+    "memberQueries": [
+      "онкологический центр в сколково адрес",
+      "сколково онкологический центр адрес"
+    ]
+  },
+  {
+    "clusterId": "query_cluster_003",
+    "primaryQuery": "инвитро рак лечение",
+    "intentClass": "competitor_brand",
+    "memberQueries": [
+      "инвитро рак лечение"
+    ]
+  }
+]

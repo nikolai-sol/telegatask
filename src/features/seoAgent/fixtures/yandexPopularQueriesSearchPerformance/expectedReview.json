@@ -1,0 +1,16 @@
+{
+  "source": "yandex_webmaster",
+  "searchEngine": "yandex",
+  "inputRows": 4,
+  "mappedRecords": 3,
+  "skippedRows": 1,
+  "metricRichRecords": 2,
+  "maxImpressions": 320,
+  "defaultMinEvidenceImpressions": 100,
+  "recordsAtOrAboveDefaultMinEvidenceImpressions": 1,
+  "notes": [
+    "This boundary maps existing Yandex popular-query rows to SearchPerformance records without persistence.",
+    "Default Opportunity Engine thresholds are read for review only and are not changed.",
+    "Production runner, collectors, reports and storage are not connected to this mapper."
+  ]
+}

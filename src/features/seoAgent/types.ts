@@ -15,7 +15,8 @@ export type SeoOpportunityType =
   | "technical_issue"
   | "internal_linking"
   | "keyword_quick_win"
-  | "competitor_gap";
+  | "competitor_gap"
+  | "section_ranking_gap";
 export type SeoOpportunityCategory = "keyword" | "competitor" | "content" | "technical";
 export type SeoQueryIntent = "brand" | "product" | "category" | "b2b" | "informational" | "unknown";
 export type SeoRecommendationType = "content" | "technical" | "competitive" | "tracking";
@@ -235,6 +236,23 @@ export type SeoOpportunity = {
   reasoning?: string;
   sourceFindingId?: string;
   evidence?: SeoEvidence[];
+  advisory?: SeoDigestAdvisory;
+};
+
+export type SeoDigestAdvisory = {
+  source: "hermes";
+  generatedAt: string;
+  recommendationText: string;
+  coveredIntents: string[];
+  internalLinkSuggestions: string[];
+  medicalReviewText: string | null;
+  complianceStatus: "passed";
+  tokenUsage: {
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+    estimated: boolean;
+  };
 };
 
 export type SeoRecommendation = {

@@ -23,7 +23,7 @@ export type ZarukuWgdHtmlReportInput = {
   htmlPath: string;
 };
 
-function renderRows<T>(items: T[], render: (item: T) => string): string {
+function renderRows<T>(items: T[], render: (item: T, index: number) => string): string {
   return items.map(render).join("");
 }
 
@@ -31,8 +31,14 @@ export function renderZarukuWgdHtmlReport(input: ZarukuWgdHtmlReportInput): stri
   const { run, draftTasks, page, sitemap, lighthouse, yandexQueries, aiProbes, jsonPath, htmlPath } = input;
   const scores = run.scores || {};
   const crawler = run.crawler || {};
+  const searchConsole = run.searchConsole || {};
   const webmaster = run.yandexWebmaster || {};
   const yandexChecks = run.rankTracking?.yandex?.checks || [];
+  const hasGsc = Boolean(searchConsole.siteUrl || searchConsole.property);
+  const gscLabel = hasGsc ? "Google Search Console connected" : "Google Search Console unavailable";
+  const gscSummary = hasGsc
+    ? `Google Search Console подключен как ${searchConsole.siteUrl || searchConsole.property}; owner-data объединены с Yandex Webmaster.`
+    : "Google Search Console недоступен; основа owner-data — Yandex Webmaster.";
   const sourceRows = renderRows(run.sourceStatuses || [], (item: any) => `
     <tr>
       <td>${escapeHtml(item.source)}</td>
@@ -55,6 +61,16 @@ export function renderZarukuWgdHtmlReport(input: ZarukuWgdHtmlReportInput): stri
       <td>${escapeHtml(item.clicks ?? "")}</td>
       <td>${escapeHtml(item.ctr !== null ? item.ctr.toFixed(2) + "%" : "")}</td>
       <td>${escapeHtml(item.averagePosition !== null ? item.averagePosition.toFixed(2) : "")}</td>
+    </tr>`);
+  const gscQueryRows = renderRows((searchConsole.topQueries || []).slice(0, 10), (item: string, index) => `
+    <tr>
+      <td>${escapeHtml(index + 1)}</td>
+      <td>${escapeHtml(item)}</td>
+    </tr>`);
+  const gscPageRows = renderRows((searchConsole.topPages || []).slice(0, 10), (item: string, index) => `
+    <tr>
+      <td>${escapeHtml(index + 1)}</td>
+      <td>${escapeHtml(item)}</td>
     </tr>`);
   const sectionRows = renderRows(sitemap.sectionCounts, (item) => `<tr><td>${escapeHtml(item.section)}</td><td>${escapeHtml(item.count)}</td></tr>`);
   const taskRows = renderRows(draftTasks, (item: any) => `<tr><td>${escapeHtml(item.priority)}</td><td>${escapeHtml(item.title)}</td><td>${escapeHtml((item.labels || []).join(", "))}</td></tr>`);
@@ -85,7 +101,7 @@ export function renderZarukuWgdHtmlReport(input: ZarukuWgdHtmlReportInput): stri
   <div class="hero">
     <div class="note">${escapeHtml(zarukuConfig.reportHeroLabel)} · ${escapeHtml(new Date().toISOString())}</div>
     <h1>${escapeHtml(zarukuConfig.reportHeading)}</h1>
-    <p class="sub">Цель: показать сильные и слабые стороны портала о раке, понять, как усилить органический рост и какие Yandex AI/Search источники подключить дальше. Google Search Console недоступен; основа owner-data — Yandex Webmaster.</p>
+    <p class="sub">Цель: показать сильные и слабые стороны портала о раке, понять, как усилить органический рост и какие Yandex AI/Search источники подключить дальше. ${escapeHtml(gscSummary)}</p>
     <p class="note">Run ID: ${escapeHtml(run.id)} · JSON: ${escapeHtml(jsonPath)} · HTML: ${escapeHtml(htmlPath)}</p>
   </div>
 
@@ -94,7 +110,10 @@ export function renderZarukuWgdHtmlReport(input: ZarukuWgdHtmlReportInput): stri
     <div class="grid">
       <div class="card"><div class="label">Yandex Webmaster impressions</div><div class="metric">${escapeHtml(webmaster.impressions ?? "n/a")}</div><p>Показы за последние 7 дней с задержкой данных Webmaster.</p></div>
       <div class="card"><div class="label">Yandex clicks / CTR</div><div class="metric">${escapeHtml(webmaster.clicks ?? "n/a")} / ${escapeHtml(webmaster.ctr !== null && webmaster.ctr !== undefined ? webmaster.ctr.toFixed(2) + "%" : "n/a")}</div><p>CTR неплохой, но top queries требуют чистки интента.</p></div>
-      <div class="card"><div class="label">Average position</div><div class="metric">${escapeHtml(webmaster.averagePosition !== null && webmaster.averagePosition !== undefined ? webmaster.averagePosition.toFixed(2) : "n/a")}</div><p>Есть база для quick wins в Yandex.</p></div>
+      <div class="card"><div class="label">GSC impressions</div><div class="metric">${escapeHtml(searchConsole.impressions ?? "n/a")}</div><p>${escapeHtml(gscLabel)}.</p></div>
+      <div class="card"><div class="label">GSC clicks / CTR</div><div class="metric">${escapeHtml(searchConsole.clicks ?? "n/a")} / ${escapeHtml(searchConsole.ctr !== null && searchConsole.ctr !== undefined ? searchConsole.ctr.toFixed(2) + "%" : "n/a")}</div><p>Google owner-data по URL-prefix property.</p></div>
+      <div class="card"><div class="label">Yandex avg position</div><div class="metric">${escapeHtml(webmaster.averagePosition !== null && webmaster.averagePosition !== undefined ? webmaster.averagePosition.toFixed(2) : "n/a")}</div><p>Есть база для quick wins в Yandex.</p></div>
+      <div class="card"><div class="label">GSC avg position</div><div class="metric">${escapeHtml(searchConsole.averagePosition !== null && searchConsole.averagePosition !== undefined ? searchConsole.averagePosition.toFixed(2) : "n/a")}</div><p>Средняя позиция по GSC query rows.</p></div>
       <div class="card"><div class="label">Yandex AI source presence</div><div class="metric">${escapeHtml(aiTargetUsed)}/${escapeHtml(aiChecked)}</div><p>Сколько Alisa/YandexGPT answers реально цитируют ${escapeHtml(zarukuConfig.domain)}.</p></div>
     </div>
   </section>
@@ -103,11 +122,27 @@ export function renderZarukuWgdHtmlReport(input: ZarukuWgdHtmlReportInput): stri
     <h2>Главные выводы</h2>
     <ol>
       <li><strong>Сильная база в Yandex уже есть.</strong> Webmaster показывает ${escapeHtml(webmaster.impressions ?? "n/a")} impressions и ${escapeHtml(webmaster.clicks ?? "n/a")} clicks за период ${escapeHtml(webmaster.dateRange?.startDate)}-${escapeHtml(webmaster.dateRange?.endDate)}.</li>
+      <li><strong>Google Search Console теперь подключён.</strong> GSC показывает ${escapeHtml(searchConsole.impressions ?? "n/a")} impressions и ${escapeHtml(searchConsole.clicks ?? "n/a")} clicks за период ${escapeHtml(searchConsole.dateRange?.startDate)}-${escapeHtml(searchConsole.dateRange?.endDate)} по property ${escapeHtml(searchConsole.siteUrl || searchConsole.property || "n/a")}.</li>
       <li><strong>Сайт технически доступен.</strong> Homepage, robots.txt и sitemap.xml отдают 200; crawler видит title, meta description, H1, canonical и indexable-сигнал.</li>
       <li><strong>Слабое место — качество поискового спроса.</strong> В top queries есть нерелевантные/сомнительные запросы вроде лабораторий и адресов, которые не раскрывают ценность портала о раке. Нужно проверить, какие страницы их привлекают, и не размывают ли они тематику.</li>
       <li><strong>AI-answerability уже есть по брендовому/entity запросу, но слабее по общим patient-help темам.</strong> В YandexGPT/Alisa-style answers ${escapeHtml(zarukuConfig.domain)} найден в ${escapeHtml(aiTargetFound)}/${escapeHtml(aiChecked)} проверенных ответах и использован как источник в ${escapeHtml(aiTargetUsed)}/${escapeHtml(aiChecked)}.</li>
       <li><strong>Growth opportunity — patient journey clusters.</strong> Порталу стоит усиливать кластеры “симптомы → диагностика → лечение → восстановление → поддержка близких” по нозологиям и типам терапии.</li>
     </ol>
+  </section>
+
+  <section>
+    <h2>Google Search Console: owned demand</h2>
+    <p class="note">Property: <code>${escapeHtml(searchConsole.siteUrl || searchConsole.property || "not connected")}</code> · период: ${escapeHtml(searchConsole.dateRange?.startDate || "n/a")} - ${escapeHtml(searchConsole.dateRange?.endDate || "n/a")}</p>
+    <div class="two">
+      <div>
+        <h3>Top queries</h3>
+        <table><thead><tr><th>#</th><th>Query</th></tr></thead><tbody>${gscQueryRows || "<tr><td colspan=\"2\">No GSC query rows</td></tr>"}</tbody></table>
+      </div>
+      <div>
+        <h3>Top pages</h3>
+        <table><thead><tr><th>#</th><th>Page</th></tr></thead><tbody>${gscPageRows || "<tr><td colspan=\"2\">No GSC page rows</td></tr>"}</tbody></table>
+      </div>
+    </div>
   </section>
 
   <section>

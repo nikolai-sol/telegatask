@@ -1,0 +1,13 @@
+{
+  "url": "https://zaruku.ru/",
+  "finalUrl": "https://zaruku.ru/",
+  "title": "За руку",
+  "description": "Портал поддержки онкопациентов и близких.",
+  "h1": "Все о диагностике и лечении рака",
+  "bodySample": "На сайте есть материалы для пациентов, личные истории и форум онкобольных.",
+  "internalLinks": [
+    "https://zaruku.ru/",
+    "https://zaruku.ru/obshie-temy/",
+    "https://zaruku.ru/rak-lyogkogo/lechenie/"
+  ]
+}

@@ -28,6 +28,18 @@ type GoogleSearchConsoleQueryResponse = {
   rows?: GoogleSearchConsoleQueryRow[];
 };
 
+export type GoogleSearchConsoleDailyQueryFact = {
+  reportDate: string;
+  query: string;
+  page: string;
+  country: string;
+  device: string;
+  impressions: number;
+  clicks: number;
+  ctr: number | null;
+  position: number | null;
+};
+
 type GoogleSearchConsoleSiteEntry = {
   siteUrl?: string;
   permissionLevel?: string;
@@ -189,6 +201,26 @@ function extractTopDimensionValues(rows: GoogleSearchConsoleQueryRow[]): string[
     .filter(Boolean);
 }
 
+function dailyFactFromRow(reportDate: string, row: GoogleSearchConsoleQueryRow): GoogleSearchConsoleDailyQueryFact | null {
+  const keys = Array.isArray(row.keys) ? row.keys : [];
+  const query = typeof keys[0] === "string" ? keys[0].trim() : "";
+  const page = typeof keys[1] === "string" ? keys[1].trim() : "";
+  const country = typeof keys[2] === "string" ? keys[2].trim() : "";
+  const device = typeof keys[3] === "string" ? keys[3].trim() : "";
+  if (!query || !page || !country || !device) return null;
+  return {
+    reportDate,
+    query,
+    page,
+    country,
+    device,
+    impressions: safeNumber(row.impressions) ?? 0,
+    clicks: safeNumber(row.clicks) ?? 0,
+    ctr: safeNumber(row.ctr),
+    position: safeNumber(row.position),
+  };
+}
+
 export class GoogleSearchConsoleSeoSource {
   async getSnapshot(
     domain: string,
@@ -264,6 +296,50 @@ export class GoogleSearchConsoleSeoSource {
       countries: extractTopDimensionValues(countryRows),
       devices: extractTopDimensionValues(deviceRows),
     };
+  }
+
+  async getDailyQueryFacts(
+    domain: string,
+    options: {
+      teamId: string;
+      siteUrl?: string | null;
+      refreshTokenOverride?: string;
+      reportDate: string;
+      rowLimit?: number;
+    }
+  ): Promise<GoogleSearchConsoleDailyQueryFact[]> {
+    const storedCredential = await getStoredGscCredential(options.teamId);
+    const refreshToken =
+      options?.refreshTokenOverride ||
+      storedCredential?.refreshToken ||
+      "";
+    const config = readGoogleSearchConsoleRuntimeConfig({
+      requestedDomain: domain,
+      refreshToken,
+      siteUrlOverride: options.siteUrl,
+    });
+    if (!storedCredential?.verifiedSiteUrls.includes(config.siteUrl) && !options.refreshTokenOverride) {
+      throw new SeoProviderNotConfiguredError(
+        `Google Search Console Team credential does not have access to selected property ${config.siteUrl}`
+      );
+    }
+    const accessToken = await exchangeRefreshTokenForAccessToken({
+      clientId: config.clientId,
+      clientSecret: config.clientSecret,
+      refreshToken: config.refreshToken,
+    });
+    const reportDate = options.reportDate.slice(0, 10);
+    const rows = await runSearchAnalyticsQuery({
+      accessToken,
+      siteUrl: config.siteUrl,
+      startDate: reportDate,
+      endDate: reportDate,
+      dimensions: ["query", "page", "country", "device"],
+      rowLimit: options.rowLimit || 25000,
+    });
+    return rows
+      .map((row) => dailyFactFromRow(reportDate, row))
+      .filter((row): row is GoogleSearchConsoleDailyQueryFact => Boolean(row));
   }
 
   async smokeTest(domain: string, options: { teamId: string; siteUrl?: string | null; refreshTokenOverride?: string }): Promise<{

@@ -1,0 +1,33 @@
+[
+  {
+    "query": "рак лечение",
+    "searchEngine": "yandex",
+    "provider": "yandex_search_api",
+    "targetDomain": "zaruku.ru",
+    "found": true,
+    "position": 9,
+    "matchedUrl": "https://zaruku.ru/rak-lyogkogo/lechenie/",
+    "topResultDomains": [
+      "example.ru",
+      "zaruku.ru"
+    ],
+    "region": "225",
+    "language": "ru",
+    "device": "desktop",
+    "checkedAt": "2026-07-05T10:00:00.000Z"
+  },
+  {
+    "query": "подногтевая меланома фото",
+    "searchEngine": "yandex",
+    "provider": "yandex_search_api",
+    "targetDomain": "zaruku.ru",
+    "found": false,
+    "topResultDomains": [
+      "example.ru"
+    ],
+    "region": "225",
+    "language": "ru",
+    "device": "desktop",
+    "checkedAt": "2026-07-05T10:00:01.000Z"
+  }
+]

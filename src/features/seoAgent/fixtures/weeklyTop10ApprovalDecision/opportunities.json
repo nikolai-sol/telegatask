@@ -1,0 +1,52 @@
+[
+  {
+    "type": "keyword",
+    "opportunityType": "content_optimization",
+    "title": "Improve Yandex Webmaster rankings for \"подногтевая меланома фото\"",
+    "description": "Cluster-level Yandex opportunity.",
+    "targetUrl": "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+    "targetKeywords": ["подногтевая меланома фото"],
+    "impact": "high",
+    "effort": "medium",
+    "urgency": "high",
+    "priority": "high",
+    "confidence": "high",
+    "source": "heuristic",
+    "recommendedAction": "Improve the page/query match for \"подногтевая меланома фото\" and add internal links from relevant pages.",
+    "evidence": [
+      {
+        "source": "yandex_webmaster",
+        "metric": "search_performance",
+        "value": 312,
+        "query": "подногтевая меланома фото",
+        "url": "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+        "message": "Yandex Webmaster query \"подногтевая меланома фото\" has 312 impressions and average position 9.25. Source rank: 3."
+      }
+    ]
+  },
+  {
+    "type": "keyword",
+    "opportunityType": "content_optimization",
+    "title": "Improve Yandex Webmaster rankings for \"онкологический центр в сколково адрес\"",
+    "description": "Cluster-level Yandex opportunity.",
+    "targetUrl": "https://zaruku.ru/map/moskva/organization_1425/",
+    "targetKeywords": ["онкологический центр в сколково адрес"],
+    "impact": "medium",
+    "effort": "medium",
+    "urgency": "medium",
+    "priority": "medium",
+    "confidence": "high",
+    "source": "heuristic",
+    "recommendedAction": "Improve the page/query match for \"онкологический центр в сколково адрес\" and add internal links from relevant pages.",
+    "evidence": [
+      {
+        "source": "yandex_webmaster",
+        "metric": "search_performance",
+        "value": 202,
+        "query": "онкологический центр в сколково адрес",
+        "url": "https://zaruku.ru/map/moskva/organization_1425/",
+        "message": "Yandex Webmaster query \"онкологический центр в сколково адрес\" has 202 impressions and average position 9.415842. Source rank: 9."
+      }
+    ]
+  }
+]

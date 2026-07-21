@@ -1,0 +1,112 @@
+[
+  {
+    "source": "yandex_webmaster",
+    "searchEngine": "yandex",
+    "property": "https:zaruku.ru:443",
+    "siteUrl": "https://zaruku.ru/",
+    "dateRange": {
+      "startDate": "2026-06-05",
+      "endDate": "2026-07-02",
+      "days": 28
+    },
+    "dimension": "query",
+    "key": "гемотест орел победа 1",
+    "query": "гемотест орел победа 1",
+    "page": null,
+    "country": null,
+    "device": null,
+    "clicks": 0,
+    "impressions": 246,
+    "ctr": 0,
+    "averagePosition": 9.8,
+    "sourceRank": 1
+  },
+  {
+    "source": "yandex_webmaster",
+    "searchEngine": "yandex",
+    "property": "https:zaruku.ru:443",
+    "siteUrl": "https://zaruku.ru/",
+    "dateRange": {
+      "startDate": "2026-06-05",
+      "endDate": "2026-07-02",
+      "days": 28
+    },
+    "dimension": "query",
+    "key": "подногтевая меланома фото",
+    "query": "подногтевая меланома фото",
+    "page": null,
+    "country": null,
+    "device": null,
+    "clicks": 1,
+    "impressions": 118,
+    "ctr": 0.84,
+    "averagePosition": 5,
+    "sourceRank": 2
+  },
+  {
+    "source": "yandex_webmaster",
+    "searchEngine": "yandex",
+    "property": "https:zaruku.ru:443",
+    "siteUrl": "https://zaruku.ru/",
+    "dateRange": {
+      "startDate": "2026-06-05",
+      "endDate": "2026-07-02",
+      "days": 28
+    },
+    "dimension": "query",
+    "key": "онкологический центр в сколково адрес",
+    "query": "онкологический центр в сколково адрес",
+    "page": null,
+    "country": null,
+    "device": null,
+    "clicks": 1,
+    "impressions": 107,
+    "ctr": 0.93,
+    "averagePosition": 9.6,
+    "sourceRank": 3
+  },
+  {
+    "source": "yandex_webmaster",
+    "searchEngine": "yandex",
+    "property": "https:zaruku.ru:443",
+    "siteUrl": "https://zaruku.ru/",
+    "dateRange": {
+      "startDate": "2026-06-05",
+      "endDate": "2026-07-02",
+      "days": 28
+    },
+    "dimension": "query",
+    "key": "за руку",
+    "query": "за руку",
+    "page": null,
+    "country": null,
+    "device": null,
+    "clicks": 7,
+    "impressions": 200,
+    "ctr": 3.5,
+    "averagePosition": 2,
+    "sourceRank": 4
+  },
+  {
+    "source": "yandex_webmaster",
+    "searchEngine": "yandex",
+    "property": "https:zaruku.ru:443",
+    "siteUrl": "https://zaruku.ru/",
+    "dateRange": {
+      "startDate": "2026-06-05",
+      "endDate": "2026-07-02",
+      "days": 28
+    },
+    "dimension": "query",
+    "key": "какая погода завтра",
+    "query": "какая погода завтра",
+    "page": null,
+    "country": null,
+    "device": null,
+    "clicks": 0,
+    "impressions": 500,
+    "ctr": 0,
+    "averagePosition": 10,
+    "sourceRank": 5
+  }
+]

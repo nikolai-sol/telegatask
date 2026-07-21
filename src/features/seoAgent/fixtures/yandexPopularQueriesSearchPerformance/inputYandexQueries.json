@@ -1,0 +1,30 @@
+[
+  {
+    "query": " рак лечение ",
+    "impressions": 320,
+    "clicks": 12,
+    "ctr": 3.75,
+    "averagePosition": 9.4
+  },
+  {
+    "query": "подногтевая меланома фото",
+    "impressions": 99,
+    "clicks": 1,
+    "ctr": 1.0101010101010102,
+    "averagePosition": 5
+  },
+  {
+    "query": "",
+    "impressions": 240,
+    "clicks": 8,
+    "ctr": 3.3333333333333335,
+    "averagePosition": 11
+  },
+  {
+    "query": "форум онкобольных",
+    "impressions": null,
+    "clicks": 2,
+    "ctr": null,
+    "averagePosition": 8.75
+  }
+]

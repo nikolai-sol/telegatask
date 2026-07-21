@@ -1,0 +1,68 @@
+[
+  {
+    "source": "yandex_webmaster",
+    "searchEngine": "yandex",
+    "property": "https:zaruku.ru:443",
+    "siteUrl": "https://zaruku.ru/",
+    "dateRange": {
+      "startDate": "2026-06-26",
+      "endDate": "2026-07-02",
+      "days": 7
+    },
+    "dimension": "query",
+    "key": "рак лечение",
+    "query": "рак лечение",
+    "page": null,
+    "country": null,
+    "device": null,
+    "clicks": 12,
+    "impressions": 320,
+    "ctr": 3.75,
+    "averagePosition": 9.4,
+    "sourceRank": 1
+  },
+  {
+    "source": "yandex_webmaster",
+    "searchEngine": "yandex",
+    "property": "https:zaruku.ru:443",
+    "siteUrl": "https://zaruku.ru/",
+    "dateRange": {
+      "startDate": "2026-06-26",
+      "endDate": "2026-07-02",
+      "days": 7
+    },
+    "dimension": "query",
+    "key": "подногтевая меланома фото",
+    "query": "подногтевая меланома фото",
+    "page": null,
+    "country": null,
+    "device": null,
+    "clicks": 1,
+    "impressions": 99,
+    "ctr": 1.0101010101010102,
+    "averagePosition": 5,
+    "sourceRank": 2
+  },
+  {
+    "source": "yandex_webmaster",
+    "searchEngine": "yandex",
+    "property": "https:zaruku.ru:443",
+    "siteUrl": "https://zaruku.ru/",
+    "dateRange": {
+      "startDate": "2026-06-26",
+      "endDate": "2026-07-02",
+      "days": 7
+    },
+    "dimension": "query",
+    "key": "форум онкобольных",
+    "query": "форум онкобольных",
+    "page": null,
+    "country": null,
+    "device": null,
+    "clicks": 2,
+    "impressions": null,
+    "ctr": null,
+    "averagePosition": 8.75,
+    "sourceRank": 3
+  }
+]

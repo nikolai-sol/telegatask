@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "seo_os_yandex_serp_url_evidence_quality_gate_v1",
+  "source": "local_review",
+  "searchEngine": "yandex",
+  "status": "review_required",
+  "config": {
+    "minRecordUrlCoverageRatio": 0.5,
+    "minOpportunityUrlCoverageRatio": 0.8,
+    "maxMismatchedDomainRecords": 0
+  },
+  "summary": {
+    "eligibleQueryRecords": 3,
+    "matchedUrlRecords": 1,
+    "missingUrlRecords": 2,
+    "recordUrlCoverageRatio": 0.3333,
+    "opportunityCount": 2,
+    "opportunitiesWithTargetUrl": 1,
+    "opportunityUrlCoverageRatio": 0.5,
+    "mismatchedDomainRecords": 0,
+    "pageTypeCounts": {
+      "homepage": 0,
+      "map_directory": 0,
+      "content_page": 1,
+      "other": 0,
+      "invalid_url": 0
+    }
+  },
+  "checks": [
+    {
+      "name": "record_url_coverage",
+      "status": "fail",
+      "actual": 0.3333,
+      "expected": 0.5,
+      "message": "Share of eligible Yandex query records with deterministic SERP matched URLs."
+    },
+    {
+      "name": "opportunity_url_coverage",
+      "status": "fail",
+      "actual": 0.5,
+      "expected": 0.8,
+      "message": "Share of generated opportunities carrying targetUrl after SERP URL evidence is applied."
+    },
+    {
+      "name": "matched_url_domain",
+      "status": "pass",
+      "actual": 0,
+      "expected": 0,
+      "message": "Matched SERP URLs must belong to the configured target domain or aliases."
+    }
+  ],
+  "matchedRecords": [
+    {
+      "query": "рак лечение",
+      "url": "https://zaruku.ru/rak-lyogkogo/lechenie/",
+      "pageType": "content_page",
+      "sourceRank": 1,
+      "impressions": 320,
+      "clicks": 12,
+      "ctr": 3.75,
+      "webmasterAveragePosition": 9.4,
+      "serpPosition": 9,
+      "positionDelta": 0.4,
+      "targetDomainMatch": true
+    }
+  ],
+  "opportunityTargets": [
+    {
+      "title": "Improve Yandex Webmaster rankings for \"рак лечение\"",
+      "query": "рак лечение",
+      "targetUrl": "https://zaruku.ru/rak-lyogkogo/lechenie/",
+      "hasTargetUrl": true
+    },
+    {
+      "title": "Improve Yandex Webmaster rankings for \"подногтевая меланома фото\"",
+      "query": "подногтевая меланома фото",
+      "targetUrl": null,
+      "hasTargetUrl": false
+    }
+  ],
+  "notes": [
+    "Local read-only SERP URL evidence quality gate only.",
+    "The gate evaluates readiness for later automation but does not create or approve tasks.",
+    "SERP position is compared as a separate evidence field and is not merged with Webmaster averagePosition.",
+    "No API calls, Firestore writes, Telegram sends, scheduler actions or production pipeline execution are performed."
+  ]
+}

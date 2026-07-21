@@ -1,4 +1,15 @@
-node_modules
-dist
+node_modules/
+dist/
 .env
+.env.*
+!.env.example
 serviceAccountKey.json
+.DS_Store
+.vercel/
+logs/
+outputs/
+*.log
+
+# Generated run artifacts stay local. The weekly cluster input is versioned.
+reports/*
+!reports/task-043-zaruku-yandex-query-cluster-review-2026-07-07.json

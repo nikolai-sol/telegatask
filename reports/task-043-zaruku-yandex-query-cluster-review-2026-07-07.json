@@ -1,0 +1,1163 @@
+{
+  "schemaVersion": "seo_os_yandex_query_cluster_review_artifact_v1",
+  "generatedAt": "2026-07-07T15:27:33.215Z",
+  "domain": "zaruku.ru",
+  "source": "local_review",
+  "serpRefreshPath": "reports/task-042-zaruku-target-class-serp-evidence-refresh-2026-07-06.json",
+  "clusterReview": {
+    "schemaVersion": "seo_os_yandex_query_cluster_review_v1",
+    "source": "local_review",
+    "searchEngine": "yandex",
+    "config": {
+      "jaccardThreshold": 0.6,
+      "sharedHeadTokenCount": 2,
+      "ignoredTokens": [
+        "в",
+        "на",
+        "с",
+        "и",
+        "или",
+        "при",
+        "для",
+        "по",
+        "кому",
+        "как",
+        "что"
+      ],
+      "normalization": {
+        "lowercase": true,
+        "replaceYo": true,
+        "stripPunctuation": true,
+        "collapseWhitespace": true
+      }
+    },
+    "summary": {
+      "inputRecords": 15,
+      "clusters": 12,
+      "clusteredRecords": 12,
+      "clustersWithUrl": 6,
+      "mixedClassClusters": 0,
+      "opportunities": 2,
+      "opportunitiesWithTargetUrl": 2
+    },
+    "clusters": [
+      {
+        "clusterId": "query_cluster_001",
+        "primaryQuery": "подногтевая меланома фото",
+        "intentClass": "medical_informational",
+        "mixedIntentClasses": [
+          "medical_informational"
+        ],
+        "mixedIntentFlag": false,
+        "memberQueries": [
+          "подногтевая меланома фото",
+          "подногтевая меланома на большом пальце ноги фото",
+          "подногтевая меланома фото на руке"
+        ],
+        "members": [
+          {
+            "query": "подногтевая меланома фото",
+            "normalizedQuery": "подногтевая меланома фото",
+            "tokens": [
+              "подногтевая",
+              "меланома",
+              "фото"
+            ],
+            "sourceRank": 3,
+            "impressions": 171,
+            "clicks": 3,
+            "ctr": 1.7543859649122806,
+            "averagePosition": 9.789473684210526,
+            "intentClass": "medical_informational",
+            "matchedUrl": null,
+            "serpPosition": null
+          },
+          {
+            "query": "подногтевая меланома на большом пальце ноги фото",
+            "normalizedQuery": "подногтевая меланома на большом пальце ноги фото",
+            "tokens": [
+              "подногтевая",
+              "меланома",
+              "большом",
+              "пальце",
+              "ноги",
+              "фото"
+            ],
+            "sourceRank": 15,
+            "impressions": 91,
+            "clicks": 5,
+            "ctr": 5.4945054945054945,
+            "averagePosition": 8.428571428571429,
+            "intentClass": "medical_informational",
+            "matchedUrl": "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+            "serpPosition": 16
+          },
+          {
+            "query": "подногтевая меланома фото на руке",
+            "normalizedQuery": "подногтевая меланома фото на руке",
+            "tokens": [
+              "подногтевая",
+              "меланома",
+              "фото",
+              "руке"
+            ],
+            "sourceRank": 39,
+            "impressions": 50,
+            "clicks": 2,
+            "ctr": 4,
+            "averagePosition": 8.9,
+            "intentClass": "medical_informational",
+            "matchedUrl": null,
+            "serpPosition": null
+          }
+        ],
+        "urlEvidence": {
+          "matchedUrl": "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+          "sourceQuery": "подногтевая меланома на большом пальце ноги фото",
+          "sourceRank": 15,
+          "serpPosition": 16
+        },
+        "aggregate": {
+          "impressions": 312,
+          "clicks": 10,
+          "ctr": 3.205128,
+          "averagePosition": 9.25,
+          "sourceRank": 3
+        }
+      },
+      {
+        "clusterId": "query_cluster_002",
+        "primaryQuery": "онкологический центр в сколково адрес",
+        "intentClass": "facility_navigational",
+        "mixedIntentClasses": [
+          "facility_navigational"
+        ],
+        "mixedIntentFlag": false,
+        "memberQueries": [
+          "онкологический центр в сколково адрес",
+          "сколково онкологический центр адрес"
+        ],
+        "members": [
+          {
+            "query": "онкологический центр в сколково адрес",
+            "normalizedQuery": "онкологический центр в сколково адрес",
+            "tokens": [
+              "онкологический",
+              "центр",
+              "сколково",
+              "адрес"
+            ],
+            "sourceRank": 9,
+            "impressions": 107,
+            "clicks": 1,
+            "ctr": 0.9345794392523363,
+            "averagePosition": 9.57943925233645,
+            "intentClass": "facility_navigational",
+            "matchedUrl": "https://zaruku.ru/map/moskva/organization_1425/",
+            "serpPosition": 12
+          },
+          {
+            "query": "сколково онкологический центр адрес",
+            "normalizedQuery": "сколково онкологический центр адрес",
+            "tokens": [
+              "сколково",
+              "онкологический",
+              "центр",
+              "адрес"
+            ],
+            "sourceRank": 12,
+            "impressions": 95,
+            "clicks": 1,
+            "ctr": 1.0526315789473684,
+            "averagePosition": 9.23157894736842,
+            "intentClass": "facility_navigational",
+            "matchedUrl": "https://zaruku.ru/map/moskva/organization_1425/",
+            "serpPosition": 14
+          }
+        ],
+        "urlEvidence": {
+          "matchedUrl": "https://zaruku.ru/map/moskva/organization_1425/",
+          "sourceQuery": "онкологический центр в сколково адрес",
+          "sourceRank": 9,
+          "serpPosition": 12
+        },
+        "aggregate": {
+          "impressions": 202,
+          "clicks": 2,
+          "ctr": 0.990099,
+          "averagePosition": 9.415842,
+          "sourceRank": 9
+        }
+      },
+      {
+        "clusterId": "query_cluster_003",
+        "primaryQuery": "первая группа с раком печени рабочая",
+        "intentClass": "medical_informational",
+        "mixedIntentClasses": [
+          "medical_informational"
+        ],
+        "mixedIntentFlag": false,
+        "memberQueries": [
+          "первая группа с раком печени рабочая"
+        ],
+        "members": [
+          {
+            "query": "первая группа с раком печени рабочая",
+            "normalizedQuery": "первая группа с раком печени рабочая",
+            "tokens": [
+              "первая",
+              "группа",
+              "раком",
+              "печени",
+              "рабочая"
+            ],
+            "sourceRank": 11,
+            "impressions": 99,
+            "clicks": 0,
+            "ctr": 0,
+            "averagePosition": 5,
+            "intentClass": "medical_informational",
+            "matchedUrl": "https://zaruku.ru/rak-pecheni/invalidnost-pri-gepatocellyulyarnoj-karcinome-komu-polozhena-i-chto-daet-ee-poluchenie/",
+            "serpPosition": 2
+          }
+        ],
+        "urlEvidence": {
+          "matchedUrl": "https://zaruku.ru/rak-pecheni/invalidnost-pri-gepatocellyulyarnoj-karcinome-komu-polozhena-i-chto-daet-ee-poluchenie/",
+          "sourceQuery": "первая группа с раком печени рабочая",
+          "sourceRank": 11,
+          "serpPosition": 2
+        },
+        "aggregate": {
+          "impressions": 99,
+          "clicks": 0,
+          "ctr": 0,
+          "averagePosition": 5,
+          "sourceRank": 11
+        }
+      },
+      {
+        "clusterId": "query_cluster_004",
+        "primaryQuery": "меланома ногтя фото",
+        "intentClass": "medical_informational",
+        "mixedIntentClasses": [
+          "medical_informational"
+        ],
+        "mixedIntentFlag": false,
+        "memberQueries": [
+          "меланома ногтя фото"
+        ],
+        "members": [
+          {
+            "query": "меланома ногтя фото",
+            "normalizedQuery": "меланома ногтя фото",
+            "tokens": [
+              "меланома",
+              "ногтя",
+              "фото"
+            ],
+            "sourceRank": 13,
+            "impressions": 91,
+            "clicks": 0,
+            "ctr": 0,
+            "averagePosition": 9.923076923076923,
+            "intentClass": "medical_informational",
+            "matchedUrl": null,
+            "serpPosition": null
+          }
+        ],
+        "urlEvidence": null,
+        "aggregate": {
+          "impressions": 91,
+          "clicks": 0,
+          "ctr": 0,
+          "averagePosition": 9.923077,
+          "sourceRank": 13
+        }
+      },
+      {
+        "clusterId": "query_cluster_005",
+        "primaryQuery": "восстановление после рмж",
+        "intentClass": "medical_informational",
+        "mixedIntentClasses": [
+          "medical_informational"
+        ],
+        "mixedIntentFlag": false,
+        "memberQueries": [
+          "восстановление после рмж"
+        ],
+        "members": [
+          {
+            "query": "восстановление после рмж",
+            "normalizedQuery": "восстановление после рмж",
+            "tokens": [
+              "восстановление",
+              "после",
+              "рмж"
+            ],
+            "sourceRank": 18,
+            "impressions": 83,
+            "clicks": 0,
+            "ctr": 0,
+            "averagePosition": 26.80722891566265,
+            "intentClass": "medical_informational",
+            "matchedUrl": null,
+            "serpPosition": null
+          }
+        ],
+        "urlEvidence": null,
+        "aggregate": {
+          "impressions": 83,
+          "clicks": 0,
+          "ctr": 0,
+          "averagePosition": 26.807229,
+          "sourceRank": 18
+        }
+      },
+      {
+        "clusterId": "query_cluster_006",
+        "primaryQuery": "черокова 12 онкологический центр красносельского района",
+        "intentClass": "medical_informational",
+        "mixedIntentClasses": [
+          "medical_informational"
+        ],
+        "mixedIntentFlag": false,
+        "memberQueries": [
+          "черокова 12 онкологический центр красносельского района"
+        ],
+        "members": [
+          {
+            "query": "черокова 12 онкологический центр красносельского района",
+            "normalizedQuery": "черокова 12 онкологический центр красносельского района",
+            "tokens": [
+              "черокова",
+              "12",
+              "онкологический",
+              "центр",
+              "красносельского",
+              "района"
+            ],
+            "sourceRank": 24,
+            "impressions": 65,
+            "clicks": 3,
+            "ctr": 4.615384615384616,
+            "averagePosition": 10.523076923076923,
+            "intentClass": "medical_informational",
+            "matchedUrl": null,
+            "serpPosition": null
+          }
+        ],
+        "urlEvidence": null,
+        "aggregate": {
+          "impressions": 65,
+          "clicks": 3,
+          "ctr": 4.615385,
+          "averagePosition": 10.523077,
+          "sourceRank": 24
+        }
+      },
+      {
+        "clusterId": "query_cluster_007",
+        "primaryQuery": "цаоп пушкинского района спб",
+        "intentClass": "facility_navigational",
+        "mixedIntentClasses": [
+          "facility_navigational"
+        ],
+        "mixedIntentFlag": false,
+        "memberQueries": [
+          "цаоп пушкинского района спб"
+        ],
+        "members": [
+          {
+            "query": "цаоп пушкинского района спб",
+            "normalizedQuery": "цаоп пушкинского района спб",
+            "tokens": [
+              "цаоп",
+              "пушкинского",
+              "района",
+              "спб"
+            ],
+            "sourceRank": 27,
+            "impressions": 58,
+            "clicks": 0,
+            "ctr": 0,
+            "averagePosition": 10.155172413793103,
+            "intentClass": "facility_navigational",
+            "matchedUrl": "https://zaruku.ru/map/sankt_peterburg/organization_959/",
+            "serpPosition": 20
+          }
+        ],
+        "urlEvidence": {
+          "matchedUrl": "https://zaruku.ru/map/sankt_peterburg/organization_959/",
+          "sourceQuery": "цаоп пушкинского района спб",
+          "sourceRank": 27,
+          "serpPosition": 20
+        },
+        "aggregate": {
+          "impressions": 58,
+          "clicks": 0,
+          "ctr": 0,
+          "averagePosition": 10.155172,
+          "sourceRank": 27
+        }
+      },
+      {
+        "clusterId": "query_cluster_008",
+        "primaryQuery": "меланома на ногте фото",
+        "intentClass": "medical_informational",
+        "mixedIntentClasses": [
+          "medical_informational"
+        ],
+        "mixedIntentFlag": false,
+        "memberQueries": [
+          "меланома на ногте фото"
+        ],
+        "members": [
+          {
+            "query": "меланома на ногте фото",
+            "normalizedQuery": "меланома на ногте фото",
+            "tokens": [
+              "меланома",
+              "ногте",
+              "фото"
+            ],
+            "sourceRank": 30,
+            "impressions": 55,
+            "clicks": 1,
+            "ctr": 1.8181818181818181,
+            "averagePosition": 9.690909090909091,
+            "intentClass": "medical_informational",
+            "matchedUrl": null,
+            "serpPosition": null
+          }
+        ],
+        "urlEvidence": null,
+        "aggregate": {
+          "impressions": 55,
+          "clicks": 1,
+          "ctr": 1.818182,
+          "averagePosition": 9.690909,
+          "sourceRank": 30
+        }
+      },
+      {
+        "clusterId": "query_cluster_009",
+        "primaryQuery": "онкологический реабилитационный центр в видном",
+        "intentClass": "medical_informational",
+        "mixedIntentClasses": [
+          "medical_informational"
+        ],
+        "mixedIntentFlag": false,
+        "memberQueries": [
+          "онкологический реабилитационный центр в видном"
+        ],
+        "members": [
+          {
+            "query": "онкологический реабилитационный центр в видном",
+            "normalizedQuery": "онкологический реабилитационный центр в видном",
+            "tokens": [
+              "онкологический",
+              "реабилитационный",
+              "центр",
+              "видном"
+            ],
+            "sourceRank": 32,
+            "impressions": 54,
+            "clicks": 0,
+            "ctr": 0,
+            "averagePosition": 8.555555555555555,
+            "intentClass": "medical_informational",
+            "matchedUrl": null,
+            "serpPosition": null
+          }
+        ],
+        "urlEvidence": null,
+        "aggregate": {
+          "impressions": 54,
+          "clicks": 0,
+          "ctr": 0,
+          "averagePosition": 8.555556,
+          "sourceRank": 32
+        }
+      },
+      {
+        "clusterId": "query_cluster_010",
+        "primaryQuery": "высоковск онкологический центр",
+        "intentClass": "medical_informational",
+        "mixedIntentClasses": [
+          "medical_informational"
+        ],
+        "mixedIntentFlag": false,
+        "memberQueries": [
+          "высоковск онкологический центр"
+        ],
+        "members": [
+          {
+            "query": "высоковск онкологический центр",
+            "normalizedQuery": "высоковск онкологический центр",
+            "tokens": [
+              "высоковск",
+              "онкологический",
+              "центр"
+            ],
+            "sourceRank": 37,
+            "impressions": 50,
+            "clicks": 1,
+            "ctr": 2,
+            "averagePosition": 9.18,
+            "intentClass": "medical_informational",
+            "matchedUrl": null,
+            "serpPosition": null
+          }
+        ],
+        "urlEvidence": null,
+        "aggregate": {
+          "impressions": 50,
+          "clicks": 1,
+          "ctr": 2,
+          "averagePosition": 9.18,
+          "sourceRank": 37
+        }
+      },
+      {
+        "clusterId": "query_cluster_011",
+        "primaryQuery": "инвалидность при раке молочной железы",
+        "intentClass": "medical_informational",
+        "mixedIntentClasses": [
+          "medical_informational"
+        ],
+        "mixedIntentFlag": false,
+        "memberQueries": [
+          "инвалидность при раке молочной железы"
+        ],
+        "members": [
+          {
+            "query": "инвалидность при раке молочной железы",
+            "normalizedQuery": "инвалидность при раке молочной железы",
+            "tokens": [
+              "инвалидность",
+              "раке",
+              "молочной",
+              "железы"
+            ],
+            "sourceRank": 45,
+            "impressions": 47,
+            "clicks": 5,
+            "ctr": 10.638297872340425,
+            "averagePosition": 7.0212765957446805,
+            "intentClass": "medical_informational",
+            "matchedUrl": "https://zaruku.ru/rak-molochnoj-zhelezy/invalidnost-pri-rake-molochnoj-zhelezy-kak-poluchit-i-kakie-preimushestva-ona-daet/",
+            "serpPosition": 5
+          }
+        ],
+        "urlEvidence": {
+          "matchedUrl": "https://zaruku.ru/rak-molochnoj-zhelezy/invalidnost-pri-rake-molochnoj-zhelezy-kak-poluchit-i-kakie-preimushestva-ona-daet/",
+          "sourceQuery": "инвалидность при раке молочной железы",
+          "sourceRank": 45,
+          "serpPosition": 5
+        },
+        "aggregate": {
+          "impressions": 47,
+          "clicks": 5,
+          "ctr": 10.638298,
+          "averagePosition": 7.021277,
+          "sourceRank": 45
+        }
+      },
+      {
+        "clusterId": "query_cluster_012",
+        "primaryQuery": "инвалидность при онкологии молочной железы кому положена",
+        "intentClass": "medical_informational",
+        "mixedIntentClasses": [
+          "medical_informational"
+        ],
+        "mixedIntentFlag": false,
+        "memberQueries": [
+          "инвалидность при онкологии молочной железы кому положена"
+        ],
+        "members": [
+          {
+            "query": "инвалидность при онкологии молочной железы кому положена",
+            "normalizedQuery": "инвалидность при онкологии молочной железы кому положена",
+            "tokens": [
+              "инвалидность",
+              "онкологии",
+              "молочной",
+              "железы",
+              "положена"
+            ],
+            "sourceRank": 47,
+            "impressions": 45,
+            "clicks": 8,
+            "ctr": 17.77777777777778,
+            "averagePosition": 4.355555555555555,
+            "intentClass": "medical_informational",
+            "matchedUrl": "https://zaruku.ru/rak-molochnoj-zhelezy/invalidnost-pri-rake-molochnoj-zhelezy-kak-poluchit-i-kakie-preimushestva-ona-daet/",
+            "serpPosition": 2
+          }
+        ],
+        "urlEvidence": {
+          "matchedUrl": "https://zaruku.ru/rak-molochnoj-zhelezy/invalidnost-pri-rake-molochnoj-zhelezy-kak-poluchit-i-kakie-preimushestva-ona-daet/",
+          "sourceQuery": "инвалидность при онкологии молочной железы кому положена",
+          "sourceRank": 47,
+          "serpPosition": 2
+        },
+        "aggregate": {
+          "impressions": 45,
+          "clicks": 8,
+          "ctr": 17.777778,
+          "averagePosition": 4.355556,
+          "sourceRank": 47
+        }
+      }
+    ],
+    "clusterRecords": [
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-05",
+          "endDate": "2026-07-02",
+          "days": 28
+        },
+        "dimension": "query",
+        "key": "подногтевая меланома фото",
+        "query": "подногтевая меланома фото",
+        "page": "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+        "country": null,
+        "device": null,
+        "clicks": 10,
+        "impressions": 312,
+        "ctr": 3.205128,
+        "averagePosition": 9.25,
+        "sourceRank": 3,
+        "serpUrlEvidence": {
+          "source": "yandex_serp_rank",
+          "provider": "yandex_search_api",
+          "matchedUrl": "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+          "serpPosition": 16,
+          "checkedAt": null,
+          "note": "Cluster-level URL evidence propagated from query \"подногтевая меланома на большом пальце ноги фото\". SERP position is not merged with Webmaster averagePosition."
+        }
+      },
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-05",
+          "endDate": "2026-07-02",
+          "days": 28
+        },
+        "dimension": "query",
+        "key": "онкологический центр в сколково адрес",
+        "query": "онкологический центр в сколково адрес",
+        "page": "https://zaruku.ru/map/moskva/organization_1425/",
+        "country": null,
+        "device": null,
+        "clicks": 2,
+        "impressions": 202,
+        "ctr": 0.990099,
+        "averagePosition": 9.415842,
+        "sourceRank": 9,
+        "serpUrlEvidence": {
+          "source": "yandex_serp_rank",
+          "provider": "yandex_search_api",
+          "matchedUrl": "https://zaruku.ru/map/moskva/organization_1425/",
+          "serpPosition": 12,
+          "checkedAt": null,
+          "note": "Cluster-level URL evidence propagated from query \"онкологический центр в сколково адрес\". SERP position is not merged with Webmaster averagePosition."
+        }
+      },
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-05",
+          "endDate": "2026-07-02",
+          "days": 28
+        },
+        "dimension": "query",
+        "key": "первая группа с раком печени рабочая",
+        "query": "первая группа с раком печени рабочая",
+        "page": "https://zaruku.ru/rak-pecheni/invalidnost-pri-gepatocellyulyarnoj-karcinome-komu-polozhena-i-chto-daet-ee-poluchenie/",
+        "country": null,
+        "device": null,
+        "clicks": 0,
+        "impressions": 99,
+        "ctr": 0,
+        "averagePosition": 5,
+        "sourceRank": 11,
+        "serpUrlEvidence": {
+          "source": "yandex_serp_rank",
+          "provider": "yandex_search_api",
+          "matchedUrl": "https://zaruku.ru/rak-pecheni/invalidnost-pri-gepatocellyulyarnoj-karcinome-komu-polozhena-i-chto-daet-ee-poluchenie/",
+          "serpPosition": 2,
+          "checkedAt": null,
+          "note": "Cluster-level URL evidence propagated from query \"первая группа с раком печени рабочая\". SERP position is not merged with Webmaster averagePosition."
+        }
+      },
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-05",
+          "endDate": "2026-07-02",
+          "days": 28
+        },
+        "dimension": "query",
+        "key": "меланома ногтя фото",
+        "query": "меланома ногтя фото",
+        "page": null,
+        "country": null,
+        "device": null,
+        "clicks": 0,
+        "impressions": 91,
+        "ctr": 0,
+        "averagePosition": 9.923077,
+        "sourceRank": 13
+      },
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-05",
+          "endDate": "2026-07-02",
+          "days": 28
+        },
+        "dimension": "query",
+        "key": "восстановление после рмж",
+        "query": "восстановление после рмж",
+        "page": null,
+        "country": null,
+        "device": null,
+        "clicks": 0,
+        "impressions": 83,
+        "ctr": 0,
+        "averagePosition": 26.807229,
+        "sourceRank": 18
+      },
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-05",
+          "endDate": "2026-07-02",
+          "days": 28
+        },
+        "dimension": "query",
+        "key": "черокова 12 онкологический центр красносельского района",
+        "query": "черокова 12 онкологический центр красносельского района",
+        "page": null,
+        "country": null,
+        "device": null,
+        "clicks": 3,
+        "impressions": 65,
+        "ctr": 4.615385,
+        "averagePosition": 10.523077,
+        "sourceRank": 24
+      },
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-05",
+          "endDate": "2026-07-02",
+          "days": 28
+        },
+        "dimension": "query",
+        "key": "цаоп пушкинского района спб",
+        "query": "цаоп пушкинского района спб",
+        "page": "https://zaruku.ru/map/sankt_peterburg/organization_959/",
+        "country": null,
+        "device": null,
+        "clicks": 0,
+        "impressions": 58,
+        "ctr": 0,
+        "averagePosition": 10.155172,
+        "sourceRank": 27,
+        "serpUrlEvidence": {
+          "source": "yandex_serp_rank",
+          "provider": "yandex_search_api",
+          "matchedUrl": "https://zaruku.ru/map/sankt_peterburg/organization_959/",
+          "serpPosition": 20,
+          "checkedAt": null,
+          "note": "Cluster-level URL evidence propagated from query \"цаоп пушкинского района спб\". SERP position is not merged with Webmaster averagePosition."
+        }
+      },
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-05",
+          "endDate": "2026-07-02",
+          "days": 28
+        },
+        "dimension": "query",
+        "key": "меланома на ногте фото",
+        "query": "меланома на ногте фото",
+        "page": null,
+        "country": null,
+        "device": null,
+        "clicks": 1,
+        "impressions": 55,
+        "ctr": 1.818182,
+        "averagePosition": 9.690909,
+        "sourceRank": 30
+      },
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-05",
+          "endDate": "2026-07-02",
+          "days": 28
+        },
+        "dimension": "query",
+        "key": "онкологический реабилитационный центр в видном",
+        "query": "онкологический реабилитационный центр в видном",
+        "page": null,
+        "country": null,
+        "device": null,
+        "clicks": 0,
+        "impressions": 54,
+        "ctr": 0,
+        "averagePosition": 8.555556,
+        "sourceRank": 32
+      },
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-05",
+          "endDate": "2026-07-02",
+          "days": 28
+        },
+        "dimension": "query",
+        "key": "высоковск онкологический центр",
+        "query": "высоковск онкологический центр",
+        "page": null,
+        "country": null,
+        "device": null,
+        "clicks": 1,
+        "impressions": 50,
+        "ctr": 2,
+        "averagePosition": 9.18,
+        "sourceRank": 37
+      },
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-05",
+          "endDate": "2026-07-02",
+          "days": 28
+        },
+        "dimension": "query",
+        "key": "инвалидность при раке молочной железы",
+        "query": "инвалидность при раке молочной железы",
+        "page": "https://zaruku.ru/rak-molochnoj-zhelezy/invalidnost-pri-rake-molochnoj-zhelezy-kak-poluchit-i-kakie-preimushestva-ona-daet/",
+        "country": null,
+        "device": null,
+        "clicks": 5,
+        "impressions": 47,
+        "ctr": 10.638298,
+        "averagePosition": 7.021277,
+        "sourceRank": 45,
+        "serpUrlEvidence": {
+          "source": "yandex_serp_rank",
+          "provider": "yandex_search_api",
+          "matchedUrl": "https://zaruku.ru/rak-molochnoj-zhelezy/invalidnost-pri-rake-molochnoj-zhelezy-kak-poluchit-i-kakie-preimushestva-ona-daet/",
+          "serpPosition": 5,
+          "checkedAt": null,
+          "note": "Cluster-level URL evidence propagated from query \"инвалидность при раке молочной железы\". SERP position is not merged with Webmaster averagePosition."
+        }
+      },
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-05",
+          "endDate": "2026-07-02",
+          "days": 28
+        },
+        "dimension": "query",
+        "key": "инвалидность при онкологии молочной железы кому положена",
+        "query": "инвалидность при онкологии молочной железы кому положена",
+        "page": "https://zaruku.ru/rak-molochnoj-zhelezy/invalidnost-pri-rake-molochnoj-zhelezy-kak-poluchit-i-kakie-preimushestva-ona-daet/",
+        "country": null,
+        "device": null,
+        "clicks": 8,
+        "impressions": 45,
+        "ctr": 17.777778,
+        "averagePosition": 4.355556,
+        "sourceRank": 47,
+        "serpUrlEvidence": {
+          "source": "yandex_serp_rank",
+          "provider": "yandex_search_api",
+          "matchedUrl": "https://zaruku.ru/rak-molochnoj-zhelezy/invalidnost-pri-rake-molochnoj-zhelezy-kak-poluchit-i-kakie-preimushestva-ona-daet/",
+          "serpPosition": 2,
+          "checkedAt": null,
+          "note": "Cluster-level URL evidence propagated from query \"инвалидность при онкологии молочной железы кому положена\". SERP position is not merged with Webmaster averagePosition."
+        }
+      }
+    ],
+    "opportunities": [
+      {
+        "type": "keyword",
+        "opportunityType": "keyword_quick_win",
+        "intent": "unknown",
+        "title": "Improve Yandex Webmaster rankings for \"подногтевая меланома фото\"",
+        "description": "Improve the page/query match for \"подногтевая меланома фото\" and add internal links from relevant pages. Yandex Webmaster query \"подногтевая меланома фото\" has 312 impressions and average position 9.25. Source rank: 3.",
+        "targetUrl": "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+        "targetKeywords": [
+          "подногтевая меланома фото"
+        ],
+        "market": "RU",
+        "language": "ru",
+        "impact": "high",
+        "effort": "medium",
+        "urgency": "high",
+        "priority": "high",
+        "confidence": "medium",
+        "source": "provider",
+        "recommendedAction": "Improve the page/query match for \"подногтевая меланома фото\" and add internal links from relevant pages.",
+        "reasoning": "Yandex Webmaster query \"подногтевая меланома фото\" has 312 impressions and average position 9.25. Source rank: 3.",
+        "evidence": [
+          {
+            "source": "yandex_webmaster",
+            "metric": "search_performance",
+            "value": 312,
+            "query": "подногтевая меланома фото",
+            "url": "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+            "message": "Yandex Webmaster query \"подногтевая меланома фото\" has 312 impressions and average position 9.25. Source rank: 3."
+          }
+        ]
+      },
+      {
+        "type": "keyword",
+        "opportunityType": "keyword_quick_win",
+        "intent": "unknown",
+        "title": "Improve Yandex Webmaster rankings for \"онкологический центр в сколково адрес\"",
+        "description": "Improve the page/query match for \"онкологический центр в сколково адрес\" and add internal links from relevant pages. Yandex Webmaster query \"онкологический центр в сколково адрес\" has 202 impressions and average position 9.415842. Source rank: 9.",
+        "targetUrl": "https://zaruku.ru/map/moskva/organization_1425/",
+        "targetKeywords": [
+          "онкологический центр в сколково адрес"
+        ],
+        "market": "RU",
+        "language": "ru",
+        "impact": "medium",
+        "effort": "medium",
+        "urgency": "medium",
+        "priority": "medium",
+        "confidence": "medium",
+        "source": "provider",
+        "recommendedAction": "Improve the page/query match for \"онкологический центр в сколково адрес\" and add internal links from relevant pages.",
+        "reasoning": "Yandex Webmaster query \"онкологический центр в сколково адрес\" has 202 impressions and average position 9.415842. Source rank: 9.",
+        "evidence": [
+          {
+            "source": "yandex_webmaster",
+            "metric": "search_performance",
+            "value": 202,
+            "query": "онкологический центр в сколково адрес",
+            "url": "https://zaruku.ru/map/moskva/organization_1425/",
+            "message": "Yandex Webmaster query \"онкологический центр в сколково адрес\" has 202 impressions and average position 9.415842. Source rank: 9."
+          }
+        ]
+      }
+    ],
+    "qualityGate": {
+      "schemaVersion": "seo_os_yandex_serp_url_evidence_quality_gate_v1",
+      "source": "local_review",
+      "searchEngine": "yandex",
+      "status": "ready",
+      "config": {
+        "minRecordUrlCoverageRatio": 0.5,
+        "minOpportunityUrlCoverageRatio": 0.8,
+        "maxMismatchedDomainRecords": 0
+      },
+      "summary": {
+        "eligibleQueryRecords": 12,
+        "matchedUrlRecords": 6,
+        "missingUrlRecords": 6,
+        "recordUrlCoverageRatio": 0.5,
+        "opportunityCount": 2,
+        "opportunitiesWithTargetUrl": 2,
+        "opportunityUrlCoverageRatio": 1,
+        "mismatchedDomainRecords": 0,
+        "pageTypeCounts": {
+          "homepage": 0,
+          "map_directory": 2,
+          "content_page": 4,
+          "other": 0,
+          "invalid_url": 0
+        }
+      },
+      "checks": [
+        {
+          "name": "record_url_coverage",
+          "status": "pass",
+          "actual": 0.5,
+          "expected": 0.5,
+          "message": "Share of eligible Yandex query records with deterministic SERP matched URLs."
+        },
+        {
+          "name": "opportunity_url_coverage",
+          "status": "pass",
+          "actual": 1,
+          "expected": 0.8,
+          "message": "Share of generated opportunities carrying targetUrl after SERP URL evidence is applied."
+        },
+        {
+          "name": "matched_url_domain",
+          "status": "pass",
+          "actual": 0,
+          "expected": 0,
+          "message": "Matched SERP URLs must belong to the configured target domain or aliases."
+        }
+      ],
+      "matchedRecords": [
+        {
+          "query": "подногтевая меланома фото",
+          "url": "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+          "pageType": "content_page",
+          "sourceRank": 3,
+          "impressions": 312,
+          "clicks": 10,
+          "ctr": 3.205128,
+          "webmasterAveragePosition": 9.25,
+          "serpPosition": 16,
+          "positionDelta": 6.75,
+          "targetDomainMatch": true
+        },
+        {
+          "query": "онкологический центр в сколково адрес",
+          "url": "https://zaruku.ru/map/moskva/organization_1425/",
+          "pageType": "map_directory",
+          "sourceRank": 9,
+          "impressions": 202,
+          "clicks": 2,
+          "ctr": 0.990099,
+          "webmasterAveragePosition": 9.415842,
+          "serpPosition": 12,
+          "positionDelta": 2.5842,
+          "targetDomainMatch": true
+        },
+        {
+          "query": "первая группа с раком печени рабочая",
+          "url": "https://zaruku.ru/rak-pecheni/invalidnost-pri-gepatocellyulyarnoj-karcinome-komu-polozhena-i-chto-daet-ee-poluchenie/",
+          "pageType": "content_page",
+          "sourceRank": 11,
+          "impressions": 99,
+          "clicks": 0,
+          "ctr": 0,
+          "webmasterAveragePosition": 5,
+          "serpPosition": 2,
+          "positionDelta": 3,
+          "targetDomainMatch": true
+        },
+        {
+          "query": "цаоп пушкинского района спб",
+          "url": "https://zaruku.ru/map/sankt_peterburg/organization_959/",
+          "pageType": "map_directory",
+          "sourceRank": 27,
+          "impressions": 58,
+          "clicks": 0,
+          "ctr": 0,
+          "webmasterAveragePosition": 10.155172,
+          "serpPosition": 20,
+          "positionDelta": 9.8448,
+          "targetDomainMatch": true
+        },
+        {
+          "query": "инвалидность при раке молочной железы",
+          "url": "https://zaruku.ru/rak-molochnoj-zhelezy/invalidnost-pri-rake-molochnoj-zhelezy-kak-poluchit-i-kakie-preimushestva-ona-daet/",
+          "pageType": "content_page",
+          "sourceRank": 45,
+          "impressions": 47,
+          "clicks": 5,
+          "ctr": 10.638298,
+          "webmasterAveragePosition": 7.021277,
+          "serpPosition": 5,
+          "positionDelta": 2.0213,
+          "targetDomainMatch": true
+        },
+        {
+          "query": "инвалидность при онкологии молочной железы кому положена",
+          "url": "https://zaruku.ru/rak-molochnoj-zhelezy/invalidnost-pri-rake-molochnoj-zhelezy-kak-poluchit-i-kakie-preimushestva-ona-daet/",
+          "pageType": "content_page",
+          "sourceRank": 47,
+          "impressions": 45,
+          "clicks": 8,
+          "ctr": 17.777778,
+          "webmasterAveragePosition": 4.355556,
+          "serpPosition": 2,
+          "positionDelta": 2.3556,
+          "targetDomainMatch": true
+        }
+      ],
+      "opportunityTargets": [
+        {
+          "title": "Improve Yandex Webmaster rankings for \"подногтевая меланома фото\"",
+          "query": "подногтевая меланома фото",
+          "targetUrl": "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+          "hasTargetUrl": true
+        },
+        {
+          "title": "Improve Yandex Webmaster rankings for \"онкологический центр в сколково адрес\"",
+          "query": "онкологический центр в сколково адрес",
+          "targetUrl": "https://zaruku.ru/map/moskva/organization_1425/",
+          "hasTargetUrl": true
+        }
+      ],
+      "notes": [
+        "Local read-only SERP URL evidence quality gate only.",
+        "The gate evaluates readiness for later automation but does not create or approve tasks.",
+        "SERP position is compared as a separate evidence field and is not merged with Webmaster averagePosition.",
+        "No API calls, Firestore writes, Telegram sends, scheduler actions or production pipeline execution are performed."
+      ]
+    },
+    "notes": [
+      "Local deterministic QueryCluster v1 review only.",
+      "Clustering uses config-driven normalization, token-set Jaccard threshold and shared head term.",
+      "URL evidence is propagated only when a cluster member has deterministic SERP matched URL evidence.",
+      "Cluster average position is an impressions-weighted aggregate; member positions remain listed in the artifact.",
+      "No lemmatization, transliteration, LLM, threshold changes, production writes or task creation are performed."
+    ]
+  },
+  "sideEffects": {
+    "persisted": false,
+    "sent": false,
+    "productionPipelineRun": false,
+    "liveApiCalls": false
+  },
+  "notes": [
+    "Local QueryCluster v1 review only.",
+    "Reads existing TASK-042 SERP evidence; does not call Yandex APIs.",
+    "Opportunities are generated from cluster-level SearchPerformance records.",
+    "Quality gate config is unchanged from TASK-040.",
+    "No Firestore writes, Telegram sends, scheduler actions, threshold changes or production pipeline execution."
+  ]
+}

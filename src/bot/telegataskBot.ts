@@ -10,6 +10,7 @@ import {
   upsertUserFromTelegramPayload,
   upsertUserByUsername,
   getUserById,
+  getUserByTelegramId,
 } from "../repositories/userRepository";
 import {
   upsertChatFromTelegramPayload,
@@ -85,6 +86,11 @@ import {
   pendingKnowledgeForwards,
   handleKnowledgeImportantFollowup,
 } from "../legacy/knowledge/handleKnowledge";
+import {
+  handleWeeklyTop10TelegramApprovalDevStartupCallback,
+  handleWeeklyTop10TelegramApprovalDevStartupMessage,
+  registerWeeklyTop10TelegramApprovalDevStartup,
+} from "./weeklyTop10TelegramApprovalBotIntegration";
 
 let skillRouter: SkillRouter | null = null;
 const mediaPlanningHandlers = registerMediaPlanningHandlers();
@@ -4304,6 +4310,13 @@ export function initTelegataskBot(): void {
 
   bot = new Telegraf(token);
 
+  registerWeeklyTop10TelegramApprovalDevStartup({
+    resolveActor: async ({ telegramUserId }) => {
+      const user = await getUserByTelegramId(telegramUserId);
+      return user ? { userId: user.id, role: "seo_manager" } : null;
+    },
+  });
+
   // Initialize skill router
   const tgService = new TelegramService();
   tgService.setBot(bot);
@@ -4328,6 +4341,25 @@ export function initTelegataskBot(): void {
         await ctx.answerCbQuery("Доступен только flow медиапланирования").catch(() => {});
         return;
       }
+
+      const handledWeeklyTop10Approval =
+        await handleWeeklyTop10TelegramApprovalDevStartupCallback({
+          updateId: ctx.update.update_id,
+          from: ctx.from ? { id: ctx.from.id } : undefined,
+          callbackQuery: {
+            id: "id" in ctx.callbackQuery ? ctx.callbackQuery.id : undefined,
+            data: callbackData,
+            message: "message" in ctx.callbackQuery && ctx.callbackQuery.message
+              ? {
+                  message_id: ctx.callbackQuery.message.message_id,
+                  chat: { id: ctx.callbackQuery.message.chat.id },
+                }
+              : undefined,
+          },
+          answerCbQuery: (text?: string) => ctx.answerCbQuery(text),
+          reply: (text, options) => ctx.reply(text, options),
+        });
+      if (handledWeeklyTop10Approval) return;
 
       if (skillRouter) {
         const handled = await skillRouter.handleCallback(ctx);
@@ -4374,6 +4406,24 @@ export function initTelegataskBot(): void {
         if (message && "chat" in message && message.chat.type === "private") {
           await ctx.reply("Для этого аккаунта сейчас доступен только flow медиапланирования.");
         }
+        return;
+      }
+
+      const message = ctx.message;
+      const handledWeeklyTop10ApprovalMessage =
+        await handleWeeklyTop10TelegramApprovalDevStartupMessage({
+          updateId: ctx.update.update_id,
+          from: ctx.from ? { id: ctx.from.id } : undefined,
+          message: message && "chat" in message
+            ? {
+                text: "text" in message ? message.text : undefined,
+                message_id: "message_id" in message ? message.message_id : undefined,
+                chat: { id: message.chat.id },
+              }
+            : undefined,
+          reply: (text, options) => ctx.reply(text, options),
+        });
+      if (handledWeeklyTop10ApprovalMessage) {
         return;
       }
 

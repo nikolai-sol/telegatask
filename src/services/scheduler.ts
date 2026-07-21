@@ -10,6 +10,7 @@
  */
 
 import cron from "node-cron";
+import { spawn } from "child_process";
 import { Telegraf } from "telegraf";
 import { runAutoScan } from "./scanner";
 import {
@@ -24,8 +25,10 @@ import {
   setBriefingBotInstance,
 } from "./briefing";
 import { debugLog } from "../config/debug";
+import { shouldRunWeeklySeoRhythmCatchUp } from "../features/seoAgent/weeklySeoRhythm";
 
 const jobs: ReturnType<typeof cron.schedule>[] = [];
+const SEO_WEEKLY_RHYTHM_TIME_ZONE = process.env.SEO_WEEKLY_RHYTHM_TIME_ZONE || "Europe/Vienna";
 
 type CronKey =
   | "auto_scan"
@@ -33,7 +36,9 @@ type CronKey =
   | "followups"
   | "unanswered_mentions"
   | "morning_briefs"
-  | "evening_digests";
+  | "evening_digests"
+  | "weekly_seo_rhythm"
+  | "async_hermes_advisory";
 
 type SchedulerStats = {
   startedAt: string | null;
@@ -54,6 +59,8 @@ const stats: SchedulerStats = {
     unanswered_mentions: null,
     morning_briefs: null,
     evening_digests: null,
+    weekly_seo_rhythm: null,
+    async_hermes_advisory: null,
   },
   lastOkAt: {
     auto_scan: null,
@@ -62,6 +69,8 @@ const stats: SchedulerStats = {
     unanswered_mentions: null,
     morning_briefs: null,
     evening_digests: null,
+    weekly_seo_rhythm: null,
+    async_hermes_advisory: null,
   },
   lastError: {
     auto_scan: null,
@@ -70,12 +79,83 @@ const stats: SchedulerStats = {
     unanswered_mentions: null,
     morning_briefs: null,
     evening_digests: null,
+    weekly_seo_rhythm: null,
+    async_hermes_advisory: null,
   },
   lastAutoScanSummary: null,
 };
 
 export function getSchedulerStats(): SchedulerStats {
   return JSON.parse(JSON.stringify({ ...stats, jobsCount: jobs.length })) as SchedulerStats;
+}
+
+async function runWeeklySeoRhythmScript(): Promise<void> {
+  await new Promise<void>((resolve, reject) => {
+    const child = spawn(process.execPath, [
+      "-r",
+      "ts-node/register/transpile-only",
+      "scripts/runWeeklySeoRhythm.ts",
+    ], {
+      cwd: process.cwd(),
+      stdio: "inherit",
+      env: process.env,
+    });
+    child.on("error", reject);
+    child.on("exit", (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`weekly rhythm script exited with code ${code}`));
+    });
+  });
+}
+
+async function runWeeklySeoRhythmSchedulerTrigger(kind: "cron" | "catch_up"): Promise<void> {
+  debugLog(`[scheduler] Running SEO weekly rhythm (${kind})...`);
+  stats.lastRunAt.weekly_seo_rhythm = new Date().toISOString();
+  try {
+    await runWeeklySeoRhythmScript();
+    stats.lastOkAt.weekly_seo_rhythm = new Date().toISOString();
+    stats.lastError.weekly_seo_rhythm = null;
+  } catch (error) {
+    stats.lastError.weekly_seo_rhythm = String((error as any)?.message || error);
+    console.error(`[scheduler] SEO weekly rhythm ${kind} failed`, error);
+  }
+}
+
+let asyncHermesAdvisoryRunning = false;
+
+async function runAsyncHermesAdvisoryScript(): Promise<void> {
+  await new Promise<void>((resolve, reject) => {
+    const child = spawn(process.execPath, [
+      "-r",
+      "ts-node/register/transpile-only",
+      "scripts/runAsyncHermesAdvisory.ts",
+    ], {
+      cwd: process.cwd(),
+      stdio: "inherit",
+      env: process.env,
+    });
+    child.on("error", reject);
+    child.on("exit", (code) => {
+      if (code === 0) resolve();
+      else reject(new Error(`async Hermes advisory script exited with code ${code}`));
+    });
+  });
+}
+
+async function runAsyncHermesAdvisorySchedulerTrigger(): Promise<void> {
+  if (asyncHermesAdvisoryRunning) return;
+  asyncHermesAdvisoryRunning = true;
+  stats.lastRunAt.async_hermes_advisory = new Date().toISOString();
+  try {
+    await runAsyncHermesAdvisoryScript();
+    stats.lastOkAt.async_hermes_advisory = new Date().toISOString();
+    stats.lastError.async_hermes_advisory = null;
+  } catch (error) {
+    stats.lastError.async_hermes_advisory = String((error as Error)?.message || error);
+    console.error("[scheduler] Async Hermes advisory failed", error);
+  } finally {
+    asyncHermesAdvisoryRunning = false;
+  }
 }
 
 /**
@@ -195,6 +275,31 @@ export function startScheduler(bot: Telegraf): void {
       }
     })
   );
+
+  if (process.env.SEO_WEEKLY_RHYTHM_CRON === "1") {
+    if (shouldRunWeeklySeoRhythmCatchUp({
+      now: new Date().toISOString(),
+      env: process.env,
+      timeZone: SEO_WEEKLY_RHYTHM_TIME_ZONE,
+    })) {
+      void runWeeklySeoRhythmSchedulerTrigger("catch_up");
+    }
+
+    jobs.push(
+      cron.schedule("0 9 * * 1", async () => {
+        await runWeeklySeoRhythmSchedulerTrigger("cron");
+      }, { timezone: SEO_WEEKLY_RHYTHM_TIME_ZONE })
+    );
+  }
+
+  if (process.env.SEO_ASYNC_HERMES_ENRICHMENT === "1") {
+    void runAsyncHermesAdvisorySchedulerTrigger();
+    jobs.push(
+      cron.schedule("*/30 * * * *", async () => {
+        await runAsyncHermesAdvisorySchedulerTrigger();
+      }, { timezone: SEO_WEEKLY_RHYTHM_TIME_ZONE })
+    );
+  }
 
   console.log(`[scheduler] ${jobs.length} cron jobs started`);
   stats.jobsCount = jobs.length;

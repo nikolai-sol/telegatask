@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "seo_os_weekly_rhythm_run_v1",
+  "counters": {
+    "opportunityCount": 1,
+    "digestMessages": 1
+  },
+  "gapDigestArtifact": {
+    "review": {
+      "opportunities": [
+        {
+          "id": "opp_1",
+          "title": "Поднять melanoma section",
+          "opportunityType": "section_ranking_gap",
+          "targetUrl": "https://zaruku.ru/melanoma/"
+        }
+      ],
+      "summary": {
+        "generated": 1
+      }
+    }
+  }
+}

@@ -36,6 +36,7 @@ describe("renderZarukuWgdHtmlReport", () => {
     expect(html).toContain("zaruku.ru: портал поддержки людей с онкозаболеваниями");
     expect(html).toContain("<h2>Executive Snapshot</h2>");
     expect(html).toContain("<h2>Главные выводы</h2>");
+    expect(html).toContain("<h2>Google Search Console: owned demand</h2>");
     expect(html).toContain("<h2>Страница и структура</h2>");
     expect(html).toContain("<h2>Yandex Webmaster: top queries</h2>");
     expect(html).toContain("<h2>Yandex SERP rank checks</h2>");

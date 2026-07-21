@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "seo_os_yandex_query_to_page_evidence_review_v1",
+  "source": "local_review",
+  "searchEngine": "yandex",
+  "summary": {
+    "reviewedQueries": 3,
+    "withCandidateUrl": 2,
+    "highConfidence": 1,
+    "mediumConfidence": 0,
+    "lowConfidence": 1,
+    "noCandidate": 1
+  },
+  "items": [
+    {
+      "query": "рак лечение",
+      "sourceRank": 1,
+      "impressions": 320,
+      "averagePosition": 9.4,
+      "candidateUrl": "https://zaruku.ru/rak-lyogkogo/lechenie/",
+      "confidence": "high",
+      "evidence": [
+        {
+          "source": "yandex_serp_rank",
+          "strength": "high",
+          "query": "рак лечение",
+          "url": "https://zaruku.ru/rak-lyogkogo/lechenie/",
+          "message": "Yandex SERP rank check found target URL at position 9 for \"рак лечение\"."
+        }
+      ],
+      "missingEvidence": []
+    },
+    {
+      "query": "подногтевая меланома фото",
+      "sourceRank": 2,
+      "impressions": 99,
+      "averagePosition": 5,
+      "candidateUrl": null,
+      "confidence": "none",
+      "evidence": [
+        {
+          "source": "yandex_serp_rank",
+          "strength": "negative",
+          "query": "подногтевая меланома фото",
+          "url": null,
+          "message": "Yandex SERP rank check did not find the target domain for \"подногтевая меланома фото\"."
+        }
+      ],
+      "missingEvidence": [
+        "No exact homepage snapshot text match for this query."
+      ]
+    },
+    {
+      "query": "форум онкобольных",
+      "sourceRank": 3,
+      "impressions": null,
+      "averagePosition": 8.75,
+      "candidateUrl": "https://zaruku.ru/",
+      "confidence": "low",
+      "evidence": [
+        {
+          "source": "page_snapshot",
+          "strength": "low",
+          "query": "форум онкобольных",
+          "url": "https://zaruku.ru/",
+          "message": "Homepage snapshot bodySample contains exact query text for \"форум онкобольных\"."
+        }
+      ],
+      "missingEvidence": [
+        "No exact Yandex SERP rank check for this query."
+      ]
+    }
+  ],
+  "notes": [
+    "Local read-only evidence review only.",
+    "Exact Yandex SERP matched URLs are treated as high-confidence candidates.",
+    "Exact homepage snapshot text matches are treated as medium or low confidence hints.",
+    "No query lemmatization, URL inference, production writes or task creation are performed."
+  ]
+}

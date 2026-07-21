@@ -1,0 +1,54 @@
+[
+  {
+    "source": "yandex_webmaster",
+    "searchEngine": "yandex",
+    "property": "https:zaruku.ru:443",
+    "siteUrl": "https://zaruku.ru/",
+    "dateRange": {
+      "startDate": "2026-06-05",
+      "endDate": "2026-07-02",
+      "days": 28
+    },
+    "dimension": "query",
+    "key": "подногтевая меланома фото",
+    "query": "подногтевая меланома фото",
+    "page": null,
+    "country": null,
+    "device": null,
+    "clicks": 1,
+    "impressions": 171,
+    "ctr": 0.584795,
+    "averagePosition": 9.789473684210526,
+    "sourceRank": 3
+  },
+  {
+    "source": "yandex_webmaster",
+    "searchEngine": "yandex",
+    "property": "https:zaruku.ru:443",
+    "siteUrl": "https://zaruku.ru/",
+    "dateRange": {
+      "startDate": "2026-06-05",
+      "endDate": "2026-07-02",
+      "days": 28
+    },
+    "dimension": "query",
+    "key": "подногтевая меланома на большом пальце ноги фото",
+    "query": "подногтевая меланома на большом пальце ноги фото",
+    "page": "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+    "country": null,
+    "device": null,
+    "clicks": 5,
+    "impressions": 91,
+    "ctr": 5.494505,
+    "averagePosition": 8.428571428571429,
+    "sourceRank": 15,
+    "serpUrlEvidence": {
+      "source": "yandex_serp_rank",
+      "provider": "yandex_search_api",
+      "matchedUrl": "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+      "serpPosition": 16,
+      "checkedAt": "2026-07-06T17:15:00.000Z",
+      "note": "Fixture SERP URL evidence."
+    }
+  }
+]

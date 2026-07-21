@@ -1,0 +1,29 @@
+[
+  {
+    "url": "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+    "visits": 10,
+    "users": 8,
+    "pageDepth": 2,
+    "avgVisitDurationSeconds": 120,
+    "bounceRate": 20,
+    "searchEngine": "yandex"
+  },
+  {
+    "url": "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+    "visits": 5,
+    "users": 4,
+    "pageDepth": 4,
+    "avgVisitDurationSeconds": 60,
+    "bounceRate": 40,
+    "searchEngine": "google"
+  },
+  {
+    "url": "https://zaruku.ru/map/moskva/organization_1425/",
+    "visits": 7,
+    "users": 6,
+    "pageDepth": 1.5,
+    "avgVisitDurationSeconds": 30,
+    "bounceRate": 50,
+    "searchEngine": "bing"
+  }
+]

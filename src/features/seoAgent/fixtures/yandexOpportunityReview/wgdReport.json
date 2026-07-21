@@ -1,0 +1,89 @@
+{
+  "run": {
+    "id": "run-1",
+    "domain": "zaruku.ru",
+    "yandexWebmaster": {
+      "property": "https:zaruku.ru:443",
+      "siteUrl": "https://zaruku.ru/",
+      "dateRange": {
+        "startDate": "2026-06-26",
+        "endDate": "2026-07-02",
+        "days": 7
+      }
+    },
+    "rankTracking": {
+      "yandex": {
+        "checks": [
+          {
+            "query": "рак лечение",
+            "searchEngine": "yandex",
+            "provider": "yandex_search_api",
+            "targetDomain": "zaruku.ru",
+            "found": true,
+            "position": 9,
+            "matchedUrl": "https://zaruku.ru/rak-lyogkogo/lechenie/",
+            "title": "Рак лечение для пациента",
+            "device": "desktop",
+            "checkedAt": "2026-07-05T12:00:00.000Z"
+          },
+          {
+            "query": "подногтевая меланома фото",
+            "searchEngine": "yandex",
+            "provider": "yandex_search_api",
+            "targetDomain": "zaruku.ru",
+            "found": false,
+            "topResultDomains": [
+              "example.com",
+              "images.example.com"
+            ],
+            "device": "desktop",
+            "checkedAt": "2026-07-05T12:00:00.000Z"
+          }
+        ]
+      }
+    }
+  },
+  "page": {
+    "url": "https://zaruku.ru/",
+    "finalUrl": "https://zaruku.ru/",
+    "title": "За руку",
+    "description": "Портал поддержки онкопациентов и близких.",
+    "h1": "Все о диагностике и лечении рака",
+    "bodySample": "На сайте есть материалы для пациентов, личные истории и форум онкобольных.",
+    "internalLinks": [
+      "https://zaruku.ru/",
+      "https://zaruku.ru/obshie-temy/",
+      "https://zaruku.ru/rak-lyogkogo/lechenie/"
+    ]
+  },
+  "yandexQueries": [
+    {
+      "query": " рак лечение ",
+      "impressions": 320,
+      "clicks": 12,
+      "ctr": 3.75,
+      "averagePosition": 9.4
+    },
+    {
+      "query": "подногтевая меланома фото",
+      "impressions": 99,
+      "clicks": 1,
+      "ctr": 1.0101010101010102,
+      "averagePosition": 5
+    },
+    {
+      "query": "",
+      "impressions": 240,
+      "clicks": 8,
+      "ctr": 3.3333333333333335,
+      "averagePosition": 11
+    },
+    {
+      "query": "форум онкобольных",
+      "impressions": null,
+      "clicks": 2,
+      "ctr": null,
+      "averagePosition": 8.75
+    }
+  ]
+}

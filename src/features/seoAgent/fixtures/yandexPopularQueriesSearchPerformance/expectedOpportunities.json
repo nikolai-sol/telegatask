@@ -1,0 +1,33 @@
+[
+  {
+    "type": "keyword",
+    "opportunityType": "keyword_quick_win",
+    "intent": "unknown",
+    "title": "Improve Yandex Webmaster rankings for \"рак лечение\"",
+    "description": "Improve the page/query match for \"рак лечение\" and add internal links from relevant pages. Yandex Webmaster query \"рак лечение\" has 320 impressions and average position 9.4. Source rank: 1.",
+    "targetUrl": null,
+    "targetKeywords": [
+      "рак лечение"
+    ],
+    "market": "RU",
+    "language": "ru",
+    "impact": "high",
+    "effort": "medium",
+    "urgency": "high",
+    "priority": "high",
+    "confidence": "medium",
+    "source": "provider",
+    "recommendedAction": "Improve the page/query match for \"рак лечение\" and add internal links from relevant pages.",
+    "reasoning": "Yandex Webmaster query \"рак лечение\" has 320 impressions and average position 9.4. Source rank: 1.",
+    "evidence": [
+      {
+        "source": "yandex_webmaster",
+        "metric": "search_performance",
+        "value": 320,
+        "query": "рак лечение",
+        "url": null,
+        "message": "Yandex Webmaster query \"рак лечение\" has 320 impressions and average position 9.4. Source rank: 1."
+      }
+    ]
+  }
+]

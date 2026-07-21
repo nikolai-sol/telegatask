@@ -1,0 +1,126 @@
+{
+  "queryUrlEvidence": {
+    "records": [
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-26",
+          "endDate": "2026-07-02",
+          "days": 7
+        },
+        "dimension": "query",
+        "key": "рак лечение",
+        "query": "рак лечение",
+        "page": "https://zaruku.ru/rak-lyogkogo/lechenie/",
+        "country": null,
+        "device": null,
+        "clicks": 12,
+        "impressions": 320,
+        "ctr": 3.75,
+        "averagePosition": 9.4,
+        "sourceRank": 1,
+        "serpUrlEvidence": {
+          "source": "yandex_serp_rank",
+          "provider": "yandex_search_api",
+          "matchedUrl": "https://zaruku.ru/rak-lyogkogo/lechenie/",
+          "serpPosition": 9,
+          "checkedAt": "2026-07-05T10:00:00.000Z",
+          "note": "SERP position is stored as evidence and is not merged with Yandex Webmaster averagePosition."
+        }
+      },
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-26",
+          "endDate": "2026-07-02",
+          "days": 7
+        },
+        "dimension": "query",
+        "key": "подногтевая меланома фото",
+        "query": "подногтевая меланома фото",
+        "page": null,
+        "country": null,
+        "device": null,
+        "clicks": 1,
+        "impressions": 99,
+        "ctr": 1.0101010101010102,
+        "averagePosition": 5,
+        "sourceRank": 2
+      },
+      {
+        "source": "yandex_webmaster",
+        "searchEngine": "yandex",
+        "property": "https:zaruku.ru:443",
+        "siteUrl": "https://zaruku.ru/",
+        "dateRange": {
+          "startDate": "2026-06-26",
+          "endDate": "2026-07-02",
+          "days": 7
+        },
+        "dimension": "query",
+        "key": "форум онкобольных",
+        "query": "форум онкобольных",
+        "page": null,
+        "country": null,
+        "device": null,
+        "clicks": 2,
+        "impressions": null,
+        "ctr": null,
+        "averagePosition": 8.75,
+        "sourceRank": 3
+      }
+    ]
+  },
+  "opportunities": [
+    {
+      "type": "keyword",
+      "opportunityType": "keyword_quick_win",
+      "intent": "unknown",
+      "title": "Improve Yandex Webmaster rankings for \"рак лечение\"",
+      "description": "Improve the page/query match.",
+      "targetUrl": "https://zaruku.ru/rak-lyogkogo/lechenie/",
+      "targetKeywords": [
+        "рак лечение"
+      ],
+      "market": "RU",
+      "language": "ru",
+      "impact": "high",
+      "effort": "medium",
+      "urgency": "high",
+      "priority": "high",
+      "confidence": "medium",
+      "source": "provider",
+      "recommendedAction": "Improve the page/query match.",
+      "reasoning": "Fixture opportunity with URL.",
+      "evidence": []
+    },
+    {
+      "type": "keyword",
+      "opportunityType": "keyword_quick_win",
+      "intent": "unknown",
+      "title": "Improve Yandex Webmaster rankings for \"подногтевая меланома фото\"",
+      "description": "Improve the page/query match.",
+      "targetUrl": null,
+      "targetKeywords": [
+        "подногтевая меланома фото"
+      ],
+      "market": "RU",
+      "language": "ru",
+      "impact": "medium",
+      "effort": "medium",
+      "urgency": "medium",
+      "priority": "medium",
+      "confidence": "medium",
+      "source": "provider",
+      "recommendedAction": "Improve the page/query match.",
+      "reasoning": "Fixture opportunity without URL.",
+      "evidence": []
+    }
+  ]
+}

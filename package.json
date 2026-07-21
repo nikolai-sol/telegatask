@@ -10,7 +10,8 @@
     "start:prod": "npm run build && pm2 start ecosystem.config.js",
     "restart": "pm2 restart telegatask",
     "logs": "pm2 logs telegatask",
-    "test": "vitest run"
+    "test": "vitest run",
+    "seo:hermes-advisory": "node -r ts-node/register/transpile-only scripts/runAsyncHermesAdvisory.ts"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +21,7 @@
     "@anthropic-ai/sdk": "^0.78.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
+    "exceljs": "^4.4.0",
     "express": "^5.2.1",
     "firebase-admin": "^13.6.0",
     "mammoth": "^1.11.0",

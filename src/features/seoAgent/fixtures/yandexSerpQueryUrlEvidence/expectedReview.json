@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "seo_os_yandex_serp_query_url_evidence_v1",
+  "source": "local_review",
+  "searchEngine": "yandex",
+  "summary": {
+    "inputRecords": 3,
+    "eligibleQueryRecords": 3,
+    "rankChecks": 2,
+    "matchedUrlRecords": 1,
+    "missingUrlRecords": 2
+  },
+  "records": [
+    {
+      "source": "yandex_webmaster",
+      "searchEngine": "yandex",
+      "property": "https:zaruku.ru:443",
+      "siteUrl": "https://zaruku.ru/",
+      "dateRange": {
+        "startDate": "2026-06-26",
+        "endDate": "2026-07-02",
+        "days": 7
+      },
+      "dimension": "query",
+      "key": "рак лечение",
+      "query": "рак лечение",
+      "page": "https://zaruku.ru/rak-lyogkogo/lechenie/",
+      "country": null,
+      "device": null,
+      "clicks": 12,
+      "impressions": 320,
+      "ctr": 3.75,
+      "averagePosition": 9.4,
+      "sourceRank": 1,
+      "serpUrlEvidence": {
+        "source": "yandex_serp_rank",
+        "provider": "yandex_search_api",
+        "matchedUrl": "https://zaruku.ru/rak-lyogkogo/lechenie/",
+        "serpPosition": 9,
+        "checkedAt": "2026-07-05T10:00:00.000Z",
+        "note": "SERP position is stored as evidence and is not merged with Yandex Webmaster averagePosition."
+      }
+    },
+    {
+      "source": "yandex_webmaster",
+      "searchEngine": "yandex",
+      "property": "https:zaruku.ru:443",
+      "siteUrl": "https://zaruku.ru/",
+      "dateRange": {
+        "startDate": "2026-06-26",
+        "endDate": "2026-07-02",
+        "days": 7
+      },
+      "dimension": "query",
+      "key": "подногтевая меланома фото",
+      "query": "подногтевая меланома фото",
+      "page": null,
+      "country": null,
+      "device": null,
+      "clicks": 1,
+      "impressions": 99,
+      "ctr": 1.0101010101010102,
+      "averagePosition": 5,
+      "sourceRank": 2
+    },
+    {
+      "source": "yandex_webmaster",
+      "searchEngine": "yandex",
+      "property": "https:zaruku.ru:443",
+      "siteUrl": "https://zaruku.ru/",
+      "dateRange": {
+        "startDate": "2026-06-26",
+        "endDate": "2026-07-02",
+        "days": 7
+      },
+      "dimension": "query",
+      "key": "форум онкобольных",
+      "query": "форум онкобольных",
+      "page": null,
+      "country": null,
+      "device": null,
+      "clicks": 2,
+      "impressions": null,
+      "ctr": null,
+      "averagePosition": 8.75,
+      "sourceRank": 3
+    }
+  ],
+  "notes": [
+    "Local read-only SERP query-to-URL evidence mapping only.",
+    "Matched URLs from yandex_serp_rank populate record.page for matching Yandex Webmaster query records.",
+    "SERP position is kept in serpUrlEvidence and is not merged with Yandex Webmaster averagePosition.",
+    "No URL heuristics, lemmatization, production writes or task creation are performed."
+  ]
+}

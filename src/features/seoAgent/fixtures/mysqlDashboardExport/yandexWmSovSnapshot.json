@@ -1,0 +1,58 @@
+{
+  "generatedAt": "2026-07-13T14:00:48.452Z",
+  "source": "Yandex Webmaster search-queries/popular",
+  "domain": "zaruku.ru",
+  "dateRange": {
+    "startDate": "2026-06-13",
+    "endDate": "2026-07-10",
+    "days": 28
+  },
+  "totals": {
+    "impressions": 1000,
+    "clicks": 100,
+    "ctrPct": 10,
+    "averagePosition": 9.3
+  },
+  "clusters": [
+    {
+      "cluster": "medical_org_labs_noise",
+      "queryCount": 10,
+      "impressions": 600,
+      "clicks": 10,
+      "impressionSharePct": 60,
+      "clickSharePct": 10,
+      "ctrPct": 1.67,
+      "averagePosition": 9.6
+    },
+    {
+      "cluster": "breast_cancer",
+      "queryCount": 5,
+      "impressions": 250,
+      "clicks": 70,
+      "impressionSharePct": 25,
+      "clickSharePct": 70,
+      "ctrPct": 28,
+      "averagePosition": 8.3
+    },
+    {
+      "cluster": "lung_cancer",
+      "queryCount": 2,
+      "impressions": 50,
+      "clicks": 10,
+      "impressionSharePct": 5,
+      "clickSharePct": 10,
+      "ctrPct": 20,
+      "averagePosition": 7.2
+    },
+    {
+      "cluster": "brand",
+      "queryCount": 1,
+      "impressions": 100,
+      "clicks": 10,
+      "impressionSharePct": 10,
+      "clickSharePct": 10,
+      "ctrPct": 10,
+      "averagePosition": 2.1
+    }
+  ]
+}

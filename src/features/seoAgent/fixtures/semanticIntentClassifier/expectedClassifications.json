@@ -1,0 +1,44 @@
+[
+  {
+    "query": "гемотест орел победа 1",
+    "intentClass": "competitor_brand",
+    "rule": "competitor_brand_token",
+    "isTarget": false
+  },
+  {
+    "query": "онкологический центр в сколково адрес",
+    "intentClass": "facility_navigational",
+    "rule": "facility_token_and_geo_token",
+    "isTarget": true
+  },
+  {
+    "query": "подногтевая меланома фото",
+    "intentClass": "medical_informational",
+    "rule": "medical_token",
+    "isTarget": true
+  },
+  {
+    "query": "за руку",
+    "intentClass": "own_brand",
+    "rule": "own_brand_token",
+    "isTarget": false
+  },
+  {
+    "query": "какая погода завтра",
+    "intentClass": "off_mission",
+    "rule": "unmatched",
+    "isTarget": false
+  },
+  {
+    "query": "ритуксимаб цена",
+    "intentClass": "drug_compliance",
+    "rule": "drug_compliance_token",
+    "isTarget": false
+  },
+  {
+    "query": "гемотест рак лечение",
+    "intentClass": "competitor_brand",
+    "rule": "competitor_brand_token",
+    "isTarget": false
+  }
+]
