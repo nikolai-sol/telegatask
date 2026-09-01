@@ -25,6 +25,12 @@ Project note:
 
 ## Source Architecture
 
+### AI Visibility Provider Policy
+
+For WGD AI visibility checks, use DataForSEO AI Optimization / LLM Mentions as the default provider. It covers Google AI Overview citation data with location and language filters and is the primary source for standard reports. Other providers, such as Peec.ai, are available on demand for model-specific comparisons, recurring project tracking, or a second opinion; they are not part of the default WGD run.
+
+DataForSEO AI visibility is a separate signal from organic Google rank tracking. Use `target_metrics` for aggregate citations and AI search volume, and `search_mentions` with `search_scope: ["sources"]` when the report needs the individual cited pages.
+
 Single-source mode is preserved:
 
 ```bash
@@ -41,10 +47,12 @@ Rules:
 
 - if `SEO_DATA_SOURCES` is set, multi-source mode is used
 - if `SEO_DATA_SOURCES` is not set, old `SEO_DATA_PROVIDER` behavior is preserved
-- missing `SEO_DATA_PROVIDER` still defaults to `mock`
+- missing `SEO_DATA_PROVIDER` defaults to the DataForSEO-based source set: `crawler,pagespeed,google_serp_rank`
 - unknown source names return a controlled error
 - one optional source can fail without failing the whole run if at least one selected source succeeds
 - source failures are recorded as safe source statuses
+- standard WGD runs use `crawler`, `pagespeed`, and `google_serp_rank` through DataForSEO; Yandex is opt-in for Russian-market runs only
+- `mock` and SISTRIX remain legacy/on-demand sources and are not part of the standard WGD source set
 
 Supported Stage 07 source names:
 

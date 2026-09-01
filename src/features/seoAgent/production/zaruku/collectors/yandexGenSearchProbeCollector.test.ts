@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { zarukuSeoProductionConfig } from "../zarukuSeoProductionConfig";
 import {
   collectYandexGenSearchProbes,
@@ -13,11 +13,7 @@ const oneQueryConfig = {
 
 function response(status: number, body: unknown): Awaited<ReturnType<YandexGenSearchFetch>> {
   const text = typeof body === "string" ? body : JSON.stringify(body);
-  return {
-    ok: status >= 200 && status < 300,
-    status,
-    text: async () => text,
-  };
+  return new Response(text, { status });
 }
 
 describe("collectYandexGenSearchProbes", () => {
@@ -181,7 +177,7 @@ describe("collectYandexGenSearchProbes", () => {
         channel: "Yandex Search API generative response",
         status: "failed",
         query: "Что такое портал За руку zaruku.ru для онкопациентов?",
-        result: "server failed",
+        result: "Yandex generative search request failed.",
         sources: [],
         sourceDetails: [],
         usedSources: [],
@@ -191,5 +187,49 @@ describe("collectYandexGenSearchProbes", () => {
         usedSourcePosition: null,
       },
     ]);
+  });
+
+  test("returns fixed failed evidence when fetch or body consumption hangs", async () => {
+    const fetchImpl: YandexGenSearchFetch = async () => new Promise(() => undefined);
+
+    const result = await collectYandexGenSearchProbes(oneQueryConfig, {
+      env: {
+        YANDEX_GEN_SEARCH_API_KEY: "test-key",
+        YANDEX_SEARCH_FOLDER_ID: "folder-1",
+      },
+      fetchImpl,
+      requestTimeoutMs: 10,
+      overallTimeoutMs: 25,
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        status: "failed",
+        result: "Yandex generative search request failed.",
+        sources: [],
+      }),
+    ]);
+  });
+
+  test("rejects an oversized declared response without consuming its body", async () => {
+    const read = vi.fn();
+    const fetchImpl: YandexGenSearchFetch = async () => ({
+      ok: true,
+      status: 200,
+      headers: new Headers({ "content-length": "33" }),
+      body: { getReader: () => ({ read }) },
+    });
+
+    const result = await collectYandexGenSearchProbes(oneQueryConfig, {
+      env: {
+        YANDEX_GEN_SEARCH_API_KEY: "test-key",
+        YANDEX_SEARCH_FOLDER_ID: "folder-1",
+      },
+      fetchImpl,
+      maxResponseBytes: 32,
+    });
+
+    expect(read).not.toHaveBeenCalled();
+    expect(result[0]).toMatchObject({ status: "failed", result: "Yandex generative search request failed." });
   });
 });

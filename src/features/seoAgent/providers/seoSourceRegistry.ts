@@ -88,8 +88,8 @@ export function resolveSeoSourceSelection(explicitSources?: string[]): SeoSource
   const provider = String(process.env.SEO_DATA_PROVIDER || "mock").trim().toLowerCase();
   if (!provider || provider === "mock") {
     return {
-      mode: "single",
-      selectedSources: ["mock"],
+      mode: "multi",
+      selectedSources: ["crawler", "pagespeed", "google_serp_rank"],
       allSources: ALL_SOURCE_NAMES,
     };
   }

@@ -6,6 +6,12 @@ import {
   extractGenSearchSourceDetails,
   type YandexAiProbe,
 } from "../zarukuWgdRunnerHelpers";
+import {
+  fetchBoundedProviderText,
+  ProviderDeadlineError,
+  withProviderDeadline,
+  type BoundedProviderResponse,
+} from "../../../providers/boundedProviderHttp";
 
 type YandexGenSearchEnv = Partial<
   Record<
@@ -14,7 +20,7 @@ type YandexGenSearchEnv = Partial<
   >
 >;
 
-type YandexGenSearchResponse = Pick<Response, "ok" | "status" | "text">;
+type YandexGenSearchResponse = Pick<Response, "ok" | "status"> & BoundedProviderResponse;
 
 export type YandexGenSearchFetch = (url: string, init: RequestInit) => Promise<YandexGenSearchResponse>;
 export type YandexGenSearchSleep = (ms: number) => Promise<void>;
@@ -24,11 +30,18 @@ type ProbeConfig = Pick<
   "aiProbeChannel" | "aiProbeQueries" | "aiProbeTargetDomain" | "aiProbeThrottleMs"
 >;
 
-type ProbeDeps = {
+export type ProbeDeps = {
   env?: YandexGenSearchEnv;
   fetchImpl?: YandexGenSearchFetch;
   sleepImpl?: YandexGenSearchSleep;
+  requestTimeoutMs?: number;
+  overallTimeoutMs?: number;
+  maxResponseBytes?: number;
 };
+
+export const YANDEX_GEN_SEARCH_REQUEST_TIMEOUT_MS = 20_000;
+export const YANDEX_GEN_SEARCH_OVERALL_TIMEOUT_MS = 90_000;
+export const YANDEX_GEN_SEARCH_MAX_RESPONSE_BYTES = 1024 * 1024;
 
 function defaultFetch(url: string, init: RequestInit): Promise<YandexGenSearchResponse> {
   return fetch(url, init);
@@ -36,6 +49,11 @@ function defaultFetch(url: string, init: RequestInit): Promise<YandexGenSearchRe
 
 function defaultSleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function boundedDependencyValue(value: number | undefined, maximum: number): number {
+  if (!Number.isFinite(value)) return maximum;
+  return Math.min(maximum, Math.max(1, Math.floor(value!)));
 }
 
 function readProcessEnv(): YandexGenSearchEnv {
@@ -60,6 +78,8 @@ async function runYandexGenSearchProbe(input: {
   config: ProbeConfig;
   env: YandexGenSearchEnv;
   fetchImpl: YandexGenSearchFetch;
+  requestTimeoutMs: number;
+  maxResponseBytes: number;
 }): Promise<YandexAiProbe> {
   const authHeader = yandexGenSearchAuthHeader(input.env);
   const folderId = cleanString(input.env.YANDEX_GEN_SEARCH_FOLDER_ID) || cleanString(input.env.YANDEX_SEARCH_FOLDER_ID);
@@ -79,24 +99,28 @@ async function runYandexGenSearchProbe(input: {
     };
   }
 
-  const response = await input.fetchImpl("https://searchapi.api.cloud.yandex.net/v2/gen/search", {
-    method: "POST",
-    headers: {
-      Authorization: authHeader,
-      "Content-Type": "application/json",
+  const { response, text } = await fetchBoundedProviderText(
+    (url, init) => input.fetchImpl(url, init || {}),
+    "https://searchapi.api.cloud.yandex.net/v2/gen/search",
+    {
+      method: "POST",
+      headers: {
+        Authorization: authHeader,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        folderId,
+        messages: [
+          {
+            role: "ROLE_USER",
+            content: input.query,
+          },
+        ],
+        responseFormat: "RESP_FORMAT_JSON",
+      }),
     },
-    body: JSON.stringify({
-      folderId,
-      messages: [
-        {
-          role: "ROLE_USER",
-          content: input.query,
-        },
-      ],
-      responseFormat: "RESP_FORMAT_JSON",
-    }),
-  });
-  const text = await response.text();
+    { timeoutMs: input.requestTimeoutMs, maximumBytes: input.maxResponseBytes }
+  );
   let payload: Record<string, unknown> = {};
   try {
     const parsed = text ? JSON.parse(text) : {};
@@ -125,7 +149,7 @@ async function runYandexGenSearchProbe(input: {
       channel: input.config.aiProbeChannel,
       status: "failed",
       query: input.query,
-      result: cleanString(payload.message) || text.slice(0, 500) || `HTTP ${response.status}`,
+      result: "Yandex generative search request failed.",
       sources: [],
       sourceDetails: [],
       usedSources: [],
@@ -154,16 +178,61 @@ async function runYandexGenSearchProbe(input: {
   };
 }
 
+function failedProbe(query: string, config: ProbeConfig): YandexAiProbe {
+  return {
+    channel: config.aiProbeChannel,
+    status: "failed",
+    query,
+    result: "Yandex generative search request failed.",
+    sources: [],
+    sourceDetails: [],
+    usedSources: [],
+    targetFound: false,
+    targetUsed: false,
+    sourcePosition: null,
+    usedSourcePosition: null,
+  };
+}
+
 export async function collectYandexGenSearchProbes(config: ProbeConfig, deps: ProbeDeps = {}): Promise<YandexAiProbe[]> {
   const env = deps.env || readProcessEnv();
   const fetchImpl = deps.fetchImpl || defaultFetch;
   const sleepImpl = deps.sleepImpl || defaultSleep;
+  const requestTimeoutMs = boundedDependencyValue(deps.requestTimeoutMs, YANDEX_GEN_SEARCH_REQUEST_TIMEOUT_MS);
+  const overallTimeoutMs = boundedDependencyValue(deps.overallTimeoutMs, YANDEX_GEN_SEARCH_OVERALL_TIMEOUT_MS);
+  const maxResponseBytes = boundedDependencyValue(deps.maxResponseBytes, YANDEX_GEN_SEARCH_MAX_RESPONSE_BYTES);
   const queries = [...config.aiProbeQueries];
   const results: YandexAiProbe[] = [];
+  const overallDeadline = Date.now() + overallTimeoutMs;
   for (const query of queries) {
-    results.push(await runYandexGenSearchProbe({ query, config, env, fetchImpl }));
+    const remaining = overallDeadline - Date.now();
+    if (remaining <= 0) {
+      results.push(failedProbe(query, config));
+      continue;
+    }
+    try {
+      results.push(await withProviderDeadline(
+        runYandexGenSearchProbe({
+          query,
+          config,
+          env,
+          fetchImpl,
+          requestTimeoutMs: Math.min(requestTimeoutMs, remaining),
+          maxResponseBytes,
+        }),
+        remaining
+      ));
+    } catch {
+      results.push(failedProbe(query, config));
+    }
     if (query !== queries[queries.length - 1]) {
-      await sleepImpl(config.aiProbeThrottleMs);
+      const sleepBudget = overallDeadline - Date.now();
+      if (sleepBudget <= 0) continue;
+      try {
+        await withProviderDeadline(sleepImpl(Math.min(config.aiProbeThrottleMs, sleepBudget)), sleepBudget);
+      } catch (error) {
+        if (!(error instanceof ProviderDeadlineError)) throw error;
+      }
     }
   }
   return results;

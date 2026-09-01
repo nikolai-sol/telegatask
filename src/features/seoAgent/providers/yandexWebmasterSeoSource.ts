@@ -1,6 +1,11 @@
 import type { SeoDeviceType, SeoSearchConsoleSnapshot } from "../types";
 import { SeoProviderError, SeoProviderNotConfiguredError } from "./seoDataProvider";
 import { buildGscDateRange, parsePositiveInteger } from "./googleSearchConsoleConfig";
+import {
+  fetchBoundedProviderText,
+  ProviderBodyLimitError,
+  ProviderDeadlineError,
+} from "./boundedProviderHttp";
 
 type YandexOAuthTokenResponse = {
   access_token?: string;
@@ -15,7 +20,7 @@ type YandexUserResponse = {
   user_id?: number | string;
 };
 
-type YandexHostEntry = {
+export type YandexHostEntry = {
   host_id?: string;
   ascii_host_url?: string;
   unicode_host_url?: string;
@@ -54,6 +59,21 @@ type YandexPopularQueriesResponse = {
 
 const API_BASE_URL = "https://api.webmaster.yandex.net/v4";
 const OAUTH_TOKEN_URL = "https://oauth.yandex.ru/token";
+export const OWNER_PROVIDER_REQUEST_TIMEOUT_MS = 15_000;
+export const OWNER_PROVIDER_MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
+
+export type YandexWebmasterSourceDeps = {
+  fetchImpl?: (url: string, init?: RequestInit) => Promise<Response>;
+  requestTimeoutMs?: number;
+  maxResponseBytes?: number;
+};
+
+type OwnerHttpContext = {
+  fetchImpl: (url: string, init?: RequestInit) => Promise<Response>;
+  requestTimeoutMs: number;
+  maxResponseBytes: number;
+  signal?: AbortSignal;
+};
 
 function cleanString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
@@ -63,43 +83,51 @@ function safeNumber(value: unknown): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
-function normalizeDomain(value: string): string {
-  const trimmed = cleanString(value);
-  if (!trimmed) return "";
-  try {
-    return new URL(trimmed).hostname.replace(/^www\./i, "").toLowerCase();
-  } catch {
-    return trimmed
-      .replace(/^https?:\/\//i, "")
-      .replace(/^www\./i, "")
-      .replace(/\/.*$/, "")
-      .toLowerCase();
-  }
-}
-
 function readDeviceType(value: SeoDeviceType | null | undefined): string {
   if (value === "mobile") return "MOBILE";
   return cleanString(process.env.YANDEX_WEBMASTER_DEVICE_TYPE) || "ALL";
 }
 
-async function parseJson<T>(response: Response, category: string, safeMessage: string): Promise<T> {
+function boundedDependencyValue(value: number | undefined, maximum: number): number {
+  if (!Number.isFinite(value)) return maximum;
+  return Math.min(maximum, Math.max(1, Math.floor(value!)));
+}
+
+function failureReason(error: unknown): string {
+  if (error instanceof ProviderDeadlineError) return "deadline";
+  if (error instanceof ProviderBodyLimitError) return "body_limit";
+  return "transport";
+}
+
+async function ownerRequest(
+  context: OwnerHttpContext,
+  url: string,
+  init: RequestInit,
+  category: string,
+  safeMessage: string
+): Promise<{ response: Response; text: string }> {
   try {
-    return (await response.json()) as T;
+    return await fetchBoundedProviderText(
+      context.fetchImpl,
+      url,
+      { ...init, ...(context.signal ? { signal: context.signal } : {}) },
+      { timeoutMs: context.requestTimeoutMs, maximumBytes: context.maxResponseBytes }
+    );
   } catch (error) {
     throw new SeoProviderError({
       category,
       safeMessage,
       statusCode: 502,
-      internalCause: error,
+      internalCause: { reason: failureReason(error) },
     });
   }
 }
 
-async function parseErrorBody(response: Response): Promise<string> {
+function parseJson<T>(text: string, category: string, safeMessage: string): T {
   try {
-    return (await response.text()).slice(0, 500);
+    return JSON.parse(text || "{}") as T;
   } catch {
-    return "";
+    throw new SeoProviderError({ category, safeMessage, statusCode: 502 });
   }
 }
 
@@ -110,7 +138,7 @@ function ensureEnabled(): void {
   }
 }
 
-async function refreshAccessToken(): Promise<string> {
+async function refreshAccessToken(context: OwnerHttpContext): Promise<string> {
   const refreshToken = cleanString(process.env.YANDEX_WEBMASTER_REFRESH_TOKEN);
   const clientId = cleanString(process.env.YANDEX_WEBMASTER_CLIENT_ID);
   const clientSecret = cleanString(process.env.YANDEX_WEBMASTER_CLIENT_SECRET);
@@ -125,15 +153,15 @@ async function refreshAccessToken(): Promise<string> {
     client_id: clientId,
     client_secret: clientSecret,
   });
-  const response = await fetch(OAUTH_TOKEN_URL, {
+  const { response, text } = await ownerRequest(context, OAUTH_TOKEN_URL, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body,
-  });
-  const json = await parseJson<YandexOAuthTokenResponse>(
-    response,
+  }, "yandex_webmaster_auth", "Yandex Webmaster token refresh failed");
+  const json = parseJson<YandexOAuthTokenResponse>(
+    text,
     "yandex_webmaster_auth",
     "Yandex Webmaster token refresh failed"
   );
@@ -144,29 +172,33 @@ async function refreshAccessToken(): Promise<string> {
       safeMessage: "Yandex Webmaster token refresh failed",
       internalCause: {
         status: response.status,
-        body: json.error_description || json.error || json,
       },
     });
   }
   return json.access_token;
 }
 
-async function getAccessToken(): Promise<string> {
+async function getAccessToken(context: OwnerHttpContext): Promise<string> {
   const directToken = cleanString(process.env.YANDEX_WEBMASTER_OAUTH_TOKEN);
   if (directToken) return directToken;
-  const refreshed = await refreshAccessToken();
+  const refreshed = await refreshAccessToken(context);
   if (refreshed) return refreshed;
   throw new SeoProviderNotConfiguredError("Yandex Webmaster OAuth token is not configured yet");
 }
 
-async function webmasterGet<T>(path: string, accessToken: string, params?: URLSearchParams): Promise<T> {
+async function webmasterGet<T>(
+  path: string,
+  accessToken: string,
+  context: OwnerHttpContext,
+  params?: URLSearchParams
+): Promise<T> {
   const query = params && params.toString() ? `?${params.toString()}` : "";
-  const response = await fetch(`${API_BASE_URL}${path}${query}`, {
+  const { response, text } = await ownerRequest(context, `${API_BASE_URL}${path}${query}`, {
     headers: {
       Authorization: `OAuth ${accessToken}`,
       Accept: "application/json",
     },
-  });
+  }, "yandex_webmaster_request", "Yandex Webmaster request failed");
   if (!response.ok) {
     throw new SeoProviderError({
       category: "yandex_webmaster_request",
@@ -174,36 +206,49 @@ async function webmasterGet<T>(path: string, accessToken: string, params?: URLSe
       safeMessage: "Yandex Webmaster request failed",
       internalCause: {
         status: response.status,
-        body: await parseErrorBody(response),
         path,
       },
     });
   }
-  return parseJson<T>(response, "yandex_webmaster_invalid_json", "Yandex Webmaster returned invalid data");
+  return parseJson<T>(text, "yandex_webmaster_invalid_json", "Yandex Webmaster returned invalid data");
 }
 
-function hostMatchesDomain(host: YandexHostEntry, domain: string): boolean {
-  const normalizedDomain = normalizeDomain(domain);
-  const candidates = [
-    host.ascii_host_url,
-    host.unicode_host_url,
-    host.main_mirror?.ascii_host_url,
-    host.main_mirror?.unicode_host_url,
-  ].map((item) => normalizeDomain(cleanString(item)));
-  return candidates.some(
-    (candidate) =>
-      candidate === normalizedDomain ||
-      candidate.endsWith(`.${normalizedDomain}`) ||
-      normalizedDomain.endsWith(`.${candidate}`)
-  );
-}
-
-function pickHost(hosts: YandexHostEntry[], domain: string): YandexHostEntry | null {
-  const configuredHostId = cleanString(process.env.YANDEX_WEBMASTER_HOST_ID);
-  if (configuredHostId) {
-    return hosts.find((host) => cleanString(host.host_id) === configuredHostId) || null;
+function exactOrigin(value: string): string | undefined {
+  const text = cleanString(value);
+  if (!text) return undefined;
+  const hostId = /^(https?):([^/:]+):(\d+)$/i.exec(text);
+  const input = hostId
+    ? `${hostId[1]}://${hostId[2]}:${hostId[3]}/`
+    : /^https?:\/\//i.test(text)
+      ? text
+      : "";
+  if (!input) return undefined;
+  try {
+    const url = new URL(input);
+    return !url.username && !url.password && (url.protocol === "http:" || url.protocol === "https:")
+      ? url.origin
+      : undefined;
+  } catch {
+    return undefined;
   }
-  return hosts.find((host) => host.verified && hostMatchesDomain(host, domain)) || null;
+}
+
+/** Select only an exact, verified audited origin; a configured id is only a filter. */
+export function selectVerifiedYandexHost(
+  hosts: YandexHostEntry[],
+  auditedTarget: string,
+  configuredHostId = cleanString(process.env.YANDEX_WEBMASTER_HOST_ID)
+): YandexHostEntry | null {
+  const targetOrigin = exactOrigin(auditedTarget);
+  if (!targetOrigin) return null;
+  return hosts.find((host) => {
+    if (!host.verified) return false;
+    if (configuredHostId && cleanString(host.host_id) !== configuredHostId) return false;
+    const identities = [host.host_id, host.ascii_host_url, host.unicode_host_url]
+      .map((value) => exactOrigin(cleanString(value)))
+      .filter((value): value is string => Boolean(value));
+    return identities.length > 0 && identities.every((origin) => origin === targetOrigin);
+  }) || null;
 }
 
 function sumIndicator(points: YandexQueryIndicatorPoint[] | undefined): number | null {
@@ -239,13 +284,30 @@ function extractTopQueries(response: YandexPopularQueriesResponse): string[] {
 }
 
 export class YandexWebmasterSeoSource {
+  private readonly fetchImpl: (url: string, init?: RequestInit) => Promise<Response>;
+  private readonly requestTimeoutMs: number;
+  private readonly maxResponseBytes: number;
+
+  constructor(deps: YandexWebmasterSourceDeps = {}) {
+    this.fetchImpl = deps.fetchImpl || ((url, init) => fetch(url, init));
+    this.requestTimeoutMs = boundedDependencyValue(deps.requestTimeoutMs, OWNER_PROVIDER_REQUEST_TIMEOUT_MS);
+    this.maxResponseBytes = boundedDependencyValue(deps.maxResponseBytes, OWNER_PROVIDER_MAX_RESPONSE_BYTES);
+  }
+
   async getSnapshot(
     domain: string,
-    options?: { device?: SeoDeviceType | null }
+    options?: { device?: SeoDeviceType | null },
+    signal?: AbortSignal
   ): Promise<SeoSearchConsoleSnapshot> {
+    const context: OwnerHttpContext = {
+      fetchImpl: this.fetchImpl,
+      requestTimeoutMs: this.requestTimeoutMs,
+      maxResponseBytes: this.maxResponseBytes,
+      ...(signal ? { signal } : {}),
+    };
     ensureEnabled();
-    const accessToken = await getAccessToken();
-    const user = await webmasterGet<YandexUserResponse>("/user", accessToken);
+    const accessToken = await getAccessToken(context);
+    const user = await webmasterGet<YandexUserResponse>("/user", accessToken, context);
     const userId = cleanString(String(user.user_id || ""));
     if (!userId) {
       throw new SeoProviderError({
@@ -255,8 +317,8 @@ export class YandexWebmasterSeoSource {
       });
     }
 
-    const hosts = await webmasterGet<YandexHostsResponse>(`/user/${encodeURIComponent(userId)}/hosts`, accessToken);
-    const host = pickHost(hosts.hosts || [], domain);
+    const hosts = await webmasterGet<YandexHostsResponse>(`/user/${encodeURIComponent(userId)}/hosts`, accessToken, context);
+    const host = selectVerifiedYandexHost(hosts.hosts || [], domain);
     const hostId = cleanString(host?.host_id);
     if (!host || !hostId) {
       throw new SeoProviderNotConfiguredError(
@@ -279,11 +341,13 @@ export class YandexWebmasterSeoSource {
       webmasterGet<YandexQueryHistoryResponse>(
         `/user/${encodeURIComponent(userId)}/hosts/${encodeURIComponent(hostId)}/search-queries/all/history`,
         accessToken,
+        context,
         commonParams
       ),
       webmasterGet<YandexPopularQueriesResponse>(
         `/user/${encodeURIComponent(userId)}/hosts/${encodeURIComponent(hostId)}/search-queries/popular`,
         accessToken,
+        context,
         new URLSearchParams({
           order_by: "TOTAL_SHOWS",
           query_indicator: "TOTAL_SHOWS",

@@ -66,6 +66,7 @@ const reportFixture = {
               currentPosition: 19,
               delta: -1,
               deltaStatus: "ok",
+              region: "213",
               matchedUrl: "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
             },
             {
@@ -234,6 +235,7 @@ describe("mysql dashboard export", () => {
     expect(plan.sql).toContain("ON DUPLICATE KEY UPDATE");
     expect(plan.sql).toContain("UNIQUE KEY uq_position");
     expect(plan.sql).toContain("'found'");
+    expect(plan.sql).toContain("'213'");
     expect(plan.sql).toContain("'no_data'");
     expect(plan.sql).toContain("'2026-07-12 00:00:00'");
     expect(plan.sql).not.toContain("2026-07-12T00:00:00.000Z");

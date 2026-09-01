@@ -1,0 +1,178 @@
+- main [ref=f1e2]:
+  - generic [ref=f1e3]:
+    - generic [ref=f1e4]:
+      - generic [ref=f1e5]: RECOVERED WGD SNAPSHOT · Austria / German
+      - heading "HELLOCASH SEO & AI visibility" [level=1] [ref=f1e6]
+      - generic [ref=f1e7]: Recovered from persisted runs after the latest failed rerun overwrote the HTML report.
+    - generic [ref=f1e8]: hellocash.at
+  - generic [ref=f1e9]:
+    - generic [ref=f1e10]:
+      - heading "Recovered Google rankings" [level=2] [ref=f1e11]
+      - generic [ref=f1e12]:
+        - generic [ref=f1e13]:
+          - generic [ref=f1e14]: 8/9
+          - generic [ref=f1e15]: latest successful run
+        - generic [ref=f1e16]:
+          - generic [ref=f1e17]: "3"
+          - generic [ref=f1e18]: successful SERP runs recovered
+        - generic [ref=f1e19]:
+          - generic [ref=f1e20]: "20"
+          - generic [ref=f1e21]: max result depth
+      - table [ref=f1e23]:
+        - rowgroup [ref=f1e24]:
+          - row [ref=f1e25]:
+            - columnheader "Query" [ref=f1e26]
+            - columnheader "27/07/2026, 10:37" [ref=f1e27]
+            - columnheader "27/07/2026, 10:31" [ref=f1e28]
+            - columnheader "27/07/2026, 10:22" [ref=f1e29]
+        - rowgroup [ref=f1e30]:
+          - row [ref=f1e31]:
+            - rowheader "hellocash" [ref=f1e32]
+            - cell "#1" [ref=f1e33]
+            - cell "#1" [ref=f1e34]
+            - cell "#1" [ref=f1e35]
+          - row [ref=f1e36]:
+            - rowheader "hello cash registrierkasse" [ref=f1e37]
+            - cell "#1" [ref=f1e38]
+            - cell "#1" [ref=f1e39]
+            - cell "#1" [ref=f1e40]
+          - row [ref=f1e41]:
+            - rowheader "online registrierkasse österreich" [ref=f1e42]
+            - cell "#1" [ref=f1e43]
+            - cell "#1" [ref=f1e44]
+            - cell "#1" [ref=f1e45]
+          - row [ref=f1e46]:
+            - rowheader "online kassa österreich" [ref=f1e47]
+            - cell "#1" [ref=f1e48]
+            - cell "#1" [ref=f1e49]
+            - cell "#1" [ref=f1e50]
+          - row [ref=f1e51]:
+            - rowheader "registrierkasse app österreich" [ref=f1e52]
+            - cell "#2" [ref=f1e53]
+            - cell "#2" [ref=f1e54]
+            - cell "#3" [ref=f1e55]
+          - row [ref=f1e56]:
+            - rowheader "kassensystem gastronomie österreich" [ref=f1e57]
+            - cell "#8" [ref=f1e58]
+            - cell "#8" [ref=f1e59]
+            - cell "#8" [ref=f1e60]
+          - row [ref=f1e61]:
+            - rowheader "rkvs registrierkasse online" [ref=f1e62]
+            - cell "not found" [ref=f1e63]
+            - cell "#4" [ref=f1e64]
+            - cell "not found" [ref=f1e65]
+          - row [ref=f1e66]:
+            - rowheader "mobile registrierkasse österreich" [ref=f1e67]
+            - cell "#1" [ref=f1e68]
+            - cell "#1" [ref=f1e69]
+            - cell "#1" [ref=f1e70]
+          - row [ref=f1e71]:
+            - rowheader "hello cash" [ref=f1e72]
+            - cell "#1" [ref=f1e73]
+            - cell "#1" [ref=f1e74]
+            - cell "#1" [ref=f1e75]
+      - generic [ref=f1e76]:
+        - generic [ref=f1e77]: top 3
+        - generic [ref=f1e79]: page 1
+        - generic [ref=f1e81]: not found
+    - generic [ref=f1e83]:
+      - heading "AI visibility recovered" [level=2] [ref=f1e84]
+      - generic [ref=f1e85]:
+        - generic [ref=f1e86]:
+          - generic [ref=f1e87]: "28"
+          - generic [ref=f1e88]: Google AI Overview citations
+        - generic [ref=f1e89]:
+          - generic [ref=f1e90]: 5,000
+          - generic [ref=f1e91]: AI search volume
+      - paragraph [ref=f1e92]: Austria · German · Last successful DataForSEO AI snapshot
+      - list [ref=f1e93]:
+        - listitem [ref=f1e94]:
+          - generic [ref=f1e95]: kassenbon
+          - generic [ref=f1e96]: Kassenbon Pflicht in Österreich
+          - emphasis [ref=f1e97]: "#3"
+        - listitem [ref=f1e98]:
+          - generic [ref=f1e99]: registrierkasse gastronomie
+          - generic [ref=f1e100]: Registrierkasse Gastronomie
+          - emphasis [ref=f1e101]: "#2"
+        - listitem [ref=f1e102]:
+          - generic [ref=f1e103]: kleinunternehmer nebenberuflich österreich
+          - generic [ref=f1e104]: Nebenberuflich selbstständig
+          - emphasis [ref=f1e105]: "#4"
+        - listitem [ref=f1e106]:
+          - generic [ref=f1e107]: rksv
+          - generic [ref=f1e108]: RKSV für Laien
+          - emphasis [ref=f1e109]: "#3"
+        - listitem [ref=f1e110]:
+          - generic [ref=f1e111]: pos system
+          - generic [ref=f1e112]: POS Systeme in Österreich
+          - emphasis [ref=f1e113]: "#5"
+  - generic [ref=f1e114]:
+    - heading "Run history and partial sources" [level=2] [ref=f1e115]
+    - generic [ref=f1e116]:
+      - article [ref=f1e117]:
+        - generic [ref=f1e118]:
+          - generic [ref=f1e119]:
+            - strong [ref=f1e120]: 27/07/2026, 10:53
+            - text: U0nBccqD5zbivJ5lEjVn
+          - generic [ref=f1e121]: "PARTIAL: pagespeed"
+        - generic [ref=f1e122]:
+          - generic [ref=f1e123]: 0/0 queries found
+          - generic [ref=f1e124]: Google/DataForSEO
+          - generic [ref=f1e125]: crawler + pagespeed + google_serp_rank
+      - article [ref=f1e126]:
+        - generic [ref=f1e127]:
+          - generic [ref=f1e128]:
+            - strong [ref=f1e129]: 27/07/2026, 10:37
+            - text: W5TUeYsRmdwxjgNy1ulv
+          - generic [ref=f1e130]: SERP SUCCESS
+        - generic [ref=f1e131]:
+          - generic [ref=f1e132]: 8/9 queries found
+          - generic [ref=f1e133]: Google/DataForSEO
+          - generic [ref=f1e134]: crawler + google_serp_rank
+      - article [ref=f1e135]:
+        - generic [ref=f1e136]:
+          - generic [ref=f1e137]:
+            - strong [ref=f1e138]: 27/07/2026, 10:31
+            - text: 2km0u7oQBuTHvUvFL0P9
+          - generic [ref=f1e139]: SERP SUCCESS
+        - generic [ref=f1e140]:
+          - generic [ref=f1e141]: 9/9 queries found
+          - generic [ref=f1e142]: Google/DataForSEO
+          - generic [ref=f1e143]: crawler + google_serp_rank
+      - article [ref=f1e144]:
+        - generic [ref=f1e145]:
+          - generic [ref=f1e146]:
+            - strong [ref=f1e147]: 27/07/2026, 10:22
+            - text: hSJ8avjDTiOzdwkqihuK
+          - generic [ref=f1e148]: SERP SUCCESS
+        - generic [ref=f1e149]:
+          - generic [ref=f1e150]: 8/9 queries found
+          - generic [ref=f1e151]: Google/DataForSEO
+          - generic [ref=f1e152]: crawler + google_serp_rank
+    - generic [ref=f1e153]:
+      - generic [ref=f1e154]: "pagespeed: partial"
+      - generic [ref=f1e155]: "crawler: success"
+  - generic [ref=f1e156]:
+    - heading "Recommended action plan" [level=2] [ref=f1e157]
+    - generic [ref=f1e158]:
+      - generic [ref=f1e159]:
+        - text: Priority 1 · Protect
+        - heading "Defend the top 1 positions" [level=3] [ref=f1e160]
+        - paragraph [ref=f1e161]: Keep the homepage focused on online Registrierkasse, online Kassa and mobile Registrierkasse intent. Avoid moving these terms into new competing pages.
+        - generic [ref=f1e162]: "KPI: retain positions 1–2"
+      - generic [ref=f1e163]:
+        - text: Priority 2 · Improve
+        - 'heading "Push gastronomy from #8" [level=3] [ref=f1e164]'
+        - paragraph [ref=f1e165]: Strengthen the gastronomy landing/blog page with Austria-specific use cases, features, pricing context, internal links and structured FAQ content.
+        - generic [ref=f1e166]: "KPI: top 5, then top 3"
+      - generic [ref=f1e167]:
+        - text: Priority 3 · Expand
+        - 'heading "Move RKSV from #4" [level=3] [ref=f1e168]'
+        - paragraph [ref=f1e169]: Refresh the RKSV page with current Austrian guidance, clear definitions, trust signals and links from the core product pages.
+        - generic [ref=f1e170]: "KPI: position 1–3"
+      - generic [ref=f1e171]:
+        - text: Priority 4 · AI
+        - heading "Build citation depth" [level=3] [ref=f1e172]
+        - paragraph [ref=f1e173]: Maintain the pages already cited in AI Overview and connect them to product pages with clear entity, author and source signals.
+        - generic [ref=f1e174]: "KPI: grow citations beyond 28"
+  - generic [ref=f1e175]: This image restores the last persisted successful/partial data. The latest failed DataForSEO rerun is intentionally excluded from ranking cells.

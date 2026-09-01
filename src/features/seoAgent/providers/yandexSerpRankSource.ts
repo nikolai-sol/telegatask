@@ -1,6 +1,12 @@
 import type { SeoDeviceType, SeoRankProviderStatus, YandexRankCheck } from "../types";
 import { normalizeProviderDomain, SeoProviderError } from "./seoDataProvider";
 import { isMatchingTargetDomain, normalizeResultDomain } from "./serpMatching";
+import {
+  fetchBoundedProviderText,
+  ProviderBodyLimitError,
+  ProviderDeadlineError,
+  withProviderDeadline,
+} from "./boundedProviderHttp";
 
 type YandexSerpRankRunResult = {
   checks: YandexRankCheck[];
@@ -15,12 +21,45 @@ type YandexSearchResponse = {
   };
 };
 
+export type YandexSerpRankEnv = Partial<Record<
+  | "YANDEX_SEARCH_API_KEY"
+  | "YANDEX_SEARCH_FOLDER_ID"
+  | "YANDEX_SEARCH_DEFAULT_REGION"
+  | "YANDEX_SEARCH_DEFAULT_LANGUAGE"
+  | "YANDEX_SEARCH_DEFAULT_DEVICE"
+  | "YANDEX_SEARCH_MODE"
+  | "SEO_MATCH_SUBDOMAINS",
+  string | undefined
+>>;
+
+export type YandexSerpFetch = (url: string, init?: RequestInit) => Promise<Response>;
+export type YandexSerpSleep = (ms: number) => Promise<void>;
+
+export type YandexSerpRankSourceDeps = {
+  env?: YandexSerpRankEnv;
+  fetchImpl?: YandexSerpFetch;
+  sleepImpl?: YandexSerpSleep;
+  requestTimeoutMs?: number;
+  overallTimeoutMs?: number;
+  maxResponseBytes?: number;
+};
+
+export const YANDEX_SERP_REQUEST_TIMEOUT_MS = 15_000;
+export const YANDEX_SERP_OVERALL_TIMEOUT_MS = 75_000;
+export const YANDEX_SERP_MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
+const YANDEX_SERP_CHECKED_DEPTH = 20;
+
 function isoNow(): string {
   return new Date().toISOString();
 }
 
 function cleanString(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
+}
+
+function boundedDependencyValue(value: number | undefined, maximum: number): number {
+  if (!Number.isFinite(value)) return maximum;
+  return Math.min(maximum, Math.max(1, Math.floor(value!)));
 }
 
 function readDevice(value: unknown): SeoDeviceType {
@@ -46,20 +85,43 @@ function readSearchTypeAndLocalization(languageInput: string): {
   return { searchType: "SEARCH_TYPE_RU", localization: "LOCALIZATION_RU" };
 }
 
-function decodeRawData(rawData: string): string {
+function decodeRawData(rawData: string, maximumBytes: number): string {
   const value = cleanString(rawData);
   if (!value) return "";
+  if (Buffer.byteLength(value, "utf8") > maximumBytes) throw new ProviderBodyLimitError();
   if (value.startsWith("<")) return value;
   try {
     const decoded = Buffer.from(value, "base64").toString("utf8").trim();
+    if (Buffer.byteLength(decoded, "utf8") > maximumBytes) throw new ProviderBodyLimitError();
     return decoded || value;
-  } catch {
+  } catch (error) {
+    if (error instanceof ProviderBodyLimitError) throw error;
     return value;
   }
 }
 
-function hasCredentials(): boolean {
-  return Boolean(cleanString(process.env.YANDEX_SEARCH_API_KEY) && cleanString(process.env.YANDEX_SEARCH_FOLDER_ID));
+function readProcessEnv(): YandexSerpRankEnv {
+  return {
+    YANDEX_SEARCH_API_KEY: process.env.YANDEX_SEARCH_API_KEY,
+    YANDEX_SEARCH_FOLDER_ID: process.env.YANDEX_SEARCH_FOLDER_ID,
+    YANDEX_SEARCH_DEFAULT_REGION: process.env.YANDEX_SEARCH_DEFAULT_REGION,
+    YANDEX_SEARCH_DEFAULT_LANGUAGE: process.env.YANDEX_SEARCH_DEFAULT_LANGUAGE,
+    YANDEX_SEARCH_DEFAULT_DEVICE: process.env.YANDEX_SEARCH_DEFAULT_DEVICE,
+    YANDEX_SEARCH_MODE: process.env.YANDEX_SEARCH_MODE,
+    SEO_MATCH_SUBDOMAINS: process.env.SEO_MATCH_SUBDOMAINS,
+  };
+}
+
+function defaultFetch(url: string, init?: RequestInit): Promise<Response> {
+  return fetch(url, init);
+}
+
+function defaultSleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function hasCredentials(env: YandexSerpRankEnv): boolean {
+  return Boolean(cleanString(env.YANDEX_SEARCH_API_KEY) && cleanString(env.YANDEX_SEARCH_FOLDER_ID));
 }
 
 function providerStatus(state: SeoRankProviderStatus["state"], message: string, metricsSummary?: Record<string, string | number | boolean | null>, errorCode?: string): SeoRankProviderStatus {
@@ -83,29 +145,42 @@ function xmlEntries(xml: string): Array<{ domain: string; url: string; title?: s
   });
 }
 
-async function parseYandexResponse(response: Response): Promise<YandexSearchResponse> {
+function parseYandexResponse(text: string): YandexSearchResponse {
   try {
-    return (await response.json()) as YandexSearchResponse;
+    return JSON.parse(text || "{}") as YandexSearchResponse;
   } catch (error) {
+    if (error instanceof ProviderBodyLimitError) throw error;
     throw new SeoProviderError({
       category: "yandex_serp_invalid_json",
       safeMessage: "Yandex rank tracking returned invalid data",
       statusCode: 503,
-      internalCause: error,
     });
   }
 }
 
-async function pollDeferredResult(operationId: string, apiKey: string): Promise<YandexSearchResponse> {
+async function pollDeferredResult(
+  operationId: string,
+  apiKey: string,
+  fetchImpl: YandexSerpFetch,
+  sleepImpl: YandexSerpSleep,
+  requestTimeoutMs: number,
+  overallDeadline: number,
+  maximumBytes: number
+): Promise<YandexSearchResponse> {
   for (let attempt = 0; attempt < 5; attempt += 1) {
-    const response = await fetch(`https://operation.api.cloud.yandex.net/operations/${encodeURIComponent(operationId)}`, {
-      headers: {
-        Authorization: `Api-Key ${apiKey}`,
-      },
-    });
-    const payload = await parseYandexResponse(response);
+    const remaining = overallDeadline - Date.now();
+    if (remaining <= 0) throw new ProviderDeadlineError();
+    const { text } = await fetchBoundedProviderText(
+      fetchImpl,
+      `https://operation.api.cloud.yandex.net/operations/${encodeURIComponent(operationId)}`,
+      { headers: { Authorization: `Api-Key ${apiKey}` } },
+      { timeoutMs: Math.min(requestTimeoutMs, remaining), maximumBytes }
+    );
+    const payload = parseYandexResponse(text);
     if (payload.done && payload.response?.rawData) return payload;
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const sleepBudget = overallDeadline - Date.now();
+    if (sleepBudget <= 0) throw new ProviderDeadlineError();
+    await withProviderDeadline(sleepImpl(Math.min(1500, sleepBudget)), sleepBudget);
   }
   throw new SeoProviderError({
     category: "yandex_serp_provider_error",
@@ -115,6 +190,22 @@ async function pollDeferredResult(operationId: string, apiKey: string): Promise<
 }
 
 export class YandexSerpRankSource {
+  private readonly injectedEnv?: YandexSerpRankEnv;
+  private readonly fetchImpl: YandexSerpFetch;
+  private readonly sleepImpl: YandexSerpSleep;
+  private readonly requestTimeoutMs: number;
+  private readonly overallTimeoutMs: number;
+  private readonly maxResponseBytes: number;
+
+  constructor(deps: YandexSerpRankSourceDeps = {}) {
+    this.injectedEnv = deps.env;
+    this.fetchImpl = deps.fetchImpl || defaultFetch;
+    this.sleepImpl = deps.sleepImpl || defaultSleep;
+    this.requestTimeoutMs = boundedDependencyValue(deps.requestTimeoutMs, YANDEX_SERP_REQUEST_TIMEOUT_MS);
+    this.overallTimeoutMs = boundedDependencyValue(deps.overallTimeoutMs, YANDEX_SERP_OVERALL_TIMEOUT_MS);
+    this.maxResponseBytes = boundedDependencyValue(deps.maxResponseBytes, YANDEX_SERP_MAX_RESPONSE_BYTES);
+  }
+
   async run(input: {
     targetDomain: string;
     targetDomainAliases?: string[];
@@ -123,7 +214,8 @@ export class YandexSerpRankSource {
     language?: string | null;
     device?: SeoDeviceType | null;
   }): Promise<YandexSerpRankRunResult> {
-    if (!hasCredentials()) {
+    const env = this.injectedEnv || readProcessEnv();
+    if (!hasCredentials(env)) {
       return {
         checks: [],
         status: providerStatus(
@@ -148,22 +240,26 @@ export class YandexSerpRankSource {
       };
     }
 
-    const apiKey = cleanString(process.env.YANDEX_SEARCH_API_KEY);
-    const folderId = cleanString(process.env.YANDEX_SEARCH_FOLDER_ID);
-    const region = cleanString(input.region) || cleanString(process.env.YANDEX_SEARCH_DEFAULT_REGION) || "225";
-    const language = cleanString(input.language) || cleanString(process.env.YANDEX_SEARCH_DEFAULT_LANGUAGE) || "ru";
+    const apiKey = cleanString(env.YANDEX_SEARCH_API_KEY);
+    const folderId = cleanString(env.YANDEX_SEARCH_FOLDER_ID);
+    const region = cleanString(input.region) || cleanString(env.YANDEX_SEARCH_DEFAULT_REGION) || "225";
+    const language = cleanString(input.language) || cleanString(env.YANDEX_SEARCH_DEFAULT_LANGUAGE) || "ru";
     const { searchType, localization } = readSearchTypeAndLocalization(language);
-    const device = readDevice(input.device || process.env.YANDEX_SEARCH_DEFAULT_DEVICE);
-    const mode = cleanString(process.env.YANDEX_SEARCH_MODE).toLowerCase() === "sync" ? "sync" : "deferred";
-    const allowSubdomains = String(process.env.SEO_MATCH_SUBDOMAINS || "").trim().toLowerCase() === "true";
+    const device = readDevice(input.device || env.YANDEX_SEARCH_DEFAULT_DEVICE);
+    const mode = cleanString(env.YANDEX_SEARCH_MODE).toLowerCase() === "sync" ? "sync" : "deferred";
+    const allowSubdomains = String(env.SEO_MATCH_SUBDOMAINS || "").trim().toLowerCase() === "true";
 
     const checks: YandexRankCheck[] = [];
     let failedCount = 0;
     let limitExceeded = false;
+    const overallDeadline = Date.now() + this.overallTimeoutMs;
 
     for (const keyword of keywords) {
       try {
-        const response = await fetch(
+        const remaining = overallDeadline - Date.now();
+        if (remaining <= 0) throw new ProviderDeadlineError();
+        const { response, text } = await fetchBoundedProviderText(
+          this.fetchImpl,
           `https://searchapi.api.cloud.yandex.net/v2/web/${mode === "sync" ? "search" : "searchAsync"}`,
           {
             method: "POST",
@@ -181,7 +277,7 @@ export class YandexSerpRankSource {
               },
               groupSpec: {
                 groupMode: "GROUP_MODE_FLAT",
-                groupsOnPage: 20,
+                groupsOnPage: YANDEX_SERP_CHECKED_DEPTH,
                 docsInGroup: 1,
               },
               ...(region ? { region } : {}),
@@ -189,6 +285,10 @@ export class YandexSerpRankSource {
               folderId,
               responseFormat: "FORMAT_XML",
             }),
+          },
+          {
+            timeoutMs: Math.min(this.requestTimeoutMs, remaining),
+            maximumBytes: this.maxResponseBytes,
           }
         );
         if (response.status === 402 || response.status === 429) {
@@ -201,23 +301,31 @@ export class YandexSerpRankSource {
           continue;
         }
 
-        let payload = await parseYandexResponse(response);
+        let payload = parseYandexResponse(text);
         if (mode === "deferred") {
           const operationId = cleanString(payload.id);
           if (!operationId) {
             failedCount += 1;
             continue;
           }
-          payload = await pollDeferredResult(operationId, apiKey);
+          payload = await pollDeferredResult(
+            operationId,
+            apiKey,
+            this.fetchImpl,
+            this.sleepImpl,
+            this.requestTimeoutMs,
+            overallDeadline,
+            this.maxResponseBytes
+          );
         }
 
-        const rawData = decodeRawData(cleanString(payload.response?.rawData));
+        const rawData = decodeRawData(cleanString(payload.response?.rawData), this.maxResponseBytes);
         if (!rawData) {
           failedCount += 1;
           continue;
         }
 
-        const entries = xmlEntries(rawData);
+        const entries = xmlEntries(rawData).slice(0, YANDEX_SERP_CHECKED_DEPTH);
         const matchedIndex = entries.findIndex((entry) =>
           isMatchingTargetDomain({
             targetDomain: input.targetDomain,
@@ -241,6 +349,7 @@ export class YandexSerpRankSource {
           query: keyword,
           searchEngine: "yandex",
           provider: "yandex_search_api",
+          checkedDepth: YANDEX_SERP_CHECKED_DEPTH,
           targetDomain: normalizeProviderDomain(input.targetDomain),
           found: Boolean(matched),
           ...(matchedIndex >= 0 ? { position: matchedIndex + 1 } : {}),

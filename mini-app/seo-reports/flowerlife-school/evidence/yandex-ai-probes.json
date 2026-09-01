@@ -1,0 +1,297 @@
+{
+  "probes": [
+    {
+      "channel": "Yandex Search API generative response",
+      "status": "checked",
+      "query": "Что такое школа Цветок жизни и какие курсы она предлагает?",
+      "result": "Возможно, имелась в виду **международная школа духовного роста «Цветок Жизни»**. [1] Одно из направлений работы школы — организация ретритов по всему миру, где участники путешествуют и по-новому смотрят на мир. [1] Ещё одно направление — студия подкастов в Москве, где выступают популярные блогеры, эксперты и коучи. [1] Некоторые курсы, которые предлагает школа «Цветок Жизни»: * **Работа с психологическими эфирными картами**. [2] С их помощью можно провести диагностику проблем, выявить причины и найти пути их решения. [2] * **Глубинное изучение эфирных масел**. [2] Участники программы в течение 7 месяцев изучают воздействие на человека эфирных масел через правополушарные методики. [2] * **«Удивительное путешествие Души или как познакомиться с собой заново»**. [2] Базовый семинар, который даёт понимание глубинных процессов, происходящих ежедневно, и инструмент, как улучшить то, что хочется изменить. [2] * **Факультативные семинары по эфирным маслам**. [2] На них изучают новые эфирные масла и их влияние на духовную сферу. [2] * **Составление духов своими руками**. [2] Правильный аромат считается энергетическим продолжением человека и помогает в решении задач. [2] * **Исцеление рода**…",
+      "sources": [
+        "https://adpass.ru/mezhdunarodnaya-shkola-duhovnogo-rosta-tsvetok-zhizni/",
+        "https://floweroflifeschool.zenclass.ru/public/products",
+        "https://cvetzhizni.ru/kids",
+        "https://thefloweroflife.ru/schedule",
+        "https://maps.yandex.ru/org/tsvetok_zhizni/105584412759/",
+        "https://study.viktoriabell.ru/cvetok_club",
+        "https://t.me/cvetok_zhizni_school",
+        "https://cvetzhizni.ru/2d"
+      ],
+      "sourceDetails": [
+        {
+          "url": "https://adpass.ru/mezhdunarodnaya-shkola-duhovnogo-rosta-tsvetok-zhizni/",
+          "title": "Через тернии к звёздам: Международная школа духовного роста «Цветок Жизни» — ADPASS",
+          "used": true
+        },
+        {
+          "url": "https://floweroflifeschool.zenclass.ru/public/products",
+          "title": "Продукты школы Цветок Жизни",
+          "used": true
+        },
+        {
+          "url": "https://cvetzhizni.ru/kids",
+          "title": "Детям",
+          "used": false
+        },
+        {
+          "url": "https://thefloweroflife.ru/schedule",
+          "title": "Расписание",
+          "used": false
+        },
+        {
+          "url": "https://maps.yandex.ru/org/tsvetok_zhizni/105584412759/",
+          "title": "Больше не работает: Цветок Жизни, обучение мастеров для салонов красоты, Московская область, Мытищи, улица Веры Волошиной, 19/16 — Яндекс Карты",
+          "used": false
+        },
+        {
+          "url": "https://study.viktoriabell.ru/cvetok_club",
+          "title": "",
+          "used": false
+        },
+        {
+          "url": "https://t.me/cvetok_zhizni_school",
+          "title": "Telegram: View @cvetok_zhizni_school",
+          "used": false
+        },
+        {
+          "url": "https://cvetzhizni.ru/2d",
+          "title": "Онлайн-курс \"Продвинутые техники «Цветка Жизни»\"",
+          "used": false
+        }
+      ],
+      "usedSources": [
+        "https://adpass.ru/mezhdunarodnaya-shkola-duhovnogo-rosta-tsvetok-zhizni/",
+        "https://floweroflifeschool.zenclass.ru/public/products"
+      ],
+      "targetFound": false,
+      "targetUsed": false,
+      "sourcePosition": null,
+      "usedSourcePosition": null
+    },
+    {
+      "channel": "Yandex Search API generative response",
+      "status": "checked",
+      "query": "Где пройти онлайн-курсы по саморазвитию?",
+      "result": "Несколько платформ, где можно пройти онлайн-курсы по саморазвитию: * **4brain.ru**. [4] Онлайн-платформа предлагает более 100 курсов по различным надпрофессиональным навыкам. [4] Среди них — техники тайм-менеджмента, психология отношений, мнемотехники и другие. [4] * **Allcourses.io**. [5] На сайте представлены программы по саморазвитию от ведущих онлайн-школ. [5] * **Stepik.org**. [7] На платформе можно найти курсы, которые помогают развить полезные привычки, прокачать soft skills, лучше понять себя. [7] * **Skillbox.ru**. [9] В каталоге курсов есть программы по саморазвитию, которые подходят для начинающих. [9] Среди бесплатных программ — курсы «Твой путь. Как изменить жизнь», «Как справляться с неопределённостью» и другие. [9] * **edu.sravni.ru**. [2] На сайте есть рейтинг онлайн-курсов саморазвития и подборки программ от разных школ. [2] * **vc.ru**. [3] Ресурс содержит сравнение онлайн-курсов по саморазвитию в 2026 году и топ-10 таких программ. [3]",
+      "sources": [
+        "https://timeweb.com/ru/community/articles/luchshie-kursy-po-samorazvitiyu-i-motivacii-onlayn-obuchenie-besplatno-i-platno",
+        "https://edu.sravni.ru/kursy/samorazvitie/",
+        "https://vc.ru/courses/psychology/selfdevelopment",
+        "https://4brain.ru/",
+        "https://allcourses.io/catalog/samorazvitie/",
+        "https://iklife.ru/samorazvitie/kursy-po-samorazvitiyu",
+        "https://stepik.org/catalog/189",
+        "https://dzen.ru/a/ZxI1IHI3kiEDC8vS"
+      ],
+      "sourceDetails": [
+        {
+          "url": "https://timeweb.com/ru/community/articles/luchshie-kursy-po-samorazvitiyu-i-motivacii-onlayn-obuchenie-besplatno-i-platno",
+          "title": "Лучшие курсы по саморазвитию и мотивации: онлайн-обучение бесплатно и платно Timeweb Community",
+          "used": false
+        },
+        {
+          "url": "https://edu.sravni.ru/kursy/samorazvitie/",
+          "title": "ТОП-20 курсов саморазвития - отзывы, рейтинг обучения в Сравни",
+          "used": true
+        },
+        {
+          "url": "https://vc.ru/courses/psychology/selfdevelopment",
+          "title": "Топ курсов по саморазвитию в 2026 году",
+          "used": true
+        },
+        {
+          "url": "https://4brain.ru/",
+          "title": "4brain - онлайн-платформа по обучению soft skills",
+          "used": true
+        },
+        {
+          "url": "https://allcourses.io/catalog/samorazvitie/",
+          "title": "Курсы по Саморазвитию, 309 программ от ведущих онлайн-школ. Allcourses.io",
+          "used": true
+        },
+        {
+          "url": "https://iklife.ru/samorazvitie/kursy-po-samorazvitiyu",
+          "title": "ТОП-30 Лучшие курсы по саморазвитию онлайн",
+          "used": false
+        },
+        {
+          "url": "https://stepik.org/catalog/189",
+          "title": "Саморазвитие — курсы онлайн, обучение с нуля Stepik",
+          "used": true
+        },
+        {
+          "url": "https://dzen.ru/a/ZxI1IHI3kiEDC8vS",
+          "title": "30 лучших курсов по саморазвитию 2026 Блог Василия Блинова Дзен",
+          "used": false
+        }
+      ],
+      "usedSources": [
+        "https://edu.sravni.ru/kursy/samorazvitie/",
+        "https://vc.ru/courses/psychology/selfdevelopment",
+        "https://4brain.ru/",
+        "https://allcourses.io/catalog/samorazvitie/",
+        "https://stepik.org/catalog/189"
+      ],
+      "targetFound": false,
+      "targetUsed": false,
+      "sourcePosition": null,
+      "usedSourcePosition": null
+    },
+    {
+      "channel": "Yandex Search API generative response",
+      "status": "checked",
+      "query": "Какие есть онлайн-курсы по духовному развитию?",
+      "result": "Несколько онлайн-курсов по духовному развитию: * **«Азы православия»** от московского Свято-Данилова монастыря. [1] Курс из 25 писем, каждое из которых раскрывает одну важную тему и даёт советы для духовной жизни. [1] В письмах есть ссылки на Писание, краткие цитаты святых и практические шаги. [1] * **«Школа Бхакти»**. [2] Предлагает курсы по изучению различных аспектов духовной жизни, включая «Бхагавад-гиту», «Нектар преданности» и другие. [2] Обучение проходит на образовательной платформе «Прамана», где доступны видео- и аудио-лекции, дополнительные материалы, домашние работы и общение с преподавателями и наставниками. [2] * **«ETSM.ONLINE — Современное христианское образование»**. [4] Предлагает онлайн-курсы по разным направлениям, включая «Семью и консультирование», «Администрирование», «Изучение писания», «Историю христианства» и «Миссию и служение». [4] * **«Школа духовного развития»**. [5] Курс для тех, кто хочет познакомиться с православной верой и начать понимать смысл богослужений. [5] В программе — теория (50%) и практика церковной жизни (50%). [5]",
+      "sources": [
+        "https://az-msdm.ru/",
+        "https://bhakti.school/",
+        "https://svetlov.academy/",
+        "https://etsm.online/",
+        "https://favor.school/"
+      ],
+      "sourceDetails": [
+        {
+          "url": "https://az-msdm.ru/",
+          "title": "«Азы православия» — курс от московского Свято-Данилова монастыря",
+          "used": true
+        },
+        {
+          "url": "https://bhakti.school/",
+          "title": "Школа Бхакти. Ощутимое духовное продвижение возможно именно в искреннем интересе.",
+          "used": true
+        },
+        {
+          "url": "https://svetlov.academy/",
+          "title": "Академия развития человека им. В. Ю. Светлова",
+          "used": false
+        },
+        {
+          "url": "https://etsm.online/",
+          "title": "ETSM.ONLINE - Современное христианское образование",
+          "used": true
+        },
+        {
+          "url": "https://favor.school/",
+          "title": "Школа духовного развития",
+          "used": true
+        }
+      ],
+      "usedSources": [
+        "https://az-msdm.ru/",
+        "https://bhakti.school/",
+        "https://etsm.online/",
+        "https://favor.school/"
+      ],
+      "targetFound": false,
+      "targetUsed": false,
+      "sourcePosition": null,
+      "usedSourcePosition": null
+    },
+    {
+      "channel": "Yandex Search API generative response",
+      "status": "checked",
+      "query": "Где пройти онлайн-курс по ароматерапии?",
+      "result": "Несколько ресурсов, где можно пройти онлайн-курс по ароматерапии: * **aromaschool.ru**. [1] На сайте представлена онлайн-школа «Астарта», которая предлагает различные курсы по ароматерапии и парфюмерии. [1] * **ncpo.ru**. [2] Здесь можно пройти программу профессиональной переподготовки «Ароматерапия» в дистанционном формате. [2] Курс включает методические пособия и онлайн-тестирование для самостоятельной подготовки к итоговой аттестации. [2] * **nadpo.ru**. [3] Предлагает программу повышения квалификации «Ароматерапия в практике психолога» (108 часов). [3] Материалы курса доступны 24 часа в сутки, система работает без выходных. [3] * **dpo.rudn.ru**. [4] В Институте восточной медицины (ИВМ) есть заочная программа «Ароматерапия» (40 академических часов). [4] В неё входят курсы по основам ароматерапии, эфирным маслам и методам диагностики в ароматерапии. [4]",
+      "sources": [
+        "https://aromaschool.ru/obuchenie",
+        "https://ncpo.ru/profperepodgotovka/aromaterapiya-pp/",
+        "https://nadpo.ru/do/aromaterapiya-v-praktike-psikhologa-108/",
+        "https://dpo.rudn.ru/course/Aromaterapiya/",
+        "https://ipo.msk.ru/professionalnaja-perepodgotovka/psihologija/aromaterapiya-v-praktike-psikhologa-pp486/"
+      ],
+      "sourceDetails": [
+        {
+          "url": "https://aromaschool.ru/obuchenie",
+          "title": "Курсы ароматерапии и парфюмерии в школе Астарта",
+          "used": true
+        },
+        {
+          "url": "https://ncpo.ru/profperepodgotovka/aromaterapiya-pp/",
+          "title": "Обучение «Ароматерапия»: онлайн переподготовка с дипломом в Москве в НЦПО",
+          "used": true
+        },
+        {
+          "url": "https://nadpo.ru/do/aromaterapiya-v-praktike-psikhologa-108/",
+          "title": "Курс Аромапсихология: обучение онлайн — Повышение квалификации",
+          "used": true
+        },
+        {
+          "url": "https://dpo.rudn.ru/course/Aromaterapiya/",
+          "title": "Курсы Дополнительное образование РУДН",
+          "used": true
+        },
+        {
+          "url": "https://ipo.msk.ru/professionalnaja-perepodgotovka/psihologija/aromaterapiya-v-praktike-psikhologa-pp486/",
+          "title": "Ароматерапия в практике психолога - дистанционный курс профессиональной переподготовки ИПО",
+          "used": false
+        }
+      ],
+      "usedSources": [
+        "https://aromaschool.ru/obuchenie",
+        "https://ncpo.ru/profperepodgotovka/aromaterapiya-pp/",
+        "https://nadpo.ru/do/aromaterapiya-v-praktike-psikhologa-108/",
+        "https://dpo.rudn.ru/course/Aromaterapiya/"
+      ],
+      "targetFound": false,
+      "targetUsed": false,
+      "sourcePosition": null,
+      "usedSourcePosition": null
+    },
+    {
+      "channel": "Yandex Search API generative response",
+      "status": "checked",
+      "query": "Где пройти курс по сакральной геометрии для начинающих?",
+      "result": "Несколько ресурсов, где можно пройти курс по сакральной геометрии для начинающих: * **newtimeman.ru**. [1] На сайте представлен онлайн-курс «Сакральная геометрия», начало обучения запланировано на январь 2027 года. [1] Курс состоит из двух частей, видеоуроки выходят раз в неделю, доступ к ним предоставляется на время обучения и ещё 2 месяца после окончания. [1] * **geometry-school.ru**. [2] На сайте можно записаться на онлайн-курс «1 ступень», который включает авторские медитации и знакомство с символами сакральной геометрии. [2] * **klubquantum.tilda.ws**. [4] На сайте представлен курс по сакральной геометрии от «Школы квантового творчества», который длится 8 недель. [4] В программе — видео-лекции, видео-практики с уроками по построению и аудио-медитации. [4] * **artmeup.ru**. [5] На сайте представлена онлайн-академия ArtmeUP, где можно найти курсы по сакральной геометрии и другим темам. [5]",
+      "sources": [
+        "https://newtimeman.ru/courses/sakralnaya-geometriya/",
+        "https://geometry-school.ru/",
+        "https://shkolamandal.online/learn/figures",
+        "https://klubquantum.tilda.ws/sacredgeometry",
+        "https://artmeup.ru/"
+      ],
+      "sourceDetails": [
+        {
+          "url": "https://newtimeman.ru/courses/sakralnaya-geometriya/",
+          "title": "Программы и курсы",
+          "used": true
+        },
+        {
+          "url": "https://geometry-school.ru/",
+          "title": "1 СТУПЕНЬ",
+          "used": true
+        },
+        {
+          "url": "https://shkolamandal.online/learn/figures",
+          "title": "Фигуры сакральной геометрии",
+          "used": false
+        },
+        {
+          "url": "https://klubquantum.tilda.ws/sacredgeometry",
+          "title": "Курс по сакральной геометрии",
+          "used": true
+        },
+        {
+          "url": "https://artmeup.ru/",
+          "title": "Онлайн - академия ArtmeUP",
+          "used": true
+        }
+      ],
+      "usedSources": [
+        "https://newtimeman.ru/courses/sakralnaya-geometriya/",
+        "https://geometry-school.ru/",
+        "https://klubquantum.tilda.ws/sacredgeometry",
+        "https://artmeup.ru/"
+      ],
+      "targetFound": false,
+      "targetUsed": false,
+      "sourcePosition": null,
+      "usedSourcePosition": null
+    }
+  ],
+  "sampleVisibility": {
+    "used": 0,
+    "checked": 5,
+    "rate": 0
+  },
+  "limitations": [
+    "Alice AI visibility is a controlled sample and is not an official Yandex Webmaster metric."
+  ]
+}

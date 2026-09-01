@@ -1,0 +1,67 @@
+[
+  {
+    "id": "dataforseo",
+    "label": "DataForSEO",
+    "state": "not_applicable",
+    "message": "DataForSEO is not used for the Russian market profile.",
+    "checkedAt": "2026-09-01T15:24:04.424Z"
+  },
+  {
+    "id": "yandex_search",
+    "label": "Yandex Search API",
+    "state": "partial",
+    "message": "Yandex rank checks returned partial evidence.",
+    "checkedAt": "2026-09-01T15:24:08.479Z",
+    "details": {
+      "requested": 5,
+      "collected": 4
+    }
+  },
+  {
+    "id": "alice_ai",
+    "label": "Alice AI sample",
+    "state": "success",
+    "message": "All requested Alice AI sample probes were checked.",
+    "checkedAt": "2026-09-01T15:24:08.479Z",
+    "details": {
+      "requested": 5,
+      "checked": 5
+    }
+  },
+  {
+    "id": "yandex_webmaster",
+    "label": "Yandex Webmaster",
+    "state": "unavailable",
+    "message": "Yandex Webmaster host access could not be checked safely.",
+    "checkedAt": "2026-09-01T15:24:04.424Z"
+  },
+  {
+    "id": "gsc",
+    "label": "Google Search Console",
+    "state": "owner_access_required",
+    "message": "Verified Google Search Console owner access is required for this domain.",
+    "checkedAt": "2026-09-01T15:24:04.424Z"
+  },
+  {
+    "id": "crawl",
+    "label": "Public crawl",
+    "state": "success",
+    "message": "Collected 14 public page record(s).",
+    "checkedAt": "2026-09-01T15:24:08.479Z",
+    "details": {
+      "pages": 14
+    }
+  },
+  {
+    "id": "lighthouse",
+    "label": "Lighthouse",
+    "state": "success",
+    "message": "All requested Lighthouse profiles completed.",
+    "checkedAt": "2026-09-01T15:24:08.479Z",
+    "details": {
+      "requested": 12,
+      "successful": 12,
+      "failed": 0
+    }
+  }
+]

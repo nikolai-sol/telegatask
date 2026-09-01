@@ -11,6 +11,7 @@ export type SeoProviderInput = {
   teamId: string;
   companyId: string;
   domain: string;
+  auditedOrigin: string | null;
   gscSiteUrl: string | null;
   targetDomainAliases: string[];
   market: string;
@@ -128,4 +129,29 @@ export function normalizeProviderDomain(domain: string): string {
 
 export function urlForDomain(domain: string, path: string): string {
   return `https://${normalizeProviderDomain(domain) || "example.com"}${path}`;
+}
+
+/** Preserve an explicit audited scheme/origin instead of guessing for owner-only providers. */
+export function resolveProviderAuditedOrigin(domain: string, property?: string | null): string | null {
+  const rawDomain = String(domain || "").trim();
+  let expectedHostname = "";
+  try {
+    const candidate = /^https?:\/\//i.test(rawDomain) ? new URL(rawDomain) : new URL(`https://${rawDomain}`);
+    if (candidate.username || candidate.password) return null;
+    expectedHostname = candidate.hostname.toLowerCase().replace(/\.$/, "");
+    if (/^https?:\/\//i.test(rawDomain)) return candidate.origin;
+  } catch {
+    return null;
+  }
+  const rawProperty = String(property || "").trim();
+  if (!/^https?:\/\//i.test(rawProperty)) return null;
+  try {
+    const candidate = new URL(rawProperty);
+    if (candidate.username || candidate.password) return null;
+    return candidate.hostname.toLowerCase().replace(/\.$/, "") === expectedHostname
+      ? candidate.origin
+      : null;
+  } catch {
+    return null;
+  }
 }

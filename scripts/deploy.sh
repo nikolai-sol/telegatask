@@ -49,12 +49,26 @@ ssh $SSH_OPTS "$SERVER" "
   set -e
   cd $REMOTE_DIR
 
-  # Node 18+ если нет
-  if ! command -v node &>/dev/null; then
-    echo 'Устанавливаем Node.js 20...'
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  REQUIRED_NODE_MAJOR=22
+  REQUIRED_NODE_MINOR=19
+  node_runtime_is_supported() {
+    command -v node >/dev/null 2>&1 && node -e '
+      const [major, minor] = process.versions.node.split(".").map(Number);
+      process.exit(major > 22 || (major === 22 && minor >= 19) ? 0 : 1);
+    '
+  }
+
+  # Lighthouse 13.4.1 and package.json require Node >=22.19.
+  if ! node_runtime_is_supported; then
+    echo 'Устанавливаем совместимый Node.js 22.x...'
+    curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
     apt-get install -y nodejs
   fi
+  if ! node_runtime_is_supported; then
+    echo 'Ошибка: требуется Node.js >=22.19.0'
+    exit 1
+  fi
+  echo 'Node.js runtime:' \$(node -v)
 
   # PM2
   npm install -g pm2 2>/dev/null || true

@@ -50,4 +50,18 @@ describe("async Hermes advisory MySQL repository", () => {
     expect(sql).toContain("total_tokens = 30");
     expect(sql).toContain("WHERE id = 9 AND status = 'advisory_pending'");
   });
+
+  test("bounds attempt errors to the MySQL last_error contract", async () => {
+    const execute = vi.fn(async () => []);
+    const repository = createAsyncHermesAdvisoryMysqlRepository({ table: "seo_advisory_jobs", execute });
+
+    await repository.recordAttemptFailure(9, {
+      at: "2026-08-03T09:45:00.000Z",
+      error: "x".repeat(1_200),
+    });
+
+    const sql = execute.mock.calls[0][0];
+    const storedError = sql.match(/last_error = '([^']+)'/)?.[1] || "";
+    expect(storedError).toHaveLength(1_024);
+  });
 });

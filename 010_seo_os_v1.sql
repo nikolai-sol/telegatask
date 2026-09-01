@@ -34,12 +34,46 @@ CREATE TABLE IF NOT EXISTS seo_positions_weekly (
   matched_url            VARCHAR(1024) NULL,
   delta_prev             DECIMAL(6,2) NULL,            -- smoothed, per TASK-047 rules
   status                 ENUM('found','no_data') NOT NULL,
+  region                 VARCHAR(16)  NULL,            -- optional SERP region (YANDEX region/geo code)
   checked_at             DATETIME     NULL,
   ingestion_run_id       VARCHAR(64)  NOT NULL,
-  UNIQUE KEY uq_position (analytics_account_id, week_key, cluster_id),
+  UNIQUE KEY uq_position (analytics_account_id, week_key, cluster_id, region),
   KEY idx_section_week   (section, week_key),
   KEY idx_week           (week_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+SET @seo_positions_weekly_region_exists := (
+  SELECT COUNT(*)
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'seo_positions_weekly'
+    AND COLUMN_NAME = 'region'
+);
+SET @seo_positions_weekly_region_sql := IF(
+  @seo_positions_weekly_region_exists = 0,
+  'ALTER TABLE seo_positions_weekly ADD COLUMN region VARCHAR(16) NULL AFTER status',
+  'SELECT 1'
+);
+PREPARE seo_positions_weekly_region_stmt FROM @seo_positions_weekly_region_sql;
+EXECUTE seo_positions_weekly_region_stmt;
+DEALLOCATE PREPARE seo_positions_weekly_region_stmt;
+
+SET @seo_positions_weekly_uq_position_cols := (
+  SELECT GROUP_CONCAT(COLUMN_NAME ORDER BY SEQ_IN_INDEX)
+  FROM information_schema.STATISTICS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'seo_positions_weekly'
+    AND INDEX_NAME = 'uq_position'
+);
+SET @seo_positions_weekly_uq_position_sql := IF(
+  @seo_positions_weekly_uq_position_cols IS NOT NULL
+    AND @seo_positions_weekly_uq_position_cols <> 'analytics_account_id,week_key,cluster_id,region',
+  'ALTER TABLE seo_positions_weekly DROP INDEX uq_position, ADD UNIQUE KEY uq_position (analytics_account_id, week_key, cluster_id, region)',
+  'SELECT 1'
+);
+PREPARE seo_positions_weekly_uq_position_stmt FROM @seo_positions_weekly_uq_position_sql;
+EXECUTE seo_positions_weekly_uq_position_stmt;
+DEALLOCATE PREPARE seo_positions_weekly_uq_position_stmt;
 
 -- 3. Opportunities + human decisions per week
 CREATE TABLE IF NOT EXISTS seo_opportunities (
@@ -109,6 +143,12 @@ CREATE TABLE IF NOT EXISTS seo_weekly_runs (
   analytics_account_id   BIGINT       NOT NULL,
   week_key               CHAR(8)      NOT NULL,        -- data week, e.g. '2026-W29'
   run_week_key           CHAR(8)      NOT NULL,        -- scheduler/run week, e.g. '2026-W30'
+  tracking_set_checksum  CHAR(64)     NULL,
+  tracking_set_item_count INT UNSIGNED NOT NULL DEFAULT 0,
+  tracking_set_seed_count INT UNSIGNED NOT NULL DEFAULT 0,
+  tracking_set_live_count INT UNSIGNED NOT NULL DEFAULT 0,
+  tracking_set_seed_fallback_count INT UNSIGNED NOT NULL DEFAULT 0,
+  tracking_set_snapshot  JSON         NULL,
   status                 ENUM('completed','failed','noop') NOT NULL,
   stages_json            JSON         NULL,
   serp_requests          INT UNSIGNED NOT NULL DEFAULT 0,
@@ -120,6 +160,102 @@ CREATE TABLE IF NOT EXISTS seo_weekly_runs (
   UNIQUE KEY uq_run (analytics_account_id, run_week_key),
   KEY idx_run_data_week (week_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+SET @seo_weekly_runs_tracking_set_checksum_exists := (
+  SELECT COUNT(*)
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'seo_weekly_runs'
+    AND COLUMN_NAME = 'tracking_set_checksum'
+);
+SET @seo_weekly_runs_tracking_set_checksum_sql := IF(
+  @seo_weekly_runs_tracking_set_checksum_exists = 0,
+  'ALTER TABLE seo_weekly_runs ADD COLUMN tracking_set_checksum CHAR(64) NULL AFTER run_week_key',
+  'SELECT 1'
+);
+PREPARE seo_weekly_runs_tracking_set_checksum_stmt FROM @seo_weekly_runs_tracking_set_checksum_sql;
+EXECUTE seo_weekly_runs_tracking_set_checksum_stmt;
+DEALLOCATE PREPARE seo_weekly_runs_tracking_set_checksum_stmt;
+
+SET @seo_weekly_runs_tracking_set_item_count_exists := (
+  SELECT COUNT(*)
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'seo_weekly_runs'
+    AND COLUMN_NAME = 'tracking_set_item_count'
+);
+SET @seo_weekly_runs_tracking_set_item_count_sql := IF(
+  @seo_weekly_runs_tracking_set_item_count_exists = 0,
+  'ALTER TABLE seo_weekly_runs ADD COLUMN tracking_set_item_count INT UNSIGNED NOT NULL DEFAULT 0 AFTER tracking_set_checksum',
+  'SELECT 1'
+);
+PREPARE seo_weekly_runs_tracking_set_item_count_stmt FROM @seo_weekly_runs_tracking_set_item_count_sql;
+EXECUTE seo_weekly_runs_tracking_set_item_count_stmt;
+DEALLOCATE PREPARE seo_weekly_runs_tracking_set_item_count_stmt;
+
+SET @seo_weekly_runs_tracking_set_seed_count_exists := (
+  SELECT COUNT(*)
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'seo_weekly_runs'
+    AND COLUMN_NAME = 'tracking_set_seed_count'
+);
+SET @seo_weekly_runs_tracking_set_seed_count_sql := IF(
+  @seo_weekly_runs_tracking_set_seed_count_exists = 0,
+  'ALTER TABLE seo_weekly_runs ADD COLUMN tracking_set_seed_count INT UNSIGNED NOT NULL DEFAULT 0 AFTER tracking_set_item_count',
+  'SELECT 1'
+);
+PREPARE seo_weekly_runs_tracking_set_seed_count_stmt FROM @seo_weekly_runs_tracking_set_seed_count_sql;
+EXECUTE seo_weekly_runs_tracking_set_seed_count_stmt;
+DEALLOCATE PREPARE seo_weekly_runs_tracking_set_seed_count_stmt;
+
+SET @seo_weekly_runs_tracking_set_live_count_exists := (
+  SELECT COUNT(*)
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'seo_weekly_runs'
+    AND COLUMN_NAME = 'tracking_set_live_count'
+);
+SET @seo_weekly_runs_tracking_set_live_count_sql := IF(
+  @seo_weekly_runs_tracking_set_live_count_exists = 0,
+  'ALTER TABLE seo_weekly_runs ADD COLUMN tracking_set_live_count INT UNSIGNED NOT NULL DEFAULT 0 AFTER tracking_set_seed_count',
+  'SELECT 1'
+);
+PREPARE seo_weekly_runs_tracking_set_live_count_stmt FROM @seo_weekly_runs_tracking_set_live_count_sql;
+EXECUTE seo_weekly_runs_tracking_set_live_count_stmt;
+DEALLOCATE PREPARE seo_weekly_runs_tracking_set_live_count_stmt;
+
+SET @seo_weekly_runs_tracking_set_seed_fallback_count_exists := (
+  SELECT COUNT(*)
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'seo_weekly_runs'
+    AND COLUMN_NAME = 'tracking_set_seed_fallback_count'
+);
+SET @seo_weekly_runs_tracking_set_seed_fallback_count_sql := IF(
+  @seo_weekly_runs_tracking_set_seed_fallback_count_exists = 0,
+  'ALTER TABLE seo_weekly_runs ADD COLUMN tracking_set_seed_fallback_count INT UNSIGNED NOT NULL DEFAULT 0 AFTER tracking_set_live_count',
+  'SELECT 1'
+);
+PREPARE seo_weekly_runs_tracking_set_seed_fallback_count_stmt FROM @seo_weekly_runs_tracking_set_seed_fallback_count_sql;
+EXECUTE seo_weekly_runs_tracking_set_seed_fallback_count_stmt;
+DEALLOCATE PREPARE seo_weekly_runs_tracking_set_seed_fallback_count_stmt;
+
+SET @seo_weekly_runs_tracking_set_snapshot_exists := (
+  SELECT COUNT(*)
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'seo_weekly_runs'
+    AND COLUMN_NAME = 'tracking_set_snapshot'
+);
+SET @seo_weekly_runs_tracking_set_snapshot_sql := IF(
+  @seo_weekly_runs_tracking_set_snapshot_exists = 0,
+  'ALTER TABLE seo_weekly_runs ADD COLUMN tracking_set_snapshot JSON NULL AFTER tracking_set_seed_fallback_count',
+  'SELECT 1'
+);
+PREPARE seo_weekly_runs_tracking_set_snapshot_stmt FROM @seo_weekly_runs_tracking_set_snapshot_sql;
+EXECUTE seo_weekly_runs_tracking_set_snapshot_stmt;
+DEALLOCATE PREPARE seo_weekly_runs_tracking_set_snapshot_stmt;
 
 SET @seo_weekly_runs_run_week_exists := (
   SELECT COUNT(*)
@@ -179,8 +315,8 @@ SET @seo_weekly_runs_uq_run_columns_after_drop := (
   SELECT GROUP_CONCAT(COLUMN_NAME ORDER BY SEQ_IN_INDEX)
   FROM information_schema.STATISTICS
   WHERE TABLE_SCHEMA = DATABASE()
-    AND TABLE_NAME = 'seo_weekly_runs'
-    AND INDEX_NAME = 'uq_run'
+  AND TABLE_NAME = 'seo_weekly_runs'
+  AND INDEX_NAME = 'uq_run'
 );
 SET @seo_weekly_runs_add_uq_run_sql := IF(
   @seo_weekly_runs_uq_run_columns_after_drop IS NULL,

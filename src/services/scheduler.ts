@@ -11,6 +11,7 @@
 
 import cron from "node-cron";
 import { spawn } from "child_process";
+import { join } from "path";
 import { Telegraf } from "telegraf";
 import { runAutoScan } from "./scanner";
 import {
@@ -28,6 +29,7 @@ import { debugLog } from "../config/debug";
 import { shouldRunWeeklySeoRhythmCatchUp } from "../features/seoAgent/weeklySeoRhythm";
 
 const jobs: ReturnType<typeof cron.schedule>[] = [];
+const schedulerProjectRoot = join(__dirname, "../..");
 const SEO_WEEKLY_RHYTHM_TIME_ZONE = process.env.SEO_WEEKLY_RHYTHM_TIME_ZONE || "Europe/Vienna";
 
 type CronKey =
@@ -96,7 +98,7 @@ async function runWeeklySeoRhythmScript(): Promise<void> {
       "ts-node/register/transpile-only",
       "scripts/runWeeklySeoRhythm.ts",
     ], {
-      cwd: process.cwd(),
+      cwd: schedulerProjectRoot,
       stdio: "inherit",
       env: process.env,
     });
@@ -130,7 +132,7 @@ async function runAsyncHermesAdvisoryScript(): Promise<void> {
       "ts-node/register/transpile-only",
       "scripts/runAsyncHermesAdvisory.ts",
     ], {
-      cwd: process.cwd(),
+      cwd: schedulerProjectRoot,
       stdio: "inherit",
       env: process.env,
     });

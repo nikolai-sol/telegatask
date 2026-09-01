@@ -19,6 +19,7 @@ import { YandexWebmasterSeoSource } from "./providers/yandexWebmasterSeoSource";
 import { YandexSerpRankSource } from "./providers/yandexSerpRankSource";
 import {
   normalizeProviderDomain,
+  resolveProviderAuditedOrigin,
   SeoProviderNotConfiguredError,
   type SeoCompetitorGap,
   type SeoDomainOverview,
@@ -635,7 +636,9 @@ function createRecommendations(input: {
   };
 
   const hasRankingSource = input.sourceStatuses.some(
-    (item) => (item.source === "mock" || item.source === "sistrix") && item.status === "success"
+    (item) =>
+      (item.source === "google_serp_rank" || item.source === "mock" || item.source === "sistrix") &&
+      item.status === "success"
   );
 
   if (hasRankingSource && input.keywords.length > 0) {
@@ -726,7 +729,12 @@ function createRecommendations(input: {
     });
   }
 
+  const yandexWebmasterAvailable = input.sourceStatuses.some(
+    (item) => item.source === "yandex_webmaster" && (item.status === "success" || item.status === "partial")
+  );
+
   if (
+    yandexWebmasterAvailable &&
     input.yandexWebmaster.impressions !== null &&
     input.yandexWebmaster.impressions > 0 &&
     input.yandexWebmaster.ctr !== null &&
@@ -742,6 +750,7 @@ function createRecommendations(input: {
   }
 
   if (
+    yandexWebmasterAvailable &&
     input.yandexWebmaster.impressions !== null &&
     input.yandexWebmaster.impressions >= 100 &&
     input.yandexWebmaster.averagePosition !== null &&
@@ -858,17 +867,6 @@ function createRecommendations(input: {
     });
   }
 
-  const yandexWebmasterStatus = input.sourceStatuses.find((item) => item.source === "yandex_webmaster");
-  if (!yandexWebmasterStatus || yandexWebmasterStatus.status === "skipped" || yandexWebmasterStatus.status === "failed") {
-    push({
-      type: "tracking",
-      title: "Connect Yandex Webmaster for owned Yandex data",
-      description:
-        "Yandex Webmaster is not connected for this run. Connect it to access Yandex clicks, impressions, CTR, average position, and query data.",
-      priority: "medium",
-    });
-  }
-
   const pagespeedStatus = input.sourceStatuses.find((item) => item.source === "pagespeed");
   if (!pagespeedStatus || pagespeedStatus.status === "skipped") {
     push({
@@ -894,7 +892,7 @@ function createRecommendations(input: {
     push({
       type: "tracking",
       title: "Add a ranking source for visibility scoring",
-      description: "Visibility and competitor scoring require ranking source such as SISTRIX.",
+      description: "Visibility and competitor scoring require a successful DataForSEO Google ranking source.",
       priority: "medium",
     });
   }
@@ -1160,9 +1158,18 @@ function createSummary(input: {
   overview: SeoDomainOverview | null;
   keywords: SeoKeywordInsight[];
   competitors: SeoCompetitorInsight[];
+  googleChecks?: GoogleRankCheck[];
 }) {
+  const googleChecks = input.googleChecks || [];
+  const googleVisibilityIndex = googleChecks.length > 0
+    ? googleChecks.reduce((sum, check) => {
+        if (!check.found) return sum;
+        const position = Math.max(1, Math.min(100, check.position || 100));
+        return sum + Math.max(0, 21 - position) / 20;
+      }, 0)
+    : null;
   return {
-    visibilityIndex: cleanNumber(input.overview?.visibilityIndex),
+    visibilityIndex: cleanNumber(input.overview?.visibilityIndex) ?? googleVisibilityIndex,
     keywordCount:
       cleanNumber(input.overview?.keywordCount) ??
       (input.keywords.length > 0 ? input.keywords.length : null),
@@ -1683,10 +1690,13 @@ async function runGscSource(providerInput: Pick<SeoProviderInput, "domain" | "te
 }
 
 async function runYandexWebmasterSource(
-  providerInput: Pick<SeoProviderInput, "domain" | "device">
+  providerInput: Pick<SeoProviderInput, "domain" | "auditedOrigin" | "device">
 ): Promise<ExecutedSourceResult> {
   try {
-    const snapshot = await new YandexWebmasterSeoSource().getSnapshot(providerInput.domain, {
+    if (!providerInput.auditedOrigin) {
+      throw new SeoProviderNotConfiguredError("Yandex Webmaster requires an explicit audited HTTP(S) origin");
+    }
+    const snapshot = await new YandexWebmasterSeoSource().getSnapshot(providerInput.auditedOrigin, {
       device: providerInput.device,
     });
     return {
@@ -1902,6 +1912,7 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
     teamId: input.teamId,
     companyId: input.companyId,
     domain: normalizeProviderDomain(input.config.domain),
+    auditedOrigin: resolveProviderAuditedOrigin(input.config.domain, input.config.gscSiteUrl),
     gscSiteUrl: input.config.gscSiteUrl,
     targetDomainAliases:
       input.config.targetDomainAliases.length > 0
@@ -1994,6 +2005,7 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
   };
 
   const overview = rankingPayloads[0]?.overview ?? null;
+  const googleChecks = rankTracking.google?.checks || [];
   const keywordItems = rankingPayloads.flatMap((item) => item.keywordItems);
   const competitorItems = rankingPayloads.flatMap((item) => item.competitorItems);
   const urlItems = rankingPayloads.flatMap((item) => item.urlItems);
@@ -2001,7 +2013,7 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
   const usableSources = sourceStatuses.filter((item) => item.status === "success" || item.status === "partial");
   const successfulSources = sourceStatuses.filter((item) => item.status === "success");
   const hasRankingSource = successfulSources.some(
-    (item) => item.source === "mock" || item.source === "sistrix"
+    (item) => item.source === "google_serp_rank" || item.source === "mock" || item.source === "sistrix"
   );
   if (usableSources.length === 0) {
     const primaryFailure = executed[0];
@@ -2047,13 +2059,13 @@ export async function runSeoAnalysis(input: SeoAnalysisInput): Promise<SeoAnalys
       crawler,
     })
   );
-  const summary = createSummary({ overview, keywords, competitors });
+  const summary = createSummary({ overview, keywords, competitors, googleChecks });
   const visibility = {
     visibilityIndex: summary.visibilityIndex,
     trend: overview?.trend ?? "unknown",
     notes: uniqueStrings([
       ...rankingPayloads.flatMap((item) => nonEmptyArray(item.overview.notes)),
-      ...(hasRankingSource ? [] : ["Visibility and competitor scoring require ranking source such as SISTRIX."]),
+      ...(hasRankingSource ? [] : ["Visibility and competitor scoring require a successful DataForSEO Google ranking source."]),
     ]),
   } as const;
   const technical = createTechnicalSnapshot({ crawler, pagespeed });

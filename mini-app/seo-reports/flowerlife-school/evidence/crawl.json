@@ -1,0 +1,1482 @@
+{
+  "attemptedUrlCount": 21,
+  "eligibleDiscoveredCount": 21,
+  "droppedEligibleCount": 0,
+  "truncated": false,
+  "pages": [
+    {
+      "requestedUrl": "https://flowerlife-school.com/",
+      "finalUrl": "https://flowerlife-school.com/",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Цветок жизни",
+      "titleLength": 12,
+      "description": "Описание для RU",
+      "descriptionLength": 15,
+      "metaRobots": "noindex, nofollow",
+      "robots": "noindex, nofollow",
+      "hreflang": [],
+      "headings": {
+        "h1": [],
+        "h2": [],
+        "h3": [],
+        "h4": [],
+        "h5": [],
+        "h6": []
+      },
+      "links": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/courses/48",
+        "https://flowerlife-school.com/courses/49",
+        "https://flowerlife-school.com/courses/47",
+        "https://flowerlife-school.com/courses/46",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "internalLinks": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/courses/48",
+        "https://flowerlife-school.com/courses/49",
+        "https://flowerlife-school.com/courses/47",
+        "https://flowerlife-school.com/courses/46",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "externalLinks": [
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {},
+      "twitterCards": {},
+      "images": {
+        "total": 54,
+        "missingAlt": 54
+      },
+      "wordCount": 503,
+      "indexable": false,
+      "signalConflicts": [],
+      "indexabilityConflicts": [],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 5,
+        "matches": [],
+        "unmatchedKeywords": [
+          "цветок жизни школа",
+          "платформа саморазвития",
+          "онлайн курсы саморазвития",
+          "курсы духовного развития",
+          "курсы ароматерапии онлайн"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 0,
+      "depth": 0,
+      "discoverySources": [
+        "start",
+        "internal_link"
+      ],
+      "inboundInternalLinks": 13,
+      "orphanCandidate": false
+    },
+    {
+      "requestedUrl": "https://flowerlife-school.com/courses/catalog",
+      "finalUrl": "https://flowerlife-school.com/courses/catalog",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Цветок жизни",
+      "titleLength": 12,
+      "description": "Описание для RU",
+      "descriptionLength": 15,
+      "metaRobots": "noindex, nofollow",
+      "robots": "noindex, nofollow",
+      "hreflang": [],
+      "headings": {
+        "h1": [
+          "все курсы"
+        ],
+        "h2": [
+          "Популярные курсы",
+          "у вас остались какие‑либо вопросы?"
+        ],
+        "h3": [
+          "Не можете выбрать? Посмотрите первый урок любого курса бесплатно"
+        ],
+        "h4": [],
+        "h5": [
+          "Школа по работе с эфирными картами",
+          "Сакральная геометрия для начинающих",
+          "Глубинный йога‑массаж",
+          "Глубинное изучение эфирных масел",
+          "Оставьте свои контактные данные ниже, чтобы присоединиться"
+        ],
+        "h6": [
+          "Цветок Жизни"
+        ]
+      },
+      "links": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/courses/catalog/2",
+        "https://flowerlife-school.com/courses/catalog/19",
+        "https://flowerlife-school.com/courses/catalog/4",
+        "https://flowerlife-school.com/courses/catalog/3",
+        "https://flowerlife-school.com/courses/catalog/1",
+        "https://flowerlife-school.com/courses/46",
+        "https://flowerlife-school.com/courses/47",
+        "https://flowerlife-school.com/courses/48",
+        "https://flowerlife-school.com/courses/49",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "internalLinks": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/courses/catalog/2",
+        "https://flowerlife-school.com/courses/catalog/19",
+        "https://flowerlife-school.com/courses/catalog/4",
+        "https://flowerlife-school.com/courses/catalog/3",
+        "https://flowerlife-school.com/courses/catalog/1",
+        "https://flowerlife-school.com/courses/46",
+        "https://flowerlife-school.com/courses/47",
+        "https://flowerlife-school.com/courses/48",
+        "https://flowerlife-school.com/courses/49",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "externalLinks": [
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {},
+      "twitterCards": {},
+      "images": {
+        "total": 17,
+        "missingAlt": 17
+      },
+      "wordCount": 203,
+      "indexable": false,
+      "signalConflicts": [],
+      "indexabilityConflicts": [],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 5,
+        "matches": [],
+        "unmatchedKeywords": [
+          "цветок жизни школа",
+          "платформа саморазвития",
+          "онлайн курсы саморазвития",
+          "курсы духовного развития",
+          "курсы ароматерапии онлайн"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 1,
+      "depth": 1,
+      "discoverySources": [
+        "internal_link"
+      ],
+      "inboundInternalLinks": 13,
+      "orphanCandidate": false
+    },
+    {
+      "requestedUrl": "https://flowerlife-school.com/courses",
+      "finalUrl": "https://flowerlife-school.com/courses",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Цветок жизни",
+      "titleLength": 12,
+      "description": "Описание для RU",
+      "descriptionLength": 15,
+      "metaRobots": "noindex, nofollow",
+      "robots": "noindex, nofollow",
+      "hreflang": [],
+      "headings": {
+        "h1": [
+          "образование будущего — №1 платформа по саморазвитию"
+        ],
+        "h2": [
+          "у вас остались какие‑либо вопросы?"
+        ],
+        "h3": [
+          "1000+",
+          "100+",
+          "~15"
+        ],
+        "h4": [],
+        "h5": [
+          "Оставьте свои контактные данные ниже, чтобы присоединиться"
+        ],
+        "h6": []
+      },
+      "links": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/courses/48",
+        "https://flowerlife-school.com/courses/49",
+        "https://flowerlife-school.com/courses/47",
+        "https://flowerlife-school.com/courses/46",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "internalLinks": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/courses/48",
+        "https://flowerlife-school.com/courses/49",
+        "https://flowerlife-school.com/courses/47",
+        "https://flowerlife-school.com/courses/46",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "externalLinks": [
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {},
+      "twitterCards": {},
+      "images": {
+        "total": 64,
+        "missingAlt": 64
+      },
+      "wordCount": 775,
+      "indexable": false,
+      "signalConflicts": [],
+      "indexabilityConflicts": [],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 5,
+        "matches": [],
+        "unmatchedKeywords": [
+          "цветок жизни школа",
+          "платформа саморазвития",
+          "онлайн курсы саморазвития",
+          "курсы духовного развития",
+          "курсы ароматерапии онлайн"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 2,
+      "depth": 1,
+      "discoverySources": [
+        "internal_link"
+      ],
+      "inboundInternalLinks": 13,
+      "orphanCandidate": false
+    },
+    {
+      "requestedUrl": "https://flowerlife-school.com/masters",
+      "finalUrl": "https://flowerlife-school.com/masters",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Цветок жизни",
+      "titleLength": 12,
+      "description": "Описание для RU",
+      "descriptionLength": 15,
+      "metaRobots": "noindex, nofollow",
+      "robots": "noindex, nofollow",
+      "hreflang": [],
+      "headings": {
+        "h1": [],
+        "h2": [],
+        "h3": [],
+        "h4": [],
+        "h5": [],
+        "h6": []
+      },
+      "links": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/masters/survey",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "internalLinks": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/masters/survey",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "externalLinks": [
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {},
+      "twitterCards": {},
+      "images": {
+        "total": 49,
+        "missingAlt": 49
+      },
+      "wordCount": 958,
+      "indexable": false,
+      "signalConflicts": [],
+      "indexabilityConflicts": [],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 5,
+        "matches": [],
+        "unmatchedKeywords": [
+          "цветок жизни школа",
+          "платформа саморазвития",
+          "онлайн курсы саморазвития",
+          "курсы духовного развития",
+          "курсы ароматерапии онлайн"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 3,
+      "depth": 1,
+      "discoverySources": [
+        "internal_link"
+      ],
+      "inboundInternalLinks": 13,
+      "orphanCandidate": false
+    },
+    {
+      "requestedUrl": "https://flowerlife-school.com/courses/48",
+      "finalUrl": "https://flowerlife-school.com/courses/48",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Глубинный йога‑массаж",
+      "titleLength": 21,
+      "description": "Искусство осознанного прикосновения",
+      "descriptionLength": 35,
+      "metaRobots": "noindex, nofollow",
+      "robots": "noindex, nofollow",
+      "hreflang": [],
+      "headings": {
+        "h1": [
+          "ГЛУБИННЫЙ ЙОГА-МАССАЖ: ИСКУССТВО ОСОЗНАННОГО ПРИКОСНОВЕНИЯ"
+        ],
+        "h2": [
+          "Мастер курса",
+          "Курс поможет вам, если вы",
+          "Вы освоите практические приемы",
+          "В содержание курса входит",
+          "На данном курсе доступны следующие тарифы",
+          "Улучшите свою жизнь вместе с практикой йога-массажа"
+        ],
+        "h3": [
+          "Главные идеи и базовые принципы практики.",
+          "Методика, как инструмент трансформации.",
+          "Естественный баланс, укорененность и центрирование. Связываем тело, дыхание и внимание в единое целое",
+          "Как практику создать безопасное пространство для клиента.",
+          "Искусство осознанного касания: Влияние на тело и энергию. Механика движений и правила безопасного применения техник",
+          "Противопоказания, принцип «не вреди»"
+        ],
+        "h4": [],
+        "h5": [
+          "Екатерина Мехоношина",
+          "Присоединяйтесь к нас сейчас, чтобы сделать свою жизнь лучше",
+          "Не можете определиться? Напишите нам",
+          "Самостоятельно",
+          "С мастером",
+          "Если у вас есть вопросы — оставьте заявку  и мы свяжемся с вами"
+        ],
+        "h6": [
+          "Цветок Жизни",
+          "Для кого",
+          "Результаты",
+          "Цветок Жизни",
+          "Стоимость",
+          "Цветок Жизни"
+        ]
+      },
+      "links": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/2026/06/20/6f7d6ec7fee615aa46a271ad5f6e47337c6da1e7.pdf",
+        "https://flowerlife-school.com/courses/48",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "internalLinks": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/2026/06/20/6f7d6ec7fee615aa46a271ad5f6e47337c6da1e7.pdf",
+        "https://flowerlife-school.com/courses/48",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "externalLinks": [
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {},
+      "twitterCards": {},
+      "images": {
+        "total": 17,
+        "missingAlt": 16
+      },
+      "wordCount": 634,
+      "indexable": false,
+      "signalConflicts": [],
+      "indexabilityConflicts": [],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 5,
+        "matches": [],
+        "unmatchedKeywords": [
+          "цветок жизни школа",
+          "платформа саморазвития",
+          "онлайн курсы саморазвития",
+          "курсы духовного развития",
+          "курсы ароматерапии онлайн"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 4,
+      "depth": 1,
+      "discoverySources": [
+        "internal_link"
+      ],
+      "inboundInternalLinks": 3,
+      "orphanCandidate": false
+    },
+    {
+      "requestedUrl": "https://flowerlife-school.com/courses/49",
+      "finalUrl": "https://flowerlife-school.com/courses/49",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Глубинное изучение эфирных масел",
+      "titleLength": 32,
+      "description": "Этот курс — не про банальную ароматерапию. Это практическая карта навигации по вашему подсознанию через язык природы. Мы разберем 24 эфирных масла (от жизнерадостного Апельсина до духовного Ладана) как уникальные энергетические ключи. Каждое масло — это проводник к определенному архетипу, эмоции или заблокированному ресурсу внутри вас.",
+      "descriptionLength": 337,
+      "metaRobots": "noindex, nofollow",
+      "robots": "noindex, nofollow",
+      "hreflang": [],
+      "headings": {
+        "h1": [
+          "ГЛУБИННОЕ ИЗУЧЕНИЕ ЭФИРНЫХ МАСЕЛ"
+        ],
+        "h2": [
+          "Мастер курса",
+          "Курс поможет вам, если вы",
+          "Глубинное изучение базовых масел",
+          "В содержание курса входит",
+          "На данном курсе доступны следующие тарифы",
+          "Начните путешествие в мир эфирных масел уже сегодня"
+        ],
+        "h3": [
+          "Апельсин",
+          "Базилик",
+          "Розмарин",
+          "Лимон",
+          "Эвкалипт"
+        ],
+        "h4": [],
+        "h5": [
+          "Любовь Галкина",
+          "присоединяйтесь к нам сейчас, чтобы сделать свою жизнь лучше!",
+          "Не можете определиться? Напишите нам",
+          "Самостоятельно",
+          "С мастером",
+          "Если у вас есть вопросы — оставьте заявку и мы свяжемся с вами"
+        ],
+        "h6": [
+          "Цветок Жизни",
+          "Для кого",
+          "Результаты",
+          "Цветок Жизни",
+          "Стоимость",
+          "Цветок Жизни"
+        ]
+      },
+      "links": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/2026/06/20/10d75d700fc7c47725e4037a6110ca8b0963c2a8.pdf",
+        "https://flowerlife-school.com/courses/49",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "internalLinks": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/2026/06/20/10d75d700fc7c47725e4037a6110ca8b0963c2a8.pdf",
+        "https://flowerlife-school.com/courses/49",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "externalLinks": [
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {},
+      "twitterCards": {},
+      "images": {
+        "total": 17,
+        "missingAlt": 16
+      },
+      "wordCount": 674,
+      "indexable": false,
+      "signalConflicts": [],
+      "indexabilityConflicts": [],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 5,
+        "matches": [],
+        "unmatchedKeywords": [
+          "цветок жизни школа",
+          "платформа саморазвития",
+          "онлайн курсы саморазвития",
+          "курсы духовного развития",
+          "курсы ароматерапии онлайн"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 5,
+      "depth": 1,
+      "discoverySources": [
+        "internal_link"
+      ],
+      "inboundInternalLinks": 3,
+      "orphanCandidate": false
+    },
+    {
+      "requestedUrl": "https://flowerlife-school.com/courses/47",
+      "finalUrl": "https://flowerlife-school.com/courses/47",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Сакральная геометрия для начинающих",
+      "titleLength": 35,
+      "description": "Сакральная геометрия — это не про скуку. Это язык Вселенной, записанный формами. За 15 уроков ты научишься видеть геометрию вокруг и использовать во благо себе.",
+      "descriptionLength": 160,
+      "metaRobots": "noindex, nofollow",
+      "robots": "noindex, nofollow",
+      "hreflang": [],
+      "headings": {
+        "h1": [
+          "САКРАЛЬНАЯ ГЕОМЕТРИЯ ДЛЯ НАЧИНАЮЩИХ"
+        ],
+        "h2": [
+          "МАСТЕР КУРСА",
+          "курс поможет вам, если вы",
+          "Вы откроете геометрию совершенно с другой стороны",
+          "в содержание курса входит",
+          "На данном курсе доступны следующие тарифы",
+          "Начните путешествие в мир сакральной геометрии"
+        ],
+        "h3": [
+          "Что такое сакральная геометрия: история, смысл, ключевые понятия",
+          "Основные символы: точка, линия, круг. Их значение и применение",
+          "Треугольник: виды и символизм",
+          "Квадрат и прямоугольник",
+          "Пентаграмма и пятиугольник"
+        ],
+        "h4": [],
+        "h5": [
+          "Даниил Рудаков",
+          "Присоединяйтесь к нам, чтобы сделать свою жизнь лучше",
+          "Не можете определиться? Напишите нам",
+          "Самостоятельно",
+          "С мастером",
+          "Если у вас есть вопросы — оставьте заявку и мы свяжемся с вами"
+        ],
+        "h6": [
+          "Цветок Жизни",
+          "Для кого",
+          "Результаты",
+          "Цветок Жизни",
+          "Стоимость",
+          "Цветок Жизни"
+        ]
+      },
+      "links": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/2026/06/20/ee7906af62458641749bf29eb63a392d83ff1097.pdf",
+        "https://flowerlife-school.com/courses/47",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "internalLinks": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/2026/06/20/ee7906af62458641749bf29eb63a392d83ff1097.pdf",
+        "https://flowerlife-school.com/courses/47",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "externalLinks": [
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {},
+      "twitterCards": {},
+      "images": {
+        "total": 18,
+        "missingAlt": 17
+      },
+      "wordCount": 592,
+      "indexable": false,
+      "signalConflicts": [],
+      "indexabilityConflicts": [],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 5,
+        "matches": [],
+        "unmatchedKeywords": [
+          "цветок жизни школа",
+          "платформа саморазвития",
+          "онлайн курсы саморазвития",
+          "курсы духовного развития",
+          "курсы ароматерапии онлайн"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 6,
+      "depth": 1,
+      "discoverySources": [
+        "internal_link"
+      ],
+      "inboundInternalLinks": 3,
+      "orphanCandidate": false
+    },
+    {
+      "requestedUrl": "https://flowerlife-school.com/courses/46",
+      "finalUrl": "https://flowerlife-school.com/courses/46",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Школа по работе с эфирными картами",
+      "titleLength": 34,
+      "description": "Вы изучите разные энергии масел, научитесь проводить расклады, трактовать значения карт, понимать скрытые процессы подсознания и использовать эфирные карты как инструмент самопознания, гармонизации и помощи клиентам.",
+      "descriptionLength": 216,
+      "metaRobots": "noindex, nofollow",
+      "robots": "noindex, nofollow",
+      "hreflang": [],
+      "headings": {
+        "h1": [
+          "ШКОЛА ПО РАБОТЕ С ЭФИРНЫМИ КАРТАМИ"
+        ],
+        "h2": [
+          "Мастер курса",
+          "Курс поможет вам, если вы",
+          "ВЫ ОСВОИТЕ 30+ ЭФИРНЫХ МАСЕЛ И ИХ ВЛИЯНИЕ",
+          "В СОДЕРЖАНИЕ КУРСА ВХОДИТ",
+          "на данном курсе доступны следующие тарифы",
+          "Начните путешествие в мир эфирных масел уже сегодня"
+        ],
+        "h3": [
+          "Основы метода",
+          "Алгоритм работы",
+          "Об эфирных композициях",
+          "Эфирные масла на картах, часть 1",
+          "Эфирные масла на картах, часть 2"
+        ],
+        "h4": [],
+        "h5": [
+          "Любовь Галкина",
+          "присоединяйтесь к нам сейчас, чтобы сделать свою жизнь лучше",
+          "Не можете определиться? Напишите нам",
+          "Самостоятельно",
+          "С мастером",
+          "Если у вас есть вопросы — оставьте заявку и мы свяжемся с вами"
+        ],
+        "h6": [
+          "Цветок Жизни",
+          "Для кого",
+          "Результаты",
+          "Цветок Жизни",
+          "Стоимость",
+          "Цветок Жизни"
+        ]
+      },
+      "links": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/2026/06/20/bcf99e190adfb0f30c632d104cb4fe88ebb6b8cc.pdf",
+        "https://flowerlife-school.com/courses/46",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "internalLinks": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/2026/06/20/bcf99e190adfb0f30c632d104cb4fe88ebb6b8cc.pdf",
+        "https://flowerlife-school.com/courses/46",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "externalLinks": [
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {},
+      "twitterCards": {},
+      "images": {
+        "total": 17,
+        "missingAlt": 16
+      },
+      "wordCount": 627,
+      "indexable": false,
+      "signalConflicts": [],
+      "indexabilityConflicts": [],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 5,
+        "matches": [],
+        "unmatchedKeywords": [
+          "цветок жизни школа",
+          "платформа саморазвития",
+          "онлайн курсы саморазвития",
+          "курсы духовного развития",
+          "курсы ароматерапии онлайн"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 7,
+      "depth": 1,
+      "discoverySources": [
+        "internal_link"
+      ],
+      "inboundInternalLinks": 3,
+      "orphanCandidate": false
+    },
+    {
+      "requestedUrl": "https://flowerlife-school.com/courses/catalog/2",
+      "finalUrl": "https://flowerlife-school.com/courses/catalog/2",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Цветок жизни",
+      "titleLength": 12,
+      "description": "Описание для RU",
+      "descriptionLength": 15,
+      "metaRobots": "noindex, nofollow",
+      "robots": "noindex, nofollow",
+      "hreflang": [],
+      "headings": {
+        "h1": [
+          "Духовное развитие"
+        ],
+        "h2": [],
+        "h3": [],
+        "h4": [],
+        "h5": [],
+        "h6": []
+      },
+      "links": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "internalLinks": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "externalLinks": [
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {},
+      "twitterCards": {},
+      "images": {
+        "total": 4,
+        "missingAlt": 4
+      },
+      "wordCount": 90,
+      "indexable": false,
+      "signalConflicts": [],
+      "indexabilityConflicts": [],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 5,
+        "matches": [],
+        "unmatchedKeywords": [
+          "цветок жизни школа",
+          "платформа саморазвития",
+          "онлайн курсы саморазвития",
+          "курсы духовного развития",
+          "курсы ароматерапии онлайн"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 11,
+      "depth": 2,
+      "discoverySources": [
+        "internal_link"
+      ],
+      "inboundInternalLinks": 1,
+      "orphanCandidate": false
+    },
+    {
+      "requestedUrl": "https://flowerlife-school.com/courses/catalog/19",
+      "finalUrl": "https://flowerlife-school.com/courses/catalog/19",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Цветок жизни",
+      "titleLength": 12,
+      "description": "Описание для RU",
+      "descriptionLength": 15,
+      "metaRobots": "noindex, nofollow",
+      "robots": "noindex, nofollow",
+      "hreflang": [],
+      "headings": {
+        "h1": [
+          "Взаимоотношения"
+        ],
+        "h2": [],
+        "h3": [],
+        "h4": [],
+        "h5": [],
+        "h6": []
+      },
+      "links": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "internalLinks": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "externalLinks": [
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {},
+      "twitterCards": {},
+      "images": {
+        "total": 4,
+        "missingAlt": 4
+      },
+      "wordCount": 88,
+      "indexable": false,
+      "signalConflicts": [],
+      "indexabilityConflicts": [],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 5,
+        "matches": [],
+        "unmatchedKeywords": [
+          "цветок жизни школа",
+          "платформа саморазвития",
+          "онлайн курсы саморазвития",
+          "курсы духовного развития",
+          "курсы ароматерапии онлайн"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 12,
+      "depth": 2,
+      "discoverySources": [
+        "internal_link"
+      ],
+      "inboundInternalLinks": 1,
+      "orphanCandidate": false
+    },
+    {
+      "requestedUrl": "https://flowerlife-school.com/courses/catalog/4",
+      "finalUrl": "https://flowerlife-school.com/courses/catalog/4",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Цветок жизни",
+      "titleLength": 12,
+      "description": "Описание для RU",
+      "descriptionLength": 15,
+      "metaRobots": "noindex, nofollow",
+      "robots": "noindex, nofollow",
+      "hreflang": [],
+      "headings": {
+        "h1": [
+          "Самореализация"
+        ],
+        "h2": [],
+        "h3": [],
+        "h4": [],
+        "h5": [],
+        "h6": []
+      },
+      "links": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "internalLinks": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "externalLinks": [
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {},
+      "twitterCards": {},
+      "images": {
+        "total": 4,
+        "missingAlt": 4
+      },
+      "wordCount": 88,
+      "indexable": false,
+      "signalConflicts": [],
+      "indexabilityConflicts": [],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 5,
+        "matches": [],
+        "unmatchedKeywords": [
+          "цветок жизни школа",
+          "платформа саморазвития",
+          "онлайн курсы саморазвития",
+          "курсы духовного развития",
+          "курсы ароматерапии онлайн"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 13,
+      "depth": 2,
+      "discoverySources": [
+        "internal_link"
+      ],
+      "inboundInternalLinks": 1,
+      "orphanCandidate": false
+    },
+    {
+      "requestedUrl": "https://flowerlife-school.com/courses/catalog/3",
+      "finalUrl": "https://flowerlife-school.com/courses/catalog/3",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Цветок жизни",
+      "titleLength": 12,
+      "description": "Описание для RU",
+      "descriptionLength": 15,
+      "metaRobots": "noindex, nofollow",
+      "robots": "noindex, nofollow",
+      "hreflang": [],
+      "headings": {
+        "h1": [
+          "Здоровое тело"
+        ],
+        "h2": [],
+        "h3": [],
+        "h4": [],
+        "h5": [],
+        "h6": []
+      },
+      "links": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "internalLinks": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "externalLinks": [
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {},
+      "twitterCards": {},
+      "images": {
+        "total": 4,
+        "missingAlt": 4
+      },
+      "wordCount": 90,
+      "indexable": false,
+      "signalConflicts": [],
+      "indexabilityConflicts": [],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 5,
+        "matches": [],
+        "unmatchedKeywords": [
+          "цветок жизни школа",
+          "платформа саморазвития",
+          "онлайн курсы саморазвития",
+          "курсы духовного развития",
+          "курсы ароматерапии онлайн"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 14,
+      "depth": 2,
+      "discoverySources": [
+        "internal_link"
+      ],
+      "inboundInternalLinks": 1,
+      "orphanCandidate": false
+    },
+    {
+      "requestedUrl": "https://flowerlife-school.com/courses/catalog/1",
+      "finalUrl": "https://flowerlife-school.com/courses/catalog/1",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Цветок жизни",
+      "titleLength": 12,
+      "description": "Описание для RU",
+      "descriptionLength": 15,
+      "metaRobots": "noindex, nofollow",
+      "robots": "noindex, nofollow",
+      "hreflang": [],
+      "headings": {
+        "h1": [
+          "Творчество"
+        ],
+        "h2": [],
+        "h3": [],
+        "h4": [],
+        "h5": [],
+        "h6": []
+      },
+      "links": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "internalLinks": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "externalLinks": [
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {},
+      "twitterCards": {},
+      "images": {
+        "total": 4,
+        "missingAlt": 4
+      },
+      "wordCount": 88,
+      "indexable": false,
+      "signalConflicts": [],
+      "indexabilityConflicts": [],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 5,
+        "matches": [],
+        "unmatchedKeywords": [
+          "цветок жизни школа",
+          "платформа саморазвития",
+          "онлайн курсы саморазвития",
+          "курсы духовного развития",
+          "курсы ароматерапии онлайн"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 15,
+      "depth": 2,
+      "discoverySources": [
+        "internal_link"
+      ],
+      "inboundInternalLinks": 1,
+      "orphanCandidate": false
+    },
+    {
+      "requestedUrl": "https://flowerlife-school.com/masters/survey",
+      "finalUrl": "https://flowerlife-school.com/masters/survey",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Опрос",
+      "titleLength": 5,
+      "description": "Опрос",
+      "descriptionLength": 5,
+      "metaRobots": "noindex, nofollow",
+      "robots": "noindex, nofollow",
+      "hreflang": [],
+      "headings": {
+        "h1": [
+          "Будем рады видеть вас в нашем сообществе мастеров со всего мира"
+        ],
+        "h2": [],
+        "h3": [],
+        "h4": [],
+        "h5": [],
+        "h6": [
+          "Цветок Жизни"
+        ]
+      },
+      "links": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "internalLinks": [
+        "https://flowerlife-school.com/",
+        "https://flowerlife-school.com/courses/catalog",
+        "https://flowerlife-school.com/courses",
+        "https://flowerlife-school.com/masters",
+        "https://flowerlife-school.com/registration/email/form",
+        "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+        "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+        "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf"
+      ],
+      "externalLinks": [
+        "https://space.flowerlife-school.com/offline",
+        "https://t.me/cvetok_zhizni_nic",
+        "https://t.me/cvetok_zhizni_school",
+        "https://vk.com/cvetok_zhizni_school"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {},
+      "twitterCards": {},
+      "images": {
+        "total": 5,
+        "missingAlt": 5
+      },
+      "wordCount": 266,
+      "indexable": false,
+      "signalConflicts": [],
+      "indexabilityConflicts": [],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 5,
+        "matches": [],
+        "unmatchedKeywords": [
+          "цветок жизни школа",
+          "платформа саморазвития",
+          "онлайн курсы саморазвития",
+          "курсы духовного развития",
+          "курсы ароматерапии онлайн"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 16,
+      "depth": 2,
+      "discoverySources": [
+        "internal_link"
+      ],
+      "inboundInternalLinks": 1,
+      "orphanCandidate": false
+    }
+  ],
+  "robots": {
+    "url": "https://flowerlife-school.com/robots.txt",
+    "status": 200,
+    "sitemapUrls": [],
+    "access": {
+      "state": "measured",
+      "userAgent": "YandexBot",
+      "checkedUrlCount": 21,
+      "blockedUrls": []
+    }
+  },
+  "sitemapCandidates": [
+    {
+      "url": "https://flowerlife-school.com/sitemap.xml",
+      "source": "common",
+      "status": 404,
+      "urls": [],
+      "isIndex": false
+    },
+    {
+      "url": "https://flowerlife-school.com/sitemap_index.xml",
+      "source": "common",
+      "status": 404,
+      "urls": [],
+      "isIndex": false
+    },
+    {
+      "url": "https://flowerlife-school.com/sitemap-index.xml",
+      "source": "common",
+      "status": 404,
+      "urls": [],
+      "isIndex": false
+    }
+  ],
+  "discoveredUrls": [
+    "https://flowerlife-school.com/",
+    "https://flowerlife-school.com/courses/catalog",
+    "https://flowerlife-school.com/courses",
+    "https://flowerlife-school.com/masters",
+    "https://flowerlife-school.com/courses/48",
+    "https://flowerlife-school.com/courses/49",
+    "https://flowerlife-school.com/courses/47",
+    "https://flowerlife-school.com/courses/46",
+    "https://flowerlife-school.com/storage/docs/personal-data-processing-consent.pdf",
+    "https://flowerlife-school.com/storage/docs/privacy-policy.pdf",
+    "https://flowerlife-school.com/storage/docs/marketing-communications-consent.pdf",
+    "https://flowerlife-school.com/courses/catalog/2",
+    "https://flowerlife-school.com/courses/catalog/19",
+    "https://flowerlife-school.com/courses/catalog/4",
+    "https://flowerlife-school.com/courses/catalog/3",
+    "https://flowerlife-school.com/courses/catalog/1",
+    "https://flowerlife-school.com/masters/survey",
+    "https://flowerlife-school.com/storage/2026/06/20/6f7d6ec7fee615aa46a271ad5f6e47337c6da1e7.pdf",
+    "https://flowerlife-school.com/storage/2026/06/20/10d75d700fc7c47725e4037a6110ca8b0963c2a8.pdf",
+    "https://flowerlife-school.com/storage/2026/06/20/ee7906af62458641749bf29eb63a392d83ff1097.pdf",
+    "https://flowerlife-school.com/storage/2026/06/20/bcf99e190adfb0f30c632d104cb4fe88ebb6b8cc.pdf"
+  ],
+  "excludedUrls": [
+    "https://flowerlife-school.com/registration/email/form"
+  ],
+  "brokenUrls": [],
+  "redirectChains": [],
+  "duplicateTitles": {
+    "Цветок жизни": [
+      "https://flowerlife-school.com/",
+      "https://flowerlife-school.com/courses/catalog",
+      "https://flowerlife-school.com/courses",
+      "https://flowerlife-school.com/masters",
+      "https://flowerlife-school.com/courses/catalog/2",
+      "https://flowerlife-school.com/courses/catalog/19",
+      "https://flowerlife-school.com/courses/catalog/4",
+      "https://flowerlife-school.com/courses/catalog/3",
+      "https://flowerlife-school.com/courses/catalog/1"
+    ]
+  },
+  "duplicateDescriptions": {
+    "Описание для RU": [
+      "https://flowerlife-school.com/",
+      "https://flowerlife-school.com/courses/catalog",
+      "https://flowerlife-school.com/courses",
+      "https://flowerlife-school.com/masters",
+      "https://flowerlife-school.com/courses/catalog/2",
+      "https://flowerlife-school.com/courses/catalog/19",
+      "https://flowerlife-school.com/courses/catalog/4",
+      "https://flowerlife-school.com/courses/catalog/3",
+      "https://flowerlife-school.com/courses/catalog/1"
+    ]
+  },
+  "limitations": []
+}

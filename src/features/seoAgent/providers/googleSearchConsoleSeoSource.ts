@@ -6,6 +6,11 @@ import {
   readGoogleSearchConsoleRuntimeConfig,
 } from "./googleSearchConsoleConfig";
 import { SeoProviderError, SeoProviderNotConfiguredError } from "./seoDataProvider";
+import {
+  fetchBoundedProviderText,
+  ProviderBodyLimitError,
+  ProviderDeadlineError,
+} from "./boundedProviderHttp";
 
 type GoogleSearchConsoleTokenResponse = {
   access_token?: string;
@@ -49,16 +54,66 @@ type GoogleSearchConsoleSitesResponse = {
   siteEntry?: GoogleSearchConsoleSiteEntry[];
 };
 
+export const OWNER_PROVIDER_REQUEST_TIMEOUT_MS = 15_000;
+export const OWNER_PROVIDER_MAX_RESPONSE_BYTES = 2 * 1024 * 1024;
+
+export type GoogleSearchConsoleSourceDeps = {
+  fetchImpl?: (url: string, init?: RequestInit) => Promise<Response>;
+  requestTimeoutMs?: number;
+  maxResponseBytes?: number;
+};
+
+type OwnerHttpContext = {
+  fetchImpl: (url: string, init?: RequestInit) => Promise<Response>;
+  requestTimeoutMs: number;
+  maxResponseBytes: number;
+  signal?: AbortSignal;
+};
+
 function safeNumber(value: unknown): number | null {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
-async function parseErrorBody(response: Response): Promise<string> {
+function boundedDependencyValue(value: number | undefined, maximum: number): number {
+  if (!Number.isFinite(value)) return maximum;
+  return Math.min(maximum, Math.max(1, Math.floor(value!)));
+}
+
+function failureReason(error: unknown): string {
+  if (error instanceof ProviderDeadlineError) return "deadline";
+  if (error instanceof ProviderBodyLimitError) return "body_limit";
+  return "transport";
+}
+
+async function ownerRequest(
+  context: OwnerHttpContext,
+  url: string,
+  init: RequestInit,
+  category: string,
+  safeMessage: string
+): Promise<{ response: Response; text: string }> {
   try {
-    const text = await response.text();
-    return text.slice(0, 500);
+    return await fetchBoundedProviderText(
+      context.fetchImpl,
+      url,
+      { ...init, ...(context.signal ? { signal: context.signal } : {}) },
+      { timeoutMs: context.requestTimeoutMs, maximumBytes: context.maxResponseBytes }
+    );
+  } catch (error) {
+    throw new SeoProviderError({
+      category,
+      safeMessage,
+      statusCode: 502,
+      internalCause: { reason: failureReason(error) },
+    });
+  }
+}
+
+function parseJson<T>(text: string, category: string, safeMessage: string): T {
+  try {
+    return JSON.parse(text || "{}") as T;
   } catch {
-    return "";
+    throw new SeoProviderError({ category, safeMessage, statusCode: 502 });
   }
 }
 
@@ -66,7 +121,7 @@ async function exchangeRefreshTokenForAccessToken(input: {
   clientId: string;
   clientSecret: string;
   refreshToken: string;
-}): Promise<string> {
+}, context: OwnerHttpContext): Promise<string> {
   const body = new URLSearchParams({
     client_id: input.clientId,
     client_secret: input.clientSecret,
@@ -74,15 +129,15 @@ async function exchangeRefreshTokenForAccessToken(input: {
     grant_type: "refresh_token",
   });
 
-  const response = await fetch("https://oauth2.googleapis.com/token", {
+  const { response, text } = await ownerRequest(context, "https://oauth2.googleapis.com/token", {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
     body,
-  });
+  }, "gsc_auth", "Google Search Console token refresh failed");
 
-  const json = (await response.json()) as GoogleSearchConsoleTokenResponse;
+  const json = parseJson<GoogleSearchConsoleTokenResponse>(text, "gsc_auth", "Google Search Console token refresh failed");
   if (!response.ok || !json.access_token) {
     throw new SeoProviderError({
       category: "gsc_auth",
@@ -90,7 +145,6 @@ async function exchangeRefreshTokenForAccessToken(input: {
       safeMessage: "Google Search Console token refresh failed",
       internalCause: {
         status: response.status,
-        body: json.error_description || json.error || json,
       },
     });
   }
@@ -105,9 +159,10 @@ async function runSearchAnalyticsQuery(input: {
   endDate: string;
   dimensions: string[];
   rowLimit: number;
-}): Promise<GoogleSearchConsoleQueryRow[]> {
+}, context: OwnerHttpContext): Promise<GoogleSearchConsoleQueryRow[]> {
   const encodedSiteUrl = encodeURIComponent(input.siteUrl);
-  const response = await fetch(
+  const { response, text } = await ownerRequest(
+    context,
     `https://searchconsole.googleapis.com/webmasters/v3/sites/${encodedSiteUrl}/searchAnalytics/query`,
     {
       method: "POST",
@@ -121,7 +176,9 @@ async function runSearchAnalyticsQuery(input: {
         dimensions: input.dimensions,
         rowLimit: input.rowLimit,
       }),
-    }
+    },
+    "gsc_query",
+    "Google Search Console query failed"
   );
 
   if (!response.ok) {
@@ -131,23 +188,22 @@ async function runSearchAnalyticsQuery(input: {
       safeMessage: "Google Search Console query failed",
       internalCause: {
         status: response.status,
-        body: await parseErrorBody(response),
         siteUrl: input.siteUrl,
         dimensions: input.dimensions,
       },
     });
   }
 
-  const json = (await response.json()) as GoogleSearchConsoleQueryResponse;
+  const json = parseJson<GoogleSearchConsoleQueryResponse>(text, "gsc_query", "Google Search Console returned invalid data");
   return Array.isArray(json.rows) ? json.rows : [];
 }
 
-async function listVerifiedSites(accessToken: string): Promise<string[]> {
-  const response = await fetch("https://searchconsole.googleapis.com/webmasters/v3/sites", {
+async function listVerifiedSites(accessToken: string, context: OwnerHttpContext): Promise<string[]> {
+  const { response, text } = await ownerRequest(context, "https://searchconsole.googleapis.com/webmasters/v3/sites", {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
-  });
+  }, "gsc_sites", "Google Search Console sites lookup failed");
 
   if (!response.ok) {
     throw new SeoProviderError({
@@ -156,12 +212,11 @@ async function listVerifiedSites(accessToken: string): Promise<string[]> {
       safeMessage: "Google Search Console sites lookup failed",
       internalCause: {
         status: response.status,
-        body: await parseErrorBody(response),
       },
     });
   }
 
-  const json = (await response.json()) as GoogleSearchConsoleSitesResponse;
+  const json = parseJson<GoogleSearchConsoleSitesResponse>(text, "gsc_sites", "Google Search Console returned invalid data");
   return (json.siteEntry || [])
     .map((entry) => (typeof entry.siteUrl === "string" ? entry.siteUrl.trim() : ""))
     .filter(Boolean);
@@ -222,10 +277,31 @@ function dailyFactFromRow(reportDate: string, row: GoogleSearchConsoleQueryRow):
 }
 
 export class GoogleSearchConsoleSeoSource {
+  private readonly fetchImpl: (url: string, init?: RequestInit) => Promise<Response>;
+  private readonly requestTimeoutMs: number;
+  private readonly maxResponseBytes: number;
+
+  constructor(deps: GoogleSearchConsoleSourceDeps = {}) {
+    this.fetchImpl = deps.fetchImpl || ((url, init) => fetch(url, init));
+    this.requestTimeoutMs = boundedDependencyValue(deps.requestTimeoutMs, OWNER_PROVIDER_REQUEST_TIMEOUT_MS);
+    this.maxResponseBytes = boundedDependencyValue(deps.maxResponseBytes, OWNER_PROVIDER_MAX_RESPONSE_BYTES);
+  }
+
+  private http(signal?: AbortSignal): OwnerHttpContext {
+    return {
+      fetchImpl: this.fetchImpl,
+      requestTimeoutMs: this.requestTimeoutMs,
+      maxResponseBytes: this.maxResponseBytes,
+      ...(signal ? { signal } : {}),
+    };
+  }
+
   async getSnapshot(
     domain: string,
-    options: { teamId: string; siteUrl?: string | null; refreshTokenOverride?: string }
+    options: { teamId: string; siteUrl?: string | null; refreshTokenOverride?: string },
+    signal?: AbortSignal
   ): Promise<SeoSearchConsoleSnapshot> {
+    const http = this.http(signal);
     const storedCredential = await getStoredGscCredential(options.teamId);
     const refreshToken =
       options?.refreshTokenOverride ||
@@ -246,7 +322,7 @@ export class GoogleSearchConsoleSeoSource {
       clientId: config.clientId,
       clientSecret: config.clientSecret,
       refreshToken: config.refreshToken,
-    });
+    }, http);
 
     const queryRows = await runSearchAnalyticsQuery({
       accessToken,
@@ -255,7 +331,7 @@ export class GoogleSearchConsoleSeoSource {
       endDate: dateRange.endDate || "",
       dimensions: ["query"],
       rowLimit: 10,
-    });
+    }, http);
     const pageRows = await runSearchAnalyticsQuery({
       accessToken,
       siteUrl: config.siteUrl,
@@ -263,7 +339,7 @@ export class GoogleSearchConsoleSeoSource {
       endDate: dateRange.endDate || "",
       dimensions: ["page"],
       rowLimit: 10,
-    });
+    }, http);
     const countryRows = await runSearchAnalyticsQuery({
       accessToken,
       siteUrl: config.siteUrl,
@@ -271,7 +347,7 @@ export class GoogleSearchConsoleSeoSource {
       endDate: dateRange.endDate || "",
       dimensions: ["country"],
       rowLimit: 10,
-    });
+    }, http);
     const deviceRows = await runSearchAnalyticsQuery({
       accessToken,
       siteUrl: config.siteUrl,
@@ -279,7 +355,7 @@ export class GoogleSearchConsoleSeoSource {
       endDate: dateRange.endDate || "",
       dimensions: ["device"],
       rowLimit: 10,
-    });
+    }, http);
 
     const summary = buildSummaryMetrics(queryRows);
 
@@ -308,6 +384,7 @@ export class GoogleSearchConsoleSeoSource {
       rowLimit?: number;
     }
   ): Promise<GoogleSearchConsoleDailyQueryFact[]> {
+    const http = this.http();
     const storedCredential = await getStoredGscCredential(options.teamId);
     const refreshToken =
       options?.refreshTokenOverride ||
@@ -327,7 +404,7 @@ export class GoogleSearchConsoleSeoSource {
       clientId: config.clientId,
       clientSecret: config.clientSecret,
       refreshToken: config.refreshToken,
-    });
+    }, http);
     const reportDate = options.reportDate.slice(0, 10);
     const rows = await runSearchAnalyticsQuery({
       accessToken,
@@ -336,7 +413,7 @@ export class GoogleSearchConsoleSeoSource {
       endDate: reportDate,
       dimensions: ["query", "page", "country", "device"],
       rowLimit: options.rowLimit || 25000,
-    });
+    }, http);
     return rows
       .map((row) => dailyFactFromRow(reportDate, row))
       .filter((row): row is GoogleSearchConsoleDailyQueryFact => Boolean(row));
@@ -346,6 +423,7 @@ export class GoogleSearchConsoleSeoSource {
     snapshot: SeoSearchConsoleSnapshot;
     verifiedSiteUrls: string[];
   }> {
+    const http = this.http();
     const storedCredential = await getStoredGscCredential(options.teamId);
     const refreshToken =
       options?.refreshTokenOverride ||
@@ -360,8 +438,8 @@ export class GoogleSearchConsoleSeoSource {
       clientId: config.clientId,
       clientSecret: config.clientSecret,
       refreshToken: config.refreshToken,
-    });
-    const verifiedSiteUrls = await listVerifiedSites(accessToken);
+    }, http);
+    const verifiedSiteUrls = await listVerifiedSites(accessToken, http);
     if (!verifiedSiteUrls.includes(config.siteUrl)) {
       throw new SeoProviderNotConfiguredError(
         `Google Search Console account does not have access to configured property ${config.siteUrl}`

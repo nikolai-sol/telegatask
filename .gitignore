@@ -9,6 +9,7 @@ serviceAccountKey.json
 logs/
 outputs/
 *.log
+.worktrees/
 
 # Generated run artifacts stay local. The weekly cluster input is versioned.
 reports/*

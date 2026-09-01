@@ -15,6 +15,20 @@ const config: SeoSectionRankTrackingConfig = {
   maxSerpRequestsPerRun: 3,
   alertDropThreshold: 5,
   estimatedCostPerRequestRub: null,
+  regionContract: {
+    facilityFallbackRegion: "225",
+    regionByIntent: {
+      medical_informational: "225",
+      facility_navigational: "225",
+      supportive_trust: "225",
+      own_brand: "225",
+    },
+    facilityRegionMap: [
+      { geoToken: "спб", region: "2" },
+      { geoToken: "пушкинского района", region: "2" },
+      { geoToken: "онкологический центр", region: "225" },
+    ],
+  },
   seedClusters: [
     {
       clusterId: "seed_melanoma",
@@ -53,6 +67,53 @@ describe("sectionRankTracking", () => {
       source: "seed_and_live_cluster",
     });
     expect(list.some((item) => item.query === "инвитро рак лечение")).toBe(false);
+  });
+
+  test("resolves facility region from geo token and marks fallback when unknown", () => {
+    const facilityMapConfig: SeoSectionRankTrackingConfig = {
+      ...config,
+      maxSerpRequestsPerRun: 2,
+      seedClusters: [
+        {
+          clusterId: "seed_spb_clinic",
+          section: "/map/",
+          query: "цаоп пушкинского района спб",
+          priority: 2,
+          intentClass: "facility_navigational",
+        },
+        {
+          clusterId: "seed_unknown_city",
+          section: "/map/",
+          query: "онкоцентр в сургуте",
+          priority: 2,
+          intentClass: "facility_navigational",
+        },
+      ],
+      regionContract: {
+        ...config.regionContract,
+        facilityRegionMap: [{ geoToken: "спб", region: "2" }],
+        facilityFallbackRegion: "225",
+      },
+    };
+
+    const list = buildSeoSectionRankTrackingList({
+      config: facilityMapConfig,
+      liveClusters: [],
+      targetIntentClasses: ["facility_navigational"],
+    });
+
+    const spb = list.find((item) => item.query === "цаоп пушкинского района спб");
+    const unknown = list.find((item) => item.query === "онкоцентр в сургуте");
+    expect(spb).toMatchObject({
+      region: "2",
+      regionSource: "facility_geo",
+      regionFallback: false,
+    });
+    expect(unknown).toMatchObject({
+      region: "225",
+      regionSource: "facility_fallback",
+      regionFallback: true,
+    });
   });
 
   test("builds RankHistory records from SERP checks without merging Webmaster position", () => {
@@ -206,6 +267,56 @@ describe("sectionRankTracking", () => {
     expect(exportPayload.notes).toContain(
       "rank_drop_alert deltas use the configured smoothing window; not_found is treated as no_data, not as a ranking drop."
     );
+  });
+
+  test("does not compare positions across regions for the same cluster", () => {
+    const current: SeoRankHistoryRecord[] = [
+      {
+        id: "current_1",
+        teamId: "zaruku",
+        runId: "run2",
+        domain: "zaruku.ru",
+        searchEngine: "yandex",
+        provider: "yandex_search_api",
+        clusterId: "query_cluster_001",
+        query: "подногтевая меланома фото",
+        section: "/melanoma/",
+        intentClass: "medical_informational",
+        checkedAt: "2026-07-17T10:00:00.000Z",
+        serpPosition: 12,
+        found: true,
+        matchedUrl: "https://zaruku.ru/melanoma/podnogtevaya-melanoma-tam-gde-ne-vidno/",
+        topResultDomains: [],
+        region: "225",
+        language: "ru",
+        device: "desktop",
+      },
+    ];
+    const previous: SeoRankHistoryRecord[] = [
+      {
+        ...current[0],
+        id: "previous_1",
+        runId: "run1",
+        checkedAt: "2026-07-10T10:00:00.000Z",
+        serpPosition: 6,
+        region: "2",
+      },
+    ];
+    const exportPayload = buildSeoRankDashboardExport({
+      generatedAt: "2026-07-17T10:01:00.000Z",
+      domain: "zaruku.ru",
+      runId: "run2",
+      currentRecords: current,
+      previousRecords: previous,
+      alertDropThreshold: 5,
+    });
+
+    expect(exportPayload.sections[0].items[0]).toMatchObject({
+      currentPosition: 12,
+      previousPosition: null,
+      delta: null,
+      region: "225",
+    });
   });
 
   test("production tracking list includes live-traffic priority sections within weekly budget", () => {

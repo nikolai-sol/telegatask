@@ -409,6 +409,7 @@ export function buildMysqlDashboardExportPlan(input: {
         sqlNumber(currentPosition),
         sqlString(nullableString(item.matchedUrl)),
         sqlNumber(nullableNumber(item.delta)),
+        sqlString(nullableString(item.region)),
         sqlString(status),
         sqlString(generatedAt),
         sqlString(ingestionRunId),
@@ -428,12 +429,24 @@ export function buildMysqlDashboardExportPlan(input: {
         "serp_position",
         "matched_url",
         "delta_prev",
+        "region",
         "status",
         "checked_at",
         "ingestion_run_id",
       ],
       positionRows,
-      ["source_key", "section", "query", "serp_position", "matched_url", "delta_prev", "status", "checked_at", "ingestion_run_id"]
+      [
+        "source_key",
+        "section",
+        "query",
+        "serp_position",
+        "matched_url",
+        "delta_prev",
+        "region",
+        "status",
+        "checked_at",
+        "ingestion_run_id",
+      ]
     )
   );
 
@@ -572,6 +585,12 @@ export function buildMysqlDashboardExportPlan(input: {
     sqlNumber(analyticsAccountId),
     sqlString(weekKey),
     sqlString(runWeekKey),
+    sqlString(trackingSetChecksum(report)),
+    sqlString(trackingSetCount(report)),
+    sqlString(trackingSetSeedCount(report)),
+    sqlString(trackingSetLiveCount(report)),
+    sqlString(trackingSetSeedFallbackCount(report)),
+    sqlJson(trackingSetSnapshot(report)),
     sqlString(cleanString(report.status) || "completed"),
     sqlJson(report.stages || record(report.sourceWeeklyArtifact).stages || []),
     sqlNumber(numberOrZero(counters.requestCount)),
@@ -590,6 +609,12 @@ export function buildMysqlDashboardExportPlan(input: {
         "analytics_account_id",
         "week_key",
         "run_week_key",
+        "tracking_set_checksum",
+        "tracking_set_item_count",
+        "tracking_set_seed_count",
+        "tracking_set_live_count",
+        "tracking_set_seed_fallback_count",
+        "tracking_set_snapshot",
         "status",
         "stages_json",
         "serp_requests",
@@ -600,7 +625,25 @@ export function buildMysqlDashboardExportPlan(input: {
         "ingestion_run_id",
       ],
       weeklyRows,
-      ["source_key", "week_key", "status", "stages_json", "serp_requests", "llm_tokens", "digest_count", "finished_at", "ingestion_run_id"]
+      [
+        "source_key",
+        "analytics_account_id",
+        "week_key",
+        "run_week_key",
+        "tracking_set_checksum",
+        "tracking_set_item_count",
+        "tracking_set_seed_count",
+        "tracking_set_live_count",
+        "tracking_set_seed_fallback_count",
+        "tracking_set_snapshot",
+        "status",
+        "stages_json",
+        "serp_requests",
+        "llm_tokens",
+        "digest_count",
+        "finished_at",
+        "ingestion_run_id",
+      ]
     )
   );
 
@@ -729,6 +772,44 @@ export function buildMysqlDashboardExportPlan(input: {
       advisoryJobs: asyncAdvisoryRows.length,
     },
   };
+}
+
+function trackingSetArtifact(value: unknown): Record<string, unknown> {
+  const sourceWeeklyArtifact = record(record(value).sourceWeeklyArtifact);
+  const rankTrackingArtifact = record(sourceWeeklyArtifact.rankTrackingArtifact);
+  return rankTrackingArtifact.trackingSetVersion
+    ? record(rankTrackingArtifact.trackingSetVersion)
+    : rankTrackingArtifact;
+}
+
+function trackingSetChecksum(value: unknown): string | null {
+  const checksum = cleanString(trackingSetArtifact(value).checksum);
+  return checksum || null;
+}
+
+function trackingSetCount(value: unknown): number {
+  const set = trackingSetArtifact(value);
+  return numberOrZero(set.itemCount);
+}
+
+function trackingSetSeedCount(value: unknown): number {
+  const set = trackingSetArtifact(value);
+  return numberOrZero(set.seedDerivedCount);
+}
+
+function trackingSetLiveCount(value: unknown): number {
+  const set = trackingSetArtifact(value);
+  return numberOrZero(set.liveDerivedCount);
+}
+
+function trackingSetSeedFallbackCount(value: unknown): number {
+  const set = trackingSetArtifact(value);
+  return numberOrZero(set.seedFallbackCount);
+}
+
+function trackingSetSnapshot(value: unknown): unknown | null {
+  const artifact = record(trackingSetArtifact(value));
+  return Object.keys(artifact).length ? artifact : null;
 }
 
 const nonMedicalSovClusters = new Set(["medical_org_labs_noise", "other", "brand"]);

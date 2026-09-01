@@ -3,6 +3,7 @@ import expectedOpportunities from "./fixtures/searchPerformanceOpportunityEngine
 import type { SeoOpportunity } from "./types";
 import {
   DEFAULT_WEEKLY_TOP10_GENERATOR_CONFIG,
+  buildWeeklyTop10NoNewOpportunitiesLifeSign,
   generateWeeklyTop10Digest,
 } from "./weeklyTop10Generator";
 
@@ -112,5 +113,18 @@ describe("weeklyTop10Generator", () => {
       noNewOpportunities: true,
     });
     expect(DEFAULT_WEEKLY_TOP10_GENERATOR_CONFIG.maxItems).toBe(10);
+  });
+
+  test("builds a Telegram life-sign for an empty opportunities digest", () => {
+    const digest = generateWeeklyTop10Digest(
+      [{ opportunity: opportunities[2], state: "new" }],
+      { now: "2026-07-27T10:00:00.000Z", minConfidenceScore: 90 }
+    );
+
+    expect(buildWeeklyTop10NoNewOpportunitiesLifeSign({
+      runWeekKey: "2026-W31",
+      onControlCount: digest.watchlist.length,
+      watchlist: digest.watchlist,
+    })).toBe("W31: новых возможностей нет, на контроле 1 — рак лечение");
   });
 });

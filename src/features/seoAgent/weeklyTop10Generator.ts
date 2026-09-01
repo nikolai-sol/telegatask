@@ -46,6 +46,19 @@ export type WeeklyTop10Digest = {
   };
 };
 
+export function buildWeeklyTop10NoNewOpportunitiesLifeSign(input: {
+  runWeekKey: string;
+  onControlCount: number;
+  watchlist: readonly Pick<WeeklyTop10DigestItem, "title" | "targetKeywords">[];
+}): string {
+  const weekLabel = input.runWeekKey.match(/W\d+$/)?.[0] || input.runWeekKey;
+  const watchlist = input.watchlist
+    .map((item) => item.targetKeywords[0] || item.title)
+    .filter(Boolean)
+    .join("; ");
+  return `${weekLabel}: новых возможностей нет, на контроле ${input.onControlCount} — ${watchlist || "нет кандидатов"}`;
+}
+
 type ScoredCandidate = {
   input: WeeklyTop10OpportunityInput;
   state: Exclude<WeeklyTop10OpportunityState, "rejected" | "implemented">;

@@ -1,0 +1,98 @@
+{
+  "status": {
+    "state": "partial_success",
+    "message": "Yandex rank checks returned partial evidence.",
+    "checkedAt": "2026-09-01T15:29:06.535Z",
+    "metricsSummary": {
+      "queryCount": 5,
+      "foundCount": 1,
+      "missingCount": 3,
+      "failedCount": 1
+    }
+  },
+  "checks": [
+    {
+      "query": "цветок жизни школа",
+      "searchEngine": "yandex",
+      "provider": "yandex_search_api",
+      "checkedDepth": 20,
+      "targetDomain": "flowerlife-school.com",
+      "found": true,
+      "position": 1,
+      "matchedUrl": "http://flowerlife-school.com/index",
+      "title": "<hlword>Цветок</hlword> <hlword>жизни</hlword> — международная <hlword>школа</hlword> духовного роста.",
+      "serpFeatures": [],
+      "topResultDomains": [
+        "flowerlife-school.com",
+        "space.flowerlife-school.com",
+        "space.flowerlife-school.com",
+        "space.flowerlife-school.com",
+        "youtube.com"
+      ],
+      "region": "225",
+      "language": "ru",
+      "device": "desktop",
+      "checkedAt": "2026-09-01T15:29:09.042Z"
+    },
+    {
+      "query": "платформа саморазвития",
+      "searchEngine": "yandex",
+      "provider": "yandex_search_api",
+      "checkedDepth": 20,
+      "targetDomain": "flowerlife-school.com",
+      "found": false,
+      "serpFeatures": [],
+      "topResultDomains": [
+        "dzen.ru",
+        "4brain.ru",
+        "kadrof.ru",
+        "vk.ru",
+        "media.mts.ru"
+      ],
+      "region": "225",
+      "language": "ru",
+      "device": "desktop",
+      "checkedAt": "2026-09-01T15:29:10.990Z"
+    },
+    {
+      "query": "онлайн курсы саморазвития",
+      "searchEngine": "yandex",
+      "provider": "yandex_search_api",
+      "checkedDepth": 20,
+      "targetDomain": "flowerlife-school.com",
+      "found": false,
+      "serpFeatures": [],
+      "topResultDomains": [
+        "skillbox.ru",
+        "stepik.org",
+        "synergy.ru",
+        "edu.sravni.ru",
+        "rsv.ru"
+      ],
+      "region": "225",
+      "language": "ru",
+      "device": "desktop",
+      "checkedAt": "2026-09-01T15:29:12.946Z"
+    },
+    {
+      "query": "курсы ароматерапии онлайн",
+      "searchEngine": "yandex",
+      "provider": "yandex_search_api",
+      "checkedDepth": 20,
+      "targetDomain": "flowerlife-school.com",
+      "found": false,
+      "serpFeatures": [],
+      "topResultDomains": [
+        "aromaschool.ru",
+        "ncpo.ru",
+        "aromaschool.ru",
+        "dpo.rudn.ru",
+        "nadpo.ru"
+      ],
+      "region": "225",
+      "language": "ru",
+      "device": "desktop",
+      "checkedAt": "2026-09-01T15:29:23.170Z"
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { spawn } from "child_process";
+import { createHash } from "crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname } from "path";
 import "../src/config/firebase";
@@ -13,6 +14,7 @@ import {
   buildSeoRankDashboardExport,
   buildSeoRankHistoryRecords,
   buildSeoSectionRankTrackingList,
+  type SeoSectionRankTrackingListItem,
   type SeoSectionRankTrackingLiveCluster,
 } from "../src/features/seoAgent/sectionRankTracking";
 import {
@@ -30,9 +32,13 @@ import {
 import { weeklySeoRhythmFirestoreStore } from "../src/features/seoAgent/weeklySeoRhythmRepository";
 import { buildWeeklyTop10InputsFromApprovalDecisions, buildWeeklyTop10OpportunityId } from "../src/features/seoAgent/weeklyTop10ApprovalDecision";
 import { listWeeklyTop10ApprovalDecisionsByTeam } from "../src/features/seoAgent/weeklyTop10ApprovalDecisionRepository";
-import { generateWeeklyTop10Digest } from "../src/features/seoAgent/weeklyTop10Generator";
+import {
+  buildWeeklyTop10NoNewOpportunitiesLifeSign,
+  generateWeeklyTop10Digest,
+} from "../src/features/seoAgent/weeklyTop10Generator";
 import { buildWeeklyTop10TelegramApprovalMessageV2, type WeeklyTop10TelegramApprovalEvidenceV2 } from "../src/features/seoAgent/weeklyTop10TelegramApprovalMessageV2";
 import { collectYandexMetrikaSectionTraffic } from "../src/features/seoAgent/yandexMetrikaReportCollector";
+import { callTelegramApi } from "../src/features/seoAgent/telegramApiTransport";
 import type { SeoOpportunity } from "../src/features/seoAgent/types";
 
 type QueryClusterReviewArtifact = {
@@ -57,6 +63,90 @@ function hasFlag(args: string[], name: string): boolean {
 
 function nestedRecord(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" ? (value as Record<string, unknown>) : {};
+}
+
+type TrackingSetByRun = {
+  schemaVersion: "seo_os_section_rank_tracking_set_v1";
+  generatedAt: string;
+  runId: string;
+  runWeekKey: string;
+  dataWeekKey: string;
+  itemCount: number;
+  seedDerivedCount: number;
+  liveDerivedCount: number;
+  seedFallbackCount: number;
+  checksum: string;
+  items: Array<{
+    clusterId: string;
+    query: string;
+    section: string;
+    intentClass: string;
+    source: SeoSectionRankTrackingListItem["source"];
+    region: string;
+    regionSource: SeoSectionRankTrackingListItem["regionSource"];
+    regionFallback: boolean;
+  }>;
+};
+
+type YandexRegionRunSummary = {
+  region: string;
+  requestCount: number;
+  checkedCount: number;
+  state: string;
+};
+
+function buildRegionTrackingMap(trackingList: SeoSectionRankTrackingListItem[]): Map<string, SeoSectionRankTrackingListItem[]> {
+  const map = new Map<string, SeoSectionRankTrackingListItem[]>();
+  for (const item of trackingList) {
+    const region = cleanString(item.region) || "225";
+    map.set(region, [...(map.get(region) || []), item]);
+  }
+  return map;
+}
+
+function buildTrackingSetSnapshot(input: {
+  runId: string;
+  runWeekKey: string;
+  dataWeekKey: string;
+  trackingList: SeoSectionRankTrackingListItem[];
+  requestCount: number;
+  regionSummaries: YandexRegionRunSummary[];
+}): TrackingSetByRun & { requestCount: number; regionSummaries: YandexRegionRunSummary[] } {
+  const items = input.trackingList
+    .map((item) => ({
+      clusterId: item.clusterId,
+      query: item.query,
+      section: item.section,
+      intentClass: item.intentClass,
+      source: item.source,
+      region: item.region,
+      regionSource: item.regionSource,
+      regionFallback: item.regionFallback,
+    }))
+    .sort((a, b) => {
+      const sectionDiff = a.section.localeCompare(b.section);
+      if (sectionDiff) return sectionDiff;
+      return a.query.localeCompare(b.query);
+    });
+  const checksum = createHash("sha256").update(JSON.stringify(items)).digest("hex");
+  const seedDerivedCount = items.filter((item) => item.source !== "live_cluster").length;
+  const liveDerivedCount = items.filter((item) => item.source === "live_cluster").length;
+  const seedFallbackCount = items.filter((item) => item.regionFallback).length;
+  return {
+    schemaVersion: "seo_os_section_rank_tracking_set_v1",
+    generatedAt: new Date().toISOString(),
+    runId: input.runId,
+    runWeekKey: input.runWeekKey,
+    dataWeekKey: input.dataWeekKey,
+    itemCount: items.length,
+    seedDerivedCount,
+    liveDerivedCount,
+    seedFallbackCount,
+    checksum,
+    items,
+    requestCount: input.requestCount,
+    regionSummaries: input.regionSummaries,
+  };
 }
 
 function readLiveClusters(path: string): SeoSectionRankTrackingLiveCluster[] {
@@ -108,14 +198,12 @@ function evidenceForOpportunity(opportunity: SeoOpportunity): WeeklyTop10Telegra
 }
 
 async function telegramCall(token: string, method: string, body: Record<string, unknown>): Promise<any> {
-  const res = await fetch(`https://api.telegram.org/bot${token}/${method}`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(body),
+  return callTelegramApi({
+    token,
+    method,
+    body,
+    onRetry: (message) => console.warn(`[telegram] ${message}`),
   });
-  const json = await res.json() as { ok: boolean; description?: string; result?: unknown };
-  if (!json.ok) throw new Error(`${method} failed: ${json.description}`);
-  return json.result;
 }
 
 export async function runWeeklySeoRhythmCli(args = process.argv.slice(2)) {
@@ -166,20 +254,40 @@ export async function runWeeklySeoRhythmCli(args = process.argv.slice(2)) {
           domain: zarukuSeoProductionConfig.domain,
           beforeRunId: input.runId,
         });
-        const rankTracking = await new YandexSerpRankSource().run({
-          targetDomain: zarukuSeoProductionConfig.domain,
-          targetDomainAliases: [...zarukuSeoProductionConfig.targetDomainAliases],
-          keywords: input.trackingList.map((item) => item.query),
-          region: zarukuSeoProductionConfig.targetRegion,
-          language: zarukuSeoProductionConfig.language,
-          device: zarukuSeoProductionConfig.targetDevice,
+        const rankSource = new YandexSerpRankSource();
+        const regionSummaries: YandexRegionRunSummary[] = [];
+        const checks: Awaited<ReturnType<YandexSerpRankSource["run"]>>["checks"] = [];
+        for (const [region, items] of buildRegionTrackingMap(input.trackingList).entries()) {
+          const rankTracking = await rankSource.run({
+            targetDomain: zarukuSeoProductionConfig.domain,
+            targetDomainAliases: [...zarukuSeoProductionConfig.targetDomainAliases],
+            keywords: items.map((item) => item.query),
+            region,
+            language: zarukuSeoProductionConfig.language,
+            device: zarukuSeoProductionConfig.targetDevice,
+          });
+          regionSummaries.push({
+            region,
+            requestCount: items.length,
+            checkedCount: rankTracking.checks.length,
+            state: rankTracking.status.state,
+          });
+          checks.push(...rankTracking.checks);
+        }
+        const trackingSetVersion = buildTrackingSetSnapshot({
+          runId: input.runId,
+          runWeekKey: input.runWeekKey,
+          dataWeekKey: input.dataWeekKey,
+          trackingList: input.trackingList,
+          requestCount: input.trackingList.length,
+          regionSummaries,
         });
         const records = buildSeoRankHistoryRecords({
           teamId: zarukuSeoProductionConfig.team.id,
           runId: input.runId,
           domain: zarukuSeoProductionConfig.domain,
-          trackingList: input.trackingList as any,
-          rankChecks: rankTracking.checks,
+          trackingList: input.trackingList,
+          rankChecks: checks,
         });
         const persistence = await persistSeoRankHistoryRecords({
           writesEnabled: seoRankHistoryWritesEnabled(),
@@ -199,7 +307,11 @@ export async function runWeeklySeoRhythmCli(args = process.argv.slice(2)) {
           recordsWritten: persistence.written,
           artifact: {
             trackingList: input.trackingList,
-            rankTracking,
+            trackingSetVersion,
+            rankTracking: {
+              checks,
+              regions: regionSummaries,
+            },
             rankHistory: {
               writesEnabled: seoRankHistoryWritesEnabled(),
               previousRecordCount: previousRecords.length,
@@ -281,6 +393,23 @@ export async function runWeeklySeoRhythmCli(args = process.argv.slice(2)) {
             draftTaskId: `w48${index + 1}`,
           });
         }).filter(Boolean) as WeeklySeoRhythmDigestMessage[];
+        if (!messages.length && digest.summary.noNewOpportunities) {
+          messages.push({
+            text: buildWeeklyTop10NoNewOpportunitiesLifeSign({
+              runWeekKey: input.runWeekKey,
+              onControlCount: digest.watchlist.length,
+              watchlist: digest.watchlist,
+            }),
+            buttons: [],
+            metadata: {
+              schema: "weekly_top10_empty_life_sign_v1",
+              runWeekKey: input.runWeekKey,
+              dataWeekKey: input.dataWeekKey,
+              noNewOpportunities: true,
+              watchlistCount: digest.watchlist.length,
+            },
+          });
+        }
         return {
           opportunityCount: review.summary.generated,
           messages,

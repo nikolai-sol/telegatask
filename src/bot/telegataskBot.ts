@@ -4626,6 +4626,8 @@ export function initTelegataskBot(): void {
     }
   });
 
+  startScheduler(bot!);
+
   // TODO: re-enable webhook for remote production deployment if needed.
   void (async () => {
     const launchRetries = Math.max(1, Number(process.env.BOT_LAUNCH_RETRIES || 5));
@@ -4648,7 +4650,6 @@ export function initTelegataskBot(): void {
           await skillRouter.initAll();
           console.log("[skills] All skills initialized");
         }
-        startScheduler(bot!);
         return;
       } catch (error) {
         if (!isLaunchRetryable(error) || attempt >= launchRetries) {

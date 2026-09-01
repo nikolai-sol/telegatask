@@ -132,7 +132,10 @@ export type SerpRankCheck = {
 };
 
 export type GoogleRankCheck = SerpRankCheck & { searchEngine: "google" };
-export type YandexRankCheck = SerpRankCheck & { searchEngine: "yandex" };
+export type YandexRankCheck = SerpRankCheck & {
+  searchEngine: "yandex";
+  checkedDepth?: number;
+};
 
 export type SeoRankTrackingSnapshot = {
   google?: {

@@ -103,7 +103,7 @@ WHERE id = ${sqlNumber(id)} AND status = 'advisory_pending';`);
       await input.execute(`UPDATE ${table}
 SET attempt_count = attempt_count + 1,
     last_attempt_at = ${sqlString(mysqlDateTime(at))},
-    last_error = ${sqlString(error)}
+    last_error = ${sqlString(error.slice(0, 1_024))}
 WHERE id = ${sqlNumber(id)} AND telegram_edited_at IS NULL;`);
     },
 

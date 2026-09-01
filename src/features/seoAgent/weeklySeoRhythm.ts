@@ -52,15 +52,17 @@ export type WeeklySeoRhythmDigestMessage = {
   metadata?: unknown;
 };
 
+import type { SeoSectionRankTrackingListItem } from "./sectionRankTracking";
+
 export type WeeklySeoRhythmDeps = {
   store: WeeklySeoRhythmStore;
-  buildTrackingList(): Promise<Array<{ query: string }>>;
+  buildTrackingList(): Promise<SeoSectionRankTrackingListItem[]>;
   runRankTracking(input: {
     runId: string;
     weekKey: string;
     runWeekKey: string;
     dataWeekKey: string;
-    trackingList: Array<{ query: string }>;
+    trackingList: SeoSectionRankTrackingListItem[];
   }): Promise<{
     requestCount: number;
     recordsWritten: number;
@@ -465,7 +467,7 @@ export async function runWeeklySeoRhythm(input: {
     maxSerpRequests: input.config.weeklyRunMaxSerpRequests,
   });
 
-  let trackingList: Array<{ query: string }> = [];
+  let trackingList: SeoSectionRankTrackingListItem[] = [];
   try {
     trackingList = await input.deps.buildTrackingList();
     artifact.counters.trackingListSize = trackingList.length;

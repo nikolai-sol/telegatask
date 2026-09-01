@@ -31,6 +31,9 @@ describe("zarukuSeoProductionConfig", () => {
     expect(zarukuSeoProductionConfig.sectionRankTracking.seedClusters.map((cluster) => cluster.query)).toContain(
       "подногтевая меланома фото"
     );
+    expect(zarukuSeoProductionConfig.sectionRankTracking.seedClusters.map((cluster) => cluster.clusterId)).toEqual(
+      expect.arrayContaining(["seed_limfoma", "seed_medialib"])
+    );
     const breastCancerSeeds = zarukuSeoProductionConfig.sectionRankTracking.seedClusters.filter(
       (cluster) => cluster.section === "/rak-molochnoj-zhelezy/"
     );

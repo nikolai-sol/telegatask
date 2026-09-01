@@ -13,6 +13,19 @@ export type SeoSectionRankTrackingConfig = {
   maxSerpRequestsPerRun: number;
   alertDropThreshold: number;
   estimatedCostPerRequestRub: number | null;
+  regionContract: {
+    facilityFallbackRegion: string;
+    regionByIntent: {
+      medical_informational: string;
+      facility_navigational: string;
+      supportive_trust: string;
+      own_brand: string;
+    };
+    facilityRegionMap: readonly {
+      geoToken: string;
+      region: string;
+    }[];
+  };
 };
 
 export type SeoSectionRankTrackingLiveCluster = {
@@ -29,6 +42,9 @@ export type SeoSectionRankTrackingListItem = {
   intentClass: string;
   priority: number;
   source: "seed" | "live_cluster" | "seed_and_live_cluster";
+  region: string;
+  regionSource: "intent_default" | "facility_geo" | "facility_fallback";
+  regionFallback: boolean;
 };
 
 export type SeoRankHistoryRecord = {
@@ -63,6 +79,7 @@ export type SeoRankDashboardSection = {
     currentPosition: number | null;
     previousPosition: number | null;
     delta: number | null;
+    region: string | null;
     matchedUrl: string | null;
     deltaStatus: "ok" | "no_data";
   }>;
@@ -125,6 +142,64 @@ function itemKey(query: string): string {
   return normalized(query);
 }
 
+function buildNormalizedToken(token: string): string {
+  return normalized(token).toLowerCase();
+}
+
+function resolveFacilityRegion(input: {
+  query: string;
+  facilityRegionMap: readonly { geoToken: string; region: string }[];
+  facilityFallbackRegion: string;
+}): { region: string; source: "facility_geo" | "facility_fallback" } {
+  const normalizedQuery = normalized(input.query);
+  const rules = [...input.facilityRegionMap].sort(
+    (a, b) => buildNormalizedToken(b.geoToken).length - buildNormalizedToken(a.geoToken).length
+  );
+  for (const rule of rules) {
+    const token = buildNormalizedToken(rule.geoToken);
+    if (!token) continue;
+    if (normalizedQuery.includes(token)) {
+      return {
+        region: cleanString(rule.region) || input.facilityFallbackRegion,
+        source: "facility_geo",
+      };
+    }
+  }
+  return {
+    region: input.facilityFallbackRegion,
+    source: "facility_fallback",
+  };
+}
+
+function resolveTrackingRegion(input: {
+  query: string;
+  intentClass: string;
+  regionContract: SeoSectionRankTrackingConfig["regionContract"];
+}): { region: string; source: SeoSectionRankTrackingListItem["regionSource"]; fallback: boolean } {
+  if (input.intentClass === "facility_navigational") {
+    const resolved = resolveFacilityRegion({
+      query: input.query,
+      facilityRegionMap: input.regionContract.facilityRegionMap,
+      facilityFallbackRegion: input.regionContract.facilityFallbackRegion,
+    });
+    return {
+      region: resolved.region,
+      source: resolved.source,
+      fallback: resolved.source === "facility_fallback",
+    };
+  }
+
+  const region =
+    input.regionContract.regionByIntent[input.intentClass as keyof typeof input.regionContract.regionByIntent]
+    || input.regionContract.regionByIntent.medical_informational
+    || input.regionContract.facilityFallbackRegion;
+  return {
+    region,
+    source: "intent_default",
+    fallback: false,
+  };
+}
+
 export function buildSeoSectionRankTrackingList(input: {
   config: SeoSectionRankTrackingConfig;
   liveClusters: SeoSectionRankTrackingLiveCluster[];
@@ -134,12 +209,20 @@ export function buildSeoSectionRankTrackingList(input: {
   for (const seed of input.config.seedClusters) {
     const query = cleanString(seed.query);
     if (!query) continue;
+    const regionResolved = resolveTrackingRegion({
+      query,
+      intentClass: seed.intentClass,
+      regionContract: input.config.regionContract,
+    });
     byQuery.set(itemKey(query), {
       clusterId: seed.clusterId,
       query,
       section: seed.section,
       intentClass: seed.intentClass,
       priority: seed.priority,
+      region: regionResolved.region,
+      regionSource: regionResolved.source,
+      regionFallback: regionResolved.fallback,
       source: "seed",
     });
   }
@@ -159,12 +242,20 @@ export function buildSeoSectionRankTrackingList(input: {
       });
       continue;
     }
+    const regionResolved = resolveTrackingRegion({
+      query,
+      intentClass: cluster.intentClass,
+      regionContract: input.config.regionContract,
+    });
     byQuery.set(key, {
       clusterId: cluster.clusterId,
       query,
       section: inferSection(query),
       intentClass: cluster.intentClass,
       priority: defaultPriorityForIntent(cluster.intentClass),
+      region: regionResolved.region,
+      regionSource: regionResolved.source,
+      regionFallback: regionResolved.fallback,
       source: "live_cluster",
     });
   }
@@ -211,7 +302,7 @@ export function buildSeoRankHistoryRecords(input: {
       found: Boolean(check?.found),
       matchedUrl: cleanString(check?.matchedUrl) || null,
       topResultDomains: Array.isArray(check?.topResultDomains) ? [...(check?.topResultDomains || [])] : [],
-      region: cleanString(check?.region) || null,
+      region: cleanString(check?.region) || cleanString(item.region) || null,
       language: cleanString(check?.language) || null,
       device: check?.device || null,
     };
@@ -222,13 +313,20 @@ function coverageRatio(found: number, total: number): number {
   return total > 0 ? Number((found / total).toFixed(6)) : 0;
 }
 
+function recordBucketKey(input: { clusterId: string; region: string | null }): string {
+  return `${input.clusterId}||${input.region || ""}`;
+}
+
 function latestRecordsByCluster(records: SeoRankHistoryRecord[]): Map<string, SeoRankHistoryRecord[]> {
   const byCluster = new Map<string, SeoRankHistoryRecord[]>();
   for (const record of records) {
-    byCluster.set(record.clusterId, [...(byCluster.get(record.clusterId) || []), record]);
+    byCluster.set(
+      recordBucketKey({ clusterId: record.clusterId, region: record.region }),
+      [...(byCluster.get(recordBucketKey({ clusterId: record.clusterId, region: record.region })) || []), record]
+    );
   }
-  for (const [clusterId, clusterRecords] of byCluster.entries()) {
-    byCluster.set(clusterId, [...clusterRecords].sort((a, b) => Date.parse(b.checkedAt) - Date.parse(a.checkedAt)));
+  for (const [key, clusterRecords] of byCluster.entries()) {
+    byCluster.set(key, [...clusterRecords].sort((a, b) => Date.parse(b.checkedAt) - Date.parse(a.checkedAt)));
   }
   return byCluster;
 }
@@ -298,12 +396,14 @@ export function buildSeoRankDashboardExport(input: {
       items: records.map((record) => {
         const delta = deltaWindow({
           current: record,
-          previousRecords: previous.get(record.clusterId) || [],
+          previousRecords:
+            previous.get(recordBucketKey({ clusterId: record.clusterId, region: record.region })) || [],
           rankSmoothingRuns,
         });
         return {
           clusterId: record.clusterId,
           query: record.query,
+          region: record.region,
           currentPosition: delta.currentPosition,
           previousPosition: delta.previousPosition,
           delta: delta.delta,
