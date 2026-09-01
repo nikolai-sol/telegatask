@@ -104,6 +104,7 @@ dt{color:var(--muted)}dd{margin:0;font-weight:650}
 table{border-collapse:collapse;width:100%;min-width:620px}
 th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
 th{background:#f7f9fc;white-space:nowrap}tbody tr:last-child td{border-bottom:0}
+@media(max-width:680px){.overall-grid{grid-template-columns:1fr}}
 @media(max-width:420px){main{width:calc(100% - 16px);margin:8px auto 30px}.report-header,section{padding:16px;border-radius:12px}summary{padding:16px}.detail-body{padding:16px}.overall-grid{grid-template-columns:1fr}.compact-facts div,.problem-facts div,.technical-facts div{grid-template-columns:1fr;gap:2px}table{min-width:560px}}
 @media print{html,body{background:#fff}.report-header,section,details{box-shadow:none;break-inside:avoid}main{width:100%;margin:0}.detail-body{display:block}.table-scroll{overflow:visible}table{min-width:0;font-size:10pt}}
 `;

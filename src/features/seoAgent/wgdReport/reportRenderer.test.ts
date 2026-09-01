@@ -437,7 +437,7 @@ describe("renderWgdHtml manager-first contract", () => {
     expect(technical).not.toContain("RAW_SCHEMA_ERROR_SENTINEL");
   });
 
-  test("ships a Russian noindex shell with print and narrow-screen table containment", () => {
+  test("ships a Russian noindex shell with print and phone-width layout containment", () => {
     const html = renderWgdHtml(payload());
     const tableCount = occurrenceCount(html, /<table\b/g);
 
@@ -446,6 +446,7 @@ describe("renderWgdHtml manager-first contract", () => {
     expect(html).toContain('<meta name="viewport" content="width=device-width, initial-scale=1">');
     expect(html).toContain('<meta name="robots" content="noindex,nofollow">');
     expect(html).toMatch(/@media\s+print/);
+    expect(html).toMatch(/@media\s*\(max-width:\s*680px\)\s*\{\.overall-grid\{grid-template-columns:1fr\}\}/);
     expect(html).toMatch(/@media\s*\(max-width:\s*4\d\dpx\)/);
     expect(html).toContain("overflow-x:auto");
     expect(occurrenceCount(html, /class="table-scroll"/g)).toBe(tableCount);
