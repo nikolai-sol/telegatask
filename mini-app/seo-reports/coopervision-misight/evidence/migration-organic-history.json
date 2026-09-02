@@ -1,0 +1,102 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-09-02T09:10:25Z",
+  "source": {
+    "provider": "Yandex Metrica Reporting API",
+    "counterId": 66929020,
+    "access": "read-only view permission",
+    "attribution": "lastsign",
+    "trafficFilter": "organic",
+    "metricOrder": [
+      "visits",
+      "users",
+      "bounceRatePercent",
+      "averageVisitDurationSeconds",
+      "pageDepth"
+    ]
+  },
+  "migration": {
+    "historicalUrl": "https://coopervision.ru/misight/find-specialist-nearby",
+    "currentUrl": "https://coopervisionmisight.ru/",
+    "redirect": {
+      "status": 301,
+      "location": "https://coopervisionmisight.ru/",
+      "hops": 1,
+      "finalStatus": 200,
+      "checkedAt": "2026-09-02T09:10:25Z"
+    }
+  },
+  "periods": {
+    "historicalOldUrl": {
+      "dateFrom": "2025-11-01",
+      "dateTo": "2026-07-31",
+      "startUrlContains": "/misight/find-specialist-nearby",
+      "totals": {
+        "visits": 2343,
+        "users": 1866,
+        "bounceRatePercent": 12.0785,
+        "averageVisitDurationSeconds": 200.0316,
+        "pageDepth": 1.8160
+      },
+      "monthly": [
+        {"month": "2025-11", "visits": 285, "users": 253, "bounceRatePercent": 10.5263, "averageVisitDurationSeconds": 229.0667, "pageDepth": 1.9158},
+        {"month": "2025-12", "visits": 312, "users": 262, "bounceRatePercent": 17.6282, "averageVisitDurationSeconds": 179.1731, "pageDepth": 1.8045},
+        {"month": "2026-01", "visits": 277, "users": 240, "bounceRatePercent": 13.3574, "averageVisitDurationSeconds": 209.4838, "pageDepth": 1.8448},
+        {"month": "2026-02", "visits": 325, "users": 264, "bounceRatePercent": 13.2308, "averageVisitDurationSeconds": 176.9138, "pageDepth": 1.7385},
+        {"month": "2026-03", "visits": 288, "users": 252, "bounceRatePercent": 11.8056, "averageVisitDurationSeconds": 236.3924, "pageDepth": 1.9236},
+        {"month": "2026-04", "visits": 270, "users": 234, "bounceRatePercent": 11.4815, "averageVisitDurationSeconds": 183.4963, "pageDepth": 1.7815},
+        {"month": "2026-05", "visits": 192, "users": 175, "bounceRatePercent": 9.8958, "averageVisitDurationSeconds": 194.9323, "pageDepth": 1.8646},
+        {"month": "2026-06", "visits": 226, "users": 165, "bounceRatePercent": 9.2920, "averageVisitDurationSeconds": 186.0885, "pageDepth": 1.6549},
+        {"month": "2026-07", "visits": 168, "users": 141, "bounceRatePercent": 7.7381, "averageVisitDurationSeconds": 207.4762, "pageDepth": 1.8036}
+      ],
+      "searchEngines": [
+        {"name": "Google search results", "visits": 2024, "users": 1596},
+        {"name": "Yandex search results", "visits": 131, "users": 103},
+        {"name": "Google mobile app", "visits": 103, "users": 99},
+        {"name": "Yandex Mobile", "visits": 74, "users": 67},
+        {"name": "Yandex mobile app", "visits": 9, "users": 9},
+        {"name": "Bing", "visits": 2, "users": 2}
+      ]
+    },
+    "currentNewDomain": {
+      "dateFrom": "2026-07-20",
+      "dateTo": "2026-09-01",
+      "startUrlContains": "coopervisionmisight.ru",
+      "totals": {
+        "visits": 187,
+        "users": 152,
+        "bounceRatePercent": 13.9037,
+        "averageVisitDurationSeconds": 235.2353,
+        "pageDepth": 1.4866
+      },
+      "monthly": [
+        {"month": "2026-08", "visits": 176, "users": 143, "bounceRatePercent": 13.6364, "averageVisitDurationSeconds": 244.4659, "pageDepth": 1.5114},
+        {"month": "2026-09-01 only", "visits": 11, "users": 9, "bounceRatePercent": 18.1818, "averageVisitDurationSeconds": 87.5455, "pageDepth": 1.0909}
+      ],
+      "searchEngines": [
+        {"name": "Google search results", "visits": 139, "users": 118},
+        {"name": "Yandex search results", "visits": 22, "users": 15},
+        {"name": "Yandex Mobile", "visits": 13, "users": 10},
+        {"name": "Google mobile app", "visits": 7, "users": 6},
+        {"name": "Bing", "visits": 3, "users": 2},
+        {"name": "Yandex mobile app", "visits": 3, "users": 3}
+      ]
+    }
+  },
+  "comparisons": {
+    "historicalAverageMonthlyVisits": 260.33,
+    "august2026Visits": 176,
+    "augustShareOfHistoricalMonthlyAveragePercent": 67.6,
+    "historicalGoogleSurfaceSharePercent": 90.78,
+    "historicalYandexSurfaceSharePercent": 9.13,
+    "currentGoogleSurfaceSharePercent": 78.07,
+    "currentYandexSurfaceSharePercent": 20.32
+  },
+  "limitations": [
+    "The historical and current periods are not equal and must not be compared as a controlled before/after test.",
+    "The ranges overlap in July 2026; totals must not be added together.",
+    "Yandex Metrica startURL attribution describes organic sessions that started on a matching URL, not search impressions or ranking positions.",
+    "September 2026 contains one day only.",
+    "The new domain is not available as a verified host in the connected Yandex Webmaster account, so current Webmaster indexing and query data are not included."
+  ]
+}

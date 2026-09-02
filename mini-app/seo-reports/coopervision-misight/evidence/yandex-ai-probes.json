@@ -1,0 +1,260 @@
+{
+  "probes": [
+    {
+      "channel": "Yandex Search API generative response",
+      "status": "checked",
+      "query": "Где купить линзы MiSight 1 day?",
+      "result": "Несколько сайтов, где можно купить линзы MiSight 1 day: * **optimistoptica.ru**. [1] Интернет-магазин «Оптимист Оптика» предлагает линзы MiSight 1 day (30 шт.). [1] Телефон для связи: 7 495 129-10-01. [1] * **gorizont-optika.ru**. [2] Компания «Горизонт-Оптика» продаёт линзы MiSight 1 Day с доставкой по России и РБ. [2] Телефон: 7 978 319-29-70. [2] * **optic-city.ru**. [3] Магазин «Оптик Сити» предлагает линзы MiSight 1 Day (30 шт.) с доставкой или самовывозом. [3] Телефон: 7 495 258-258-2. [3] * **viplinza.ru**. [4] Интернет-магазин предлагает линзы MiSight 1 day (30 шт.). [4] Телефон: 8 800 333-11-36. [4]",
+      "sources": [
+        "https://optimistoptica.ru/kontaktnye_linzy/misight_1_day_30_linz.html",
+        "https://gorizont-optika.ru/contact-lenses/1-day/misight",
+        "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_30_sht/",
+        "https://viplinza.ru/CooperVision/MiSight-1-day",
+        "https://optica3z.ru/kontaktnye_linzy/kontaktnye_linzy_coopervision_misight_1_day_30_linz/"
+      ],
+      "sourceDetails": [
+        {
+          "url": "https://optimistoptica.ru/kontaktnye_linzy/misight_1_day_30_linz.html",
+          "title": "Контактные линзы MiSight 1 day (30 шт.) — купить в «Оптимист Оптика»",
+          "used": true
+        },
+        {
+          "url": "https://gorizont-optika.ru/contact-lenses/1-day/misight",
+          "title": "Контактные линзы Cooper Vision MiSight 1 Day купить с доставкой по России и РБ",
+          "used": true
+        },
+        {
+          "url": "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_30_sht/",
+          "title": "Контактные линзы Cooper Vision Детские контактные линзы MiSight 1 Day (30 шт) купить за 3 590 в Оптик Сити в Москве с доставкой или самовывозом",
+          "used": true
+        },
+        {
+          "url": "https://viplinza.ru/CooperVision/MiSight-1-day",
+          "title": "MiSight 1 day (30 шт) от 3499 руб. Купить линзы в интернет-магазине Viplinza",
+          "used": true
+        },
+        {
+          "url": "https://optica3z.ru/kontaktnye_linzy/kontaktnye_linzy_coopervision_misight_1_day_30_linz/",
+          "title": "Контактные линзы CooperVision MiSight 1 Day, 30 линз купить Оптика 3Z",
+          "used": false
+        }
+      ],
+      "usedSources": [
+        "https://optimistoptica.ru/kontaktnye_linzy/misight_1_day_30_linz.html",
+        "https://gorizont-optika.ru/contact-lenses/1-day/misight",
+        "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_30_sht/",
+        "https://viplinza.ru/CooperVision/MiSight-1-day"
+      ],
+      "targetFound": false,
+      "targetUsed": false,
+      "sourcePosition": null,
+      "usedSourcePosition": null
+    },
+    {
+      "channel": "Yandex Search API generative response",
+      "status": "checked",
+      "query": "Что такое MiSight 1 day и как они помогают контролировать миопию у детей?",
+      "result": "**MiSight 1 day** — это детские однодневные контактные линзы, предназначенные для коррекции и замедления прогрессирования миопии (близорукости). [2] Произведены компанией CooperVision. [2] **Как линзы помогают контролировать миопию у детей**: * **Замедляют рост роговицы глаза в длину**. [1] Это снижает риск осложнений со зрением, связанных с миопией в дальнейшей жизни, включая необратимую потерю зрения. [1] * **Корректируют аномалию рефракции глаза**. [1] Устранение аксиального удлинения глаза помогает снизить риск осложнений. [1] * **Обеспечивают чёткое зрение**. [3] Линзы подходят для активных игр и занятий спортом, в школе и при просмотре телевизора. [3] **Кому подходят линзы**: детям и подросткам в возрасте от 8 до 17 лет, у которых была выявлена близорукость. [2] Их ношение особенно рекомендовано в тех случаях, когда миопия прогрессирует, и необходимо замедлить развитие патологии. [2] **Важно**: линзы MiSight 1 day являются медицинским изделием и применяются только по назначению офтальмолога. [1] Использование линз без рекомендации врача может иметь нежелательные последствия. [1]",
+      "sources": [
+        "https://gorizont-optika.ru/blog/misight-1day",
+        "https://optic-lab.ru/polezno-znat/detskie-linzy-dlya-kontrolya-miopii-misight-1-day",
+        "https://optimistoptica.promo.page/media/kontrol-miopii-linzy-dlia-detei-misight-1-day-62fa67561c47531eca1b8d25_0_0",
+        "https://www.trubilin.com/uslugi/kontrol-miopii-u-detej/",
+        "https://www.zrenie.spb.ru/uslugi/kontaktnye-linzy-misight/"
+      ],
+      "sourceDetails": [
+        {
+          "url": "https://gorizont-optika.ru/blog/misight-1day",
+          "title": "Контактные линзы MiSight 1-Day",
+          "used": true
+        },
+        {
+          "url": "https://optic-lab.ru/polezno-znat/detskie-linzy-dlya-kontrolya-miopii-misight-1-day",
+          "title": "Детские линзы для коррекции зрения и контроля миопии MiSight 1 day от CooperVision - эффективность контактных линз для детей в лечении близорукости",
+          "used": true
+        },
+        {
+          "url": "https://optimistoptica.promo.page/media/kontrol-miopii-linzy-dlia-detei-misight-1-day-62fa67561c47531eca1b8d25_0_0",
+          "title": "Контроль миопии: линзы для детей MiSight 1 day Оптимист Оптика ПромоСтраницы",
+          "used": true
+        },
+        {
+          "url": "https://www.trubilin.com/uslugi/kontrol-miopii-u-detej/",
+          "title": "Контроль миопии у детей: замедление прогрессирования Клиника Семейной Офтальмологии профессора Трубилина",
+          "used": false
+        },
+        {
+          "url": "https://www.zrenie.spb.ru/uslugi/kontaktnye-linzy-misight/",
+          "title": "Контактные линзы MiSight 1 day Cooper Vision для детей в Санкт-Петербурге",
+          "used": false
+        }
+      ],
+      "usedSources": [
+        "https://gorizont-optika.ru/blog/misight-1day",
+        "https://optic-lab.ru/polezno-znat/detskie-linzy-dlya-kontrolya-miopii-misight-1-day",
+        "https://optimistoptica.promo.page/media/kontrol-miopii-linzy-dlia-detei-misight-1-day-62fa67561c47531eca1b8d25_0_0"
+      ],
+      "targetFound": false,
+      "targetUsed": false,
+      "sourcePosition": null,
+      "usedSourcePosition": null
+    },
+    {
+      "channel": "Yandex Search API generative response",
+      "status": "checked",
+      "query": "Где подобрать детские контактные линзы MiSight?",
+      "result": "Несколько мест, где можно подобрать детские контактные линзы MiSight: * **Салон оптики Optic Place**. [2] Специализируется на подборе и продаже контактных линз для лечения миопии у детей. [2] Предлагает полный спектр услуг — от диагностики и подбора линз до консультаций по уходу и длительному наблюдению за состоянием зрения. [2] Адрес: Москва, ул. Старая Басманная, 14/2, стр. 4. [2] Телефон: 7 495 497-0-497. [2] * **Интернет-магазин «Оптимист Оптика»**. [5] Предлагает контактные линзы бренда MiSight. [5] Телефон: 7 495 129-10-01. [5] * **«Оптик Сити»**. [4] В ассортименте есть детские контактные линзы MiSight 1 Day. [4] Можно оформить доставку или забрать линзы самовывозом. [4] Телефон: 7 495 258-258-2. [4]",
+      "sources": [
+        "https://www.lensmaster.ru/detskie-linzy-misight/",
+        "https://opticplace.ru/catalog/category/optica-dlya-detej/linzy-dlya-kontrolya-miopii/",
+        "https://optimistoptica.ru/sohranit-zrenie/yarkoe-budushee-s-linzami-misight_1-day/",
+        "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_30_sht/",
+        "https://optimistoptica.ru/kontaktnye_linzy/brand-is-misight/"
+      ],
+      "sourceDetails": [
+        {
+          "url": "https://www.lensmaster.ru/detskie-linzy-misight/",
+          "title": "MiSight",
+          "used": false
+        },
+        {
+          "url": "https://opticplace.ru/catalog/category/optica-dlya-detej/linzy-dlya-kontrolya-miopii/",
+          "title": "Линзы MiSight и Abiliti для контроля близорукости у детей в Москве – купить в салоне OPTIC PLACE",
+          "used": true
+        },
+        {
+          "url": "https://optimistoptica.ru/sohranit-zrenie/yarkoe-budushee-s-linzami-misight_1-day/",
+          "title": "Яркое будущее",
+          "used": false
+        },
+        {
+          "url": "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_30_sht/",
+          "title": "Контактные линзы Cooper Vision Детские контактные линзы MiSight 1 Day (30 шт) купить за 3 590 в Оптик Сити в Москве с доставкой или самовывозом",
+          "used": true
+        },
+        {
+          "url": "https://optimistoptica.ru/kontaktnye_linzy/brand-is-misight/",
+          "title": "Контактные линзы - Бренд MiSight — купить в интернет-магазине «Оптимист Оптика»",
+          "used": true
+        }
+      ],
+      "usedSources": [
+        "https://opticplace.ru/catalog/category/optica-dlya-detej/linzy-dlya-kontrolya-miopii/",
+        "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_30_sht/",
+        "https://optimistoptica.ru/kontaktnye_linzy/brand-is-misight/"
+      ],
+      "targetFound": false,
+      "targetUsed": false,
+      "sourcePosition": null,
+      "usedSourcePosition": null
+    },
+    {
+      "channel": "Yandex Search API generative response",
+      "status": "checked",
+      "query": "Какие контактные линзы замедляют прогрессирование близорукости у детей?",
+      "result": "**Некоторые контактные линзы, которые замедляют прогрессирование близорукости у детей:** * **ACUVUE Abiliti 1-Day**. [1][4] Однодневные линзы производства Johnson & Johnson, разработанные специально для детей 7–12 лет. [1] В них используется технология RingBoostTM, в которой центральная зона линзы отвечает за чёткость, а периферические кольца — за контроль удлинения глаза. [1] * **MiSight 1 day**. [1][2] Линзы CooperVision, одобренные международными офтальмологическими ассоциациями. [1] Клинические исследования показали, что за два года ношения они сокращают скорость роста миопии примерно на 59%. [1] Специальные мягкие контактные линзы назначаются детям, у которых близорукость имеет тенденцию к увеличению, и рекомендованы для ежедневного ношения под контролем специалиста. [1] Подбор выполняется только после диагностики и обучения гигиене, обычно с 7–8 лет. [1] Важно понимать, что ни один метод коррекции не способен полностью остановить миопию, но регулярное использование таких линз позволяет замедлить её развитие и сохранить здоровье глаз на годы вперёд. [1]",
+      "sources": [
+        "https://linzispb.ru/info/review/myagkie-kontaktnye-linzy-dlya-kontrolya-detskoj-miopii",
+        "https://www.cvz.ru/child-vision/kontaktnye-linzy-misight/",
+        "https://coopervision.ru/practitioner/clinical-resources/myopia/misight1day",
+        "https://euro-optica.ru/services/detskaya-optika/acuvue-abiliti-1-day-dlya-kontrolya-miopii-blizorukosti-u-detej/",
+        "https://opticstyle.spb.ru/stati/kontrol-miopii-u-detej-kakie-ochki-i-linzy-pomogayut"
+      ],
+      "sourceDetails": [
+        {
+          "url": "https://linzispb.ru/info/review/myagkie-kontaktnye-linzy-dlya-kontrolya-detskoj-miopii",
+          "title": "Мягкие контактные линзы для контроля детской миопии",
+          "used": true
+        },
+        {
+          "url": "https://www.cvz.ru/child-vision/kontaktnye-linzy-misight/",
+          "title": "Контактные линзы MiSight для остановки прогрессирования близорукости (миопии) в Центре восстановления зрения",
+          "used": true
+        },
+        {
+          "url": "https://coopervision.ru/practitioner/clinical-resources/myopia/misight1day",
+          "title": "MiSight 1 day — контроль прогрессирования миопии. Материалы для офтальмологов CooperVision Russia",
+          "used": false
+        },
+        {
+          "url": "https://euro-optica.ru/services/detskaya-optika/acuvue-abiliti-1-day-dlya-kontrolya-miopii-blizorukosti-u-detej/",
+          "title": "ACUVUE Abiliti 1-Day для контроля миопии (близорукости) у детей - ЕврООптика",
+          "used": true
+        },
+        {
+          "url": "https://opticstyle.spb.ru/stati/kontrol-miopii-u-detej-kakie-ochki-i-linzy-pomogayut",
+          "title": "Контроль миопии у детей: какие очки и линзы действительно замедляют близорукость",
+          "used": false
+        }
+      ],
+      "usedSources": [
+        "https://linzispb.ru/info/review/myagkie-kontaktnye-linzy-dlya-kontrolya-detskoj-miopii",
+        "https://www.cvz.ru/child-vision/kontaktnye-linzy-misight/",
+        "https://euro-optica.ru/services/detskaya-optika/acuvue-abiliti-1-day-dlya-kontrolya-miopii-blizorukosti-u-detej/"
+      ],
+      "targetFound": false,
+      "targetUsed": false,
+      "sourcePosition": null,
+      "usedSourcePosition": null
+    },
+    {
+      "channel": "Yandex Search API generative response",
+      "status": "checked",
+      "query": "Как найти оптику с MiSight рядом?",
+      "result": "Возможно, имелись в виду салоны оптики, где продают контактные линзы MiSight. Несколько таких заведений: * **«Оптимист Оптика»**. [1][4] Интернет-магазин предлагает линзы MiSight, есть доставка. [1][4] Телефон: 7 495 129-10-01. [1][4] * **Optic Place**. [2] Салон оптики, где можно купить линзы MiSight, есть проверка зрения и подбор контактных линз. [2] Адрес: Москва, ул. Старая Басманная, 14/2, стр. 4. [2] Телефон: 7 495 497-0-497. [2] * **«Оптик Сити»**. [3][5] На сайте представлены салоны оптики, где можно купить линзы MiSight, есть доставка или самовывоз. [3][5] Телефон: 7 495 258-258-2. [3]",
+      "sources": [
+        "https://optimistoptica.ru/kontaktnye_linzy/brand-is-misight/",
+        "https://opticplace.ru/brand/misight/",
+        "https://www.optic-city.ru/kontaktnye_linzy/l_brend/misight/",
+        "https://optimistoptica.ru/kontaktnye_linzy/misight_1_day_30_linz.html",
+        "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_90_sht/"
+      ],
+      "sourceDetails": [
+        {
+          "url": "https://optimistoptica.ru/kontaktnye_linzy/brand-is-misight/",
+          "title": "Контактные линзы - Бренд MiSight — купить в интернет-магазине «Оптимист Оптика»",
+          "used": true
+        },
+        {
+          "url": "https://opticplace.ru/brand/misight/",
+          "title": "MiSight купить в Москве в салоне оптики OPTIC PLACE",
+          "used": true
+        },
+        {
+          "url": "https://www.optic-city.ru/kontaktnye_linzy/l_brend/misight/",
+          "title": "Контактные линзы MiSight купить по выгодным ценам Optic-city.ru",
+          "used": true
+        },
+        {
+          "url": "https://optimistoptica.ru/kontaktnye_linzy/misight_1_day_30_linz.html",
+          "title": "Контактные линзы MiSight 1 day (30 шт.) — купить в «Оптимист Оптика»",
+          "used": true
+        },
+        {
+          "url": "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_90_sht/",
+          "title": "Контактные линзы Cooper Vision Детские контактные линзы MiSight 1 Day (90 шт) купить за 9 570 в Оптик Сити в Москве с доставкой или самовывозом",
+          "used": true
+        }
+      ],
+      "usedSources": [
+        "https://optimistoptica.ru/kontaktnye_linzy/brand-is-misight/",
+        "https://opticplace.ru/brand/misight/",
+        "https://www.optic-city.ru/kontaktnye_linzy/l_brend/misight/",
+        "https://optimistoptica.ru/kontaktnye_linzy/misight_1_day_30_linz.html",
+        "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_90_sht/"
+      ],
+      "targetFound": false,
+      "targetUsed": false,
+      "sourcePosition": null,
+      "usedSourcePosition": null
+    }
+  ],
+  "sampleVisibility": {
+    "used": 0,
+    "checked": 5,
+    "rate": 0
+  },
+  "limitations": [
+    "Alice AI visibility is a controlled sample and is not an official Yandex Webmaster metric."
+  ]
+}

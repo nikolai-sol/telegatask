@@ -1,0 +1,115 @@
+{
+  "status": {
+    "state": "partial_success",
+    "message": "Yandex rank checks returned partial evidence.",
+    "checkedAt": "2026-09-02T09:07:11.529Z",
+    "metricsSummary": {
+      "queryCount": 6,
+      "foundCount": 0,
+      "missingCount": 5,
+      "failedCount": 1
+    }
+  },
+  "checks": [
+    {
+      "query": "MiSight 1 day",
+      "searchEngine": "yandex",
+      "provider": "yandex_search_api",
+      "checkedDepth": 20,
+      "targetDomain": "coopervisionmisight.ru",
+      "found": false,
+      "serpFeatures": [],
+      "topResultDomains": [
+        "avito.ru",
+        "linza.ru",
+        "avito.ru",
+        "optic-city.ru",
+        "avito.ru"
+      ],
+      "region": "225",
+      "language": "ru",
+      "device": "desktop",
+      "checkedAt": "2026-09-02T09:07:14.124Z"
+    },
+    {
+      "query": "где купить MiSight",
+      "searchEngine": "yandex",
+      "provider": "yandex_search_api",
+      "checkedDepth": 20,
+      "targetDomain": "coopervisionmisight.ru",
+      "found": false,
+      "serpFeatures": [],
+      "topResultDomains": [
+        "optimistoptica.ru",
+        "optica3z.ru",
+        "linzispb.ru",
+        "optimistoptica.ru",
+        "linzispb.ru"
+      ],
+      "region": "225",
+      "language": "ru",
+      "device": "desktop",
+      "checkedAt": "2026-09-02T09:07:24.595Z"
+    },
+    {
+      "query": "линзы для контроля миопии у детей",
+      "searchEngine": "yandex",
+      "provider": "yandex_search_api",
+      "checkedDepth": 20,
+      "targetDomain": "coopervisionmisight.ru",
+      "found": false,
+      "serpFeatures": [],
+      "topResultDomains": [
+        "optic-city.ru",
+        "optic-city.ru",
+        "linzispb.ru",
+        "euro-optica.ru",
+        "opticstyle.spb.ru"
+      ],
+      "region": "225",
+      "language": "ru",
+      "device": "desktop",
+      "checkedAt": "2026-09-02T09:07:26.584Z"
+    },
+    {
+      "query": "детские контактные линзы от близорукости",
+      "searchEngine": "yandex",
+      "provider": "yandex_search_api",
+      "checkedDepth": 20,
+      "targetDomain": "coopervisionmisight.ru",
+      "found": false,
+      "serpFeatures": [],
+      "topResultDomains": [
+        "linzispb.ru",
+        "optic-lab.ru",
+        "euro-optica.ru",
+        "optic-city.ru",
+        "optic-city.ru"
+      ],
+      "region": "225",
+      "language": "ru",
+      "device": "desktop",
+      "checkedAt": "2026-09-02T09:07:28.545Z"
+    },
+    {
+      "query": "оптика MiSight рядом",
+      "searchEngine": "yandex",
+      "provider": "yandex_search_api",
+      "checkedDepth": 20,
+      "targetDomain": "coopervisionmisight.ru",
+      "found": false,
+      "serpFeatures": [],
+      "topResultDomains": [
+        "yandex.ru",
+        "avito.ru",
+        "z-zrenie.ru",
+        "yandex.ru",
+        "lensmaster.ru"
+      ],
+      "region": "225",
+      "language": "ru",
+      "device": "desktop",
+      "checkedAt": "2026-09-02T09:07:30.683Z"
+    }
+  ]
+}

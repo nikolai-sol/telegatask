@@ -1,0 +1,1911 @@
+{
+  "generatedAt": "2026-09-02T09:04:40.558Z",
+  "options": {
+    "url": "https://coopervisionmisight.ru/",
+    "domain": "coopervisionmisight.ru",
+    "market": "RU",
+    "language": "ru",
+    "region": "225",
+    "crawlLimit": 100,
+    "lighthousePageLimit": 6,
+    "keywords": [
+      "MiSight 1 day",
+      "купить линзы MiSight",
+      "где купить MiSight",
+      "линзы для контроля миопии у детей",
+      "детские контактные линзы от близорукости",
+      "оптика MiSight рядом"
+    ],
+    "aiQueries": [
+      "Где купить линзы MiSight 1 day?",
+      "Что такое MiSight 1 day и как они помогают контролировать миопию у детей?",
+      "Где подобрать детские контактные линзы MiSight?",
+      "Какие контактные линзы замедляют прогрессирование близорукости у детей?",
+      "Как найти оптику с MiSight рядом?"
+    ],
+    "priorityUrls": [
+      "https://coopervisionmisight.ru/"
+    ],
+    "outDir": "reports",
+    "sources": {
+      "dataForSeo": "not_applicable"
+    }
+  },
+  "sources": [
+    {
+      "id": "dataforseo",
+      "label": "DataForSEO",
+      "state": "not_applicable",
+      "message": "DataForSEO is not used for the Russian market profile.",
+      "checkedAt": "2026-09-02T09:04:39.668Z"
+    },
+    {
+      "id": "yandex_search",
+      "label": "Yandex Search API",
+      "state": "partial",
+      "message": "Yandex rank checks returned partial evidence.",
+      "checkedAt": "2026-09-02T09:04:40.558Z",
+      "details": {
+        "requested": 6,
+        "collected": 5
+      }
+    },
+    {
+      "id": "alice_ai",
+      "label": "Alice AI sample",
+      "state": "success",
+      "message": "All requested Alice AI sample probes were checked.",
+      "checkedAt": "2026-09-02T09:04:40.558Z",
+      "details": {
+        "requested": 5,
+        "checked": 5
+      }
+    },
+    {
+      "id": "yandex_webmaster",
+      "label": "Yandex Webmaster",
+      "state": "owner_access_required",
+      "message": "Credentials are present, but verified host access is required for this domain.",
+      "checkedAt": "2026-09-02T09:04:39.668Z"
+    },
+    {
+      "id": "gsc",
+      "label": "Google Search Console",
+      "state": "owner_access_required",
+      "message": "Verified Google Search Console owner access is required for this domain.",
+      "checkedAt": "2026-09-02T09:04:39.668Z"
+    },
+    {
+      "id": "crawl",
+      "label": "Public crawl",
+      "state": "success",
+      "message": "Collected 1 public page record(s).",
+      "checkedAt": "2026-09-02T09:04:40.558Z",
+      "details": {
+        "pages": 1
+      }
+    },
+    {
+      "id": "lighthouse",
+      "label": "Lighthouse",
+      "state": "success",
+      "message": "All requested Lighthouse profiles completed.",
+      "checkedAt": "2026-09-02T09:04:40.558Z",
+      "details": {
+        "requested": 2,
+        "successful": 2,
+        "failed": 0
+      }
+    }
+  ],
+  "crawl": {
+    "attemptedUrlCount": 1,
+    "eligibleDiscoveredCount": 1,
+    "droppedEligibleCount": 0,
+    "truncated": false,
+    "pages": [
+      {
+        "requestedUrl": "https://coopervisionmisight.ru/",
+        "finalUrl": "https://coopervisionmisight.ru/",
+        "status": 200,
+        "contentType": "text/html; charset=utf-8",
+        "title": "Где купить контактные линзы Misight 1 day",
+        "titleLength": 41,
+        "description": "Где купить контактные линзы Misight 1 day по выгодной цене - все адреса в вашем городе. Получите скидку 1000 рублей на контактные линзы Misight 1 day для замедления прогрессирования близорукости у детей от производителя Coopervision в партнерских оптиках.",
+        "descriptionLength": 255,
+        "canonical": "https://coopervision.ru/misight/find-specialist-nearby",
+        "hreflang": [
+          {
+            "language": "ru",
+            "url": "https://coopervision.ru/misight/find-specialist-nearby"
+          }
+        ],
+        "headings": {
+          "h1": [
+            "Где купить MiSight® 1 day"
+          ],
+          "h2": [
+            "Как получить скидку 1000₽",
+            "Адреса, где можно подобрать и купить MiSight® 1 day",
+            "Вопросы и ответы",
+            "Как получить скидку после консультации",
+            "Адреса, где можно подобрать и купить MiSight® 1 day",
+            "Источники"
+          ],
+          "h3": [
+            "Выберите партнёрскую оптику",
+            "Получите QR-код",
+            "Запишитесь на диагностику",
+            "Покажите QR при покупке"
+          ],
+          "h4": [],
+          "h5": [],
+          "h6": []
+        },
+        "links": [
+          "https://coopervisionmisight.ru/",
+          "https://coopervision.ru/find-an-optician",
+          "https://coopervision.ru/practitioner",
+          "https://eifu.coopervision.com/",
+          "https://coopervision.ru/select-region",
+          "https://coopervision.ru/",
+          "https://coopervision.ru/why-coopervision",
+          "https://coopervision.ru/%D0%BD%D0%B0%D1%88%D0%B8-%D0%BF%D1%80%D0%BE%D0%B4%D1%83%D0%BA%D1%82%D1%8B",
+          "https://coopervision.ru/contact-lenses/avaira-vitality",
+          "https://coopervision.ru/contact-lenses/avaira-vitality-toric",
+          "https://coopervision.ru/contact-lenses/biofinity",
+          "https://coopervision.ru/contact-lenses/family-biofinity/biofinity-energys",
+          "https://coopervision.ru/contact-lenses/biofinity-toric",
+          "https://coopervision.ru/contact-lenses/biofinity-multifocal",
+          "https://coopervision.ru/contact-lenses/biomedics-55-evolution",
+          "https://coopervision.ru/contact-lenses/proclear-1-day-contacts",
+          "https://coopervision.ru/contact-lenses/proclear",
+          "https://coopervision.ru/contact-lenses/clariti-1-day",
+          "https://coopervision.ru/contact-lenses/clariti-1-day-multifocal",
+          "https://coopervision.ru/contact-lenses/clariti-1-day-toric",
+          "https://coopervision.ru/products/contact-lens-technology",
+          "https://coopervision.ru/which-contact-lens-quiz",
+          "https://coopervision.ru/our-company/contact-us",
+          "https://coopervision.ru/contact-lenses/myday",
+          "https://coopervision.ru/contact-lenses/myday-toric",
+          "https://coopervision.ru/contact-lenses/%D1%81%D0%B5%D0%BC%D0%B5%D0%B9%D1%81%D1%82%D0%B2%D0%BE-myday/myday-multifocal",
+          "https://coopervision.ru/contact-lenses/misight-1-day",
+          "https://coopervision.ru/contact-lenses/clariti-1-day/clariti-1-day-multifocal",
+          "https://coopervision.ru/misight",
+          "https://coopervision.ru/contact-lenses-and-vision",
+          "https://coopervision.ru/wearers/new-wearer",
+          "https://coopervision.ru/wearers/experienced-wearer",
+          "https://coopervision.ru/my-lens-life",
+          "https://coopervision.ru/stati"
+        ],
+        "internalLinks": [
+          "https://coopervisionmisight.ru/"
+        ],
+        "externalLinks": [
+          "https://coopervision.ru/find-an-optician",
+          "https://coopervision.ru/practitioner",
+          "https://eifu.coopervision.com/",
+          "https://coopervision.ru/select-region",
+          "https://coopervision.ru/",
+          "https://coopervision.ru/why-coopervision",
+          "https://coopervision.ru/%D0%BD%D0%B0%D1%88%D0%B8-%D0%BF%D1%80%D0%BE%D0%B4%D1%83%D0%BA%D1%82%D1%8B",
+          "https://coopervision.ru/contact-lenses/avaira-vitality",
+          "https://coopervision.ru/contact-lenses/avaira-vitality-toric",
+          "https://coopervision.ru/contact-lenses/biofinity",
+          "https://coopervision.ru/contact-lenses/family-biofinity/biofinity-energys",
+          "https://coopervision.ru/contact-lenses/biofinity-toric",
+          "https://coopervision.ru/contact-lenses/biofinity-multifocal",
+          "https://coopervision.ru/contact-lenses/biomedics-55-evolution",
+          "https://coopervision.ru/contact-lenses/proclear-1-day-contacts",
+          "https://coopervision.ru/contact-lenses/proclear",
+          "https://coopervision.ru/contact-lenses/clariti-1-day",
+          "https://coopervision.ru/contact-lenses/clariti-1-day-multifocal",
+          "https://coopervision.ru/contact-lenses/clariti-1-day-toric",
+          "https://coopervision.ru/products/contact-lens-technology",
+          "https://coopervision.ru/which-contact-lens-quiz",
+          "https://coopervision.ru/our-company/contact-us",
+          "https://coopervision.ru/contact-lenses/myday",
+          "https://coopervision.ru/contact-lenses/myday-toric",
+          "https://coopervision.ru/contact-lenses/%D1%81%D0%B5%D0%BC%D0%B5%D0%B9%D1%81%D1%82%D0%B2%D0%BE-myday/myday-multifocal",
+          "https://coopervision.ru/contact-lenses/misight-1-day",
+          "https://coopervision.ru/contact-lenses/clariti-1-day/clariti-1-day-multifocal",
+          "https://coopervision.ru/misight",
+          "https://coopervision.ru/contact-lenses-and-vision",
+          "https://coopervision.ru/wearers/new-wearer",
+          "https://coopervision.ru/wearers/experienced-wearer",
+          "https://coopervision.ru/my-lens-life",
+          "https://coopervision.ru/stati"
+        ],
+        "schemaTypes": [],
+        "schemaErrors": [],
+        "openGraph": {
+          "og:site_name": "CooperVision Russia",
+          "og:type": "article",
+          "og:url": "https://coopervision.ru/misight/find-specialist-nearby",
+          "og:title": "Найти специалиста рядом",
+          "og:description": "Продажа контактных линз для коррекции и профилактики зрения от производителя CooperVision.",
+          "og:image": "https://coopervisionmisight.ru/assets/cv/img/cv-15-logo.png",
+          "og:updated_time": "2026-07-31T21:05:02+03:00"
+        },
+        "twitterCards": {},
+        "images": {
+          "total": 16,
+          "missingAlt": 4
+        },
+        "wordCount": 1126,
+        "indexable": true,
+        "signalConflicts": [
+          {
+            "code": "canonical_differs_from_final",
+            "category": "canonical"
+          }
+        ],
+        "indexabilityConflicts": [
+          "Canonical points away from the crawled final URL."
+        ],
+        "keywordAlignment": {
+          "state": "measured",
+          "method": "normalized_token_presence",
+          "checkedKeywords": 6,
+          "matches": [
+            {
+              "keyword": "MiSight 1 day",
+              "fields": [
+                "title",
+                "description",
+                "h1"
+              ]
+            },
+            {
+              "keyword": "купить линзы MiSight",
+              "fields": [
+                "title",
+                "description"
+              ]
+            },
+            {
+              "keyword": "где купить MiSight",
+              "fields": [
+                "title",
+                "description",
+                "h1"
+              ]
+            }
+          ],
+          "unmatchedKeywords": [
+            "линзы для контроля миопии у детей",
+            "детские контактные линзы от близорукости",
+            "оптика MiSight рядом"
+          ],
+          "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+        },
+        "discoveryOrder": 0,
+        "depth": 0,
+        "discoverySources": [
+          "start",
+          "priority",
+          "internal_link"
+        ],
+        "inboundInternalLinks": 0,
+        "orphanCandidate": false
+      }
+    ],
+    "robots": {
+      "url": "https://coopervisionmisight.ru/robots.txt",
+      "status": 404,
+      "sitemapUrls": [],
+      "access": {
+        "state": "measured",
+        "userAgent": "YandexBot",
+        "checkedUrlCount": 1,
+        "blockedUrls": []
+      }
+    },
+    "sitemapCandidates": [
+      {
+        "url": "https://coopervisionmisight.ru/sitemap.xml",
+        "source": "common",
+        "status": 404,
+        "urls": [],
+        "isIndex": false
+      },
+      {
+        "url": "https://coopervisionmisight.ru/sitemap_index.xml",
+        "source": "common",
+        "status": 404,
+        "urls": [],
+        "isIndex": false
+      },
+      {
+        "url": "https://coopervisionmisight.ru/sitemap-index.xml",
+        "source": "common",
+        "status": 404,
+        "urls": [],
+        "isIndex": false
+      }
+    ],
+    "discoveredUrls": [
+      "https://coopervisionmisight.ru/"
+    ],
+    "excludedUrls": [],
+    "brokenUrls": [],
+    "redirectChains": [],
+    "duplicateTitles": {},
+    "duplicateDescriptions": {},
+    "limitations": []
+  },
+  "pages": [
+    {
+      "requestedUrl": "https://coopervisionmisight.ru/",
+      "finalUrl": "https://coopervisionmisight.ru/",
+      "status": 200,
+      "contentType": "text/html; charset=utf-8",
+      "title": "Где купить контактные линзы Misight 1 day",
+      "titleLength": 41,
+      "description": "Где купить контактные линзы Misight 1 day по выгодной цене - все адреса в вашем городе. Получите скидку 1000 рублей на контактные линзы Misight 1 day для замедления прогрессирования близорукости у детей от производителя Coopervision в партнерских оптиках.",
+      "descriptionLength": 255,
+      "canonical": "https://coopervision.ru/misight/find-specialist-nearby",
+      "hreflang": [
+        {
+          "language": "ru",
+          "url": "https://coopervision.ru/misight/find-specialist-nearby"
+        }
+      ],
+      "headings": {
+        "h1": [
+          "Где купить MiSight® 1 day"
+        ],
+        "h2": [
+          "Как получить скидку 1000₽",
+          "Адреса, где можно подобрать и купить MiSight® 1 day",
+          "Вопросы и ответы",
+          "Как получить скидку после консультации",
+          "Адреса, где можно подобрать и купить MiSight® 1 day",
+          "Источники"
+        ],
+        "h3": [
+          "Выберите партнёрскую оптику",
+          "Получите QR-код",
+          "Запишитесь на диагностику",
+          "Покажите QR при покупке"
+        ],
+        "h4": [],
+        "h5": [],
+        "h6": []
+      },
+      "links": [
+        "https://coopervisionmisight.ru/",
+        "https://coopervision.ru/find-an-optician",
+        "https://coopervision.ru/practitioner",
+        "https://eifu.coopervision.com/",
+        "https://coopervision.ru/select-region",
+        "https://coopervision.ru/",
+        "https://coopervision.ru/why-coopervision",
+        "https://coopervision.ru/%D0%BD%D0%B0%D1%88%D0%B8-%D0%BF%D1%80%D0%BE%D0%B4%D1%83%D0%BA%D1%82%D1%8B",
+        "https://coopervision.ru/contact-lenses/avaira-vitality",
+        "https://coopervision.ru/contact-lenses/avaira-vitality-toric",
+        "https://coopervision.ru/contact-lenses/biofinity",
+        "https://coopervision.ru/contact-lenses/family-biofinity/biofinity-energys",
+        "https://coopervision.ru/contact-lenses/biofinity-toric",
+        "https://coopervision.ru/contact-lenses/biofinity-multifocal",
+        "https://coopervision.ru/contact-lenses/biomedics-55-evolution",
+        "https://coopervision.ru/contact-lenses/proclear-1-day-contacts",
+        "https://coopervision.ru/contact-lenses/proclear",
+        "https://coopervision.ru/contact-lenses/clariti-1-day",
+        "https://coopervision.ru/contact-lenses/clariti-1-day-multifocal",
+        "https://coopervision.ru/contact-lenses/clariti-1-day-toric",
+        "https://coopervision.ru/products/contact-lens-technology",
+        "https://coopervision.ru/which-contact-lens-quiz",
+        "https://coopervision.ru/our-company/contact-us",
+        "https://coopervision.ru/contact-lenses/myday",
+        "https://coopervision.ru/contact-lenses/myday-toric",
+        "https://coopervision.ru/contact-lenses/%D1%81%D0%B5%D0%BC%D0%B5%D0%B9%D1%81%D1%82%D0%B2%D0%BE-myday/myday-multifocal",
+        "https://coopervision.ru/contact-lenses/misight-1-day",
+        "https://coopervision.ru/contact-lenses/clariti-1-day/clariti-1-day-multifocal",
+        "https://coopervision.ru/misight",
+        "https://coopervision.ru/contact-lenses-and-vision",
+        "https://coopervision.ru/wearers/new-wearer",
+        "https://coopervision.ru/wearers/experienced-wearer",
+        "https://coopervision.ru/my-lens-life",
+        "https://coopervision.ru/stati"
+      ],
+      "internalLinks": [
+        "https://coopervisionmisight.ru/"
+      ],
+      "externalLinks": [
+        "https://coopervision.ru/find-an-optician",
+        "https://coopervision.ru/practitioner",
+        "https://eifu.coopervision.com/",
+        "https://coopervision.ru/select-region",
+        "https://coopervision.ru/",
+        "https://coopervision.ru/why-coopervision",
+        "https://coopervision.ru/%D0%BD%D0%B0%D1%88%D0%B8-%D0%BF%D1%80%D0%BE%D0%B4%D1%83%D0%BA%D1%82%D1%8B",
+        "https://coopervision.ru/contact-lenses/avaira-vitality",
+        "https://coopervision.ru/contact-lenses/avaira-vitality-toric",
+        "https://coopervision.ru/contact-lenses/biofinity",
+        "https://coopervision.ru/contact-lenses/family-biofinity/biofinity-energys",
+        "https://coopervision.ru/contact-lenses/biofinity-toric",
+        "https://coopervision.ru/contact-lenses/biofinity-multifocal",
+        "https://coopervision.ru/contact-lenses/biomedics-55-evolution",
+        "https://coopervision.ru/contact-lenses/proclear-1-day-contacts",
+        "https://coopervision.ru/contact-lenses/proclear",
+        "https://coopervision.ru/contact-lenses/clariti-1-day",
+        "https://coopervision.ru/contact-lenses/clariti-1-day-multifocal",
+        "https://coopervision.ru/contact-lenses/clariti-1-day-toric",
+        "https://coopervision.ru/products/contact-lens-technology",
+        "https://coopervision.ru/which-contact-lens-quiz",
+        "https://coopervision.ru/our-company/contact-us",
+        "https://coopervision.ru/contact-lenses/myday",
+        "https://coopervision.ru/contact-lenses/myday-toric",
+        "https://coopervision.ru/contact-lenses/%D1%81%D0%B5%D0%BC%D0%B5%D0%B9%D1%81%D1%82%D0%B2%D0%BE-myday/myday-multifocal",
+        "https://coopervision.ru/contact-lenses/misight-1-day",
+        "https://coopervision.ru/contact-lenses/clariti-1-day/clariti-1-day-multifocal",
+        "https://coopervision.ru/misight",
+        "https://coopervision.ru/contact-lenses-and-vision",
+        "https://coopervision.ru/wearers/new-wearer",
+        "https://coopervision.ru/wearers/experienced-wearer",
+        "https://coopervision.ru/my-lens-life",
+        "https://coopervision.ru/stati"
+      ],
+      "schemaTypes": [],
+      "schemaErrors": [],
+      "openGraph": {
+        "og:site_name": "CooperVision Russia",
+        "og:type": "article",
+        "og:url": "https://coopervision.ru/misight/find-specialist-nearby",
+        "og:title": "Найти специалиста рядом",
+        "og:description": "Продажа контактных линз для коррекции и профилактики зрения от производителя CooperVision.",
+        "og:image": "https://coopervisionmisight.ru/assets/cv/img/cv-15-logo.png",
+        "og:updated_time": "2026-07-31T21:05:02+03:00"
+      },
+      "twitterCards": {},
+      "images": {
+        "total": 16,
+        "missingAlt": 4
+      },
+      "wordCount": 1126,
+      "indexable": true,
+      "signalConflicts": [
+        {
+          "code": "canonical_differs_from_final",
+          "category": "canonical"
+        }
+      ],
+      "indexabilityConflicts": [
+        "Canonical points away from the crawled final URL."
+      ],
+      "keywordAlignment": {
+        "state": "measured",
+        "method": "normalized_token_presence",
+        "checkedKeywords": 6,
+        "matches": [
+          {
+            "keyword": "MiSight 1 day",
+            "fields": [
+              "title",
+              "description",
+              "h1"
+            ]
+          },
+          {
+            "keyword": "купить линзы MiSight",
+            "fields": [
+              "title",
+              "description"
+            ]
+          },
+          {
+            "keyword": "где купить MiSight",
+            "fields": [
+              "title",
+              "description",
+              "h1"
+            ]
+          }
+        ],
+        "unmatchedKeywords": [
+          "линзы для контроля миопии у детей",
+          "детские контактные линзы от близорукости",
+          "оптика MiSight рядом"
+        ],
+        "note": "A bounded heuristic checks normalized keyword tokens in title, description, and H1; it is not a relevance judgment."
+      },
+      "discoveryOrder": 0,
+      "depth": 0,
+      "discoverySources": [
+        "start",
+        "priority",
+        "internal_link"
+      ],
+      "inboundInternalLinks": 0,
+      "orphanCandidate": false
+    }
+  ],
+  "lighthouse": [
+    {
+      "url": "https://coopervisionmisight.ru/",
+      "requestedUrl": "https://coopervisionmisight.ru/",
+      "finalUrl": "https://coopervisionmisight.ru/",
+      "device": "mobile",
+      "status": "success",
+      "measurementType": "lab",
+      "fieldData": {
+        "source": "CrUX",
+        "state": "not_collected"
+      },
+      "categoryScores": {
+        "performance": 46,
+        "accessibility": 93,
+        "best-practices": 73,
+        "seo": 92
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 9256.242100000001,
+        "largestContentfulPaintMs": 16676.1729,
+        "cumulativeLayoutShift": 0.00001135241572167959,
+        "totalBlockingTimeMs": 419,
+        "speedIndexMs": 9256.242100000001,
+        "interactionToNextPaintMs": null
+      },
+      "transferSizeBytes": 7767889,
+      "unusedJavaScriptBytes": 3560,
+      "unusedCssBytes": 3870,
+      "insights": [
+        "cache-insight",
+        "image-delivery-insight",
+        "render-blocking-insight"
+      ],
+      "failedAudits": [
+        {
+          "id": "first-contentful-paint",
+          "title": "First Contentful Paint",
+          "score": 0,
+          "description": "First Contentful Paint marks the time at which the first text or image is painted. [Learn more about the First Contentful Paint metric](https://developer.chrome.com/docs/lighthouse/performance/first-contentful-paint/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "largest-contentful-paint",
+          "title": "Largest Contentful Paint",
+          "score": 0,
+          "description": "Largest Contentful Paint marks the time at which the largest text or image is painted. [Learn more about the Largest Contentful Paint metric](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-largest-contentful-paint/)",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "total-blocking-time",
+          "title": "Total Blocking Time",
+          "score": 0.66,
+          "description": "Sum of all time periods between FCP and Time to Interactive, when task length exceeded 50ms, expressed in milliseconds. [Learn more about the Total Blocking Time metric](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-total-blocking-time/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "speed-index",
+          "title": "Speed Index",
+          "score": 0.13,
+          "description": "Speed Index shows how quickly the contents of a page are visibly populated. [Learn more about the Speed Index metric](https://developer.chrome.com/docs/lighthouse/performance/speed-index/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "cache-insight",
+          "title": "Use efficient cache lifetimes",
+          "score": 0,
+          "description": "A long cache lifetime can speed up repeat visits to your page. [Learn more about caching](https://developer.chrome.com/docs/performance/insights/cache).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "document-latency-insight",
+          "title": "Document request latency",
+          "score": 0.5,
+          "description": "Your first network request is the most important. [Reduce its latency](https://developer.chrome.com/docs/performance/insights/document-latency) by avoiding redirects, ensuring a fast server response, and enabling text compression.",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "forced-reflow-insight",
+          "title": "Forced reflow",
+          "score": 0,
+          "description": "A forced reflow occurs when JavaScript queries geometric properties (such as offsetWidth) after styles have been invalidated by a change to the DOM state. This can result in poor performance. Learn more about [forced reflows](https://developer.chrome.com/docs/performance/insights/forced-reflow) and possible mitigations.",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "score": 0.5,
+          "description": "Reducing the download time of images can improve the perceived load time of the page and LCP. [Learn more about optimizing image size](https://developer.chrome.com/docs/performance/insights/image-delivery)",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "lcp-breakdown-insight",
+          "title": "LCP breakdown",
+          "score": 0,
+          "description": "Each [subpart has specific improvement strategies](https://developer.chrome.com/docs/performance/insights/lcp-breakdown). Ideally, most of the LCP time should be spent on loading the resources, not within delays.",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "lcp-discovery-insight",
+          "title": "LCP request discovery",
+          "score": 0,
+          "description": "[Optimize LCP](https://developer.chrome.com/docs/performance/insights/lcp-discovery) by making the LCP image discoverable from the HTML immediately, and avoiding lazy-loading",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "network-dependency-tree-insight",
+          "title": "Network dependency tree",
+          "score": 0,
+          "description": "[Avoid chaining critical requests](https://developer.chrome.com/docs/performance/insights/network-dependency-tree) by reducing the length of chains, reducing the download size of resources, or deferring the download of unnecessary resources to improve page load.",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests",
+          "score": 0,
+          "description": "Requests are blocking the page's initial render, which may delay LCP. [Deferring or inlining](https://developer.chrome.com/docs/performance/insights/render-blocking) can move these network requests out of the critical path.",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "interactive",
+          "title": "Time to Interactive",
+          "score": 0.04,
+          "description": "Time to Interactive is the amount of time it takes for the page to become fully interactive. [Learn more about the Time to Interactive metric](https://developer.chrome.com/docs/lighthouse/performance/interactive/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "max-potential-fid",
+          "title": "Max Potential First Input Delay",
+          "score": 0.73,
+          "description": "The maximum potential First Input Delay that your users could experience is the duration of the longest task. [Learn more about the Maximum Potential First Input Delay metric](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-max-potential-fid/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "unminified-css",
+          "title": "Minify CSS",
+          "score": 0.5,
+          "description": "Minifying CSS files can reduce network payload sizes. [Learn how to minify CSS](https://developer.chrome.com/docs/lighthouse/performance/unminified-css/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "unminified-javascript",
+          "title": "Minify JavaScript",
+          "score": 0.5,
+          "description": "Minifying JavaScript files can reduce payload sizes and script parse time. [Learn how to minify JavaScript](https://developer.chrome.com/docs/lighthouse/performance/unminified-javascript/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "unused-css-rules",
+          "title": "Reduce unused CSS",
+          "score": 0,
+          "description": "Reduce unused rules from stylesheets and defer CSS not used for above-the-fold content to decrease bytes consumed by network activity. [Learn how to reduce unused CSS](https://developer.chrome.com/docs/lighthouse/performance/unused-css-rules/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "score": 0,
+          "description": "Reduce unused JavaScript and defer loading scripts until they are required to decrease bytes consumed by network activity. [Learn how to reduce unused JavaScript](https://developer.chrome.com/docs/lighthouse/performance/unused-javascript/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "total-byte-weight",
+          "title": "Avoid enormous network payloads",
+          "score": 0.5,
+          "description": "Large network payloads cost users real money and are highly correlated with long load times. [Learn how to reduce payload sizes](https://developer.chrome.com/docs/lighthouse/performance/total-byte-weight/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "bootup-time",
+          "title": "Reduce JavaScript execution time",
+          "score": 0,
+          "description": "Consider reducing the time spent parsing, compiling, and executing JS. You may find delivering smaller JS payloads helps with this. [Learn how to reduce Javascript execution time](https://developer.chrome.com/docs/lighthouse/performance/bootup-time/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "mainthread-work-breakdown",
+          "title": "Minimize main-thread work",
+          "score": 0,
+          "description": "Consider reducing the time spent parsing, compiling and executing JS. You may find delivering smaller JS payloads helps with this. [Learn how to minimize main-thread work](https://developer.chrome.com/docs/lighthouse/performance/mainthread-work-breakdown/)",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "unsized-images",
+          "title": "Image elements do not have explicit `width` and `height`",
+          "score": 0.5,
+          "description": "Set an explicit width and height on image elements to reduce layout shifts and improve CLS. [Learn how to set image dimensions](https://web.dev/articles/optimize-cls",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "heading-order",
+          "title": "Heading elements are not in a sequentially-descending order",
+          "score": 0,
+          "description": "Properly ordered headings that do not skip levels convey the semantic structure of the page, making it easier to navigate and understand when using assistive technologies. [Learn more about heading order](https://dequeuniversity.com/rules/axe/4.12/heading-order).",
+          "categories": [
+            "accessibility"
+          ]
+        },
+        {
+          "id": "link-name",
+          "title": "Links do not have a discernible name",
+          "score": 0,
+          "description": "Link text (and alternate text for images, when used as links) that is discernible, unique, and focusable improves the navigation experience for screen reader users. [Learn how to make links accessible](https://dequeuniversity.com/rules/axe/4.12/link-name).",
+          "categories": [
+            "accessibility"
+          ]
+        },
+        {
+          "id": "skip-link",
+          "title": "Skip links are not focusable.",
+          "score": 0,
+          "description": "Including a skip link can help users skip to the main content to save time. [Learn more about skip links](https://dequeuniversity.com/rules/axe/4.12/skip-link).",
+          "categories": [
+            "accessibility"
+          ]
+        },
+        {
+          "id": "landmark-one-main",
+          "title": "Document does not have a main landmark.",
+          "score": 0,
+          "description": "One main landmark helps screen reader users navigate a web page. [Learn more about landmarks](https://dequeuniversity.com/rules/axe/4.12/landmark-one-main).",
+          "categories": [
+            "accessibility"
+          ]
+        },
+        {
+          "id": "geolocation-on-start",
+          "title": "Requests the geolocation permission on page load",
+          "score": 0,
+          "description": "Users are mistrustful of or confused by sites that request their location without context. Consider tying the request to a user action instead. [Learn more about the geolocation permission](https://developer.chrome.com/docs/lighthouse/best-practices/geolocation-on-start/). Also consider using the [`<geolocation>` element](https://developer.chrome.com/blog/geolocation-html-element).",
+          "categories": [
+            "best-practices"
+          ]
+        },
+        {
+          "id": "third-party-cookies",
+          "title": "Uses third-party cookies",
+          "score": 0,
+          "description": "Third-party cookies may be blocked in some contexts. [Learn more about preparing for third-party cookie restrictions](https://privacysandbox.google.com/cookies/prepare/overview).",
+          "categories": [
+            "best-practices"
+          ]
+        },
+        {
+          "id": "inspector-issues",
+          "title": "Issues were logged in the `Issues` panel in Chrome Devtools",
+          "score": 0,
+          "description": "Issues logged to the `Issues` panel in Chrome Devtools indicate unresolved problems. They can come from network request failures, insufficient security controls, and other browser concerns. Open up the Issues panel in Chrome DevTools for more details on each issue.",
+          "categories": [
+            "best-practices"
+          ]
+        },
+        {
+          "id": "canonical",
+          "title": "Document does not have a valid `rel=canonical`",
+          "score": 0,
+          "description": "Canonical links suggest which URL to show in search results. [Learn more about canonical links](https://developer.chrome.com/docs/lighthouse/seo/canonical/).",
+          "categories": [
+            "seo"
+          ]
+        }
+      ],
+      "rawPath": "evidence/lighthouse-coopervisionmisight-ru-home-mobile.json"
+    },
+    {
+      "url": "https://coopervisionmisight.ru/",
+      "requestedUrl": "https://coopervisionmisight.ru/",
+      "finalUrl": "https://coopervisionmisight.ru/",
+      "device": "desktop",
+      "status": "success",
+      "measurementType": "lab",
+      "fieldData": {
+        "source": "CrUX",
+        "state": "not_collected"
+      },
+      "categoryScores": {
+        "performance": 64,
+        "accessibility": 86,
+        "best-practices": 73,
+        "seo": 92
+      },
+      "metrics": {
+        "firstContentfulPaintMs": 797.979,
+        "largestContentfulPaintMs": 1543.499,
+        "cumulativeLayoutShift": 0.09604596040189126,
+        "totalBlockingTimeMs": 853.5329999999997,
+        "speedIndexMs": 1270,
+        "interactionToNextPaintMs": null
+      },
+      "transferSizeBytes": 8738939,
+      "unusedJavaScriptBytes": 0,
+      "unusedCssBytes": 120,
+      "insights": [
+        "cache-insight",
+        "image-delivery-insight",
+        "render-blocking-insight"
+      ],
+      "failedAudits": [
+        {
+          "id": "first-contentful-paint",
+          "title": "First Contentful Paint",
+          "score": 0.95,
+          "description": "First Contentful Paint marks the time at which the first text or image is painted. [Learn more about the First Contentful Paint metric](https://developer.chrome.com/docs/lighthouse/performance/first-contentful-paint/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "largest-contentful-paint",
+          "title": "Largest Contentful Paint",
+          "score": 0.79,
+          "description": "Largest Contentful Paint marks the time at which the largest text or image is painted. [Learn more about the Largest Contentful Paint metric](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-largest-contentful-paint/)",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "total-blocking-time",
+          "title": "Total Blocking Time",
+          "score": 0.08,
+          "description": "Sum of all time periods between FCP and Time to Interactive, when task length exceeded 50ms, expressed in milliseconds. [Learn more about the Total Blocking Time metric](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-total-blocking-time/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "cumulative-layout-shift",
+          "title": "Cumulative Layout Shift",
+          "score": 0.91,
+          "description": "Cumulative Layout Shift measures the movement of visible elements within the viewport. [Learn more about the Cumulative Layout Shift metric](https://web.dev/articles/cls).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "speed-index",
+          "title": "Speed Index",
+          "score": 0.91,
+          "description": "Speed Index shows how quickly the contents of a page are visibly populated. [Learn more about the Speed Index metric](https://developer.chrome.com/docs/lighthouse/performance/speed-index/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "cache-insight",
+          "title": "Use efficient cache lifetimes",
+          "score": 0,
+          "description": "A long cache lifetime can speed up repeat visits to your page. [Learn more about caching](https://developer.chrome.com/docs/performance/insights/cache).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "document-latency-insight",
+          "title": "Document request latency",
+          "score": 0.5,
+          "description": "Your first network request is the most important. [Reduce its latency](https://developer.chrome.com/docs/performance/insights/document-latency) by avoiding redirects, ensuring a fast server response, and enabling text compression.",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "forced-reflow-insight",
+          "title": "Forced reflow",
+          "score": 0,
+          "description": "A forced reflow occurs when JavaScript queries geometric properties (such as offsetWidth) after styles have been invalidated by a change to the DOM state. This can result in poor performance. Learn more about [forced reflows](https://developer.chrome.com/docs/performance/insights/forced-reflow) and possible mitigations.",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "image-delivery-insight",
+          "title": "Improve image delivery",
+          "score": 0.5,
+          "description": "Reducing the download time of images can improve the perceived load time of the page and LCP. [Learn more about optimizing image size](https://developer.chrome.com/docs/performance/insights/image-delivery)",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "lcp-discovery-insight",
+          "title": "LCP request discovery",
+          "score": 0,
+          "description": "[Optimize LCP](https://developer.chrome.com/docs/performance/insights/lcp-discovery) by making the LCP image discoverable from the HTML immediately, and avoiding lazy-loading",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "network-dependency-tree-insight",
+          "title": "Network dependency tree",
+          "score": 0,
+          "description": "[Avoid chaining critical requests](https://developer.chrome.com/docs/performance/insights/network-dependency-tree) by reducing the length of chains, reducing the download size of resources, or deferring the download of unnecessary resources to improve page load.",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "render-blocking-insight",
+          "title": "Render-blocking requests",
+          "score": 0,
+          "description": "Requests are blocking the page's initial render, which may delay LCP. [Deferring or inlining](https://developer.chrome.com/docs/performance/insights/render-blocking) can move these network requests out of the critical path.",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "interactive",
+          "title": "Time to Interactive",
+          "score": 0.74,
+          "description": "Time to Interactive is the amount of time it takes for the page to become fully interactive. [Learn more about the Time to Interactive metric](https://developer.chrome.com/docs/lighthouse/performance/interactive/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "max-potential-fid",
+          "title": "Max Potential First Input Delay",
+          "score": 0.11,
+          "description": "The maximum potential First Input Delay that your users could experience is the duration of the longest task. [Learn more about the Maximum Potential First Input Delay metric](https://developer.chrome.com/docs/lighthouse/performance/lighthouse-max-potential-fid/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "unminified-css",
+          "title": "Minify CSS",
+          "score": 0.5,
+          "description": "Minifying CSS files can reduce network payload sizes. [Learn how to minify CSS](https://developer.chrome.com/docs/lighthouse/performance/unminified-css/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "unminified-javascript",
+          "title": "Minify JavaScript",
+          "score": 0.5,
+          "description": "Minifying JavaScript files can reduce payload sizes and script parse time. [Learn how to minify JavaScript](https://developer.chrome.com/docs/lighthouse/performance/unminified-javascript/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "unused-css-rules",
+          "title": "Reduce unused CSS",
+          "score": 0,
+          "description": "Reduce unused rules from stylesheets and defer CSS not used for above-the-fold content to decrease bytes consumed by network activity. [Learn how to reduce unused CSS](https://developer.chrome.com/docs/lighthouse/performance/unused-css-rules/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "unused-javascript",
+          "title": "Reduce unused JavaScript",
+          "score": 0.5,
+          "description": "Reduce unused JavaScript and defer loading scripts until they are required to decrease bytes consumed by network activity. [Learn how to reduce unused JavaScript](https://developer.chrome.com/docs/lighthouse/performance/unused-javascript/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "total-byte-weight",
+          "title": "Avoid enormous network payloads",
+          "score": 0.5,
+          "description": "Large network payloads cost users real money and are highly correlated with long load times. [Learn how to reduce payload sizes](https://developer.chrome.com/docs/lighthouse/performance/total-byte-weight/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "bootup-time",
+          "title": "Reduce JavaScript execution time",
+          "score": 0,
+          "description": "Consider reducing the time spent parsing, compiling, and executing JS. You may find delivering smaller JS payloads helps with this. [Learn how to reduce Javascript execution time](https://developer.chrome.com/docs/lighthouse/performance/bootup-time/).",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "mainthread-work-breakdown",
+          "title": "Minimize main-thread work",
+          "score": 0,
+          "description": "Consider reducing the time spent parsing, compiling and executing JS. You may find delivering smaller JS payloads helps with this. [Learn how to minimize main-thread work](https://developer.chrome.com/docs/lighthouse/performance/mainthread-work-breakdown/)",
+          "categories": [
+            "performance"
+          ]
+        },
+        {
+          "id": "heading-order",
+          "title": "Heading elements are not in a sequentially-descending order",
+          "score": 0,
+          "description": "Properly ordered headings that do not skip levels convey the semantic structure of the page, making it easier to navigate and understand when using assistive technologies. [Learn more about heading order](https://dequeuniversity.com/rules/axe/4.12/heading-order).",
+          "categories": [
+            "accessibility"
+          ]
+        },
+        {
+          "id": "link-name",
+          "title": "Links do not have a discernible name",
+          "score": 0,
+          "description": "Link text (and alternate text for images, when used as links) that is discernible, unique, and focusable improves the navigation experience for screen reader users. [Learn how to make links accessible](https://dequeuniversity.com/rules/axe/4.12/link-name).",
+          "categories": [
+            "accessibility"
+          ]
+        },
+        {
+          "id": "select-name",
+          "title": "Select elements do not have associated label elements.",
+          "score": 0,
+          "description": "Form elements without effective labels can create frustrating experiences for screen reader users. [Learn more about the `select` element](https://dequeuniversity.com/rules/axe/4.12/select-name).",
+          "categories": [
+            "accessibility"
+          ]
+        },
+        {
+          "id": "skip-link",
+          "title": "Skip links are not focusable.",
+          "score": 0,
+          "description": "Including a skip link can help users skip to the main content to save time. [Learn more about skip links](https://dequeuniversity.com/rules/axe/4.12/skip-link).",
+          "categories": [
+            "accessibility"
+          ]
+        },
+        {
+          "id": "target-size",
+          "title": "Touch targets do not have sufficient size or spacing.",
+          "score": 0,
+          "description": "Touch targets with sufficient size and spacing help users who may have difficulty targeting small controls to activate the targets. [Learn more about touch targets](https://dequeuniversity.com/rules/axe/4.12/target-size).",
+          "categories": [
+            "accessibility"
+          ]
+        },
+        {
+          "id": "landmark-one-main",
+          "title": "Document does not have a main landmark.",
+          "score": 0,
+          "description": "One main landmark helps screen reader users navigate a web page. [Learn more about landmarks](https://dequeuniversity.com/rules/axe/4.12/landmark-one-main).",
+          "categories": [
+            "accessibility"
+          ]
+        },
+        {
+          "id": "geolocation-on-start",
+          "title": "Requests the geolocation permission on page load",
+          "score": 0,
+          "description": "Users are mistrustful of or confused by sites that request their location without context. Consider tying the request to a user action instead. [Learn more about the geolocation permission](https://developer.chrome.com/docs/lighthouse/best-practices/geolocation-on-start/). Also consider using the [`<geolocation>` element](https://developer.chrome.com/blog/geolocation-html-element).",
+          "categories": [
+            "best-practices"
+          ]
+        },
+        {
+          "id": "third-party-cookies",
+          "title": "Uses third-party cookies",
+          "score": 0,
+          "description": "Third-party cookies may be blocked in some contexts. [Learn more about preparing for third-party cookie restrictions](https://privacysandbox.google.com/cookies/prepare/overview).",
+          "categories": [
+            "best-practices"
+          ]
+        },
+        {
+          "id": "inspector-issues",
+          "title": "Issues were logged in the `Issues` panel in Chrome Devtools",
+          "score": 0,
+          "description": "Issues logged to the `Issues` panel in Chrome Devtools indicate unresolved problems. They can come from network request failures, insufficient security controls, and other browser concerns. Open up the Issues panel in Chrome DevTools for more details on each issue.",
+          "categories": [
+            "best-practices"
+          ]
+        },
+        {
+          "id": "canonical",
+          "title": "Document does not have a valid `rel=canonical`",
+          "score": 0,
+          "description": "Canonical links suggest which URL to show in search results. [Learn more about canonical links](https://developer.chrome.com/docs/lighthouse/seo/canonical/).",
+          "categories": [
+            "seo"
+          ]
+        }
+      ],
+      "rawPath": "evidence/lighthouse-coopervisionmisight-ru-home-desktop.json"
+    }
+  ],
+  "yandex": {
+    "serpChecks": [
+      {
+        "query": "MiSight 1 day",
+        "searchEngine": "yandex",
+        "provider": "yandex_search_api",
+        "targetDomain": "coopervisionmisight.ru",
+        "found": false,
+        "serpFeatures": [],
+        "topResultDomains": [
+          "avito.ru",
+          "linza.ru",
+          "avito.ru",
+          "optic-city.ru",
+          "avito.ru"
+        ],
+        "region": "225",
+        "language": "ru",
+        "device": "desktop",
+        "checkedAt": "2026-09-02T09:07:14.124Z",
+        "checkedDepth": 20
+      },
+      {
+        "query": "где купить MiSight",
+        "searchEngine": "yandex",
+        "provider": "yandex_search_api",
+        "targetDomain": "coopervisionmisight.ru",
+        "found": false,
+        "serpFeatures": [],
+        "topResultDomains": [
+          "optimistoptica.ru",
+          "optica3z.ru",
+          "linzispb.ru",
+          "optimistoptica.ru",
+          "linzispb.ru"
+        ],
+        "region": "225",
+        "language": "ru",
+        "device": "desktop",
+        "checkedAt": "2026-09-02T09:07:24.595Z",
+        "checkedDepth": 20
+      },
+      {
+        "query": "линзы для контроля миопии у детей",
+        "searchEngine": "yandex",
+        "provider": "yandex_search_api",
+        "targetDomain": "coopervisionmisight.ru",
+        "found": false,
+        "serpFeatures": [],
+        "topResultDomains": [
+          "optic-city.ru",
+          "optic-city.ru",
+          "linzispb.ru",
+          "euro-optica.ru",
+          "opticstyle.spb.ru"
+        ],
+        "region": "225",
+        "language": "ru",
+        "device": "desktop",
+        "checkedAt": "2026-09-02T09:07:26.584Z",
+        "checkedDepth": 20
+      },
+      {
+        "query": "детские контактные линзы от близорукости",
+        "searchEngine": "yandex",
+        "provider": "yandex_search_api",
+        "targetDomain": "coopervisionmisight.ru",
+        "found": false,
+        "serpFeatures": [],
+        "topResultDomains": [
+          "linzispb.ru",
+          "optic-lab.ru",
+          "euro-optica.ru",
+          "optic-city.ru",
+          "optic-city.ru"
+        ],
+        "region": "225",
+        "language": "ru",
+        "device": "desktop",
+        "checkedAt": "2026-09-02T09:07:28.545Z",
+        "checkedDepth": 20
+      },
+      {
+        "query": "оптика MiSight рядом",
+        "searchEngine": "yandex",
+        "provider": "yandex_search_api",
+        "targetDomain": "coopervisionmisight.ru",
+        "found": false,
+        "serpFeatures": [],
+        "topResultDomains": [
+          "yandex.ru",
+          "avito.ru",
+          "z-zrenie.ru",
+          "yandex.ru",
+          "lensmaster.ru"
+        ],
+        "region": "225",
+        "language": "ru",
+        "device": "desktop",
+        "checkedAt": "2026-09-02T09:07:30.683Z",
+        "checkedDepth": 20
+      }
+    ],
+    "serpStatus": {
+      "state": "partial_success",
+      "message": "Yandex rank checks returned partial evidence.",
+      "checkedAt": "2026-09-02T09:07:11.529Z",
+      "metricsSummary": {
+        "queryCount": 6,
+        "foundCount": 0,
+        "missingCount": 5,
+        "failedCount": 1
+      }
+    },
+    "aiProbes": [
+      {
+        "channel": "Yandex Search API generative response",
+        "status": "checked",
+        "query": "Где купить линзы MiSight 1 day?",
+        "result": "Несколько сайтов, где можно купить линзы MiSight 1 day: * **optimistoptica.ru**. [1] Интернет-магазин «Оптимист Оптика» предлагает линзы MiSight 1 day (30 шт.). [1] Телефон для связи: 7 495 129-10-01. [1] * **gorizont-optika.ru**. [2] Компания «Горизонт-Оптика» продаёт линзы MiSight 1 Day с доставкой по России и РБ. [2] Телефон: 7 978 319-29-70. [2] * **optic-city.ru**. [3] Магазин «Оптик Сити» предлагает линзы MiSight 1 Day (30 шт.) с доставкой или самовывозом. [3] Телефон: 7 495 258-258-2. [3] * **viplinza.ru**. [4] Интернет-магазин предлагает линзы MiSight 1 day (30 шт.). [4] Телефон: 8 800 333-11-36. [4]",
+        "sources": [
+          "https://optimistoptica.ru/kontaktnye_linzy/misight_1_day_30_linz.html",
+          "https://gorizont-optika.ru/contact-lenses/1-day/misight",
+          "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_30_sht/",
+          "https://viplinza.ru/CooperVision/MiSight-1-day",
+          "https://optica3z.ru/kontaktnye_linzy/kontaktnye_linzy_coopervision_misight_1_day_30_linz/"
+        ],
+        "sourceDetails": [
+          {
+            "url": "https://optimistoptica.ru/kontaktnye_linzy/misight_1_day_30_linz.html",
+            "title": "Контактные линзы MiSight 1 day (30 шт.) — купить в «Оптимист Оптика»",
+            "used": true
+          },
+          {
+            "url": "https://gorizont-optika.ru/contact-lenses/1-day/misight",
+            "title": "Контактные линзы Cooper Vision MiSight 1 Day купить с доставкой по России и РБ",
+            "used": true
+          },
+          {
+            "url": "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_30_sht/",
+            "title": "Контактные линзы Cooper Vision Детские контактные линзы MiSight 1 Day (30 шт) купить за 3 590 в Оптик Сити в Москве с доставкой или самовывозом",
+            "used": true
+          },
+          {
+            "url": "https://viplinza.ru/CooperVision/MiSight-1-day",
+            "title": "MiSight 1 day (30 шт) от 3499 руб. Купить линзы в интернет-магазине Viplinza",
+            "used": true
+          },
+          {
+            "url": "https://optica3z.ru/kontaktnye_linzy/kontaktnye_linzy_coopervision_misight_1_day_30_linz/",
+            "title": "Контактные линзы CooperVision MiSight 1 Day, 30 линз купить Оптика 3Z",
+            "used": false
+          }
+        ],
+        "usedSources": [
+          "https://optimistoptica.ru/kontaktnye_linzy/misight_1_day_30_linz.html",
+          "https://gorizont-optika.ru/contact-lenses/1-day/misight",
+          "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_30_sht/",
+          "https://viplinza.ru/CooperVision/MiSight-1-day"
+        ],
+        "targetFound": false,
+        "targetUsed": false,
+        "sourcePosition": null,
+        "usedSourcePosition": null
+      },
+      {
+        "channel": "Yandex Search API generative response",
+        "status": "checked",
+        "query": "Что такое MiSight 1 day и как они помогают контролировать миопию у детей?",
+        "result": "**MiSight 1 day** — это детские однодневные контактные линзы, предназначенные для коррекции и замедления прогрессирования миопии (близорукости). [2] Произведены компанией CooperVision. [2] **Как линзы помогают контролировать миопию у детей**: * **Замедляют рост роговицы глаза в длину**. [1] Это снижает риск осложнений со зрением, связанных с миопией в дальнейшей жизни, включая необратимую потерю зрения. [1] * **Корректируют аномалию рефракции глаза**. [1] Устранение аксиального удлинения глаза помогает снизить риск осложнений. [1] * **Обеспечивают чёткое зрение**. [3] Линзы подходят для активных игр и занятий спортом, в школе и при просмотре телевизора. [3] **Кому подходят линзы**: детям и подросткам в возрасте от 8 до 17 лет, у которых была выявлена близорукость. [2] Их ношение особенно рекомендовано в тех случаях, когда миопия прогрессирует, и необходимо замедлить развитие патологии. [2] **Важно**: линзы MiSight 1 day являются медицинским изделием и применяются только по назначению офтальмолога. [1] Использование линз без рекомендации врача может иметь нежелательные последствия. [1]",
+        "sources": [
+          "https://gorizont-optika.ru/blog/misight-1day",
+          "https://optic-lab.ru/polezno-znat/detskie-linzy-dlya-kontrolya-miopii-misight-1-day",
+          "https://optimistoptica.promo.page/media/kontrol-miopii-linzy-dlia-detei-misight-1-day-62fa67561c47531eca1b8d25_0_0",
+          "https://www.trubilin.com/uslugi/kontrol-miopii-u-detej/",
+          "https://www.zrenie.spb.ru/uslugi/kontaktnye-linzy-misight/"
+        ],
+        "sourceDetails": [
+          {
+            "url": "https://gorizont-optika.ru/blog/misight-1day",
+            "title": "Контактные линзы MiSight 1-Day",
+            "used": true
+          },
+          {
+            "url": "https://optic-lab.ru/polezno-znat/detskie-linzy-dlya-kontrolya-miopii-misight-1-day",
+            "title": "Детские линзы для коррекции зрения и контроля миопии MiSight 1 day от CooperVision - эффективность контактных линз для детей в лечении близорукости",
+            "used": true
+          },
+          {
+            "url": "https://optimistoptica.promo.page/media/kontrol-miopii-linzy-dlia-detei-misight-1-day-62fa67561c47531eca1b8d25_0_0",
+            "title": "Контроль миопии: линзы для детей MiSight 1 day Оптимист Оптика ПромоСтраницы",
+            "used": true
+          },
+          {
+            "url": "https://www.trubilin.com/uslugi/kontrol-miopii-u-detej/",
+            "title": "Контроль миопии у детей: замедление прогрессирования Клиника Семейной Офтальмологии профессора Трубилина",
+            "used": false
+          },
+          {
+            "url": "https://www.zrenie.spb.ru/uslugi/kontaktnye-linzy-misight/",
+            "title": "Контактные линзы MiSight 1 day Cooper Vision для детей в Санкт-Петербурге",
+            "used": false
+          }
+        ],
+        "usedSources": [
+          "https://gorizont-optika.ru/blog/misight-1day",
+          "https://optic-lab.ru/polezno-znat/detskie-linzy-dlya-kontrolya-miopii-misight-1-day",
+          "https://optimistoptica.promo.page/media/kontrol-miopii-linzy-dlia-detei-misight-1-day-62fa67561c47531eca1b8d25_0_0"
+        ],
+        "targetFound": false,
+        "targetUsed": false,
+        "sourcePosition": null,
+        "usedSourcePosition": null
+      },
+      {
+        "channel": "Yandex Search API generative response",
+        "status": "checked",
+        "query": "Где подобрать детские контактные линзы MiSight?",
+        "result": "Несколько мест, где можно подобрать детские контактные линзы MiSight: * **Салон оптики Optic Place**. [2] Специализируется на подборе и продаже контактных линз для лечения миопии у детей. [2] Предлагает полный спектр услуг — от диагностики и подбора линз до консультаций по уходу и длительному наблюдению за состоянием зрения. [2] Адрес: Москва, ул. Старая Басманная, 14/2, стр. 4. [2] Телефон: 7 495 497-0-497. [2] * **Интернет-магазин «Оптимист Оптика»**. [5] Предлагает контактные линзы бренда MiSight. [5] Телефон: 7 495 129-10-01. [5] * **«Оптик Сити»**. [4] В ассортименте есть детские контактные линзы MiSight 1 Day. [4] Можно оформить доставку или забрать линзы самовывозом. [4] Телефон: 7 495 258-258-2. [4]",
+        "sources": [
+          "https://www.lensmaster.ru/detskie-linzy-misight/",
+          "https://opticplace.ru/catalog/category/optica-dlya-detej/linzy-dlya-kontrolya-miopii/",
+          "https://optimistoptica.ru/sohranit-zrenie/yarkoe-budushee-s-linzami-misight_1-day/",
+          "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_30_sht/",
+          "https://optimistoptica.ru/kontaktnye_linzy/brand-is-misight/"
+        ],
+        "sourceDetails": [
+          {
+            "url": "https://www.lensmaster.ru/detskie-linzy-misight/",
+            "title": "MiSight",
+            "used": false
+          },
+          {
+            "url": "https://opticplace.ru/catalog/category/optica-dlya-detej/linzy-dlya-kontrolya-miopii/",
+            "title": "Линзы MiSight и Abiliti для контроля близорукости у детей в Москве – купить в салоне OPTIC PLACE",
+            "used": true
+          },
+          {
+            "url": "https://optimistoptica.ru/sohranit-zrenie/yarkoe-budushee-s-linzami-misight_1-day/",
+            "title": "Яркое будущее",
+            "used": false
+          },
+          {
+            "url": "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_30_sht/",
+            "title": "Контактные линзы Cooper Vision Детские контактные линзы MiSight 1 Day (30 шт) купить за 3 590 в Оптик Сити в Москве с доставкой или самовывозом",
+            "used": true
+          },
+          {
+            "url": "https://optimistoptica.ru/kontaktnye_linzy/brand-is-misight/",
+            "title": "Контактные линзы - Бренд MiSight — купить в интернет-магазине «Оптимист Оптика»",
+            "used": true
+          }
+        ],
+        "usedSources": [
+          "https://opticplace.ru/catalog/category/optica-dlya-detej/linzy-dlya-kontrolya-miopii/",
+          "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_30_sht/",
+          "https://optimistoptica.ru/kontaktnye_linzy/brand-is-misight/"
+        ],
+        "targetFound": false,
+        "targetUsed": false,
+        "sourcePosition": null,
+        "usedSourcePosition": null
+      },
+      {
+        "channel": "Yandex Search API generative response",
+        "status": "checked",
+        "query": "Какие контактные линзы замедляют прогрессирование близорукости у детей?",
+        "result": "**Некоторые контактные линзы, которые замедляют прогрессирование близорукости у детей:** * **ACUVUE Abiliti 1-Day**. [1][4] Однодневные линзы производства Johnson & Johnson, разработанные специально для детей 7–12 лет. [1] В них используется технология RingBoostTM, в которой центральная зона линзы отвечает за чёткость, а периферические кольца — за контроль удлинения глаза. [1] * **MiSight 1 day**. [1][2] Линзы CooperVision, одобренные международными офтальмологическими ассоциациями. [1] Клинические исследования показали, что за два года ношения они сокращают скорость роста миопии примерно на 59%. [1] Специальные мягкие контактные линзы назначаются детям, у которых близорукость имеет тенденцию к увеличению, и рекомендованы для ежедневного ношения под контролем специалиста. [1] Подбор выполняется только после диагностики и обучения гигиене, обычно с 7–8 лет. [1] Важно понимать, что ни один метод коррекции не способен полностью остановить миопию, но регулярное использование таких линз позволяет замедлить её развитие и сохранить здоровье глаз на годы вперёд. [1]",
+        "sources": [
+          "https://linzispb.ru/info/review/myagkie-kontaktnye-linzy-dlya-kontrolya-detskoj-miopii",
+          "https://www.cvz.ru/child-vision/kontaktnye-linzy-misight/",
+          "https://coopervision.ru/practitioner/clinical-resources/myopia/misight1day",
+          "https://euro-optica.ru/services/detskaya-optika/acuvue-abiliti-1-day-dlya-kontrolya-miopii-blizorukosti-u-detej/",
+          "https://opticstyle.spb.ru/stati/kontrol-miopii-u-detej-kakie-ochki-i-linzy-pomogayut"
+        ],
+        "sourceDetails": [
+          {
+            "url": "https://linzispb.ru/info/review/myagkie-kontaktnye-linzy-dlya-kontrolya-detskoj-miopii",
+            "title": "Мягкие контактные линзы для контроля детской миопии",
+            "used": true
+          },
+          {
+            "url": "https://www.cvz.ru/child-vision/kontaktnye-linzy-misight/",
+            "title": "Контактные линзы MiSight для остановки прогрессирования близорукости (миопии) в Центре восстановления зрения",
+            "used": true
+          },
+          {
+            "url": "https://coopervision.ru/practitioner/clinical-resources/myopia/misight1day",
+            "title": "MiSight 1 day — контроль прогрессирования миопии. Материалы для офтальмологов CooperVision Russia",
+            "used": false
+          },
+          {
+            "url": "https://euro-optica.ru/services/detskaya-optika/acuvue-abiliti-1-day-dlya-kontrolya-miopii-blizorukosti-u-detej/",
+            "title": "ACUVUE Abiliti 1-Day для контроля миопии (близорукости) у детей - ЕврООптика",
+            "used": true
+          },
+          {
+            "url": "https://opticstyle.spb.ru/stati/kontrol-miopii-u-detej-kakie-ochki-i-linzy-pomogayut",
+            "title": "Контроль миопии у детей: какие очки и линзы действительно замедляют близорукость",
+            "used": false
+          }
+        ],
+        "usedSources": [
+          "https://linzispb.ru/info/review/myagkie-kontaktnye-linzy-dlya-kontrolya-detskoj-miopii",
+          "https://www.cvz.ru/child-vision/kontaktnye-linzy-misight/",
+          "https://euro-optica.ru/services/detskaya-optika/acuvue-abiliti-1-day-dlya-kontrolya-miopii-blizorukosti-u-detej/"
+        ],
+        "targetFound": false,
+        "targetUsed": false,
+        "sourcePosition": null,
+        "usedSourcePosition": null
+      },
+      {
+        "channel": "Yandex Search API generative response",
+        "status": "checked",
+        "query": "Как найти оптику с MiSight рядом?",
+        "result": "Возможно, имелись в виду салоны оптики, где продают контактные линзы MiSight. Несколько таких заведений: * **«Оптимист Оптика»**. [1][4] Интернет-магазин предлагает линзы MiSight, есть доставка. [1][4] Телефон: 7 495 129-10-01. [1][4] * **Optic Place**. [2] Салон оптики, где можно купить линзы MiSight, есть проверка зрения и подбор контактных линз. [2] Адрес: Москва, ул. Старая Басманная, 14/2, стр. 4. [2] Телефон: 7 495 497-0-497. [2] * **«Оптик Сити»**. [3][5] На сайте представлены салоны оптики, где можно купить линзы MiSight, есть доставка или самовывоз. [3][5] Телефон: 7 495 258-258-2. [3]",
+        "sources": [
+          "https://optimistoptica.ru/kontaktnye_linzy/brand-is-misight/",
+          "https://opticplace.ru/brand/misight/",
+          "https://www.optic-city.ru/kontaktnye_linzy/l_brend/misight/",
+          "https://optimistoptica.ru/kontaktnye_linzy/misight_1_day_30_linz.html",
+          "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_90_sht/"
+        ],
+        "sourceDetails": [
+          {
+            "url": "https://optimistoptica.ru/kontaktnye_linzy/brand-is-misight/",
+            "title": "Контактные линзы - Бренд MiSight — купить в интернет-магазине «Оптимист Оптика»",
+            "used": true
+          },
+          {
+            "url": "https://opticplace.ru/brand/misight/",
+            "title": "MiSight купить в Москве в салоне оптики OPTIC PLACE",
+            "used": true
+          },
+          {
+            "url": "https://www.optic-city.ru/kontaktnye_linzy/l_brend/misight/",
+            "title": "Контактные линзы MiSight купить по выгодным ценам Optic-city.ru",
+            "used": true
+          },
+          {
+            "url": "https://optimistoptica.ru/kontaktnye_linzy/misight_1_day_30_linz.html",
+            "title": "Контактные линзы MiSight 1 day (30 шт.) — купить в «Оптимист Оптика»",
+            "used": true
+          },
+          {
+            "url": "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_90_sht/",
+            "title": "Контактные линзы Cooper Vision Детские контактные линзы MiSight 1 Day (90 шт) купить за 9 570 в Оптик Сити в Москве с доставкой или самовывозом",
+            "used": true
+          }
+        ],
+        "usedSources": [
+          "https://optimistoptica.ru/kontaktnye_linzy/brand-is-misight/",
+          "https://opticplace.ru/brand/misight/",
+          "https://www.optic-city.ru/kontaktnye_linzy/l_brend/misight/",
+          "https://optimistoptica.ru/kontaktnye_linzy/misight_1_day_30_linz.html",
+          "https://www.optic-city.ru/kontaktnye_linzy/detskie_kontaktnye_linzy_misight_1_day_90_sht/"
+        ],
+        "targetFound": false,
+        "targetUsed": false,
+        "sourcePosition": null,
+        "usedSourcePosition": null
+      }
+    ],
+    "aiSampleVisibility": {
+      "used": 0,
+      "checked": 5,
+      "rate": 0
+    },
+    "manualQueries": [
+      {
+        "source": "yandex_search",
+        "query": "купить линзы MiSight",
+        "reason": "No reportable Yandex SERP result was returned."
+      }
+    ],
+    "limitations": [
+      "Alice AI visibility is a controlled sample and is not an official Yandex Webmaster metric."
+    ]
+  },
+  "findings": [
+    {
+      "severity": "high",
+      "confidence": "high",
+      "code": "indexability_signal_conflict",
+      "affectedUrl": "https://coopervisionmisight.ru/",
+      "evidence": "Conflicting indexability evidence: Canonical points away from the crawled final URL.",
+      "source": "crawl:indexability_signals",
+      "action": "Align meta robots, X-Robots-Tag, response status, and canonical signals with the intended index URL.",
+      "expectedEffect": "Remove contradictory crawler directives and canonical ambiguity.",
+      "acceptanceCriterion": "The normalized page evidence contains no indexability conflict and all directives support the intended canonical URL.",
+      "verification": "Re-crawl https://coopervisionmisight.ru/ and inspect both HTTP and HTML indexability signals."
+    },
+    {
+      "severity": "high",
+      "confidence": "high",
+      "code": "missing_sitemap",
+      "scope": "site",
+      "evidence": "No reachable sitemap was identified in robots.txt or the tested common sitemap locations.",
+      "source": "crawl:sitemap_discovery",
+      "action": "Publish a current XML sitemap and reference it from robots.txt.",
+      "expectedEffect": "Give search engines a reliable discovery inventory for canonical URLs.",
+      "acceptanceCriterion": "A same-origin XML sitemap returns 2xx and lists the intended canonical URLs.",
+      "verification": "Fetch robots.txt and each declared sitemap, then validate the XML and sampled URLs."
+    },
+    {
+      "severity": "high",
+      "confidence": "high",
+      "code": "mobile_desktop_regression",
+      "affectedUrl": "https://coopervisionmisight.ru/",
+      "evidence": "Mobile scores trail desktop by at least 15 points for: performance.",
+      "source": "lighthouse:profile_comparison",
+      "action": "Investigate mobile-specific rendering, payload, layout, and interaction bottlenecks.",
+      "expectedEffect": "Improve the experience and audit results for mobile visitors.",
+      "acceptanceCriterion": "No Lighthouse category has an unexplained mobile deficit of 15 or more points.",
+      "verification": "Repeat mobile and desktop Lighthouse runs under the same report configuration."
+    },
+    {
+      "severity": "high",
+      "confidence": "high",
+      "code": "accessibility_audits_failed",
+      "affectedUrl": "https://coopervisionmisight.ru/",
+      "evidence": "6 unique accessibility audits failed across Lighthouse lab profiles: heading-order, landmark-one-main, link-name, select-name, skip-link, target-size.",
+      "source": "lighthouse:accessibility",
+      "action": "Resolve the detailed accessibility audit failures and test the affected interactions manually.",
+      "expectedEffect": "Remove barriers for visitors using assistive technology.",
+      "acceptanceCriterion": "Reported accessibility audits pass and manual checks confirm the affected experience.",
+      "verification": "Re-run Lighthouse accessibility audits and the corresponding keyboard/screen-reader checks."
+    },
+    {
+      "severity": "medium",
+      "confidence": "high",
+      "code": "missing_image_alt",
+      "affectedUrl": "https://coopervisionmisight.ru/",
+      "evidence": "4 of 16 image(s) have no alt text.",
+      "source": "crawl:page_html",
+      "action": "Add meaningful alt text to informative images and empty alt attributes to decorative images.",
+      "expectedEffect": "Improve image context and accessibility for assistive technology.",
+      "acceptanceCriterion": "Every image has an alt attribute appropriate to its purpose.",
+      "verification": "Re-crawl https://coopervisionmisight.ru/ and run the Lighthouse image-alt audit."
+    },
+    {
+      "severity": "medium",
+      "confidence": "medium",
+      "code": "alice_ai_not_used",
+      "scope": "controlled Alice AI sample",
+      "evidence": "Controlled-sample result: the domain was used in 0 of 5 checked Alice AI response(s); this is not official share of voice.",
+      "source": "alice_ai:controlled_sample",
+      "action": "Review sampled source selection and strengthen useful, attributable coverage for the sampled intents.",
+      "expectedEffect": "Increase the chance of being selected as a source for comparable sampled answers.",
+      "acceptanceCriterion": "A later controlled sample records target use, without representing the sample as official visibility.",
+      "verification": "Repeat the same documented query sample and compare targetFound and targetUsed evidence."
+    },
+    {
+      "severity": "low",
+      "confidence": "medium",
+      "code": "keyword_topic_alignment_gap",
+      "affectedUrl": "https://coopervisionmisight.ru/",
+      "evidence": "Heuristic: 3 of 6 requested keyword(s) matched normalized tokens in the title, description, or H1; 3 did not. This is not a relevance judgment.",
+      "source": "crawl:keyword_topic_alignment_heuristic",
+      "action": "Manually compare the unmatched requested topics with the page intent and adjust visible metadata or headings only when the topic genuinely belongs on the page.",
+      "expectedEffect": "Make intended page topics clearer without treating lexical presence as search relevance.",
+      "acceptanceCriterion": "A human intent review documents each unmatched topic as either intentionally out of scope or accurately represented in the title, description, or H1.",
+      "verification": "Repeat the normalized-token heuristic for https://coopervisionmisight.ru/ and review the result alongside page intent."
+    },
+    {
+      "severity": "low",
+      "confidence": "high",
+      "code": "owner_access_gap",
+      "scope": "owner-source coverage",
+      "evidence": "Verified owner access is still required for: Yandex Webmaster, Google Search Console.",
+      "source": "provider_preflight",
+      "action": "Grant read-only verified-owner access before drawing owner-metric conclusions.",
+      "expectedEffect": "Add first-party impressions, clicks, indexing, and query evidence where available.",
+      "acceptanceCriterion": "The relevant source-coverage rows report success and owner snapshots are present.",
+      "verification": "Repeat provider preflight and confirm the expected verified property is returned."
+    }
+  ],
+  "limitations": [
+    "Alice AI visibility is a controlled sample and is not an official Yandex Webmaster metric."
+  ],
+  "evidenceFiles": [
+    "evidence/crawl.json",
+    "evidence/provider-preflight.json",
+    "evidence/yandex-serp.json",
+    "evidence/yandex-ai-probes.json",
+    "evidence/lighthouse-coopervisionmisight-ru-home-mobile.json",
+    "evidence/lighthouse-coopervisionmisight-ru-home-desktop.json"
+  ],
+  "manualQueryPackPath": "manual-query-pack.md",
+  "schemaVersion": "2.0",
+  "assessment": {
+    "state": "scored",
+    "calculatedScore": 44,
+    "displayScore": 44,
+    "completeness": 95.83333333333334,
+    "status": "high_risk",
+    "indexabilityCapApplied": false,
+    "components": {
+      "technical": {
+        "score": 74,
+        "nominalWeight": 40,
+        "effectiveWeight": 40,
+        "collectionCoverage": 1,
+        "scoringCoverage": 1,
+        "collected": 1,
+        "requested": 1,
+        "crawlCompletion": 1,
+        "atomicRuleCoverage": 1,
+        "rules": [
+          {
+            "id": "http_success",
+            "weight": 20,
+            "applicableCount": 1,
+            "measuredCount": 1,
+            "passedCount": 1,
+            "ruleCoverage": 1,
+            "passRate": 1
+          },
+          {
+            "id": "indexability",
+            "weight": 25,
+            "applicableCount": 1,
+            "measuredCount": 1,
+            "passedCount": 1,
+            "ruleCoverage": 1,
+            "passRate": 1
+          },
+          {
+            "id": "robots_access",
+            "weight": 5,
+            "applicableCount": 1,
+            "measuredCount": 1,
+            "passedCount": 1,
+            "ruleCoverage": 1,
+            "passRate": 1
+          },
+          {
+            "id": "sitemap",
+            "weight": 10,
+            "applicableCount": 1,
+            "measuredCount": 1,
+            "passedCount": 0,
+            "ruleCoverage": 1,
+            "passRate": 0
+          },
+          {
+            "id": "canonical",
+            "weight": 12,
+            "applicableCount": 1,
+            "measuredCount": 1,
+            "passedCount": 0,
+            "ruleCoverage": 1,
+            "passRate": 0
+          },
+          {
+            "id": "signal_conflicts",
+            "weight": 3,
+            "applicableCount": 1,
+            "measuredCount": 1,
+            "passedCount": 0,
+            "ruleCoverage": 1,
+            "passRate": 0
+          },
+          {
+            "id": "title_present",
+            "weight": 3,
+            "applicableCount": 1,
+            "measuredCount": 1,
+            "passedCount": 1,
+            "ruleCoverage": 1,
+            "passRate": 1
+          },
+          {
+            "id": "title_unique",
+            "weight": 2,
+            "applicableCount": 1,
+            "measuredCount": 1,
+            "passedCount": 1,
+            "ruleCoverage": 1,
+            "passRate": 1
+          },
+          {
+            "id": "description_present",
+            "weight": 3,
+            "applicableCount": 1,
+            "measuredCount": 1,
+            "passedCount": 1,
+            "ruleCoverage": 1,
+            "passRate": 1
+          },
+          {
+            "id": "description_unique",
+            "weight": 2,
+            "applicableCount": 1,
+            "measuredCount": 1,
+            "passedCount": 1,
+            "ruleCoverage": 1,
+            "passRate": 1
+          },
+          {
+            "id": "h1_present",
+            "weight": 5,
+            "applicableCount": 1,
+            "measuredCount": 1,
+            "passedCount": 1,
+            "ruleCoverage": 1,
+            "passRate": 1
+          },
+          {
+            "id": "broken_internal_links",
+            "weight": 5,
+            "applicableCount": 1,
+            "measuredCount": 1,
+            "passedCount": 1,
+            "ruleCoverage": 1,
+            "passRate": 1
+          },
+          {
+            "id": "redirect_chains",
+            "weight": 3,
+            "applicableCount": 1,
+            "measuredCount": 1,
+            "passedCount": 1,
+            "ruleCoverage": 1,
+            "passRate": 1
+          },
+          {
+            "id": "orphan_pages",
+            "weight": 2,
+            "applicableCount": 0,
+            "measuredCount": 0,
+            "passedCount": 0,
+            "ruleCoverage": null,
+            "passRate": null
+          }
+        ]
+      },
+      "yandex": {
+        "score": 0,
+        "nominalWeight": 25,
+        "effectiveWeight": 20.833333333333336,
+        "collectionCoverage": 0.8333333333333334,
+        "scoringCoverage": 0.8333333333333334,
+        "collected": 5,
+        "requested": 6
+      },
+      "lighthouse": {
+        "score": 61,
+        "nominalWeight": 20,
+        "effectiveWeight": 20,
+        "collectionCoverage": 1,
+        "scoringCoverage": 1,
+        "collected": 1,
+        "requested": 1,
+        "worstMobileUrl": "https://coopervisionmisight.ru/"
+      },
+      "alice": {
+        "score": 0,
+        "nominalWeight": 15,
+        "effectiveWeight": 15,
+        "collectionCoverage": 1,
+        "scoringCoverage": 1,
+        "collected": 5,
+        "requested": 5
+      }
+    },
+    "pages": [
+      {
+        "url": "https://coopervisionmisight.ru/",
+        "score": 80,
+        "collectionCoverage": 1,
+        "noindexCapApplied": false,
+        "groups": {
+          "indexability": {
+            "nominalWeight": 45,
+            "measuredWeight": 45,
+            "earnedPoints": 45,
+            "score": 100
+          },
+          "content": {
+            "nominalWeight": 30,
+            "measuredWeight": 30,
+            "earnedPoints": 22,
+            "score": 73
+          },
+          "internal_structure": {
+            "nominalWeight": 10,
+            "measuredWeight": 10,
+            "earnedPoints": 5,
+            "score": 50
+          },
+          "lighthouse": {
+            "nominalWeight": 15,
+            "measuredWeight": 15,
+            "earnedPoints": 7.8,
+            "score": 52
+          }
+        }
+      }
+    ]
+  },
+  "groupedFindings": [
+    {
+      "code": "indexability_signal_conflict",
+      "rank": 1,
+      "severity": "high",
+      "deliveryStage": "blocking",
+      "technicalAnchor": "#page-details",
+      "scope": "page",
+      "affectedUrls": [
+        "https://coopervisionmisight.ru/"
+      ],
+      "findingCount": 1
+    },
+    {
+      "code": "missing_sitemap",
+      "rank": 3,
+      "severity": "high",
+      "deliveryStage": "visibility",
+      "technicalAnchor": "#site-technical",
+      "scope": "site",
+      "affectedUrls": [],
+      "findingCount": 1
+    },
+    {
+      "code": "mobile_desktop_regression",
+      "rank": 9,
+      "severity": "high",
+      "deliveryStage": "improvement",
+      "technicalAnchor": "#speed-ux",
+      "scope": "page",
+      "affectedUrls": [
+        "https://coopervisionmisight.ru/"
+      ],
+      "findingCount": 1
+    },
+    {
+      "code": "accessibility_audits_failed",
+      "rank": 10,
+      "severity": "high",
+      "deliveryStage": "improvement",
+      "technicalAnchor": "#page-details",
+      "scope": "page",
+      "affectedUrls": [
+        "https://coopervisionmisight.ru/"
+      ],
+      "findingCount": 1
+    },
+    {
+      "code": "missing_image_alt",
+      "rank": 15,
+      "severity": "medium",
+      "deliveryStage": "improvement",
+      "technicalAnchor": "#page-details",
+      "scope": "page",
+      "affectedUrls": [
+        "https://coopervisionmisight.ru/"
+      ],
+      "findingCount": 1
+    }
+  ]
+}
