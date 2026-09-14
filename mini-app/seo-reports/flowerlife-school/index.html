@@ -35,6 +35,9 @@ p{margin:.45rem 0 1rem}
 dt{color:var(--muted)}dd{margin:0;font-weight:650}
 .problem-card{border-left:5px solid var(--blue)}
 .problem-card p{margin:.6rem 0}
+.demand-meta{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin:-4px 0 8px}.demand-meta span{color:var(--muted)}
+.demand-primary{border:1px solid #a8c7fa;border-left:6px solid var(--blue);border-radius:13px;background:#f5f9ff;padding:18px;margin:14px 0}.demand-primary h3{font-size:1.2rem;margin:.3rem 0}.demand-primary-facts{display:flex;flex-wrap:wrap;gap:8px 10px}.demand-primary-facts span{background:#e5efff;border-radius:999px;padding:4px 10px;font-weight:750}
+.demand-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px}.demand-row{border:1px solid var(--line);border-radius:13px;padding:14px;min-width:0}.demand-row dl{display:grid;gap:8px;margin:0}.demand-row dl div{display:grid;grid-template-columns:minmax(120px,.65fr) minmax(0,1.35fr);gap:10px}.demand-row dd{overflow-wrap:anywhere}
 .detail-link,.file-links a{color:var(--blue);font-weight:700;text-decoration-thickness:1px;text-underline-offset:2px}
 .summary-cards{margin-bottom:14px}
 .metric-card{border-top:4px solid var(--unknown);display:grid;gap:5px}.metric-card span{color:var(--muted)}.metric-card strong{font-size:1.35rem}
@@ -47,35 +50,35 @@ table{border-collapse:collapse;width:100%;min-width:620px}
 th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
 th{background:#f7f9fc;white-space:nowrap}tbody tr:last-child td{border-bottom:0}
 @media(max-width:680px){.overall-grid{grid-template-columns:1fr}}
-@media(max-width:420px){main{width:calc(100% - 16px);margin:8px auto 30px}.report-header,section{padding:16px;border-radius:12px}summary{padding:16px}.detail-body{padding:16px}.overall-grid{grid-template-columns:1fr}.compact-facts div,.problem-facts div,.technical-facts div{grid-template-columns:1fr;gap:2px}table{min-width:560px}}
+@media(max-width:420px){main{width:calc(100% - 16px);margin:8px auto 30px}.report-header,section{padding:16px;border-radius:12px}summary{padding:16px}.detail-body{padding:16px}.overall-grid{grid-template-columns:1fr}.compact-facts div,.problem-facts div,.technical-facts div,.demand-row dl div{grid-template-columns:1fr;gap:2px}table{min-width:560px}}
 @media print{html,body{background:#fff}.report-header,section,details{box-shadow:none;break-inside:avoid}main{width:100%;margin:0}.detail-body{display:block}.table-scroll{overflow:visible}table{min-width:0;font-size:10pt}}
 </style></head><body><main>
 <header class="report-header">
     <p class="eyebrow">SEO-аудит сайта</p>
     <h1>flowerlife-school.com</h1>
-    <div class="header-meta"><span>1 сентября 2026 г.</span><span>Россия</span><span>Яндекс</span><span>Полнота данных: 95 %</span></div>
+    <div class="header-meta"><span>14 сентября 2026 г.</span><span>Россия</span><span>Яндекс</span><span>Полнота данных: 100 %</span></div>
   </header>
 <section id="overall-score">
     <h2>Общая оценка</h2>
     <div class="overall-grid">
-      <article class="overall-card score-critical">
-        <div class="overall-score-value">39 / 100</div>
-        <p class="overall-state">Критическое состояние</p>
-        <p>Полнота данных: 95 %</p>
-        <p class="conclusion">Подтверждённые ошибки требуют срочного исправления.</p>
+      <article class="overall-card score-risk">
+        <div class="overall-score-value">55 / 100</div>
+        <p class="overall-state">Высокий риск</p>
+        <p>Полнота данных: 100 %</p>
+        <p class="conclusion">Сайт теряет видимость из-за подтверждённых проблем.</p>
       </article>
       <div><h3>Составляющие оценки</h3><div class="component-grid">
-    <article class="component-card score-risk">
+    <article class="component-card score-good">
       <h3>Техническое SEO и индексируемость</h3>
-      <div class="component-score">56 / 100</div>
+      <div class="component-score">88 / 100</div>
       <p>Доступность страниц, сигналы индексирования и внутренняя структура.</p>
-      <dl class="compact-facts"><div><dt>Собрано данных</dt><dd>21 из 21</dd></div><div><dt>Полнота</dt><dd>100 %</dd></div></dl>
+      <dl class="compact-facts"><div><dt>Собрано данных</dt><dd>49 из 49</dd></div><div><dt>Полнота</dt><dd>100 %</dd></div></dl>
     </article>
     <article class="component-card score-critical">
       <h3>Позиции в Яндексе</h3>
-      <div class="component-score">25 / 100</div>
+      <div class="component-score">20 / 100</div>
       <p>Место сайта по выбранным запросам в проверенной части выдачи.</p>
-      <dl class="compact-facts"><div><dt>Собрано данных</dt><dd>4 из 5</dd></div><div><dt>Полнота</dt><dd>80 %</dd></div></dl>
+      <dl class="compact-facts"><div><dt>Собрано данных</dt><dd>5 из 5</dd></div><div><dt>Полнота</dt><dd>100 %</dd></div></dl>
     </article>
     <article class="component-card score-improve">
       <h3>Скорость и удобство</h3>
@@ -92,23 +95,14 @@ th{background:#f7f9fc;white-space:nowrap}tbody tr:last-child td{border-bottom:0}
     </div>
   </section>
 <section id="main-problems"><h2>Что мешает росту</h2><div class="problem-grid"><article class="problem-card">
-      <h3>Главная страница закрыта от индексации</h3>
-      <dl class="problem-facts">
-        <div><dt>Приоритет</dt><dd>критический</dd></div>
-        <div><dt>Затронутые страницы</dt><dd>Затронута 1 страница</dd></div>
-      </dl>
-      <p><strong>Почему это важно:</strong> Поисковая система не сможет добавить главную страницу в выдачу.</p>
-      <p><strong>Что сделать:</strong> Уберите запрет на индексацию с главной страницы и повторите проверку.</p>
-      <a class="detail-link" href="#page-detail-flowerlife-school-com-w3g7gq">Подробнее по страницам</a>
-    </article><article class="problem-card">
-      <h3>Карта сайта не найдена</h3>
+      <h3>Внутренние ссылки ведут на недоступные страницы</h3>
       <dl class="problem-facts">
         <div><dt>Приоритет</dt><dd>высокий</dd></div>
-        <div><dt>Затронутые страницы</dt><dd>Проблема уровня сайта</dd></div>
+        <div><dt>Затронутые страницы</dt><dd>Затронуты 3 страницы</dd></div>
       </dl>
-      <p><strong>Почему это важно:</strong> Поисковой системе сложнее находить и обновлять адреса сайта.</p>
-      <p><strong>Что сделать:</strong> Опубликуйте корректную карту сайта XML и укажите её в robots.txt.</p>
-      <a class="detail-link" href="#site-technical">Технические данные сайта</a>
+      <p><strong>Почему это важно:</strong> Посетители и поисковые роботы попадают на страницы с ошибкой.</p>
+      <p><strong>Что сделать:</strong> Исправьте или удалите неработающие внутренние ссылки.</p>
+      <a class="detail-link" href="#page-detail-flowerlife-school-com-course-szd4dz">Подробнее по страницам</a>
     </article><article class="problem-card">
       <h3>На странице нет основного заголовка</h3>
       <dl class="problem-facts">
@@ -122,22 +116,36 @@ th{background:#f7f9fc;white-space:nowrap}tbody tr:last-child td{border-bottom:0}
       <h3>На странице не указан канонический адрес</h3>
       <dl class="problem-facts">
         <div><dt>Приоритет</dt><dd>высокий</dd></div>
-        <div><dt>Затронутые страницы</dt><dd>Затронуты 14 страниц</dd></div>
+        <div><dt>Затронутые страницы</dt><dd>Затронуты 5 страниц</dd></div>
       </dl>
       <p><strong>Почему это важно:</strong> Поисковой системе сложнее выбрать основной адрес страницы.</p>
       <p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p>
-      <a class="detail-link" href="#page-detail-flowerlife-school-com-w3g7gq">Подробнее по страницам</a>
+      <a class="detail-link" href="#page-detail-flowerlife-school-com-masters-survey-1xj8dxo">Подробнее по страницам</a>
     </article><article class="problem-card">
       <h3>Несколько страниц используют одинаковый заголовок</h3>
       <dl class="problem-facts">
         <div><dt>Приоритет</dt><dd>высокий</dd></div>
-        <div><dt>Затронутые страницы</dt><dd>Затронуты 9 страниц</dd></div>
+        <div><dt>Затронутые страницы</dt><dd>Затронуты 3 страницы</dd></div>
       </dl>
       <p><strong>Почему это важно:</strong> Страницы хуже различаются в поисковой выдаче.</p>
       <p><strong>Что сделать:</strong> Напишите отдельный заголовок для каждой целевой страницы.</p>
+      <a class="detail-link" href="#page-detail-flowerlife-school-com-course-szd4dz">Подробнее по страницам</a>
+    </article><article class="problem-card">
+      <h3>Мобильная версия заметно медленнее компьютерной</h3>
+      <dl class="problem-facts">
+        <div><dt>Приоритет</dt><dd>высокий</dd></div>
+        <div><dt>Затронутые страницы</dt><dd>Затронуты 5 страниц</dd></div>
+      </dl>
+      <p><strong>Почему это важно:</strong> Посетителям со смартфонов приходится дольше ждать загрузки.</p>
+      <p><strong>Что сделать:</strong> Проверьте мобильную загрузку и сократите самые тяжёлые операции.</p>
       <a class="detail-link" href="#page-detail-flowerlife-school-com-w3g7gq">Подробнее по страницам</a>
     </article></div></section>
-<section id="yandex-positions"><h2>Позиции в Яндексе</h2><p class="section-summary">Проверенные запросы: 4 из 5. Сайт найден: 1. В топ-10: 1.</p><div class="table-scroll"><table><thead><tr><th scope="col">Запрос</th><th scope="col">Позиция</th><th scope="col">Страница</th><th scope="col">Результат</th></tr></thead><tbody><tr><td>цветок жизни школа</td><td>1</td><td>http://flowerlife-school.com/index</td><td>Сайт найден</td></tr><tr><td>платформа саморазвития</td><td>Нет данных</td><td>Страница не определена</td><td>Не найден среди первых 20 результатов</td></tr><tr><td>онлайн курсы саморазвития</td><td>Нет данных</td><td>Страница не определена</td><td>Не найден среди первых 20 результатов</td></tr><tr><td>курсы духовного развития</td><td>Нет данных</td><td>Страница не определена</td><td>Проверка не выполнена</td></tr><tr><td>курсы ароматерапии онлайн</td><td>Нет данных</td><td>Страница не определена</td><td>Не найден среди первых 20 результатов</td></tr></tbody></table></div></section>
+<section id="wordstat-demand"><h2>Спрос и соответствие контента</h2>
+    <div class="demand-meta"><strong>Данные получены</strong><span>Не влияет на общую SEO-оценку</span></div>
+    <p class="section-summary">Измерено кластеров: 5 из 5. Слой показывает соответствие страниц реальному поисковому спросу.</p><article class="demand-primary"><p class="eyebrow">Главная возможность роста</p><h3>платформа саморазвития</h3><div class="demand-primary-facts"><span>132</span><span>Контент отсутствует</span></div><p>Создать отдельную посадочную страницу под запрос «платформа саморазвития» и связанные формулировки спроса.</p></article>
+    <div class="demand-grid"><article class="demand-row"><dl><div><dt>Запрос</dt><dd>цветок жизни школа</dd></div><div><dt>Спрос за 30 дней</dt><dd>254</dd></div><div><dt>Контент</dt><dd>Спрос покрыт</dd></div><div><dt>Лучшая страница</dt><dd>https://flowerlife-school.com/courses/catalog/1</dd></div><div><dt>Связанные формулировки</dt><dd>школа цветок жизни — 254; цветок жизни школа духовного — 11; цветок жизни школа духовного роста — 10</dd></div><div><dt>Динамика</dt><dd>Нет данных</dd></div><div><dt>Регион</dt><dd>Нет данных</dd></div></dl></article><article class="demand-row"><dl><div><dt>Запрос</dt><dd>платформа саморазвития</dd></div><div><dt>Спрос за 30 дней</dt><dd>132</dd></div><div><dt>Контент</dt><dd>Контент отсутствует</dd></div><div><dt>Лучшая страница</dt><dd>Подходящая страница не найдена</dd></div><div><dt>Связанные формулировки</dt><dd>платформы саморазвития — 132; образовательные платформы для саморазвития — 17; space платформа саморазвития — 17</dd></div><div><dt>Динамика</dt><dd>-21 %</dd></div><div><dt>Регион</dt><dd>Центр — 34</dd></div></dl></article><article class="demand-row"><dl><div><dt>Запрос</dt><dd>онлайн курсы саморазвития</dd></div><div><dt>Спрос за 30 дней</dt><dd>112</dd></div><div><dt>Контент</dt><dd>Покрыт частично</dd></div><div><dt>Лучшая страница</dt><dd>https://flowerlife-school.com/course</dd></div><div><dt>Связанные формулировки</dt><dd>онлайн курсы для саморазвития — 37; онлайн курсы по психологии и саморазвитию — 18; онлайн платформа курсов по психологии и саморазвитию — 17</dd></div><div><dt>Динамика</dt><dd>-36 %</dd></div><div><dt>Регион</dt><dd>Центр — 37</dd></div></dl></article><article class="demand-row"><dl><div><dt>Запрос</dt><dd>курсы духовного развития</dd></div><div><dt>Спрос за 30 дней</dt><dd>175</dd></div><div><dt>Контент</dt><dd>Спрос покрыт</dd></div><div><dt>Лучшая страница</dt><dd>https://flowerlife-school.com/courses</dd></div><div><dt>Связанные формулировки</dt><dd>курсы духовного развития — 175</dd></div><div><dt>Динамика</dt><dd>Нет данных</dd></div><div><dt>Регион</dt><dd>Нет данных</dd></div></dl></article><article class="demand-row"><dl><div><dt>Запрос</dt><dd>курсы ароматерапии онлайн</dd></div><div><dt>Спрос за 30 дней</dt><dd>19</dd></div><div><dt>Контент</dt><dd>Покрыт частично</dd></div><div><dt>Лучшая страница</dt><dd>https://flowerlife-school.com/courses/catalog</dd></div><div><dt>Связанные формулировки</dt><dd>курсы по ароматерапии онлайн — 18</dd></div><div><dt>Динамика</dt><dd>Нет данных</dd></div><div><dt>Регион</dt><dd>Россия — 18</dd></div></dl></article></div>
+  </section>
+<section id="yandex-positions"><h2>Позиции в Яндексе</h2><p class="section-summary">Проверенные запросы: 5 из 5. Сайт найден: 1. В топ-10: 1.</p><div class="table-scroll"><table><thead><tr><th scope="col">Запрос</th><th scope="col">Позиция</th><th scope="col">Страница</th><th scope="col">Результат</th></tr></thead><tbody><tr><td>цветок жизни школа</td><td>1</td><td>http://flowerlife-school.com/index</td><td>Сайт найден</td></tr><tr><td>платформа саморазвития</td><td>Нет данных</td><td>Страница не определена</td><td>Не найден среди первых 20 результатов</td></tr><tr><td>онлайн курсы саморазвития</td><td>Нет данных</td><td>Страница не определена</td><td>Не найден среди первых 20 результатов</td></tr><tr><td>курсы духовного развития</td><td>Нет данных</td><td>Страница не определена</td><td>Не найден среди первых 20 результатов</td></tr><tr><td>курсы ароматерапии онлайн</td><td>Нет данных</td><td>Страница не определена</td><td>Не найден среди первых 20 результатов</td></tr></tbody></table></div></section>
 <section id="alice-visibility"><h2>Видимость в ответах Алисы</h2>
     <div class="summary-cards">
       <article class="metric-card score-critical"><span>Оценка составляющей</span><strong>0 / 100</strong></article>
@@ -150,211 +158,541 @@ th{background:#f7f9fc;white-space:nowrap}tbody tr:last-child td{border-bottom:0}
 <section id="speed-ux"><h2>Скорость и удобство</h2>
     <div class="summary-cards">
       <article class="metric-card score-improve"><span>Оценка составляющей</span><strong>73 / 100</strong></article>
-      <article class="metric-card"><span>Средняя оценка на мобильных устройствах</span><strong>62 / 100</strong></article>
-      <article class="metric-card"><span>Средняя оценка на компьютерах</span><strong>91 / 100</strong></article>
+      <article class="metric-card"><span>Средняя оценка на мобильных устройствах</span><strong>61 / 100</strong></article>
+      <article class="metric-card"><span>Средняя оценка на компьютерах</span><strong>92,667 / 100</strong></article>
     </div>
-    <p><strong>Страница с самой низкой мобильной оценкой:</strong> https://flowerlife-school.com/courses/catalog · 56 / 100</p><h3>Факторы замедления</h3><ul><li>Увеличить срок хранения файлов в браузере</li><li>Настроить отображение шрифтов во время загрузки</li><li>Оптимизировать загрузку изображений</li><li>Сократить ресурсы, задерживающие первый показ страницы</li></ul>
-    <h3>Показатели, входящие в оценку</h3><div class="table-scroll"><table><thead><tr><th scope="col">Результат</th><th scope="col">Оценка составляющей</th><th scope="col">Вес в оценке</th></tr></thead><tbody><tr><td>Производительность на мобильных устройствах</td><td>62 / 100</td><td>50 %</td></tr><tr><td>Производительность на компьютерах</td><td>91 / 100</td><td>20 %</td></tr><tr><td>Доступность</td><td>81,5 / 100</td><td>20 %</td></tr><tr><td>Лучшие практики</td><td>77 / 100</td><td>10 %</td></tr></tbody></table></div>
-    <h3>Дополнительные результаты Lighthouse</h3><div class="table-scroll"><table><thead><tr><th scope="col">Результат</th><th scope="col">Оценка составляющей</th><th scope="col">Состояние</th></tr></thead><tbody><tr><td>Поисковая оптимизация</td><td>66 / 100</td><td>Не входит в оценку скорости и удобства</td></tr></tbody></table></div>
+    <p><strong>Страница с самой низкой мобильной оценкой:</strong> https://flowerlife-school.com/courses/catalog · 29 / 100</p><h3>Факторы замедления</h3><ul><li>Увеличить срок хранения файлов в браузере</li><li>Оптимизировать загрузку изображений</li><li>Сократить ресурсы, задерживающие первый показ страницы</li></ul>
+    <h3>Показатели, входящие в оценку</h3><div class="table-scroll"><table><thead><tr><th scope="col">Результат</th><th scope="col">Оценка составляющей</th><th scope="col">Вес в оценке</th></tr></thead><tbody><tr><td>Производительность на мобильных устройствах</td><td>61 / 100</td><td>50 %</td></tr><tr><td>Производительность на компьютерах</td><td>92,667 / 100</td><td>20 %</td></tr><tr><td>Доступность</td><td>80,833 / 100</td><td>20 %</td></tr><tr><td>Лучшие практики</td><td>77 / 100</td><td>10 %</td></tr></tbody></table></div>
+    <h3>Дополнительные результаты Lighthouse</h3><div class="table-scroll"><table><thead><tr><th scope="col">Результат</th><th scope="col">Оценка составляющей</th><th scope="col">Состояние</th></tr></thead><tbody><tr><td>Поисковая оптимизация</td><td>100 / 100</td><td>Не входит в оценку скорости и удобства</td></tr></tbody></table></div>
     <p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p><p class="note">Средние значения при показе могут быть округлены.</p>
   </section>
-<section id="priority-actions"><h2>Что делать сначала</h2><div class="priority-list"><article class="priority-card"><div class="priority-number">1</div><div><h3>Устранить блокирующие проблемы</h3><p>Критические страницы доступны, а блокирующие ошибки устранены.</p><ul><li>Главная страница закрыта от индексации</li></ul></div></article><article class="priority-card"><div class="priority-number">2</div><div><h3>Исправить проблемы, влияющие на видимость и посадочные страницы</h3><p>Посадочные страницы передают поисковой системе однозначные сигналы.</p><ul><li>Карта сайта не найдена</li><li>На странице нет основного заголовка</li><li>На странице не указан канонический адрес</li><li>Несколько страниц используют одинаковый заголовок</li><li>Несколько страниц используют одинаковое описание</li></ul></div></article><article class="priority-card"><div class="priority-number">3</div><div><h3>Улучшить скорость, контент и дополнительные сигналы</h3><p>Повторная проверка подтверждает улучшение измеряемых показателей.</p><ul><li>Мобильная версия заметно медленнее компьютерной</li><li>Lighthouse выявил проблемы доступности</li><li>У части изображений нет текстового описания</li></ul></div></article></div></section>
-<section id="page-details"><h2>Подробнее по страницам</h2><details id="page-detail-flowerlife-school-com-w3g7gq" class="page-detail"><summary>/ · 39 / 100 · Недоступна для индексации · Главная страница закрыта от индексации</summary><div class="detail-body"><dl class="technical-facts">
+<section id="priority-actions"><h2>Что делать сначала</h2><div class="priority-list"><article class="priority-card"><div class="priority-number">1</div><div><h3>Устранить блокирующие проблемы</h3><p>Критические страницы доступны, а блокирующие ошибки устранены.</p><ul><li>Внутренние ссылки ведут на недоступные страницы</li></ul></div></article><article class="priority-card"><div class="priority-number">2</div><div><h3>Исправить проблемы, влияющие на видимость и посадочные страницы</h3><p>Посадочные страницы передают поисковой системе однозначные сигналы.</p><ul><li>На странице нет основного заголовка</li><li>На странице не указан канонический адрес</li><li>Несколько страниц используют одинаковый заголовок</li><li>Несколько страниц используют одинаковое описание</li></ul></div></article><article class="priority-card"><div class="priority-number">3</div><div><h3>Улучшить скорость, контент и дополнительные сигналы</h3><p>Повторная проверка подтверждает улучшение измеряемых показателей.</p><ul><li>Мобильная версия заметно медленнее компьютерной</li><li>Lighthouse выявил проблемы доступности</li><li>У части изображений нет текстового описания</li></ul></div></article></div></section>
+<section id="page-details"><h2>Подробнее по страницам</h2><details id="page-detail-flowerlife-school-com-w3g7gq" class="page-detail"><summary>/ · 89 / 100 · Доступна для индексации · На странице нет основного заголовка</summary><div class="detail-body"><dl class="technical-facts">
       <div><dt>Страница</dt><dd>https://flowerlife-school.com/</dd></div>
-      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
-      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+      <div><dt>Оценка страницы</dt><dd>89 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
       <div><dt>Статус HTTP</dt><dd>200</dd></div>
     </dl><dl class="technical-facts">
-      <div><dt>Заголовок страницы</dt><dd>Цветок жизни</dd></div>
-      <div><dt>Описание страницы</dt><dd>Описание для RU</dd></div>
-      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
+      <div><dt>Заголовок страницы</dt><dd>Школа духовного развития «Цветок Жизни» — онлайн-курсы, ретриты и практики</dd></div>
+      <div><dt>Описание страницы</dt><dd>Международная школа духовного развития «Цветок Жизни». Онлайн-курсы, ретриты, практики, обучение у опытных мастеров, лицензированный сертификат и поддержка на пути к гармоничной жизни.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/</dd></div>
       <div><dt>Основной заголовок H1</dt><dd>Нет данных</dd></div>
       <div><dt>Заголовки H2-H6</dt><dd>0</dd></div>
       <div><dt>Слов на странице</dt><dd>503</dd></div>
-      <div><dt>Входящие внутренние ссылки</dt><dd>13</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>38</dd></div>
       <div><dt>Изображения</dt><dd>54 · 54 без текстового описания</dd></div>
       <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
-    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Главная страница закрыта от индексации</h4><p><strong>Приоритет:</strong> критический</p><p><strong>Что сделать:</strong> Уберите запрет на индексацию с главной страницы и повторите проверку.</p></article><article class="page-problem"><h4>На странице нет основного заголовка</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Добавьте один содержательный заголовок H1.</p></article><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>Мобильная версия заметно медленнее компьютерной</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Проверьте мобильную загрузку и сократите самые тяжёлые операции.</p></article><article class="page-problem"><h4>Lighthouse выявил проблемы доступности</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Исправьте подтверждённые проверки доступности и проверьте интерфейс вручную.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div><h3>Лабораторные измерения страницы</h3><div class="table-scroll"><table><thead><tr><th scope="col">Устройство</th><th scope="col">Состояние</th><th scope="col">Данные CrUX</th><th scope="col">Производительность</th><th scope="col">Доступность</th><th scope="col">Лучшие практики</th><th scope="col">Поисковая оптимизация</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Отклонённые проверки Lighthouse</th></tr></thead><tbody><tr><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>65</td><td>82</td><td>77</td><td>66</td><td>17 792,89</td><td>0</td><td>23</td></tr><tr><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>92</td><td>82</td><td>77</td><td>66</td><td>1 479,85</td><td>0</td><td>23</td></tr></tbody></table></div><p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p></div></details><details id="page-detail-flowerlife-school-com-courses-catalog-ch8d3o" class="page-detail"><summary>/courses/catalog · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
-      <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/catalog</dd></div>
-      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
-      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
-      <div><dt>Статус HTTP</dt><dd>200</dd></div>
-    </dl><dl class="technical-facts">
-      <div><dt>Заголовок страницы</dt><dd>Цветок жизни</dd></div>
-      <div><dt>Описание страницы</dt><dd>Описание для RU</dd></div>
-      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
-      <div><dt>Основной заголовок H1</dt><dd>все курсы</dd></div>
-      <div><dt>Заголовки H2-H6</dt><dd>9</dd></div>
-      <div><dt>Слов на странице</dt><dd>203</dd></div>
-      <div><dt>Входящие внутренние ссылки</dt><dd>13</dd></div>
-      <div><dt>Изображения</dt><dd>17 · 17 без текстового описания</dd></div>
-      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
-    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>Мобильная версия заметно медленнее компьютерной</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Проверьте мобильную загрузку и сократите самые тяжёлые операции.</p></article><article class="page-problem"><h4>Lighthouse выявил проблемы доступности</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Исправьте подтверждённые проверки доступности и проверьте интерфейс вручную.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div><h3>Лабораторные измерения страницы</h3><div class="table-scroll"><table><thead><tr><th scope="col">Устройство</th><th scope="col">Состояние</th><th scope="col">Данные CrUX</th><th scope="col">Производительность</th><th scope="col">Доступность</th><th scope="col">Лучшие практики</th><th scope="col">Поисковая оптимизация</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Отклонённые проверки Lighthouse</th></tr></thead><tbody><tr><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>56</td><td>82</td><td>77</td><td>66</td><td>91 009,74</td><td>0</td><td>25</td></tr><tr><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>87</td><td>82</td><td>77</td><td>66</td><td>2 074,31</td><td>0</td><td>24</td></tr></tbody></table></div><p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p></div></details><details id="page-detail-flowerlife-school-com-courses-vxci8c" class="page-detail"><summary>/courses · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице нет основного заголовка</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Добавьте один содержательный заголовок H1.</p></article><article class="page-problem"><h4>Мобильная версия заметно медленнее компьютерной</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Проверьте мобильную загрузку и сократите самые тяжёлые операции.</p></article><article class="page-problem"><h4>Lighthouse выявил проблемы доступности</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Исправьте подтверждённые проверки доступности и проверьте интерфейс вручную.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div><h3>Лабораторные измерения страницы</h3><div class="table-scroll"><table><thead><tr><th scope="col">Устройство</th><th scope="col">Состояние</th><th scope="col">Данные CrUX</th><th scope="col">Производительность</th><th scope="col">Доступность</th><th scope="col">Лучшие практики</th><th scope="col">Поисковая оптимизация</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Отклонённые проверки Lighthouse</th></tr></thead><tbody><tr><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>64</td><td>82</td><td>77</td><td>100</td><td>18 031,02</td><td>0</td><td>22</td></tr><tr><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>98</td><td>82</td><td>77</td><td>100</td><td>1 035,55</td><td>0</td><td>19</td></tr></tbody></table></div><p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p></div></details><details id="page-detail-flowerlife-school-com-courses-vxci8c" class="page-detail"><summary>/courses · 95 / 100 · Доступна для индексации · Мобильная версия заметно медленнее компьютерной</summary><div class="detail-body"><dl class="technical-facts">
       <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses</dd></div>
-      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
-      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+      <div><dt>Оценка страницы</dt><dd>95 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
       <div><dt>Статус HTTP</dt><dd>200</dd></div>
     </dl><dl class="technical-facts">
-      <div><dt>Заголовок страницы</dt><dd>Цветок жизни</dd></div>
-      <div><dt>Описание страницы</dt><dd>Описание для RU</dd></div>
-      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
+      <div><dt>Заголовок страницы</dt><dd>Курсы духовного развития онлайн — обучение и практики | Цветок Жизни</dd></div>
+      <div><dt>Описание страницы</dt><dd>Выберите курс духовного развития в международной школе «Цветок Жизни». Онлайн-обучение, семинары, мастер-классы и практики для гармоничной, осознанной и счастливой жизни.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/courses</dd></div>
       <div><dt>Основной заголовок H1</dt><dd>образование будущего — №1 платформа по саморазвитию</dd></div>
       <div><dt>Заголовки H2-H6</dt><dd>5</dd></div>
       <div><dt>Слов на странице</dt><dd>775</dd></div>
-      <div><dt>Входящие внутренние ссылки</dt><dd>13</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>38</dd></div>
       <div><dt>Изображения</dt><dd>64 · 64 без текстового описания</dd></div>
       <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
-    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>Мобильная версия заметно медленнее компьютерной</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Проверьте мобильную загрузку и сократите самые тяжёлые операции.</p></article><article class="page-problem"><h4>Lighthouse выявил проблемы доступности</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Исправьте подтверждённые проверки доступности и проверьте интерфейс вручную.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div><h3>Лабораторные измерения страницы</h3><div class="table-scroll"><table><thead><tr><th scope="col">Устройство</th><th scope="col">Состояние</th><th scope="col">Данные CrUX</th><th scope="col">Производительность</th><th scope="col">Доступность</th><th scope="col">Лучшие практики</th><th scope="col">Поисковая оптимизация</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Отклонённые проверки Lighthouse</th></tr></thead><tbody><tr><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>60</td><td>82</td><td>77</td><td>66</td><td>15 105</td><td>0</td><td>25</td></tr><tr><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>90</td><td>82</td><td>77</td><td>66</td><td>837,64</td><td>0</td><td>23</td></tr></tbody></table></div><p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p></div></details><details id="page-detail-flowerlife-school-com-masters-84r901" class="page-detail"><summary>/masters · 39 / 100 · Недоступна для индексации · На странице нет основного заголовка</summary><div class="detail-body"><dl class="technical-facts">
-      <div><dt>Страница</dt><dd>https://flowerlife-school.com/masters</dd></div>
-      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
-      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Мобильная версия заметно медленнее компьютерной</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Проверьте мобильную загрузку и сократите самые тяжёлые операции.</p></article><article class="page-problem"><h4>Lighthouse выявил проблемы доступности</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Исправьте подтверждённые проверки доступности и проверьте интерфейс вручную.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div><h3>Лабораторные измерения страницы</h3><div class="table-scroll"><table><thead><tr><th scope="col">Устройство</th><th scope="col">Состояние</th><th scope="col">Данные CrUX</th><th scope="col">Производительность</th><th scope="col">Доступность</th><th scope="col">Лучшие практики</th><th scope="col">Поисковая оптимизация</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Отклонённые проверки Lighthouse</th></tr></thead><tbody><tr><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>60</td><td>82</td><td>77</td><td>100</td><td>15 258,25</td><td>0</td><td>24</td></tr><tr><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>90</td><td>82</td><td>77</td><td>100</td><td>852,15</td><td>0</td><td>21</td></tr></tbody></table></div><p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p></div></details><details id="page-detail-flowerlife-school-com-courses-catalog-ch8d3o" class="page-detail"><summary>/courses/catalog · 92 / 100 · Доступна для индексации · Мобильная версия заметно медленнее компьютерной</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/catalog</dd></div>
+      <div><dt>Оценка страницы</dt><dd>92 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
       <div><dt>Статус HTTP</dt><dd>200</dd></div>
     </dl><dl class="technical-facts">
-      <div><dt>Заголовок страницы</dt><dd>Цветок жизни</dd></div>
-      <div><dt>Описание страницы</dt><dd>Описание для RU</dd></div>
-      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
+      <div><dt>Заголовок страницы</dt><dd>Каталог курсов духовного развития — онлайн-обучение | Цветок Жизни</dd></div>
+      <div><dt>Описание страницы</dt><dd>Выберите курс духовного развития в каталоге школы «Цветок Жизни». Онлайн-программы, духовные практики, семинары и мастер-классы для личностного роста и гармоничной жизни.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/courses/catalog</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>все курсы</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>9</dd></div>
+      <div><dt>Слов на странице</dt><dd>203</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>38</dd></div>
+      <div><dt>Изображения</dt><dd>17 · 17 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Мобильная версия заметно медленнее компьютерной</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Проверьте мобильную загрузку и сократите самые тяжёлые операции.</p></article><article class="page-problem"><h4>Lighthouse выявил проблемы доступности</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Исправьте подтверждённые проверки доступности и проверьте интерфейс вручную.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div><h3>Лабораторные измерения страницы</h3><div class="table-scroll"><table><thead><tr><th scope="col">Устройство</th><th scope="col">Состояние</th><th scope="col">Данные CrUX</th><th scope="col">Производительность</th><th scope="col">Доступность</th><th scope="col">Лучшие практики</th><th scope="col">Поисковая оптимизация</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Отклонённые проверки Lighthouse</th></tr></thead><tbody><tr><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>29</td><td>82</td><td>77</td><td>100</td><td>91 588,19</td><td>0</td><td>27</td></tr><tr><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>87</td><td>82</td><td>77</td><td>100</td><td>2 060,35</td><td>0</td><td>20</td></tr></tbody></table></div><p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p></div></details><details id="page-detail-flowerlife-school-com-masters-84r901" class="page-detail"><summary>/masters · 88 / 100 · Доступна для индексации · На странице нет основного заголовка</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/masters</dd></div>
+      <div><dt>Оценка страницы</dt><dd>88 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Мастера школы «Цветок Жизни» — преподаватели и наставники духовного развития</dd></div>
+      <div><dt>Описание страницы</dt><dd>Познакомьтесь с мастерами международной школы «Цветок Жизни». Опытные преподаватели, наставники и эксперты по духовному развитию, авторы курсов, семинаров и практик.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/masters</dd></div>
       <div><dt>Основной заголовок H1</dt><dd>Нет данных</dd></div>
       <div><dt>Заголовки H2-H6</dt><dd>0</dd></div>
       <div><dt>Слов на странице</dt><dd>958</dd></div>
-      <div><dt>Входящие внутренние ссылки</dt><dd>13</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>38</dd></div>
       <div><dt>Изображения</dt><dd>49 · 49 без текстового описания</dd></div>
       <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
-    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице нет основного заголовка</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Добавьте один содержательный заголовок H1.</p></article><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>Мобильная версия заметно медленнее компьютерной</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Проверьте мобильную загрузку и сократите самые тяжёлые операции.</p></article><article class="page-problem"><h4>Lighthouse выявил проблемы доступности</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Исправьте подтверждённые проверки доступности и проверьте интерфейс вручную.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div><h3>Лабораторные измерения страницы</h3><div class="table-scroll"><table><thead><tr><th scope="col">Устройство</th><th scope="col">Состояние</th><th scope="col">Данные CrUX</th><th scope="col">Производительность</th><th scope="col">Доступность</th><th scope="col">Лучшие практики</th><th scope="col">Поисковая оптимизация</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Отклонённые проверки Lighthouse</th></tr></thead><tbody><tr><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>61</td><td>79</td><td>77</td><td>66</td><td>38 730,41</td><td>0</td><td>25</td></tr><tr><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>93</td><td>79</td><td>77</td><td>66</td><td>1 495,39</td><td>0,05</td><td>23</td></tr></tbody></table></div><p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p></div></details><details id="page-detail-flowerlife-school-com-courses-48-h2rhml" class="page-detail"><summary>/courses/48 · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
-      <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/48</dd></div>
-      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
-      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице нет основного заголовка</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Добавьте один содержательный заголовок H1.</p></article><article class="page-problem"><h4>Мобильная версия заметно медленнее компьютерной</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Проверьте мобильную загрузку и сократите самые тяжёлые операции.</p></article><article class="page-problem"><h4>Lighthouse выявил проблемы доступности</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Исправьте подтверждённые проверки доступности и проверьте интерфейс вручную.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div><h3>Лабораторные измерения страницы</h3><div class="table-scroll"><table><thead><tr><th scope="col">Устройство</th><th scope="col">Состояние</th><th scope="col">Данные CrUX</th><th scope="col">Производительность</th><th scope="col">Доступность</th><th scope="col">Лучшие практики</th><th scope="col">Поисковая оптимизация</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Отклонённые проверки Lighthouse</th></tr></thead><tbody><tr><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>61</td><td>79</td><td>77</td><td>100</td><td>38 388,41</td><td>0</td><td>22</td></tr><tr><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>94</td><td>79</td><td>77</td><td>100</td><td>1 436,74</td><td>0,05</td><td>21</td></tr></tbody></table></div><p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p></div></details><details id="page-detail-flowerlife-school-com-events-1ljwr67" class="page-detail"><summary>/events · 98 / 100 · Доступна для индексации · Lighthouse выявил проблемы доступности</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/events</dd></div>
+      <div><dt>Оценка страницы</dt><dd>98 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
       <div><dt>Статус HTTP</dt><dd>200</dd></div>
     </dl><dl class="technical-facts">
-      <div><dt>Заголовок страницы</dt><dd>Глубинный йога‑массаж</dd></div>
-      <div><dt>Описание страницы</dt><dd>Искусство осознанного прикосновения</dd></div>
-      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
-      <div><dt>Основной заголовок H1</dt><dd>ГЛУБИННЫЙ ЙОГА-МАССАЖ: ИСКУССТВО ОСОЗНАННОГО ПРИКОСНОВЕНИЯ</dd></div>
-      <div><dt>Заголовки H2-H6</dt><dd>24</dd></div>
-      <div><dt>Слов на странице</dt><dd>634</dd></div>
-      <div><dt>Входящие внутренние ссылки</dt><dd>3</dd></div>
-      <div><dt>Изображения</dt><dd>17 · 16 без текстового описания</dd></div>
+      <div><dt>Заголовок страницы</dt><dd>Ретриты и события «Цветок жизни»</dd></div>
+      <div><dt>Описание страницы</dt><dd>Ретриты и живые события школы «Цветок жизни». Практики, путешествия и встречи с мастерами — выберите программу и присоединяйтесь к сообществу.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/events</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Ретриты и путешествия</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>0</dd></div>
+      <div><dt>Слов на странице</dt><dd>1 208</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>8</dd></div>
+      <div><dt>Изображения</dt><dd>15 · 4 без текстового описания</dd></div>
       <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
-    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>Мобильная версия заметно медленнее компьютерной</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Проверьте мобильную загрузку и сократите самые тяжёлые операции.</p></article><article class="page-problem"><h4>Lighthouse выявил проблемы доступности</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Исправьте подтверждённые проверки доступности и проверьте интерфейс вручную.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div><h3>Лабораторные измерения страницы</h3><div class="table-scroll"><table><thead><tr><th scope="col">Устройство</th><th scope="col">Состояние</th><th scope="col">Данные CrUX</th><th scope="col">Производительность</th><th scope="col">Доступность</th><th scope="col">Лучшие практики</th><th scope="col">Поисковая оптимизация</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Отклонённые проверки Lighthouse</th></tr></thead><tbody><tr><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>65</td><td>82</td><td>77</td><td>66</td><td>15 559,89</td><td>0</td><td>25</td></tr><tr><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>92</td><td>82</td><td>77</td><td>66</td><td>1 542,68</td><td>0</td><td>25</td></tr></tbody></table></div><p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p></div></details><details id="page-detail-flowerlife-school-com-courses-49-gsrvxm" class="page-detail"><summary>/courses/49 · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
-      <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/49</dd></div>
-      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Lighthouse выявил проблемы доступности</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Исправьте подтверждённые проверки доступности и проверьте интерфейс вручную.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div><h3>Лабораторные измерения страницы</h3><div class="table-scroll"><table><thead><tr><th scope="col">Устройство</th><th scope="col">Состояние</th><th scope="col">Данные CrUX</th><th scope="col">Производительность</th><th scope="col">Доступность</th><th scope="col">Лучшие практики</th><th scope="col">Поисковая оптимизация</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Отклонённые проверки Lighthouse</th></tr></thead><tbody><tr><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>87</td><td>78</td><td>77</td><td>100</td><td>2 030,09</td><td>0</td><td>24</td></tr><tr><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>89</td><td>78</td><td>77</td><td>100</td><td>814,28</td><td>0</td><td>20</td></tr></tbody></table></div><p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p></div></details><details id="page-detail-flowerlife-school-com-course-szd4dz" class="page-detail"><summary>/course · 0 / 100 · Недоступна для индексации · Основная подтверждённая проблема не найдена</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/course</dd></div>
+      <div><dt>Оценка страницы</dt><dd>0 / 100</dd></div>
       <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
-      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+      <div><dt>Статус HTTP</dt><dd>404</dd></div>
     </dl><dl class="technical-facts">
-      <div><dt>Заголовок страницы</dt><dd>Глубинное изучение эфирных масел</dd></div>
-      <div><dt>Описание страницы</dt><dd>Этот курс — не про банальную ароматерапию. Это практическая карта навигации по вашему подсознанию через язык природы. Мы разберем 24 эфирных масла (от жизнерадостного Апельсина до духовного Ладана) как уникальные энергетические ключи. Каждое масло — это проводник к определенному архетипу, эмоции или заблокированному ресурсу внутри вас.</dd></div>
-      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
-      <div><dt>Основной заголовок H1</dt><dd>ГЛУБИННОЕ ИЗУЧЕНИЕ ЭФИРНЫХ МАСЕЛ</dd></div>
-      <div><dt>Заголовки H2-H6</dt><dd>23</dd></div>
-      <div><dt>Слов на странице</dt><dd>674</dd></div>
-      <div><dt>Входящие внутренние ссылки</dt><dd>3</dd></div>
-      <div><dt>Изображения</dt><dd>17 · 16 без текстового описания</dd></div>
+      <div><dt>Заголовок страницы</dt><dd>Страница не найдена</dd></div>
+      <div><dt>Описание страницы</dt><dd>«Цветок жизни» — онлайн-школа саморазвития: курсы, ретриты и практики с мастерами. Учитесь в своём ритме и присоединяйтесь к сообществу единомышленников.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/course</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Нет данных</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>0</dd></div>
+      <div><dt>Слов на странице</dt><dd>0</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>16</dd></div>
+      <div><dt>Изображения</dt><dd>0 · 0 без текстового описания</dd></div>
       <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
-    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>Мобильная версия заметно медленнее компьютерной</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Проверьте мобильную загрузку и сократите самые тяжёлые операции.</p></article><article class="page-problem"><h4>Lighthouse выявил проблемы доступности</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Исправьте подтверждённые проверки доступности и проверьте интерфейс вручную.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div><h3>Лабораторные измерения страницы</h3><div class="table-scroll"><table><thead><tr><th scope="col">Устройство</th><th scope="col">Состояние</th><th scope="col">Данные CrUX</th><th scope="col">Производительность</th><th scope="col">Доступность</th><th scope="col">Лучшие практики</th><th scope="col">Поисковая оптимизация</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Отклонённые проверки Lighthouse</th></tr></thead><tbody><tr><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>65</td><td>82</td><td>77</td><td>66</td><td>15 557,8</td><td>0</td><td>26</td></tr><tr><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>92</td><td>82</td><td>77</td><td>66</td><td>1 465,66</td><td>0,02</td><td>25</td></tr></tbody></table></div><p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p></div></details><details id="page-detail-flowerlife-school-com-courses-47-cwxg80" class="page-detail"><summary>/courses/47 · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
-      <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/47</dd></div>
-      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
-      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
-      <div><dt>Статус HTTP</dt><dd>200</dd></div>
-    </dl><dl class="technical-facts">
-      <div><dt>Заголовок страницы</dt><dd>Сакральная геометрия для начинающих</dd></div>
-      <div><dt>Описание страницы</dt><dd>Сакральная геометрия — это не про скуку. Это язык Вселенной, записанный формами. За 15 уроков ты научишься видеть геометрию вокруг и использовать во благо себе.</dd></div>
-      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
-      <div><dt>Основной заголовок H1</dt><dd>САКРАЛЬНАЯ ГЕОМЕТРИЯ ДЛЯ НАЧИНАЮЩИХ</dd></div>
-      <div><dt>Заголовки H2-H6</dt><dd>23</dd></div>
-      <div><dt>Слов на странице</dt><dd>592</dd></div>
-      <div><dt>Входящие внутренние ссылки</dt><dd>3</dd></div>
-      <div><dt>Изображения</dt><dd>18 · 17 без текстового описания</dd></div>
-      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
-    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-courses-46-d6x1wz" class="page-detail"><summary>/courses/46 · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
-      <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/46</dd></div>
-      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
-      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
-      <div><dt>Статус HTTP</dt><dd>200</dd></div>
-    </dl><dl class="technical-facts">
-      <div><dt>Заголовок страницы</dt><dd>Школа по работе с эфирными картами</dd></div>
-      <div><dt>Описание страницы</dt><dd>Вы изучите разные энергии масел, научитесь проводить расклады, трактовать значения карт, понимать скрытые процессы подсознания и использовать эфирные карты как инструмент самопознания, гармонизации и помощи клиентам.</dd></div>
-      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
-      <div><dt>Основной заголовок H1</dt><dd>ШКОЛА ПО РАБОТЕ С ЭФИРНЫМИ КАРТАМИ</dd></div>
-      <div><dt>Заголовки H2-H6</dt><dd>23</dd></div>
-      <div><dt>Слов на странице</dt><dd>627</dd></div>
-      <div><dt>Входящие внутренние ссылки</dt><dd>3</dd></div>
-      <div><dt>Изображения</dt><dd>17 · 16 без текстового описания</dd></div>
-      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
-    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-courses-catalog-2-9z8609" class="page-detail"><summary>/courses/catalog/2 · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
+    </dl></div></details><details id="page-detail-flowerlife-school-com-courses-catalog-2-9z8609" class="page-detail"><summary>/courses/catalog/2 · 100 / 100 · Доступна для индексации · На странице мало содержательного текста</summary><div class="detail-body"><dl class="technical-facts">
       <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/catalog/2</dd></div>
-      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
-      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+      <div><dt>Оценка страницы</dt><dd>100 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
       <div><dt>Статус HTTP</dt><dd>200</dd></div>
     </dl><dl class="technical-facts">
-      <div><dt>Заголовок страницы</dt><dd>Цветок жизни</dd></div>
-      <div><dt>Описание страницы</dt><dd>Описание для RU</dd></div>
-      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
+      <div><dt>Заголовок страницы</dt><dd>Курсы по отношениям и гармонии в семье — онлайн | Цветок Жизни</dd></div>
+      <div><dt>Описание страницы</dt><dd>Изучайте курсы по отношениям, женственности, гармонии в семье и духовному развитию в школе «Цветок Жизни». Практики, семинары и онлайн-обучение от опытных мастеров.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/courses/catalog/2</dd></div>
       <div><dt>Основной заголовок H1</dt><dd>Духовное развитие</dd></div>
       <div><dt>Заголовки H2-H6</dt><dd>0</dd></div>
       <div><dt>Слов на странице</dt><dd>90</dd></div>
       <div><dt>Входящие внутренние ссылки</dt><dd>1</dd></div>
       <div><dt>Изображения</dt><dd>4 · 4 без текстового описания</dd></div>
       <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
-    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-courses-catalog-19-uacvqj" class="page-detail"><summary>/courses/catalog/19 · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-courses-catalog-19-uacvqj" class="page-detail"><summary>/courses/catalog/19 · 100 / 100 · Доступна для индексации · На странице мало содержательного текста</summary><div class="detail-body"><dl class="technical-facts">
       <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/catalog/19</dd></div>
-      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
-      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+      <div><dt>Оценка страницы</dt><dd>100 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
       <div><dt>Статус HTTP</dt><dd>200</dd></div>
     </dl><dl class="technical-facts">
-      <div><dt>Заголовок страницы</dt><dd>Цветок жизни</dd></div>
-      <div><dt>Описание страницы</dt><dd>Описание для RU</dd></div>
-      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
+      <div><dt>Заголовок страницы</dt><dd>Курсы по взаимоотношениям и гармонии в семье | Цветок Жизни</dd></div>
+      <div><dt>Описание страницы</dt><dd>Изучайте курсы по взаимоотношениям в школе «Цветок Жизни». Гармония в семье, отношения мужчины и женщины, духовные практики и личностное развитие в онлайн-формате.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/courses/catalog/19</dd></div>
       <div><dt>Основной заголовок H1</dt><dd>Взаимоотношения</dd></div>
       <div><dt>Заголовки H2-H6</dt><dd>0</dd></div>
       <div><dt>Слов на странице</dt><dd>88</dd></div>
       <div><dt>Входящие внутренние ссылки</dt><dd>1</dd></div>
       <div><dt>Изображения</dt><dd>4 · 4 без текстового описания</dd></div>
       <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
-    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-courses-catalog-4-aj7de7" class="page-detail"><summary>/courses/catalog/4 · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-courses-catalog-4-aj7de7" class="page-detail"><summary>/courses/catalog/4 · 100 / 100 · Доступна для индексации · На странице мало содержательного текста</summary><div class="detail-body"><dl class="technical-facts">
       <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/catalog/4</dd></div>
-      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
-      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+      <div><dt>Оценка страницы</dt><dd>100 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
       <div><dt>Статус HTTP</dt><dd>200</dd></div>
     </dl><dl class="technical-facts">
-      <div><dt>Заголовок страницы</dt><dd>Цветок жизни</dd></div>
-      <div><dt>Описание страницы</dt><dd>Описание для RU</dd></div>
-      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
+      <div><dt>Заголовок страницы</dt><dd>Курсы самореализации и личностного роста онлайн | Цветок Жизни</dd></div>
+      <div><dt>Описание страницы</dt><dd>Раскройте свой потенциал вместе со школой «Цветок Жизни». Онлайн-курсы по самореализации, поиску предназначения, личностному росту и гармоничному развитию личности.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/courses/catalog/4</dd></div>
       <div><dt>Основной заголовок H1</dt><dd>Самореализация</dd></div>
       <div><dt>Заголовки H2-H6</dt><dd>0</dd></div>
       <div><dt>Слов на странице</dt><dd>88</dd></div>
       <div><dt>Входящие внутренние ссылки</dt><dd>1</dd></div>
       <div><dt>Изображения</dt><dd>4 · 4 без текстового описания</dd></div>
       <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
-    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-courses-catalog-3-9p8kba" class="page-detail"><summary>/courses/catalog/3 · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-courses-catalog-3-9p8kba" class="page-detail"><summary>/courses/catalog/3 · 100 / 100 · Доступна для индексации · На странице мало содержательного текста</summary><div class="detail-body"><dl class="technical-facts">
       <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/catalog/3</dd></div>
-      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
-      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+      <div><dt>Оценка страницы</dt><dd>100 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
       <div><dt>Статус HTTP</dt><dd>200</dd></div>
     </dl><dl class="technical-facts">
-      <div><dt>Заголовок страницы</dt><dd>Цветок жизни</dd></div>
-      <div><dt>Описание страницы</dt><dd>Описание для RU</dd></div>
-      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
+      <div><dt>Заголовок страницы</dt><dd>Курсы здоровья и оздоровительных практик онлайн | Цветок Жизни</dd></div>
+      <div><dt>Описание страницы</dt><dd>Изучайте курсы по здоровому телу в школе «Цветок Жизни». Практики оздоровления, правильное питание, восстановление организма и гармоничное развитие в онлайн-формате.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/courses/catalog/3</dd></div>
       <div><dt>Основной заголовок H1</dt><dd>Здоровое тело</dd></div>
       <div><dt>Заголовки H2-H6</dt><dd>0</dd></div>
       <div><dt>Слов на странице</dt><dd>90</dd></div>
       <div><dt>Входящие внутренние ссылки</dt><dd>1</dd></div>
       <div><dt>Изображения</dt><dd>4 · 4 без текстового описания</dd></div>
       <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
-    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-courses-catalog-1-959cxc" class="page-detail"><summary>/courses/catalog/1 · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-courses-catalog-1-959cxc" class="page-detail"><summary>/courses/catalog/1 · 100 / 100 · Доступна для индексации · На странице мало содержательного текста</summary><div class="detail-body"><dl class="technical-facts">
       <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/catalog/1</dd></div>
-      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
-      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+      <div><dt>Оценка страницы</dt><dd>100 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
       <div><dt>Статус HTTP</dt><dd>200</dd></div>
     </dl><dl class="technical-facts">
-      <div><dt>Заголовок страницы</dt><dd>Цветок жизни</dd></div>
-      <div><dt>Описание страницы</dt><dd>Описание для RU</dd></div>
-      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
+      <div><dt>Заголовок страницы</dt><dd>Курсы творчества и самовыражения онлайн | Школа «Цветок Жизни»</dd></div>
+      <div><dt>Описание страницы</dt><dd>Откройте свой творческий потенциал вместе со школой «Цветок Жизни». Онлайн-курсы, практики и мастер-классы для вдохновения, самовыражения и гармоничного развития личности.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/courses/catalog/1</dd></div>
       <div><dt>Основной заголовок H1</dt><dd>Творчество</dd></div>
       <div><dt>Заголовки H2-H6</dt><dd>0</dd></div>
       <div><dt>Слов на странице</dt><dd>88</dd></div>
       <div><dt>Входящие внутренние ссылки</dt><dd>1</dd></div>
       <div><dt>Изображения</dt><dd>4 · 4 без текстового описания</dd></div>
       <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
-    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-masters-survey-1xj8dxo" class="page-detail"><summary>/masters/survey · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-courses-46-d6x1wz" class="page-detail"><summary>/courses/46 · 96 / 100 · Доступна для индексации · Мобильная версия заметно медленнее компьютерной</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/46</dd></div>
+      <div><dt>Оценка страницы</dt><dd>96 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Школа по работе с эфирными картами</dd></div>
+      <div><dt>Описание страницы</dt><dd>Вы изучите разные энергии масел, научитесь проводить расклады, трактовать значения карт, понимать скрытые процессы подсознания и использовать эфирные карты как инструмент самопознания, гармонизации и помощи клиентам.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/courses/46</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>ШКОЛА ПО РАБОТЕ С ЭФИРНЫМИ КАРТАМИ</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>23</dd></div>
+      <div><dt>Слов на странице</dt><dd>627</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>4</dd></div>
+      <div><dt>Изображения</dt><dd>17 · 16 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Мобильная версия заметно медленнее компьютерной</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Проверьте мобильную загрузку и сократите самые тяжёлые операции.</p></article><article class="page-problem"><h4>Lighthouse выявил проблемы доступности</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Исправьте подтверждённые проверки доступности и проверьте интерфейс вручную.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div><h3>Лабораторные измерения страницы</h3><div class="table-scroll"><table><thead><tr><th scope="col">Устройство</th><th scope="col">Состояние</th><th scope="col">Данные CrUX</th><th scope="col">Производительность</th><th scope="col">Доступность</th><th scope="col">Лучшие практики</th><th scope="col">Поисковая оптимизация</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Отклонённые проверки Lighthouse</th></tr></thead><tbody><tr><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>65</td><td>82</td><td>77</td><td>100</td><td>14 111,79</td><td>0</td><td>23</td></tr><tr><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>98</td><td>82</td><td>77</td><td>100</td><td>1 109,97</td><td>0,01</td><td>21</td></tr></tbody></table></div><p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p></div></details><details id="page-detail-flowerlife-school-com-courses-47-cwxg80" class="page-detail"><summary>/courses/47 · 100 / 100 · Доступна для индексации · У части изображений нет текстового описания</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/47</dd></div>
+      <div><dt>Оценка страницы</dt><dd>100 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Сакральная геометрия для начинающих</dd></div>
+      <div><dt>Описание страницы</dt><dd>Сакральная геометрия — это не про скуку. Это язык Вселенной, записанный формами. За 15 уроков ты научишься видеть геометрию вокруг и использовать во благо себе.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/courses/47</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>САКРАЛЬНАЯ ГЕОМЕТРИЯ ДЛЯ НАЧИНАЮЩИХ</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>23</dd></div>
+      <div><dt>Слов на странице</dt><dd>592</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>4</dd></div>
+      <div><dt>Изображения</dt><dd>18 · 17 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-courses-48-h2rhml" class="page-detail"><summary>/courses/48 · 100 / 100 · Доступна для индексации · У части изображений нет текстового описания</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/48</dd></div>
+      <div><dt>Оценка страницы</dt><dd>100 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Глубинный йога‑массаж</dd></div>
+      <div><dt>Описание страницы</dt><dd>Искусство осознанного прикосновения</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/courses/48</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>ГЛУБИННЫЙ ЙОГА-МАССАЖ: ИСКУССТВО ОСОЗНАННОГО ПРИКОСНОВЕНИЯ</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>24</dd></div>
+      <div><dt>Слов на странице</dt><dd>634</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>4</dd></div>
+      <div><dt>Изображения</dt><dd>17 · 16 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-courses-49-gsrvxm" class="page-detail"><summary>/courses/49 · 100 / 100 · Доступна для индексации · У части изображений нет текстового описания</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/courses/49</dd></div>
+      <div><dt>Оценка страницы</dt><dd>100 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Глубинное изучение эфирных масел</dd></div>
+      <div><dt>Описание страницы</dt><dd>Этот курс — не про банальную ароматерапию. Это практическая карта навигации по вашему подсознанию через язык природы. Мы разберем 24 эфирных масла (от жизнерадостного Апельсина до духовного Ладана) как уникальные энергетические ключи. Каждое масло — это проводник к определенному архетипу, эмоции или заблокированному ресурсу внутри вас.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/courses/49</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>ГЛУБИННОЕ ИЗУЧЕНИЕ ЭФИРНЫХ МАСЕЛ</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>23</dd></div>
+      <div><dt>Слов на странице</dt><dd>674</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>4</dd></div>
+      <div><dt>Изображения</dt><dd>17 · 16 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-2-13pzy2t" class="page-detail"><summary>/master/2 · 94 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/2</dd></div>
+      <div><dt>Оценка страницы</dt><dd>94 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Екатерина Мишина</dd></div>
+      <div><dt>Описание страницы</dt><dd>На протяжении 10 лет я занимаюсь преподаванием йоги и медитативных практик. Мой путь в этой сфере начался в студенческие годы, когда я столкнулась со стрессами и тревогами во время сессий. Йога и медитации помогли мне их преодолеть и обрести душевное равновесие. С тех пор эти практики стали частью моей жизни. Через несколько лет я решила получить профессиональное образование инструктора йоги и стала вести занятия. Со временем ко мне потянулись ученики, многие из которых достигли впечатляющих результатов - избавились от лишнего веса, повысили гибкость, научились справляться со стрессом при помощи йоги и медитаций. Их положительный опыт вдохновил меня стать преподавателем и передавать эти знания другим. Сегодня я с радостью готова поделиться опытом со всеми, кто стремится к гармонии тела и духа!</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/2</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Екатерина Мишина</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>3</dd></div>
+      <div><dt>Слов на странице</dt><dd>251</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 5 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-3-13g0cdu" class="page-detail"><summary>/master/3 · 94 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/3</dd></div>
+      <div><dt>Оценка страницы</dt><dd>94 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>елена солнечная</dd></div>
+      <div><dt>Описание страницы</dt><dd>Преподаватель танцев</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/3</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>елена солнечная</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>3</dd></div>
+      <div><dt>Слов на странице</dt><dd>128</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 5 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-4-1222bwz" class="page-detail"><summary>/master/4 · 94 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/4</dd></div>
+      <div><dt>Оценка страницы</dt><dd>94 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>светлана наримова</dd></div>
+      <div><dt>Описание страницы</dt><dd>Психолог, дизайнер интерьера</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/4</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>светлана наримова</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>3</dd></div>
+      <div><dt>Слов на странице</dt><dd>128</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 5 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-5-11s2q80" class="page-detail"><summary>/master/5 · 94 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/5</dd></div>
+      <div><dt>Оценка страницы</dt><dd>94 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>карина вавилова</dd></div>
+      <div><dt>Описание страницы</dt><dd>Семейный психолог</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/5</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>карина вавилова</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>3</dd></div>
+      <div><dt>Слов на странице</dt><dd>128</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 5 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-6-12m1jax" class="page-detail"><summary>/master/6 · 94 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/6</dd></div>
+      <div><dt>Оценка страницы</dt><dd>94 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>ирина молчалина</dd></div>
+      <div><dt>Описание страницы</dt><dd>Мастер по йоге</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/6</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>ирина молчалина</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>3</dd></div>
+      <div><dt>Слов на странице</dt><dd>128</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 5 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-7-12c1xly" class="page-detail"><summary>/master/7 · 94 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/7</dd></div>
+      <div><dt>Оценка страницы</dt><dd>94 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>ольга кабо</dd></div>
+      <div><dt>Описание страницы</dt><dd>Балерина, танцовщица</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/7</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>ольга кабо</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>3</dd></div>
+      <div><dt>Слов на странице</dt><dd>128</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 5 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-8-15dxk8n" class="page-detail"><summary>/master/8 · 94 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/8</dd></div>
+      <div><dt>Оценка страницы</dt><dd>94 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Любовь Галкина</dd></div>
+      <div><dt>Описание страницы</dt><dd>Выпускница высшей Школы трансцендентного образования и духовной грамотности &quot;СОТИС&quot;. Член международной ассоциации ароматерапевтов МАА. Работа основана на 10-летнем опыте работы с энергетической физиологией человека, а также применении трав и эфирных масел для гармонизации разных сфер жизни. Поиск причинно-следственных связей возникновения проблем в разных сферах жизни (детско-родительские и женско-мужские отношения, отношения с деньгами и с самим собой. Диагностика с помощью эфирных карт и регрессии.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/8</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Любовь Галкина</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>6</dd></div>
+      <div><dt>Слов на странице</dt><dd>216</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>7 · 7 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-9-153xyjo" class="page-detail"><summary>/master/9 · 94 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/9</dd></div>
+      <div><dt>Оценка страницы</dt><dd>94 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>регина светлая</dd></div>
+      <div><dt>Описание страницы</dt><dd>Мастер по ароматерапии</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/9</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>регина светлая</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>3</dd></div>
+      <div><dt>Слов на странице</dt><dd>128</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 5 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-10-qwqw38" class="page-detail"><summary>/master/10 · 94 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/10</dd></div>
+      <div><dt>Оценка страницы</dt><dd>94 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>ульяна приходько</dd></div>
+      <div><dt>Описание страницы</dt><dd>Мастер по арт-терапии</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/10</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>ульяна приходько</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>3</dd></div>
+      <div><dt>Слов на странице</dt><dd>128</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 5 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-11-r6qhs7" class="page-detail"><summary>/master/11 · 94 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/11</dd></div>
+      <div><dt>Оценка страницы</dt><dd>94 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>илья поваров</dd></div>
+      <div><dt>Описание страницы</dt><dd>Мастер по музыкальной терапии</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/11</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>илья поваров</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>3</dd></div>
+      <div><dt>Слов на странице</dt><dd>128</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 5 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-15-q2s30b" class="page-detail"><summary>/master/15 · 100 / 100 · Доступна для индексации · У части изображений нет текстового описания</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/15</dd></div>
+      <div><dt>Оценка страницы</dt><dd>100 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Лариса Фортуна</dd></div>
+      <div><dt>Описание страницы</dt><dd>Лариса Фортуна - основатель международной школы духовного роста “Цветок Жизни”. Проводник южноамериканских сакральных практик, а также практик в местах силы по всему миру. Основатель и управляющий партнер рекламного агентства BeeTL. Лауреат рейтинга &quot;ТОП-1000 менеджеров России&quot; 2022 и 2023 по версии ИД &quot;Коммерсантъ&quot;. Лауреат Национальной премии &quot;Медиа-Менеджер России - 2022&quot;. Президент Российской ассоциации маркетинговых услуг с 2020 по 2022 г. Мастер спорта международного класса по плаванию, многократная чемпионка России и призер международных турниров. Автор книги &quot;Душа Бизнесмена&quot;, которая стала помощником, вдохновением и наставлением для многих успешных людей бизнеса и духовных мастеров.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/15</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Лариса Фортуна</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>3</dd></div>
+      <div><dt>Слов на странице</dt><dd>220</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>4</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 5 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-16-qcropa" class="page-detail"><summary>/master/16 · 94 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/16</dd></div>
+      <div><dt>Оценка страницы</dt><dd>94 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Екатерина Мехоношина</dd></div>
+      <div><dt>Описание страницы</dt><dd>Ведущий преподаватель международной школы духовного развития &quot;Цветок Жизни&quot;. Исследователь славяно-арийской, древней-православной и древней культуры Земли, специалист по восточным и аюрведическим массажам, реконструктор и адепт природных традиций наших общих предков. Опыт работы с людьми в наставничестве 12 лет.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/16</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Екатерина Мехоношина</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>5</dd></div>
+      <div><dt>Слов на странице</dt><dd>172</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>6 · 6 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-18-oou2jg" class="page-detail"><summary>/master/18 · 89 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/18</dd></div>
+      <div><dt>Оценка страницы</dt><dd>89 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Елизавета</dd></div>
+      <div><dt>Описание страницы</dt><dd>Нет данных</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/18</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Елизавета</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>3</dd></div>
+      <div><dt>Слов на странице</dt><dd>91</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 5 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-20-1mjr1nz" class="page-detail"><summary>/master/20 · 89 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/20</dd></div>
+      <div><dt>Оценка страницы</dt><dd>89 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Александр Фортуна</dd></div>
+      <div><dt>Описание страницы</dt><dd>Нет данных</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/20</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Александр Фортуна</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>3</dd></div>
+      <div><dt>Слов на странице</dt><dd>92</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 5 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-21-1m9rfz0" class="page-detail"><summary>/master/21 · 94 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/21</dd></div>
+      <div><dt>Оценка страницы</dt><dd>94 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Даниил Рудаков</dd></div>
+      <div><dt>Описание страницы</dt><dd>Более 15 лет Даниил помогает людям обретать целостность через игру, сердце и язык форм Вселенной. Его путь начался с простого вопроса: «Зачем я здесь?» — и привёл к глубокому соединению с собой через сакральные символы. Как один из первых проводников метода голландского художника Яноша в России, Даниил передаёт не только знания, но и энергию оригинальных сакральных кодов. Через его практики сотни людей прошли трансформацию: нашли своё предназначение, создали здоровые отношения, переехали в город мечты, обрели уверенность и внутреннее спокойствие. Для Даниила сакральная геометрия — это не абстракция. Это инструмент создания любящего пространства, где каждый может быть честным с собой, освободиться от страхов и смело двигаться к желаемому.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/21</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Даниил Рудаков</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>5</dd></div>
+      <div><dt>Слов на странице</dt><dd>247</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>6 · 6 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-master-22-1n3q91x" class="page-detail"><summary>/master/22 · 89 / 100 · Доступна для индексации · Страница не связана внутренними ссылками</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/master/22</dd></div>
+      <div><dt>Оценка страницы</dt><dd>89 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Andante Гришин</dd></div>
+      <div><dt>Описание страницы</dt><dd>Нет данных</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/master/22</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Andante Гришин</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>3</dd></div>
+      <div><dt>Слов на странице</dt><dd>92</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>0</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 5 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>Страница не связана внутренними ссылками</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте уместную внутреннюю ссылку или исключите страницу из публикации.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-events-8-ek6xvs" class="page-detail"><summary>/events/8 · 100 / 100 · Доступна для индексации · У части изображений нет текстового описания</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/events/8</dd></div>
+      <div><dt>Оценка страницы</dt><dd>100 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Таинства Перу</dd></div>
+      <div><dt>Описание страницы</dt><dd>Перу — одно из самых загадочных мест планеты Тихий океан, влажные леса, неповторимая флора, горы, симбиоз туземной культуры и европейского наследия, передающиеся из поколения в поколения знания и ритуалы. Мачу-Пикчу Здесь находится одно из признанных чудес света — город инков Мачу-Пикчу. В 1532 году все жители покинули город, а у археологов и историков до сих пор нет ответа, почему это произошло. Все пространство здесь окутано тайнами и загадками, подталкивает к поиску ответов на сакральные вопросы о мире, жизни и себе.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/events/8</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Таинства Перу</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>5</dd></div>
+      <div><dt>Слов на странице</dt><dd>1 177</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>1</dd></div>
+      <div><dt>Изображения</dt><dd>35 · 35 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-events-10-1k9a62x" class="page-detail"><summary>/events/10 · 100 / 100 · Доступна для индексации · У части изображений нет текстового описания</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/events/10</dd></div>
+      <div><dt>Оценка страницы</dt><dd>100 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Дели Решикеш</dd></div>
+      <div><dt>Описание страницы</dt><dd>Индия – столица духовного наследия планеты Веками она оберегала и приумножала духовные практики, принимала на своей земле учения и учителей. Здесь сохранилась культура передачи сакральных знаний. И ими щедро делятся с тем, кто готов открыться неосязаемым силам. Ретрит Дели — Ришикеш — увлекательное путешествие по местам силы для постижения истинного баланса Какие задачи решает ретрит? Гармонизация ауры Ретрит в Индию сопровождает Шива — потомственный индийский целитель. С раннего возраста он обладает способностями к исцелению. Взаимодействуя с тибетскими чашами и ситарами, он заметил, что может влиять на людей и пространство вокруг, работать с аурой. Шива разработал уникальную звуковую терапию для расслабления и гармонизации тела, разума и ауры. Шива станет нашим проводником на пути к достижению баланса, под его присмотром будут проходить практики саундхилинга и церемонии на священной реке Ганг. Обнуление деструктивных программ, наполнение ресурсами На какую борьбу уходят ваши силы, если уже с утра вы чувствуете усталость? Привычка вкладываться в «чужую жизнь», невозможность следовать своему предназначению — указывают на наличие деструктивных программ и кармического следа. Наш маршрут строится вокруг мест силы, попав в которые, вы можете обнулить карму и вернуть себе свою жизнь. Духовные и энергетические практики Это инструменты, которые переключают мозг в природное состояние, при котором психика расслабляется, а поток чужих голосов затихает. В результате практик сознание становится более ясным, вырабатывается способность концентрироваться на том, что для вас важно и ясно видеть свой путь.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/events/10</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Дели Решикеш</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>5</dd></div>
+      <div><dt>Слов на странице</dt><dd>1 688</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>1</dd></div>
+      <div><dt>Изображения</dt><dd>51 · 51 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-events-15-1l38z5u" class="page-detail"><summary>/events/15 · 100 / 100 · Доступна для индексации · У части изображений нет текстового описания</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/events/15</dd></div>
+      <div><dt>Оценка страницы</dt><dd>100 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Эльбрус</dd></div>
+      <div><dt>Описание страницы</dt><dd>будет наполнен живыми потоковыми практиками, которые, в сочетании с удивительными природными местами, помогут восполнить свои энергетические запасы, наладить внутреннюю гармонию и восстановить баланс между телом, разумом и душой.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/events/15</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Эльбрус</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>4</dd></div>
+      <div><dt>Слов на странице</dt><dd>254</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>1</dd></div>
+      <div><dt>Изображения</dt><dd>7 · 7 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-events-16-1kt9dgv" class="page-detail"><summary>/events/16 · 100 / 100 · Доступна для индексации · У части изображений нет текстового описания</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/events/16</dd></div>
+      <div><dt>Оценка страницы</dt><dd>100 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Доступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Алтай</dd></div>
+      <div><dt>Описание страницы</dt><dd>Раскройте свой потенциал на одном из сильнейших энергетических маршрутов: подножие Белухи  —  Озеро Духов  —  перевал Каратюрек  —  Долина Ярлу.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/events/16</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Алтай</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>4</dd></div>
+      <div><dt>Слов на странице</dt><dd>243</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>1</dd></div>
+      <div><dt>Изображения</dt><dd>7 · 7 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-masters-survey-1xj8dxo" class="page-detail"><summary>/masters/survey · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
       <div><dt>Страница</dt><dd>https://flowerlife-school.com/masters/survey</dd></div>
       <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
       <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
@@ -369,12 +707,102 @@ th{background:#f7f9fc;white-space:nowrap}tbody tr:last-child td{border-bottom:0}
       <div><dt>Входящие внутренние ссылки</dt><dd>1</dd></div>
       <div><dt>Изображения</dt><dd>5 · 5 без текстового описания</dd></div>
       <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
-    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details></section>
-<details id="site-technical"><summary>Технические данные сайта</summary><div class="detail-body"><div class="table-scroll"><table><thead><tr><th scope="col">Показатель</th><th scope="col">Значение</th></tr></thead><tbody><tr><td>Проверенные адреса</td><td>21</td></tr><tr><td>Найденные адреса для проверки</td><td>21</td></tr><tr><td>Адреса вне лимита</td><td>0</td></tr><tr><td>Обход ограничен</td><td>Нет</td></tr><tr><td>Найденные адреса</td><td>21</td></tr><tr><td>Исключённые адреса</td><td>1</td></tr><tr><td>Недоступные внутренние адреса</td><td>0</td></tr><tr><td>Цепочки перенаправлений</td><td>0</td></tr><tr><td>Группы одинаковых заголовков</td><td>1</td></tr><tr><td>Группы одинаковых описаний</td><td>1</td></tr></tbody></table></div><dl class="technical-facts">
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-events-8-payment-8n087l" class="page-detail"><summary>/events/8/payment · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/events/8/payment</dd></div>
+      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Таинства Перу — бронирование</dd></div>
+      <div><dt>Описание страницы</dt><dd>«Цветок жизни» — онлайн-школа саморазвития: курсы, ретриты и практики с мастерами. Учитесь в своём ритме и присоединяйтесь к сообществу единомышленников.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Бронирование</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>1</dd></div>
+      <div><dt>Слов на странице</dt><dd>124</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>1</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 4 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-events-10-payment-17he21k" class="page-detail"><summary>/events/10/payment · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/events/10/payment</dd></div>
+      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Дели Решикеш — бронирование</dd></div>
+      <div><dt>Описание страницы</dt><dd>«Цветок жизни» — онлайн-школа саморазвития: курсы, ретриты и практики с мастерами. Учитесь в своём ритме и присоединяйтесь к сообществу единомышленников.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Бронирование</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>1</dd></div>
+      <div><dt>Слов на странице</dt><dd>137</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>1</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 4 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-events-15-payment-yg9ntf" class="page-detail"><summary>/events/15/payment · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/events/15/payment</dd></div>
+      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Эльбрус — бронирование</dd></div>
+      <div><dt>Описание страницы</dt><dd>«Цветок жизни» — онлайн-школа саморазвития: курсы, ретриты и практики с мастерами. Учитесь в своём ритме и присоединяйтесь к сообществу единомышленников.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Бронирование</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>1</dd></div>
+      <div><dt>Слов на странице</dt><dd>115</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>1</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 4 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-events-16-payment-b607ri" class="page-detail"><summary>/events/16/payment · 39 / 100 · Недоступна для индексации · На странице не указан канонический адрес</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/events/16/payment</dd></div>
+      <div><dt>Оценка страницы</dt><dd>39 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>200</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Алтай — бронирование</dd></div>
+      <div><dt>Описание страницы</dt><dd>«Цветок жизни» — онлайн-школа саморазвития: курсы, ретриты и практики с мастерами. Учитесь в своём ритме и присоединяйтесь к сообществу единомышленников.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>Нет данных</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Бронирование</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>1</dd></div>
+      <div><dt>Слов на странице</dt><dd>115</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>1</dd></div>
+      <div><dt>Изображения</dt><dd>5 · 4 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl><h3>Подтверждённые проблемы и рекомендации</h3><div class="page-problems"><article class="page-problem"><h4>На странице не указан канонический адрес</h4><p><strong>Приоритет:</strong> высокий</p><p><strong>Что сделать:</strong> Укажите корректный канонический адрес и повторите обход.</p></article><article class="page-problem"><h4>На странице мало содержательного текста</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте полезные сведения, если они нужны для темы страницы.</p></article><article class="page-problem"><h4>У части изображений нет текстового описания</h4><p><strong>Приоритет:</strong> средний</p><p><strong>Что сделать:</strong> Добавьте описание значимым изображениям. Декоративные изображения оставьте пустыми.</p></article><article class="page-problem"><h4>Страница слабо отражает выбранную тему</h4><p><strong>Приоритет:</strong> низкий</p><p><strong>Что сделать:</strong> Уточните заголовок страницы, описание и H1 по её содержанию.</p></article></div></div></details><details id="page-detail-flowerlife-school-com-documentdata-aqssin" class="page-detail"><summary>/documentData · 0 / 100 · Недоступна для индексации · Основная подтверждённая проблема не найдена</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/documentData</dd></div>
+      <div><dt>Оценка страницы</dt><dd>0 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>404</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Страница не найдена</dd></div>
+      <div><dt>Описание страницы</dt><dd>«Цветок жизни» — онлайн-школа саморазвития: курсы, ретриты и практики с мастерами. Учитесь в своём ритме и присоединяйтесь к сообществу единомышленников.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/documentData</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Нет данных</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>0</dd></div>
+      <div><dt>Слов на странице</dt><dd>0</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>4</dd></div>
+      <div><dt>Изображения</dt><dd>0 · 0 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl></div></details><details id="page-detail-flowerlife-school-com-legaldocument-p12ebi" class="page-detail"><summary>/legalDocument · 0 / 100 · Недоступна для индексации · Основная подтверждённая проблема не найдена</summary><div class="detail-body"><dl class="technical-facts">
+      <div><dt>Страница</dt><dd>https://flowerlife-school.com/legalDocument</dd></div>
+      <div><dt>Оценка страницы</dt><dd>0 / 100</dd></div>
+      <div><dt>Индексируемость</dt><dd>Недоступна для индексации</dd></div>
+      <div><dt>Статус HTTP</dt><dd>404</dd></div>
+    </dl><dl class="technical-facts">
+      <div><dt>Заголовок страницы</dt><dd>Страница не найдена</dd></div>
+      <div><dt>Описание страницы</dt><dd>«Цветок жизни» — онлайн-школа саморазвития: курсы, ретриты и практики с мастерами. Учитесь в своём ритме и присоединяйтесь к сообществу единомышленников.</dd></div>
+      <div><dt>Канонический адрес</dt><dd>https://flowerlife-school.com/legalDocument</dd></div>
+      <div><dt>Основной заголовок H1</dt><dd>Нет данных</dd></div>
+      <div><dt>Заголовки H2-H6</dt><dd>0</dd></div>
+      <div><dt>Слов на странице</dt><dd>0</dd></div>
+      <div><dt>Входящие внутренние ссылки</dt><dd>4</dd></div>
+      <div><dt>Изображения</dt><dd>0 · 0 без текстового описания</dd></div>
+      <div><dt>Типы структурированных данных</dt><dd>Нет данных</dd></div>
+    </dl></div></details></section>
+<details id="site-technical"><summary>Технические данные сайта</summary><div class="detail-body"><div class="table-scroll"><table><thead><tr><th scope="col">Показатель</th><th scope="col">Значение</th></tr></thead><tbody><tr><td>Проверенные адреса</td><td>49</td></tr><tr><td>Найденные адреса для проверки</td><td>49</td></tr><tr><td>Адреса вне лимита</td><td>0</td></tr><tr><td>Обход ограничен</td><td>Нет</td></tr><tr><td>Найденные адреса</td><td>49</td></tr><tr><td>Исключённые адреса</td><td>1</td></tr><tr><td>Недоступные внутренние адреса</td><td>3</td></tr><tr><td>Цепочки перенаправлений</td><td>0</td></tr><tr><td>Группы одинаковых заголовков</td><td>1</td></tr><tr><td>Группы одинаковых описаний</td><td>1</td></tr></tbody></table></div><dl class="technical-facts">
     <div><dt>Файл robots.txt</dt><dd>https://flowerlife-school.com/robots.txt</dd></div>
     <div><dt>Статус HTTP</dt><dd>200</dd></div>
-    <div><dt>Карты сайта из robots.txt</dt><dd>Нет данных</dd></div>
-  </dl><div class="table-scroll"><table><thead><tr><th scope="col">Карта сайта</th><th scope="col">Статус HTTP</th><th scope="col">Адресов</th></tr></thead><tbody><tr><td>https://flowerlife-school.com/sitemap.xml</td><td>404</td><td>0</td></tr><tr><td>https://flowerlife-school.com/sitemap_index.xml</td><td>404</td><td>0</td></tr><tr><td>https://flowerlife-school.com/sitemap-index.xml</td><td>404</td><td>0</td></tr></tbody></table></div><h3>Лабораторные измерения Lighthouse</h3><div class="table-scroll"><table><thead><tr><th scope="col">Страница</th><th scope="col">Устройство</th><th scope="col">Состояние</th><th scope="col">Данные CrUX</th><th scope="col">Производительность</th><th scope="col">Доступность</th><th scope="col">Лучшие практики</th><th scope="col">Поисковая оптимизация</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Отклонённые проверки Lighthouse</th></tr></thead><tbody><tr><td>https://flowerlife-school.com/</td><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>65</td><td>82</td><td>77</td><td>66</td><td>17 792,89</td><td>0</td><td>23</td></tr><tr><td>https://flowerlife-school.com/</td><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>92</td><td>82</td><td>77</td><td>66</td><td>1 479,85</td><td>0</td><td>23</td></tr><tr><td>https://flowerlife-school.com/courses/catalog</td><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>56</td><td>82</td><td>77</td><td>66</td><td>91 009,74</td><td>0</td><td>25</td></tr><tr><td>https://flowerlife-school.com/courses/catalog</td><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>87</td><td>82</td><td>77</td><td>66</td><td>2 074,31</td><td>0</td><td>24</td></tr><tr><td>https://flowerlife-school.com/courses</td><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>60</td><td>82</td><td>77</td><td>66</td><td>15 105</td><td>0</td><td>25</td></tr><tr><td>https://flowerlife-school.com/courses</td><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>90</td><td>82</td><td>77</td><td>66</td><td>837,64</td><td>0</td><td>23</td></tr><tr><td>https://flowerlife-school.com/masters</td><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>61</td><td>79</td><td>77</td><td>66</td><td>38 730,41</td><td>0</td><td>25</td></tr><tr><td>https://flowerlife-school.com/masters</td><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>93</td><td>79</td><td>77</td><td>66</td><td>1 495,39</td><td>0,05</td><td>23</td></tr><tr><td>https://flowerlife-school.com/courses/48</td><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>65</td><td>82</td><td>77</td><td>66</td><td>15 559,89</td><td>0</td><td>25</td></tr><tr><td>https://flowerlife-school.com/courses/48</td><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>92</td><td>82</td><td>77</td><td>66</td><td>1 542,68</td><td>0</td><td>25</td></tr><tr><td>https://flowerlife-school.com/courses/49</td><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>65</td><td>82</td><td>77</td><td>66</td><td>15 557,8</td><td>0</td><td>26</td></tr><tr><td>https://flowerlife-school.com/courses/49</td><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>92</td><td>82</td><td>77</td><td>66</td><td>1 465,66</td><td>0,02</td><td>25</td></tr></tbody></table></div><p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p></div></details>
-<details id="methodology"><summary>Методика и доступность данных</summary><div class="detail-body"><ul><li>В отчёт вошли данные обхода сайта, позиции в Яндексе, проверки Lighthouse и выбранные запросы к Алисе.</li><li>Оценки рассчитаны только по измеренным показателям с видимой полнотой данных.</li></ul><div class="table-scroll"><table><thead><tr><th scope="col">Источник</th><th scope="col">Состояние</th></tr></thead><tbody><tr><td>Обход сайта</td><td>Данные получены</td></tr><tr><td>Lighthouse</td><td>Данные получены</td></tr><tr><td>Поиск Яндекса</td><td>Получены частично</td></tr><tr><td>Ответы Алисы</td><td>Данные получены</td></tr><tr><td>Яндекс.Вебмастер</td><td>Недоступно при этой проверке</td></tr><tr><td>Google Search Console</td><td>Нужен доступ владельца сайта</td></tr><tr><td>DataForSEO</td><td>Не используется для этого рынка</td></tr></tbody></table></div><div class="table-scroll"><table><thead><tr><th scope="col">Источник</th><th scope="col">Состояние</th></tr></thead><tbody><tr><td>Google Search Console</td><td>Нужен доступ владельца сайта</td></tr></tbody></table></div><p class="note">Отсутствие доступа к Яндекс.Вебмастеру или Google Search Console не снижает оценку сайта.</p><ul><li>Проверенные запросы в Яндексе: 4 из 5.</li><li>Поиск Яндекса: данные получены частично.</li><li>Яндекс.Вебмастер: данные недоступны при этой проверке.</li><li>Часть данных кабинетов владельца недоступна без подтверждённого доступа.</li><li>В исходных данных отмечены дополнительные ограничения сбора.</li></ul></div></details>
-<details id="specialist-data"><summary>Данные проверки для специалиста</summary><div class="detail-body"><p>Исходные данные и подробный JSON сохранены для технической проверки.</p><ul class="file-links"><li><a href="report.json">report.json</a></li><li><a href="evidence/crawl.json">evidence/crawl.json</a></li><li><a href="evidence/provider-preflight.json">evidence/provider-preflight.json</a></li><li><a href="evidence/yandex-serp.json">evidence/yandex-serp.json</a></li><li><a href="evidence/yandex-ai-probes.json">evidence/yandex-ai-probes.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-home-mobile.json">evidence/lighthouse-flowerlife-school-com-home-mobile.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-home-desktop.json">evidence/lighthouse-flowerlife-school-com-home-desktop.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-courses-catalog-mobile.json">evidence/lighthouse-flowerlife-school-com-courses-catalog-mobile.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-courses-catalog-desktop.json">evidence/lighthouse-flowerlife-school-com-courses-catalog-desktop.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-courses-mobile.json">evidence/lighthouse-flowerlife-school-com-courses-mobile.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-courses-desktop.json">evidence/lighthouse-flowerlife-school-com-courses-desktop.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-masters-mobile.json">evidence/lighthouse-flowerlife-school-com-masters-mobile.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-masters-desktop.json">evidence/lighthouse-flowerlife-school-com-masters-desktop.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-courses-48-mobile.json">evidence/lighthouse-flowerlife-school-com-courses-48-mobile.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-courses-48-desktop.json">evidence/lighthouse-flowerlife-school-com-courses-48-desktop.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-courses-49-mobile.json">evidence/lighthouse-flowerlife-school-com-courses-49-mobile.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-courses-49-desktop.json">evidence/lighthouse-flowerlife-school-com-courses-49-desktop.json</a></li><li><a href="manual-query-pack.md">manual-query-pack.md</a></li></ul><h3>Запросы для ручной проверки</h3><ul><li>курсы духовного развития</li></ul></div></details>
+    <div><dt>Карты сайта из robots.txt</dt><dd>https://flowerlife-school.com/sitemap.xml</dd></div>
+  </dl><div class="table-scroll"><table><thead><tr><th scope="col">Карта сайта</th><th scope="col">Статус HTTP</th><th scope="col">Адресов</th></tr></thead><tbody><tr><td>https://flowerlife-school.com/sitemap.xml</td><td>200</td><td>34</td></tr><tr><td>https://flowerlife-school.com/sitemap_index.xml</td><td>404</td><td>0</td></tr><tr><td>https://flowerlife-school.com/sitemap-index.xml</td><td>404</td><td>0</td></tr></tbody></table></div><h3>Недоступные внутренние адреса</h3><ul><li>https://flowerlife-school.com/course</li><li>https://flowerlife-school.com/documentData</li><li>https://flowerlife-school.com/legalDocument</li></ul><h3>Лабораторные измерения Lighthouse</h3><div class="table-scroll"><table><thead><tr><th scope="col">Страница</th><th scope="col">Устройство</th><th scope="col">Состояние</th><th scope="col">Данные CrUX</th><th scope="col">Производительность</th><th scope="col">Доступность</th><th scope="col">Лучшие практики</th><th scope="col">Поисковая оптимизация</th><th scope="col">LCP</th><th scope="col">CLS</th><th scope="col">Отклонённые проверки Lighthouse</th></tr></thead><tbody><tr><td>https://flowerlife-school.com/</td><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>64</td><td>82</td><td>77</td><td>100</td><td>18 031,02</td><td>0</td><td>22</td></tr><tr><td>https://flowerlife-school.com/</td><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>98</td><td>82</td><td>77</td><td>100</td><td>1 035,55</td><td>0</td><td>19</td></tr><tr><td>https://flowerlife-school.com/courses</td><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>60</td><td>82</td><td>77</td><td>100</td><td>15 258,25</td><td>0</td><td>24</td></tr><tr><td>https://flowerlife-school.com/courses</td><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>90</td><td>82</td><td>77</td><td>100</td><td>852,15</td><td>0</td><td>21</td></tr><tr><td>https://flowerlife-school.com/courses/catalog</td><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>29</td><td>82</td><td>77</td><td>100</td><td>91 588,19</td><td>0</td><td>27</td></tr><tr><td>https://flowerlife-school.com/courses/catalog</td><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>87</td><td>82</td><td>77</td><td>100</td><td>2 060,35</td><td>0</td><td>20</td></tr><tr><td>https://flowerlife-school.com/masters</td><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>61</td><td>79</td><td>77</td><td>100</td><td>38 388,41</td><td>0</td><td>22</td></tr><tr><td>https://flowerlife-school.com/masters</td><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>94</td><td>79</td><td>77</td><td>100</td><td>1 436,74</td><td>0,05</td><td>21</td></tr><tr><td>https://flowerlife-school.com/events</td><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>87</td><td>78</td><td>77</td><td>100</td><td>2 030,09</td><td>0</td><td>24</td></tr><tr><td>https://flowerlife-school.com/events</td><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>89</td><td>78</td><td>77</td><td>100</td><td>814,28</td><td>0</td><td>20</td></tr><tr><td>https://flowerlife-school.com/courses/46</td><td>Мобильное устройство</td><td>Данные получены</td><td>Данные не собирались</td><td>65</td><td>82</td><td>77</td><td>100</td><td>14 111,79</td><td>0</td><td>23</td></tr><tr><td>https://flowerlife-school.com/courses/46</td><td>Компьютер</td><td>Данные получены</td><td>Данные не собирались</td><td>98</td><td>82</td><td>77</td><td>100</td><td>1 109,97</td><td>0,01</td><td>21</td></tr></tbody></table></div><p class="note">Lighthouse моделирует загрузку в лабораторных условиях и не заменяет данные реальных посетителей.</p></div></details>
+<details id="methodology"><summary>Методика и доступность данных</summary><div class="detail-body"><ul><li>В отчёт вошли данные обхода сайта, позиции в Яндексе, проверки Lighthouse и выбранные запросы к Алисе.</li><li>Оценки рассчитаны только по измеренным показателям с видимой полнотой данных.</li></ul><div class="table-scroll"><table><thead><tr><th scope="col">Источник</th><th scope="col">Состояние</th></tr></thead><tbody><tr><td>Обход сайта</td><td>Данные получены</td></tr><tr><td>Lighthouse</td><td>Данные получены</td></tr><tr><td>Поиск Яндекса</td><td>Данные получены</td></tr><tr><td>Ответы Алисы</td><td>Данные получены</td></tr><tr><td>Яндекс Wordstat</td><td>Данные получены</td></tr><tr><td>Яндекс.Вебмастер</td><td>Данные получены</td></tr><tr><td>Google Search Console</td><td>Нужен доступ владельца сайта</td></tr><tr><td>DataForSEO</td><td>Не используется для этого рынка</td></tr></tbody></table></div><div class="table-scroll"><table><thead><tr><th scope="col">Источник</th><th scope="col">Состояние</th></tr></thead><tbody><tr><td>Google Search Console</td><td>Нужен доступ владельца сайта</td></tr></tbody></table></div><p class="note">Отсутствие доступа к Яндекс.Вебмастеру или Google Search Console не снижает оценку сайта.</p><ul><li>Часть данных кабинетов владельца недоступна без подтверждённого доступа.</li><li>В исходных данных отмечены дополнительные ограничения сбора.</li></ul></div></details>
+<details id="specialist-data"><summary>Данные проверки для специалиста</summary><div class="detail-body"><p>Исходные данные и подробный JSON сохранены для технической проверки.</p><ul class="file-links"><li><a href="report.json">report.json</a></li><li><a href="evidence/crawl.json">evidence/crawl.json</a></li><li><a href="evidence/provider-preflight.json">evidence/provider-preflight.json</a></li><li><a href="evidence/yandex-serp.json">evidence/yandex-serp.json</a></li><li><a href="evidence/yandex-ai-probes.json">evidence/yandex-ai-probes.json</a></li><li><a href="evidence/wordstat.json">evidence/wordstat.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-home-mobile.json">evidence/lighthouse-flowerlife-school-com-home-mobile.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-home-desktop.json">evidence/lighthouse-flowerlife-school-com-home-desktop.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-courses-mobile.json">evidence/lighthouse-flowerlife-school-com-courses-mobile.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-courses-desktop.json">evidence/lighthouse-flowerlife-school-com-courses-desktop.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-courses-catalog-mobile.json">evidence/lighthouse-flowerlife-school-com-courses-catalog-mobile.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-courses-catalog-desktop.json">evidence/lighthouse-flowerlife-school-com-courses-catalog-desktop.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-masters-mobile.json">evidence/lighthouse-flowerlife-school-com-masters-mobile.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-masters-desktop.json">evidence/lighthouse-flowerlife-school-com-masters-desktop.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-events-mobile.json">evidence/lighthouse-flowerlife-school-com-events-mobile.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-events-desktop.json">evidence/lighthouse-flowerlife-school-com-events-desktop.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-courses-46-mobile.json">evidence/lighthouse-flowerlife-school-com-courses-46-mobile.json</a></li><li><a href="evidence/lighthouse-flowerlife-school-com-courses-46-desktop.json">evidence/lighthouse-flowerlife-school-com-courses-46-desktop.json</a></li></ul></div></details>
 </main></body></html>
