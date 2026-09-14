@@ -15,6 +15,7 @@ import {
   SOURCE_PRESENTATION_ORDER,
   type WgdManagerPresentationInput,
 } from "./managerPresentation";
+import type { WordstatEvidence } from "./wordstatEvidence";
 
 const HOME = "https://example.com/";
 const SLOW = "https://example.com/slow";
@@ -264,6 +265,40 @@ function input(language = "ru"): WgdManagerPresentationInput {
 }
 
 describe("buildManagerPresentation", () => {
+  test("turns Wordstat into the first non-scoring content recommendation", () => {
+    const demand = input();
+    demand.normalized.wordstat = {
+      status: { state: "success", message: "RAW_WORDSTAT_MESSAGE", checkedAt: "2026-09-01T10:00:00.000Z" },
+      clusters: [{
+        seed: "курсы ароматерапии онлайн", totalCount: 4200,
+        phrases: [{ phrase: "обучение ароматерапии", count: 1700 }], brand: false,
+        coverage: "missing", bestPage: null, matchedFields: [], tokenRatio: 0,
+        dynamics: [{ date: "2026-08-01", count: 450 }],
+        regions: [{ regionId: "225", regionName: "Россия", count: 4200, share: 0.7, affinityIndex: 110 }],
+      }],
+      primaryRecommendation: {
+        seed: "курсы ароматерапии онлайн", demand: 4200, coverage: "missing", bestPage: null,
+        action: "Создать или расширить посадочную страницу.",
+      },
+      requestCount: 3,
+      limitations: [],
+    } satisfies WordstatEvidence;
+
+    const model = buildManagerPresentation(demand);
+
+    expect(model.headings.demand).toBe("Спрос и соответствие контента");
+    expect(model.wordstat).toMatchObject({
+      state: "Данные получены",
+      scoreNote: "Не влияет на общую SEO-оценку",
+      primary: expect.objectContaining({ title: "Главная возможность роста", seed: "курсы ароматерапии онлайн" }),
+    });
+    expect(model.wordstat.rows[0]).toMatchObject({
+      seed: "курсы ароматерапии онлайн", demand: "4 200", coverage: "Контент отсутствует",
+      bestPage: "Подходящая страница не найдена", related: "обучение ароматерапии — 1 700",
+    });
+    expect(JSON.stringify(model.wordstat)).not.toContain("RAW_WORDSTAT_MESSAGE");
+  });
+
   test("builds the complete Russian manager model from normalized evidence and supplied scores", () => {
     const model = buildManagerPresentation(input());
 
@@ -479,7 +514,7 @@ describe("buildManagerPresentation", () => {
       "uses-responsive-images", "modern-image-formats", "efficient-animated-content",
     ]);
     expect(SOURCE_PRESENTATION_ORDER).toEqual([
-      "crawl", "crawler", "lighthouse", "yandex_search", "alice_ai", "yandex_webmaster", "gsc", "dataforseo",
+      "crawl", "crawler", "lighthouse", "yandex_search", "alice_ai", "wordstat", "yandex_webmaster", "gsc", "dataforseo",
     ]);
   });
 

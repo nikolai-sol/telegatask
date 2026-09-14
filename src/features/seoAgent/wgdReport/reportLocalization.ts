@@ -35,6 +35,7 @@ export type WgdManagerHeading =
   | "overall"
   | "components"
   | "problems"
+  | "demand"
   | "yandex"
   | "alice"
   | "speed"
@@ -71,6 +72,7 @@ export type WgdKnownSourceId =
   | "lighthouse"
   | "yandex_search"
   | "alice_ai"
+  | "wordstat"
   | "yandex_webmaster"
   | "gsc"
   | "dataforseo";
@@ -131,6 +133,7 @@ const RU_HEADINGS: Record<WgdManagerHeading, string> = {
   overall: "Общая оценка",
   components: "Составляющие оценки",
   problems: "Что мешает росту",
+  demand: "Спрос и соответствие контента",
   yandex: "Позиции в Яндексе",
   alice: "Видимость в ответах Алисы",
   speed: "Скорость и удобство",
@@ -146,6 +149,7 @@ const EN_HEADINGS: Record<WgdManagerHeading, string> = {
   overall: "Overall assessment",
   components: "Assessment components",
   problems: "What limits growth",
+  demand: "Demand and content alignment",
   yandex: "Yandex positions",
   alice: "Visibility in Alice answers",
   speed: "Speed and usability",
@@ -472,6 +476,7 @@ const RU_SOURCE_NAMES: Record<WgdKnownSourceId, string> = {
   lighthouse: "Lighthouse",
   yandex_search: "Поиск Яндекса",
   alice_ai: "Ответы Алисы",
+  wordstat: "Яндекс Wordstat",
   yandex_webmaster: "Яндекс.Вебмастер",
   gsc: "Google Search Console",
   dataforseo: "DataForSEO",
@@ -483,6 +488,7 @@ const EN_SOURCE_NAMES: Record<WgdKnownSourceId, string> = {
   lighthouse: "Lighthouse",
   yandex_search: "Yandex Search",
   alice_ai: "Alice answers",
+  wordstat: "Yandex Wordstat",
   yandex_webmaster: "Yandex Webmaster",
   gsc: "Google Search Console",
   dataforseo: "DataForSEO",

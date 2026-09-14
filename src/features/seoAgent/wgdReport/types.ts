@@ -446,6 +446,7 @@ export type WgdManagerPresentation = {
     overall: string;
     components: string;
     problems: string;
+    demand: string;
     yandex: string;
     alice: string;
     speed: string;
@@ -490,6 +491,29 @@ export type WgdManagerPresentation = {
     linkLabel: string;
   }>;
   problemsEmpty: string | null;
+  wordstat: {
+    state: string;
+    scoreNote: string;
+    summary: string;
+    primary: {
+      title: string;
+      seed: string;
+      demand: string;
+      coverage: string;
+      action: string;
+    } | null;
+    rows: Array<{
+      seed: string;
+      demand: string;
+      coverage: string;
+      bestPage: string;
+      related: string;
+      trend: string;
+      region: string;
+      brand: string;
+    }>;
+    empty: string | null;
+  };
   yandex: {
     summary: { requested: number; checked: number; found: number; top10: number; text: string };
     rows: Array<{ query: string; position: string; page: string; result: string }>;

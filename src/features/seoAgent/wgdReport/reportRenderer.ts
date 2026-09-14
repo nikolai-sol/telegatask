@@ -7,6 +7,7 @@ import { htmlText } from "./reportHtml";
 import { renderTechnicalSections } from "./technicalReportRenderer";
 import { buildPublishedWgdReport, isScorableCrawlEvidence } from "./reportModel";
 import type { YandexEvidence } from "./yandexEvidence";
+import type { WordstatEvidence } from "./wordstatEvidence";
 import type {
   CrawlEvidence,
   LighthouseEvidence,
@@ -33,6 +34,7 @@ function assemblePresentation(published: WgdPublishedReport): {
   const pages: PageEvidence[] = published.pages;
   const lighthouse: LighthouseEvidence[] = published.lighthouse;
   const yandex = isObject(published.yandex) ? published.yandex as unknown as YandexEvidence : undefined;
+  const wordstat = isObject(published.wordstat) ? published.wordstat as unknown as WordstatEvidence : undefined;
   const sources: SourceCoverage[] = published.sources;
   const normalized: WgdManagerNormalizedPayload = {
     generatedAt: published.generatedAt,
@@ -42,6 +44,7 @@ function assemblePresentation(published: WgdPublishedReport): {
     pages,
     lighthouse,
     yandex,
+    wordstat,
     findings: published.findings,
     limitations: published.limitations,
     evidenceFiles: stringArray(published.evidenceFiles),
@@ -93,6 +96,9 @@ p{margin:.45rem 0 1rem}
 dt{color:var(--muted)}dd{margin:0;font-weight:650}
 .problem-card{border-left:5px solid var(--blue)}
 .problem-card p{margin:.6rem 0}
+.demand-meta{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin:-4px 0 8px}.demand-meta span{color:var(--muted)}
+.demand-primary{border:1px solid #a8c7fa;border-left:6px solid var(--blue);border-radius:13px;background:#f5f9ff;padding:18px;margin:14px 0}.demand-primary h3{font-size:1.2rem;margin:.3rem 0}.demand-primary-facts{display:flex;flex-wrap:wrap;gap:8px 10px}.demand-primary-facts span{background:#e5efff;border-radius:999px;padding:4px 10px;font-weight:750}
+.demand-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px}.demand-row{border:1px solid var(--line);border-radius:13px;padding:14px;min-width:0}.demand-row dl{display:grid;gap:8px;margin:0}.demand-row dl div{display:grid;grid-template-columns:minmax(120px,.65fr) minmax(0,1.35fr);gap:10px}.demand-row dd{overflow-wrap:anywhere}
 .detail-link,.file-links a{color:var(--blue);font-weight:700;text-decoration-thickness:1px;text-underline-offset:2px}
 .summary-cards{margin-bottom:14px}
 .metric-card{border-top:4px solid var(--unknown);display:grid;gap:5px}.metric-card span{color:var(--muted)}.metric-card strong{font-size:1.35rem}
@@ -105,7 +111,7 @@ table{border-collapse:collapse;width:100%;min-width:620px}
 th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
 th{background:#f7f9fc;white-space:nowrap}tbody tr:last-child td{border-bottom:0}
 @media(max-width:680px){.overall-grid{grid-template-columns:1fr}}
-@media(max-width:420px){main{width:calc(100% - 16px);margin:8px auto 30px}.report-header,section{padding:16px;border-radius:12px}summary{padding:16px}.detail-body{padding:16px}.overall-grid{grid-template-columns:1fr}.compact-facts div,.problem-facts div,.technical-facts div{grid-template-columns:1fr;gap:2px}table{min-width:560px}}
+@media(max-width:420px){main{width:calc(100% - 16px);margin:8px auto 30px}.report-header,section{padding:16px;border-radius:12px}summary{padding:16px}.detail-body{padding:16px}.overall-grid{grid-template-columns:1fr}.compact-facts div,.problem-facts div,.technical-facts div,.demand-row dl div{grid-template-columns:1fr;gap:2px}table{min-width:560px}}
 @media print{html,body{background:#fff}.report-header,section,details{box-shadow:none;break-inside:avoid}main{width:100%;margin:0}.detail-body{display:block}.table-scroll{overflow:visible}table{min-width:0;font-size:10pt}}
 `;
 
