@@ -105,6 +105,10 @@ describe("Wordstat demand analysis", () => {
       checkedAt: "2026-09-14T10:00:00.000Z",
       options: { ...options(), keywords: ["курс духовного развития", "нет данных"] },
       pages: [
+        page("https://flowerlife-school.com/404", {
+          title: "Духовное развитие курс",
+          discoveryOrder: 0,
+        }),
         page("https://flowerlife-school.com/later/", {
           title: "Курс духовного роста",
           discoveryOrder: 2,
