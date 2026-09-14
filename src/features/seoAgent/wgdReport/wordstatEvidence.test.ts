@@ -86,6 +86,20 @@ describe("Wordstat demand analysis", () => {
     });
   });
 
+  test("recognizes a short brand phrase inside a longer homepage title segment", () => {
+    const evidence = analyzeWordstatDemand({
+      checkedAt: "2026-09-14T10:00:00.000Z",
+      options: { ...options(), keywords: ["цветок жизни школа"] },
+      pages: [page(options().url, {
+        title: "Школа духовного развития «Цветок Жизни» — онлайн-курсы, ретриты и практики",
+        headings: { h1: [], h2: [] },
+      })],
+      seeds: [{ seed: "цветок жизни школа", totalCount: 254, phrases: [] }],
+    });
+
+    expect(evidence.clusters[0].brand).toBe(true);
+  });
+
   test("selects the best page deterministically and does not invent a gap without measurements", () => {
     const evidence = analyzeWordstatDemand({
       checkedAt: "2026-09-14T10:00:00.000Z",
@@ -109,7 +123,9 @@ describe("Wordstat demand analysis", () => {
     expect(evidence.clusters[0]).toMatchObject({
       coverage: "partial",
       bestPage: "https://flowerlife-school.com/first/",
+      matchRatio: 1,
     });
+    expect(evidence.clusters[0]).not.toHaveProperty("tokenRatio");
     expect(evidence.clusters[1].coverage).toBe("not_measured");
     expect(evidence.primaryRecommendation?.seed).toBe("курс духовного развития");
   });
@@ -131,7 +147,10 @@ describe("collectWordstatEvidence", () => {
       if (url.endsWith("/dynamics")) {
         return new Response(JSON.stringify({ dynamics: [{ date: "2026-08-01", count: "100" }] }), { status: 200 });
       }
-      return new Response(JSON.stringify({ regions: [{ regionId: "225", count: "200", share: 0.4, affinityIndex: 120 }] }), { status: 200 });
+      if (url.endsWith("/getRegionsTree")) {
+        return new Response(JSON.stringify({ regions: [{ id: "225", name: "Россия", children: [{ id: "213", name: "Москва" }] }] }), { status: 200 });
+      }
+      return new Response(JSON.stringify({ results: [{ region: "213", count: "200", share: 0.4, affinityIndex: 120 }] }), { status: 200 });
     });
 
     const evidence = await collectWordstatEvidence(options(), [page(options().url, {
@@ -145,8 +164,27 @@ describe("collectWordstatEvidence", () => {
 
     expect(evidence.status.state).toBe("success");
     expect(evidence.clusters.every((cluster) => cluster.phrases.length <= 20)).toBe(true);
-    expect(calls).toHaveLength(7); // 3 top requests + dynamics/regions for two non-brand gaps.
+    expect(calls).toHaveLength(8); // 3 top requests + one region tree + dynamics/regions for two non-brand gaps.
     expect(calls.slice(0, 3).every((call) => call.url.endsWith("/topRequests"))).toBe(true);
+    const topBody = JSON.parse(String(calls[0].init?.body));
+    expect(topBody).toMatchObject({
+      folderId: "folder-secret",
+      phrase: "цветок жизни школа",
+      numPhrases: 20,
+      regions: ["225"],
+    });
+    expect(topBody).not.toHaveProperty("regionIds");
+    const dynamicsBody = JSON.parse(String(calls.find((call) => call.url.endsWith("/dynamics"))!.init?.body));
+    expect(dynamicsBody).toMatchObject({
+      folderId: "folder-secret",
+      period: "PERIOD_MONTHLY",
+      regions: ["225"],
+      fromDate: "2025-08-01T00:00:00Z",
+      toDate: "2026-08-31T00:00:00Z",
+    });
+    const regionsBody = JSON.parse(String(calls.find((call) => call.url.endsWith("/regions"))!.init?.body));
+    expect(regionsBody).toMatchObject({ folderId: "folder-secret", region: "REGION_ALL" });
+    expect(evidence.clusters.find((cluster) => cluster.regions?.length)?.regions?.[0].regionName).toBe("Москва");
     expect(calls.every((call) => (call.init?.headers as Record<string, string>).Authorization === "Api-Key super-secret")).toBe(true);
     expect(JSON.stringify(evidence)).not.toContain("super-secret");
     expect(evidence.requestCount).toBeLessThanOrEqual(16);

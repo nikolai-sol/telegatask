@@ -33,7 +33,7 @@ export type WordstatDemandCluster = WordstatSeedEvidence & {
   coverage: WordstatCoverageState;
   bestPage: string | null;
   matchedFields: string[];
-  tokenRatio: number;
+  matchRatio: number;
 };
 
 export type WordstatPrimaryRecommendation = {
@@ -153,8 +153,11 @@ function brandCandidates(options: WgdReportOptions, pages: PageEvidence[], expli
   });
   const shortSignals = [homepage?.title, ...(homepage?.headings?.h1 || [])]
     .flatMap((value) => {
-      const valueTokens = tokens(value);
-      return valueTokens.length > 0 && valueTokens.length <= 5 ? [normalizeText(value)] : [];
+      const candidates = typeof value === "string" ? [value, ...value.split(/\s+[—–-]\s+|[|:]/)] : [];
+      return candidates.flatMap((candidate) => {
+        const valueTokens = tokens(candidate);
+        return valueTokens.length > 0 && valueTokens.length <= 5 ? [normalizeText(candidate)] : [];
+      });
     });
   return [...new Set([...labels, ...shortSignals, ...explicit].map(normalizeText).filter(Boolean))];
 }
@@ -165,7 +168,8 @@ function isBrandSeed(seed: string, candidates: string[]): boolean {
   return candidates.some((candidate) => {
     if (candidate.length >= 4 && normalized.includes(candidate)) return true;
     const candidateTokens = tokens(candidate);
-    return candidateTokens.length >= 2 && candidateTokens.every((token) => seedTokens.includes(token));
+    return (candidateTokens.length >= 2 && candidateTokens.every((token) => seedTokens.includes(token)))
+      || (seedTokens.length >= 2 && seedTokens.every((token) => candidateTokens.includes(token)));
   });
 }
 
@@ -201,7 +205,7 @@ export function analyzeWordstatDemand(input: AnalyzeWordstatInput): WordstatEvid
   const candidates = brandCandidates(input.options, input.pages, input.brandKeys);
   const clusters = input.seeds.map((seed): WordstatDemandCluster => {
     if (seed.measured === false) {
-      return { ...seed, brand: isBrandSeed(seed.seed, candidates), coverage: "not_measured", bestPage: null, matchedFields: [], tokenRatio: 0 };
+      return { ...seed, brand: isBrandSeed(seed.seed, candidates), coverage: "not_measured", bestPage: null, matchedFields: [], matchRatio: 0 };
     }
     const matches = input.pages.map((page, index) => ({ page, index, ...pageMatch(seed, page) }))
       .sort((left, right) => coverageRank(right.coverage) - coverageRank(left.coverage)
@@ -215,7 +219,7 @@ export function analyzeWordstatDemand(input: AnalyzeWordstatInput): WordstatEvid
       coverage: best?.coverage || "missing",
       bestPage: best && best.coverage !== "missing" ? best.page.finalUrl || best.page.requestedUrl : null,
       matchedFields: best?.fields || [],
-      tokenRatio: best?.ratio || 0,
+      matchRatio: best?.ratio || 0,
     };
   });
   const state = input.statusState || (clusters.some((item) => item.coverage === "not_measured") ? "partial" : "success");
@@ -264,7 +268,7 @@ function parseRegions(payload: Record<string, unknown>): WordstatRegionPoint[] {
   return readArray(payload, ["regions", "items", "results"]).slice(0, 20).flatMap((value) => {
     if (!value || typeof value !== "object") return [];
     const item = value as Record<string, unknown>;
-    const regionId = String(item.regionId ?? item.id ?? "").trim();
+    const regionId = String(item.regionId ?? item.region ?? item.id ?? "").trim();
     if (!regionId) return [];
     const regionName = [item.regionName, item.name].find((entry) => typeof entry === "string") as string | undefined;
     return [{
@@ -280,7 +284,8 @@ function parseRegions(payload: Record<string, unknown>): WordstatRegionPoint[] {
 function completedMonths(now: Date): { fromDate: string; toDate: string } {
   const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 0));
   const start = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth() - 12, 1));
-  return { fromDate: start.toISOString().slice(0, 10), toDate: end.toISOString().slice(0, 10) };
+  const rfc3339Date = (value: Date) => `${value.toISOString().slice(0, 10)}T00:00:00Z`;
+  return { fromDate: rfc3339Date(start), toDate: rfc3339Date(end) };
 }
 
 /** Collect bounded Wordstat evidence directly through Yandex Search API. */
@@ -313,14 +318,14 @@ export async function collectWordstatEvidence(
   const fetcher = deps.fetch || globalThis.fetch;
   let requestCount = 0;
   let failures = 0;
-  const request = async (method: "topRequests" | "dynamics" | "regions", body: Record<string, unknown>): Promise<Record<string, unknown> | null> => {
+  const request = async (method: "topRequests" | "dynamics" | "regions" | "getRegionsTree", body: Record<string, unknown>): Promise<Record<string, unknown> | null> => {
     requestCount += 1;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     try {
       const response = await fetcher(`${WORDSTAT_BASE}/${method}`, {
         method: "POST",
-        headers: { Authorization: `Api-Key ${apiKey}`, "x-folder-id": folderId, "content-type": "application/json" },
+        headers: { Authorization: `Api-Key ${apiKey}`, "content-type": "application/json" },
         body: JSON.stringify(body),
         signal: controller.signal,
       });
@@ -338,15 +343,29 @@ export async function collectWordstatEvidence(
 
   const seeds: WordstatSeedEvidence[] = [];
   for (const seed of uniqueSeeds) {
-    const payload = await request("topRequests", { phrase: seed, regionIds: [Number(options.region) || 225], pageSize: MAX_PHRASES });
+    const payload = await request("topRequests", {
+      phrase: seed,
+      numPhrases: MAX_PHRASES,
+      regions: [String(Number(options.region) || 225)],
+      folderId,
+    });
     if (!payload) {
       seeds.push({ seed, totalCount: null, phrases: [], measured: false });
       continue;
     }
+    const resultPhrases = readArray(payload, ["topRequests", "requests", "results", "items"])
+      .map(parsePhrase).filter((item): item is WordstatPhrase => Boolean(item));
+    const associationPhrases = readArray(payload, ["associations"])
+      .map(parsePhrase).filter((item): item is WordstatPhrase => Boolean(item));
+    const deduplicated = new Map<string, WordstatPhrase>();
+    for (const phrase of [...resultPhrases, ...associationPhrases]) {
+      const key = normalizeText(phrase.phrase);
+      if (key && !deduplicated.has(key)) deduplicated.set(key, phrase);
+    }
     seeds.push({
       seed,
       totalCount: parseWordstatCount(readValue(payload, ["totalCount", "count", "shows"])),
-      phrases: readArray(payload, ["topRequests", "requests", "results", "items"]).map(parsePhrase).filter((item): item is WordstatPhrase => Boolean(item)).slice(0, MAX_PHRASES),
+      phrases: [...deduplicated.values()].slice(0, MAX_PHRASES),
     });
   }
   let analysis = analyzeWordstatDemand({ checkedAt, options, pages, seeds, brandKeys: deps.brandKeys });
@@ -355,12 +374,36 @@ export async function collectWordstatEvidence(
     .sort((left, right) => (right.totalCount ?? -1) - (left.totalCount ?? -1) || (left.coverage === "missing" ? -1 : 1))
     .slice(0, MAX_ENRICHED_GAPS);
   const period = completedMonths(now);
+  const regionNames = new Map<string, string>();
+  if (gaps.length) {
+    const tree = await request("getRegionsTree", { folderId });
+    const visit = (items: unknown[]): void => {
+      for (const value of items) {
+        if (!value || typeof value !== "object") continue;
+        const item = value as Record<string, unknown>;
+        const id = String(item.id ?? "").trim();
+        const name = [item.name, item.label].find((entry) => typeof entry === "string") as string | undefined;
+        if (id && name?.trim()) regionNames.set(id, name.trim());
+        if (Array.isArray(item.children)) visit(item.children);
+      }
+    };
+    if (tree) visit(readArray(tree, ["regions", "results", "items"]));
+  }
   for (const gap of gaps) {
     const target = seeds.find((seed) => seed.seed === gap.seed)!;
-    const dynamics = await request("dynamics", { phrase: gap.seed, regionIds: [Number(options.region) || 225], ...period });
-    const regions = await request("regions", { phrase: gap.seed });
+    const dynamics = await request("dynamics", {
+      phrase: gap.seed,
+      period: "PERIOD_MONTHLY",
+      regions: [String(Number(options.region) || 225)],
+      folderId,
+      ...period,
+    });
+    const regions = await request("regions", { phrase: gap.seed, region: "REGION_ALL", folderId });
     if (dynamics) target.dynamics = parseDynamics(dynamics);
-    if (regions) target.regions = parseRegions(regions);
+    if (regions) target.regions = parseRegions(regions).map((item) => ({
+      ...item,
+      ...(regionNames.get(item.regionId) ? { regionName: regionNames.get(item.regionId) } : {}),
+    }));
   }
   const successful = requestCount - failures;
   const state: WordstatCollectionState = successful === 0 ? "unavailable" : failures > 0 ? "partial" : "success";

@@ -190,7 +190,7 @@ function payload(): WgdReportPayload {
       clusters: [{
         seed: "курсы ароматерапии онлайн", totalCount: 4200,
         phrases: [{ phrase: "обучение ароматерапии", count: 1700 }], brand: false,
-        coverage: "missing", bestPage: null, matchedFields: [], tokenRatio: 0,
+        coverage: "missing", bestPage: null, matchedFields: [], matchRatio: 0,
       }],
       primaryRecommendation: {
         seed: "курсы ароматерапии онлайн", demand: 4200, coverage: "missing",

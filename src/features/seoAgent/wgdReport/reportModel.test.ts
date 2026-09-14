@@ -116,7 +116,7 @@ describe("buildPublishedWgdReport", () => {
       status: { state: "success", message: "Collected", checkedAt: withDemand.generatedAt },
       clusters: [{
         seed: "online course", totalCount: 5000, phrases: [], brand: false,
-        coverage: "missing", bestPage: null, matchedFields: [], tokenRatio: 0,
+        coverage: "missing", bestPage: null, matchedFields: [], matchRatio: 0,
       }],
       primaryRecommendation: {
         seed: "online course", demand: 5000, coverage: "missing", bestPage: null,

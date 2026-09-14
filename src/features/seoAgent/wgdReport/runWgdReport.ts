@@ -508,7 +508,7 @@ function nonRussianWordstat(options: WgdReportOptions, checkedAt: string): Words
     status: { state: "not_applicable", message: "Wordstat applies to Russian-market reports.", checkedAt },
     clusters: options.keywords.map((seed) => ({
       seed, totalCount: null, phrases: [], measured: false, brand: false,
-      coverage: "not_measured", bestPage: null, matchedFields: [], tokenRatio: 0,
+      coverage: "not_measured", bestPage: null, matchedFields: [], matchRatio: 0,
     })),
     primaryRecommendation: null,
     requestCount: 0,
@@ -576,7 +576,7 @@ export async function runWgdReport(
         status: { state: "unavailable", message: "Wordstat demand is unavailable.", checkedAt: generatedAt },
         clusters: options.keywords.map((seed) => ({
           seed, totalCount: null, phrases: [], measured: false, brand: false,
-          coverage: "not_measured", bestPage: null, matchedFields: [], tokenRatio: 0,
+          coverage: "not_measured", bestPage: null, matchedFields: [], matchRatio: 0,
         })),
         primaryRecommendation: null,
         requestCount: 0,

@@ -272,7 +272,7 @@ describe("buildManagerPresentation", () => {
       clusters: [{
         seed: "курсы ароматерапии онлайн", totalCount: 4200,
         phrases: [{ phrase: "обучение ароматерапии", count: 1700 }], brand: false,
-        coverage: "missing", bestPage: null, matchedFields: [], tokenRatio: 0,
+        coverage: "missing", bestPage: null, matchedFields: [], matchRatio: 0,
         dynamics: [{ date: "2026-08-01", count: 450 }],
         regions: [{ regionId: "225", regionName: "Россия", count: 4200, share: 0.7, affinityIndex: 110 }],
       }],
