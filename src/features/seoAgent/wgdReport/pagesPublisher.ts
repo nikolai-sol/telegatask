@@ -76,6 +76,7 @@ type TrustedBundle = {
   html: Buffer;
   reportJson: Buffer;
   evidence: Map<string, Buffer>;
+  manualQueryPack?: Buffer;
   report: WgdPublishedReport;
   files: string[];
 };
@@ -97,6 +98,7 @@ const MANAGER_MARKERS = [
   "SEO-аудит сайта",
   "Общая оценка",
   "Что мешает росту",
+  "Спрос и соответствие контента",
   "Позиции в Яндексе",
   "Видимость в ответах Алисы",
   "Скорость и удобство",
@@ -108,6 +110,7 @@ const MANAGER_MARKERS = [
 const MANAGER_SECTION_IDS = [
   "overall-score",
   "main-problems",
+  "wordstat-demand",
   "yandex-positions",
   "alice-visibility",
   "speed-ux",
@@ -565,6 +568,9 @@ function assertReportContract(value: unknown): WgdPublishedReport {
     throw publicationError("an evidence declaration is unsafe");
   }
   if (new Set(declared).size !== declared.length) throw publicationError("evidence declarations must be unique");
+  if (value.manualQueryPackPath !== undefined && value.manualQueryPackPath !== "manual-query-pack.md") {
+    throw publicationError("manual query pack declaration is unsafe");
+  }
   for (const required of REQUIRED_EVIDENCE) {
     if (!declared.includes(required)) throw publicationError("required evidence is not declared");
   }
@@ -621,9 +627,14 @@ function assertHtmlContract(html: string, report: WgdPublishedReport): void {
   const evidenceHrefs = new Set<string>();
   let reportJsonLinked = false;
   const declared = new Set(report.evidenceFiles as string[]);
+  const manualQueryPackPath = report.manualQueryPackPath === "manual-query-pack.md"
+    ? report.manualQueryPackPath
+    : undefined;
   for (const href of hrefAttributes) {
     if (href === "report.json") {
       reportJsonLinked = true;
+    } else if (manualQueryPackPath && href === manualQueryPackPath) {
+      continue;
     } else if (declared.has(href)) {
       evidenceHrefs.add(href);
     } else if (/^#[a-z0-9][a-z0-9-]*$/.test(href) && ids.has(href.slice(1))) {
@@ -644,10 +655,12 @@ async function readBundle(
   deps: Partial<PublisherDependencies>
 ): Promise<TrustedBundle> {
   const rootIdentity = await captureDirectoryIdentity(directory, "bundle root");
-  const expectedRoot = ["evidence", htmlName, "report.json"];
   const rootEntries = (await readdir(directory)).sort();
   await assertDirectoryIdentity(rootIdentity, "bundle root");
-  if (rootEntries.join("\0") !== expectedRoot.sort().join("\0")) {
+  const requiredRoot = ["evidence", htmlName, "report.json"];
+  const allowedRoot = new Set([...requiredRoot, "manual-query-pack.md"]);
+  if (requiredRoot.some((name) => !rootEntries.includes(name))
+    || rootEntries.some((name) => !allowedRoot.has(name))) {
     throw publicationError("bundle root entries do not match the allowlist");
   }
   const evidenceDirectory = join(directory, "evidence");
@@ -670,8 +683,17 @@ async function readBundle(
   const reportValue = parseJson(reportJson, "report.json");
   assertNoSecrets(reportJson, reportValue, "report.json");
   const report = assertReportContract(reportValue);
+  const hasManualEntry = rootEntries.includes("manual-query-pack.md");
+  const hasManualDeclaration = report.manualQueryPackPath === "manual-query-pack.md";
+  if (hasManualEntry !== hasManualDeclaration) {
+    throw publicationError("manual query pack entry does not match its declaration");
+  }
+  const manualQueryPack = hasManualEntry
+    ? await readRegularFile(join(directory, "manual-query-pack.md"), "manual-query-pack.md", deps)
+    : undefined;
+  if (manualQueryPack) assertNoSecrets(manualQueryPack, undefined, "manual-query-pack.md");
   const evidence = new Map<string, Buffer>();
-  let totalBytes = html.length + reportJson.length;
+  let totalBytes = html.length + reportJson.length + (manualQueryPack?.length || 0);
   for (const name of evidenceNames) {
     await assertBundleIdentity();
     const relativePath = posix.join("evidence", name);
@@ -700,8 +722,9 @@ async function readBundle(
     html,
     reportJson,
     evidence,
+    ...(manualQueryPack ? { manualQueryPack } : {}),
     report,
-    files: [...evidence.keys(), "index.html", "report.json"].sort(),
+    files: [...evidence.keys(), "index.html", "report.json", ...(manualQueryPack ? ["manual-query-pack.md"] : [])].sort(),
   };
 }
 
@@ -735,6 +758,10 @@ async function materializeAndVerifyBundle(
   await assertDirectoryIdentity(root, "Pages report root");
   await writer(join(directory, "report.json"), bundle.reportJson, { flag: "wx", mode: 0o600 });
   await assertDirectoryIdentity(root, "Pages report root");
+  if (bundle.manualQueryPack) {
+    await writer(join(directory, "manual-query-pack.md"), bundle.manualQueryPack, { flag: "wx", mode: 0o600 });
+    await assertDirectoryIdentity(root, "Pages report root");
+  }
   for (const [relativePath, buffer] of bundle.evidence) {
     await writer(join(directory, ...relativePath.split("/")), buffer, { flag: "wx", mode: 0o600 });
     await assertDirectoryIdentity(root, "Pages report root");
@@ -743,6 +770,8 @@ async function materializeAndVerifyBundle(
   await assertDirectoryIdentity(root, "Pages report root");
   if (!materialized.html.equals(bundle.html)
     || !materialized.reportJson.equals(bundle.reportJson)
+    || Boolean(materialized.manualQueryPack) !== Boolean(bundle.manualQueryPack)
+    || (bundle.manualQueryPack && !materialized.manualQueryPack?.equals(bundle.manualQueryPack))
     || materialized.evidence.size !== bundle.evidence.size
     || [...bundle.evidence].some(([path, value]) => !materialized.evidence.get(path)?.equals(value))) {
     throw publicationError("published bytes differ from the reviewed source");
