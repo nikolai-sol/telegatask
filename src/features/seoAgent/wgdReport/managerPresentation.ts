@@ -320,6 +320,11 @@ function wordstatCoverageLabel(
   return labels[value];
 }
 
+function demandTokens(value: string): string[] {
+  return [...new Set(value.toLocaleLowerCase("ru-RU").replace(/ё/g, "е")
+    .split(/[^\p{L}\p{N}]+/u).filter((token) => token.length >= 2))];
+}
+
 function buildWordstat(
   input: WgdManagerPresentationInput,
   copy: WgdReportLocalization
@@ -338,12 +343,17 @@ function buildWordstat(
       : copy.labels.noData;
     const topRegion = [...(cluster.regions || [])]
       .sort((left, right) => (right.count ?? -1) - (left.count ?? -1))[0];
+    const seedTokens = demandTokens(cluster.seed);
+    const relatedPhrases = cluster.phrases.filter((item) => {
+      const phraseTokens = demandTokens(item.phrase);
+      return seedTokens.some((token) => phraseTokens.includes(token));
+    }).slice(0, 3);
     return {
       seed: cluster.seed,
       demand: cluster.totalCount === null ? copy.labels.noData : copy.formatNumber(cluster.totalCount),
       coverage: wordstatCoverageLabel(cluster.coverage, copy.locale),
       bestPage: safeHttpUrl(cluster.bestPage) || (ru ? "Подходящая страница не найдена" : "No suitable page found"),
-      related: cluster.phrases.slice(0, 3).map((item) => item.count === null
+      related: relatedPhrases.map((item) => item.count === null
         ? item.phrase
         : `${item.phrase} — ${copy.formatNumber(item.count)}`).join("; ") || copy.labels.noData,
       trend,

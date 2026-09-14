@@ -271,7 +271,10 @@ describe("buildManagerPresentation", () => {
       status: { state: "success", message: "RAW_WORDSTAT_MESSAGE", checkedAt: "2026-09-01T10:00:00.000Z" },
       clusters: [{
         seed: "курсы ароматерапии онлайн", totalCount: 4200,
-        phrases: [{ phrase: "обучение ароматерапии", count: 1700 }], brand: false,
+        phrases: [
+          { phrase: "обучение ароматерапии", count: 1700 },
+          { phrase: "духи интернет магазин", count: 99_000 },
+        ], brand: false,
         coverage: "missing", bestPage: null, matchedFields: [], matchRatio: 0,
         dynamics: [{ date: "2026-08-01", count: 450 }],
         regions: [{ regionId: "225", regionName: "Россия", count: 4200, share: 0.7, affinityIndex: 110 }],
@@ -296,6 +299,7 @@ describe("buildManagerPresentation", () => {
       seed: "курсы ароматерапии онлайн", demand: "4 200", coverage: "Контент отсутствует",
       bestPage: "Подходящая страница не найдена", related: "обучение ароматерапии — 1 700",
     });
+    expect(model.wordstat.rows[0].related).not.toContain("духи интернет магазин");
     expect(JSON.stringify(model.wordstat)).not.toContain("RAW_WORDSTAT_MESSAGE");
   });
 
