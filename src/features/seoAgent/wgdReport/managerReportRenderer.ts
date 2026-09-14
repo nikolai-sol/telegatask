@@ -50,6 +50,25 @@ function problemsSection(presentation: WgdManagerPresentation): string {
   return `<section id="main-problems"><h2>${htmlText(presentation.headings.problems)}</h2><div class="problem-grid">${cards || `<p class="empty">${htmlText(presentation.problemsEmpty)}</p>`}</div></section>`;
 }
 
+function wordstatSection(presentation: WgdManagerPresentation): string {
+  const demand = presentation.wordstat;
+  const labels = presentation.locale === "ru"
+    ? ["Запрос", "Спрос за 30 дней", "Контент", "Лучшая страница", "Связанные формулировки", "Динамика", "Регион"]
+    : ["Query", "30-day demand", "Content", "Best page", "Related phrases", "Trend", "Region"];
+  const primary = demand.primary
+    ? `<article class="demand-primary"><p class="eyebrow">${htmlText(demand.primary.title)}</p><h3>${htmlText(demand.primary.seed)}</h3><div class="demand-primary-facts"><span>${htmlText(demand.primary.demand)}</span><span>${htmlText(demand.primary.coverage)}</span></div><p>${htmlText(demand.primary.action)}</p></article>`
+    : "";
+  const rows = demand.rows.map((row) => {
+    const values = [row.seed, row.demand, row.coverage, row.bestPage, row.related, row.trend, row.region];
+    return `<article class="demand-row"><dl>${values.map((value, index) => `<div><dt>${htmlText(labels[index])}</dt><dd>${htmlText(value)}</dd></div>`).join("")}</dl></article>`;
+  }).join("");
+  return `<section id="wordstat-demand"><h2>${htmlText(presentation.headings.demand)}</h2>
+    <div class="demand-meta"><strong>${htmlText(demand.state)}</strong><span>${htmlText(demand.scoreNote)}</span></div>
+    <p class="section-summary">${htmlText(demand.summary)}</p>${primary}
+    <div class="demand-grid">${rows || `<p class="empty">${htmlText(demand.empty)}</p>`}</div>
+  </section>`;
+}
+
 function yandexSection(presentation: WgdManagerPresentation): string {
   const yandex = presentation.yandex;
   const rows = yandex.rows.map((row) => [row.query, row.position, row.page, row.result]);
@@ -122,6 +141,7 @@ export function renderManagerSections(presentation: WgdManagerPresentation): Ren
     leadingHtml: [
       overallSection(presentation),
       problemsSection(presentation),
+      wordstatSection(presentation),
       yandexSection(presentation),
       aliceSection(presentation),
       speedSection(presentation),

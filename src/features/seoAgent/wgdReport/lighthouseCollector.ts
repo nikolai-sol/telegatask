@@ -621,6 +621,21 @@ async function collectOne(
   }
 }
 
+async function collectOneWithRetry(
+  url: string,
+  device: WgdDevice,
+  resolution: ResolvedPublicUrl,
+  execImpl: LighthouseExec,
+  resolveDns: DnsResolver
+): Promise<LighthouseEvidence> {
+  const first = await collectOne(url, device, resolution, execImpl, resolveDns);
+  if (first.status !== "failed"
+    || (first.error !== "Lighthouse execution failed" && first.error !== "Lighthouse execution timed out")) {
+    return first;
+  }
+  return collectOne(url, device, resolution, execImpl, resolveDns);
+}
+
 /** Run independent mobile and desktop Lighthouse profiles for each requested URL. */
 export async function collectLighthouseProfiles(
   urls: string[],
@@ -651,8 +666,8 @@ export async function collectLighthouseProfiles(
       continue;
     }
     output.push(
-      await collectOne(url, "mobile", resolution, execImpl, resolver),
-      await collectOne(url, "desktop", resolution, execImpl, resolver)
+      await collectOneWithRetry(url, "mobile", resolution, execImpl, resolver),
+      await collectOneWithRetry(url, "desktop", resolution, execImpl, resolver)
     );
   }
   return output;

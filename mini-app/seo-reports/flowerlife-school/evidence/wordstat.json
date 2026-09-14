@@ -1,0 +1,939 @@
+{
+  "status": {
+    "state": "success",
+    "message": "Wordstat demand collected.",
+    "checkedAt": "2026-09-14T13:20:55.634Z"
+  },
+  "clusters": [
+    {
+      "seed": "цветок жизни школа",
+      "totalCount": 254,
+      "phrases": [
+        {
+          "phrase": "школа цветок жизни",
+          "count": 254
+        },
+        {
+          "phrase": "цветок жизни школа духовного",
+          "count": 11
+        },
+        {
+          "phrase": "цветок жизни школа духовного роста",
+          "count": 10
+        },
+        {
+          "phrase": "научи меня жить сериал",
+          "count": 14651
+        },
+        {
+          "phrase": "старшая дочь идет по цветочному пути",
+          "count": 1823
+        },
+        {
+          "phrase": "что пожелать учителю на 1 сентября",
+          "count": 1391
+        },
+        {
+          "phrase": "подарки на 1 сентября учителю",
+          "count": 38329
+        },
+        {
+          "phrase": "что подарить учительнице на 1 сентября",
+          "count": 2127
+        },
+        {
+          "phrase": "любимица учителя фильм 2025",
+          "count": 375
+        },
+        {
+          "phrase": "старшая дочь идет по цветочному пути читать",
+          "count": 248
+        }
+      ],
+      "brand": true,
+      "coverage": "covered",
+      "bestPage": "https://flowerlife-school.com/courses/catalog/1",
+      "matchedFields": [
+        "title",
+        "description"
+      ],
+      "matchRatio": 1
+    },
+    {
+      "seed": "платформа саморазвития",
+      "totalCount": 132,
+      "phrases": [
+        {
+          "phrase": "платформы саморазвития",
+          "count": 132
+        },
+        {
+          "phrase": "образовательные платформы для саморазвития",
+          "count": 17
+        },
+        {
+          "phrase": "space платформа саморазвития",
+          "count": 17
+        },
+        {
+          "phrase": "онлайн платформа курсов по психологии и саморазвитию",
+          "count": 17
+        },
+        {
+          "phrase": "space платформа саморазвития отзывы",
+          "count": 9
+        },
+        {
+          "phrase": "платформа саморазвития дистантник",
+          "count": 5
+        },
+        {
+          "phrase": "своя правда",
+          "count": 193421
+        },
+        {
+          "phrase": "вне себя",
+          "count": 60683
+        },
+        {
+          "phrase": "путь к себе",
+          "count": 28354
+        },
+        {
+          "phrase": "я поднимаюсь над землей",
+          "count": 6349
+        },
+        {
+          "phrase": "комплекс принимающий у себя участников похода",
+          "count": 2922
+        },
+        {
+          "phrase": "мой путь к успеху в bl",
+          "count": 1203
+        },
+        {
+          "phrase": "уверенность в себе",
+          "count": 31476
+        },
+        {
+          "phrase": "песня за каждый шаг отвечу сам",
+          "count": 3509
+        },
+        {
+          "phrase": "раскрытие путь к себе",
+          "count": 1249
+        }
+      ],
+      "dynamics": [
+        {
+          "date": "2025-08-01T00:00:00Z",
+          "count": 126,
+          "share": 0.000001314588058670755
+        },
+        {
+          "date": "2025-09-01T00:00:00Z",
+          "count": 113,
+          "share": 0.0000010992446818676292
+        },
+        {
+          "date": "2025-10-01T00:00:00Z",
+          "count": 241,
+          "share": 0.000002168938957034963
+        },
+        {
+          "date": "2025-11-01T00:00:00Z",
+          "count": 157,
+          "share": 0.000001438171411709056
+        },
+        {
+          "date": "2025-12-01T00:00:00Z",
+          "count": 171,
+          "share": 0.0000015909523229873996
+        },
+        {
+          "date": "2026-01-01T00:00:00Z",
+          "count": 128,
+          "share": 0.0000013069081901887088
+        },
+        {
+          "date": "2026-02-01T00:00:00Z",
+          "count": 153,
+          "share": 0.0000017099070433376919
+        },
+        {
+          "date": "2026-03-01T00:00:00Z",
+          "count": 125,
+          "share": 0.000001203405763078622
+        },
+        {
+          "date": "2026-04-01T00:00:00Z",
+          "count": 139,
+          "share": 0.000001306305867196529
+        },
+        {
+          "date": "2026-05-01T00:00:00Z",
+          "count": 162,
+          "share": 0.0000016324382433744245
+        },
+        {
+          "date": "2026-06-01T00:00:00Z",
+          "count": 96,
+          "share": 9.773644714737734e-7
+        },
+        {
+          "date": "2026-07-01T00:00:00Z",
+          "count": 143,
+          "share": 0.0000013529359088137924
+        },
+        {
+          "date": "2026-08-01T00:00:00Z",
+          "count": 100,
+          "share": 9.418869165197388e-7
+        }
+      ],
+      "regions": [
+        {
+          "regionId": "1",
+          "count": 20,
+          "share": 9.494551836265315e-7,
+          "affinityIndex": 88.99911822229316,
+          "regionName": "Москва и область"
+        },
+        {
+          "regionId": "2",
+          "count": 15,
+          "share": 0.000002816677063428561,
+          "affinityIndex": 264.0269696612724,
+          "regionName": "Санкт-Петербург"
+        },
+        {
+          "regionId": "3",
+          "count": 34,
+          "share": 9.55767558911749e-7,
+          "affinityIndex": 89.59082159488072,
+          "regionName": "Центр"
+        },
+        {
+          "regionId": "7",
+          "count": 3,
+          "share": 0.000011590979822229143,
+          "affinityIndex": 1086.5041355301728,
+          "regionName": "Кострома"
+        },
+        {
+          "regionId": "9",
+          "count": 2,
+          "share": 0.000004391532045898624,
+          "affinityIndex": 411.6492136438307,
+          "regionName": "Липецк"
+        },
+        {
+          "regionId": "11",
+          "count": 2,
+          "share": 0.0000035379462692453885,
+          "affinityIndex": 331.63660982712287,
+          "regionName": "Рязань"
+        },
+        {
+          "regionId": "17",
+          "count": 26,
+          "share": 0.0000022155779557891084,
+          "affinityIndex": 207.68171875666334,
+          "regionName": "Северо-Запад"
+        },
+        {
+          "regionId": "20",
+          "count": 1,
+          "share": 0.000003832621596339785,
+          "affinityIndex": 359.25860265578393,
+          "regionName": "Архангельск"
+        },
+        {
+          "regionId": "21",
+          "count": 1,
+          "share": 0.000003196198211720708,
+          "affinityIndex": 299.60215859825695,
+          "regionName": "Вологда"
+        },
+        {
+          "regionId": "22",
+          "count": 1,
+          "share": 0.0000025012896649512488,
+          "affinityIndex": 234.4634885755292,
+          "regionName": "Калининград"
+        },
+        {
+          "regionId": "26",
+          "count": 5,
+          "share": 4.878929839057833e-7,
+          "affinityIndex": 45.733643992129984,
+          "regionName": "Юг"
+        },
+        {
+          "regionId": "35",
+          "count": 2,
+          "share": 0.0000013265698171207433,
+          "affinityIndex": 124.34872758617237,
+          "regionName": "Краснодар"
+        },
+        {
+          "regionId": "40",
+          "count": 20,
+          "share": 0.0000010103831922663011,
+          "affinityIndex": 94.71032938580261,
+          "regionName": "Поволжье"
+        },
+        {
+          "regionId": "44",
+          "count": 5,
+          "share": 0.000008908685651360868,
+          "affinityIndex": 835.0738204011811,
+          "regionName": "Ижевск"
+        },
+        {
+          "regionId": "45",
+          "count": 1,
+          "share": 0.0000021313393091114437,
+          "affinityIndex": 199.78543739042195,
+          "regionName": "Чебоксары"
+        },
+        {
+          "regionId": "47",
+          "count": 4,
+          "share": 0.0000026041628350208285,
+          "affinityIndex": 244.1065150003825,
+          "regionName": "Нижний Новгород"
+        },
+        {
+          "regionId": "51",
+          "count": 1,
+          "share": 9.195362388863931e-7,
+          "affinityIndex": 86.19460491199327,
+          "regionName": "Самара"
+        },
+        {
+          "regionId": "52",
+          "count": 5,
+          "share": 5.68410996328165e-7,
+          "affinityIndex": 53.281164117547895,
+          "regionName": "Урал"
+        },
+        {
+          "regionId": "54",
+          "count": 1,
+          "share": 5.459590513240817e-7,
+          "affinityIndex": 51.1765852577996,
+          "regionName": "Екатеринбург"
+        },
+        {
+          "regionId": "56",
+          "count": 1,
+          "share": 9.50348835043391e-7,
+          "affinityIndex": 89.08288646061571,
+          "regionName": "Челябинск"
+        }
+      ],
+      "brand": false,
+      "coverage": "missing",
+      "bestPage": null,
+      "matchedFields": [
+        "h1"
+      ],
+      "matchRatio": 0.5
+    },
+    {
+      "seed": "онлайн курсы саморазвития",
+      "totalCount": 112,
+      "phrases": [
+        {
+          "phrase": "онлайн курсы для саморазвития",
+          "count": 37
+        },
+        {
+          "phrase": "онлайн курсы по психологии и саморазвитию",
+          "count": 18
+        },
+        {
+          "phrase": "онлайн платформа курсов по психологии и саморазвитию",
+          "count": 17
+        },
+        {
+          "phrase": "бесплатные курсы онлайн саморазвитие",
+          "count": 12
+        },
+        {
+          "phrase": "учи ру",
+          "count": 1817899
+        },
+        {
+          "phrase": "обучай ру",
+          "count": 2145
+        },
+        {
+          "phrase": "интернет урок семейное обучение",
+          "count": 1273
+        },
+        {
+          "phrase": "сайт учи ру",
+          "count": 8265
+        },
+        {
+          "phrase": "учи ру официальный сайт",
+          "count": 1544
+        },
+        {
+          "phrase": "институт развития интернета",
+          "count": 2727
+        },
+        {
+          "phrase": "интернет урок школа",
+          "count": 12042
+        },
+        {
+          "phrase": "online school",
+          "count": 10104
+        }
+      ],
+      "dynamics": [
+        {
+          "date": "2025-08-01T00:00:00Z",
+          "count": 137,
+          "share": 0.000001429353682840424
+        },
+        {
+          "date": "2025-09-01T00:00:00Z",
+          "count": 131,
+          "share": 0.0000012743456046430037
+        },
+        {
+          "date": "2025-10-01T00:00:00Z",
+          "count": 158,
+          "share": 0.0000014219599801308056
+        },
+        {
+          "date": "2025-11-01T00:00:00Z",
+          "count": 167,
+          "share": 0.0000015297746863402057
+        },
+        {
+          "date": "2025-12-01T00:00:00Z",
+          "count": 136,
+          "share": 0.0000012653188065864702
+        },
+        {
+          "date": "2026-01-01T00:00:00Z",
+          "count": 175,
+          "share": 0.0000017867885412736253
+        },
+        {
+          "date": "2026-02-01T00:00:00Z",
+          "count": 140,
+          "share": 0.0000015646208239691298
+        },
+        {
+          "date": "2026-03-01T00:00:00Z",
+          "count": 121,
+          "share": 0.0000011648967786601061
+        },
+        {
+          "date": "2026-04-01T00:00:00Z",
+          "count": 110,
+          "share": 0.0000010337672330332246
+        },
+        {
+          "date": "2026-05-01T00:00:00Z",
+          "count": 120,
+          "share": 0.0000012092135136106847
+        },
+        {
+          "date": "2026-06-01T00:00:00Z",
+          "count": 90,
+          "share": 9.162791920066625e-7
+        },
+        {
+          "date": "2026-07-01T00:00:00Z",
+          "count": 93,
+          "share": 8.798813952425364e-7
+        },
+        {
+          "date": "2026-08-01T00:00:00Z",
+          "count": 88,
+          "share": 8.2886048653737e-7
+        }
+      ],
+      "regions": [
+        {
+          "regionId": "1",
+          "count": 27,
+          "share": 0.0000012817644978958174,
+          "affinityIndex": 143.7073997177616,
+          "regionName": "Москва и область"
+        },
+        {
+          "regionId": "2",
+          "count": 9,
+          "share": 0.0000016900062380571367,
+          "affinityIndex": 189.47817822750136,
+          "regionName": "Санкт-Петербург"
+        },
+        {
+          "regionId": "3",
+          "count": 37,
+          "share": 0.0000010400999905804329,
+          "affinityIndex": 116.61273606669307,
+          "regionName": "Центр"
+        },
+        {
+          "regionId": "8",
+          "count": 1,
+          "share": 0.0000020655279232213527,
+          "affinityIndex": 231.58048719390854,
+          "regionName": "Курск"
+        },
+        {
+          "regionId": "12",
+          "count": 2,
+          "share": 0.00000814075495570493,
+          "affinityIndex": 912.715813508923,
+          "regionName": "Смоленск"
+        },
+        {
+          "regionId": "16",
+          "count": 2,
+          "share": 0.000004911429852539967,
+          "affinityIndex": 550.654050852075,
+          "regionName": "Ярославль"
+        },
+        {
+          "regionId": "17",
+          "count": 15,
+          "share": 0.0000012782180514167932,
+          "affinityIndex": 143.30978330493738,
+          "regionName": "Северо-Запад"
+        },
+        {
+          "regionId": "20",
+          "count": 1,
+          "share": 0.000003832621596339785,
+          "affinityIndex": 429.701465921624,
+          "regionName": "Архангельск"
+        },
+        {
+          "regionId": "22",
+          "count": 1,
+          "share": 0.0000025012896649512488,
+          "affinityIndex": 280.4367216295545,
+          "regionName": "Калининград"
+        },
+        {
+          "regionId": "26",
+          "count": 9,
+          "share": 8.782073710304101e-7,
+          "affinityIndex": 98.46184530070336,
+          "regionName": "Юг"
+        },
+        {
+          "regionId": "40",
+          "count": 14,
+          "share": 7.072682345864108e-7,
+          "affinityIndex": 79.29668754458376,
+          "regionName": "Поволжье"
+        },
+        {
+          "regionId": "43",
+          "count": 1,
+          "share": 8.252068543958897e-7,
+          "affinityIndex": 92.51959425400294,
+          "regionName": "Казань"
+        },
+        {
+          "regionId": "102444",
+          "count": 2,
+          "share": 5.775995309475937e-7,
+          "affinityIndex": 64.75864076976812,
+          "regionName": "Северный Кавказ"
+        },
+        {
+          "regionId": "47",
+          "count": 3,
+          "share": 0.0000019531221262656215,
+          "affinityIndex": 218.97790316210782,
+          "regionName": "Нижний Новгород"
+        },
+        {
+          "regionId": "49",
+          "count": 1,
+          "share": 0.0000020316091567550214,
+          "affinityIndex": 227.77762189493006,
+          "regionName": "Пенза"
+        },
+        {
+          "regionId": "52",
+          "count": 2,
+          "share": 2.27364398531266e-7,
+          "affinityIndex": 25.491380479768015,
+          "regionName": "Урал"
+        },
+        {
+          "regionId": "54",
+          "count": 2,
+          "share": 0.0000010919181026481635,
+          "affinityIndex": 122.42241963630494,
+          "regionName": "Екатеринбург"
+        },
+        {
+          "regionId": "59",
+          "count": 19,
+          "share": 0.0000017740768153374536,
+          "affinityIndex": 198.90390664606724,
+          "regionName": "Сибирь"
+        },
+        {
+          "regionId": "62",
+          "count": 9,
+          "share": 0.000009253554614201727,
+          "affinityIndex": 1037.479407438941,
+          "regionName": "Красноярск"
+        },
+        {
+          "regionId": "67",
+          "count": 2,
+          "share": 0.000005612359178191225,
+          "affinityIndex": 629.24003988565,
+          "regionName": "Томск"
+        }
+      ],
+      "brand": false,
+      "coverage": "partial",
+      "bestPage": "https://flowerlife-school.com/course",
+      "matchedFields": [
+        "description"
+      ],
+      "matchRatio": 1
+    },
+    {
+      "seed": "курсы духовного развития",
+      "totalCount": 175,
+      "phrases": [
+        {
+          "phrase": "курсы духовного развития",
+          "count": 175
+        },
+        {
+          "phrase": "саморазвитие",
+          "count": 79742
+        },
+        {
+          "phrase": "интернет урок семейное обучение",
+          "count": 1273
+        },
+        {
+          "phrase": "of course",
+          "count": 30755
+        },
+        {
+          "phrase": "базовое высшее образование это",
+          "count": 1486
+        },
+        {
+          "phrase": "духовность это",
+          "count": 5856
+        },
+        {
+          "phrase": "духовность",
+          "count": 25154
+        },
+        {
+          "phrase": "что такое семейное обучение",
+          "count": 2918
+        },
+        {
+          "phrase": "духовно нравственная культура россии предмет о чем",
+          "count": 777
+        }
+      ],
+      "brand": false,
+      "coverage": "covered",
+      "bestPage": "https://flowerlife-school.com/courses",
+      "matchedFields": [
+        "title",
+        "description"
+      ],
+      "matchRatio": 1
+    },
+    {
+      "seed": "курсы ароматерапии онлайн",
+      "totalCount": 19,
+      "phrases": [
+        {
+          "phrase": "курсы по ароматерапии онлайн",
+          "count": 18
+        },
+        {
+          "phrase": "духи рф интернет магазин",
+          "count": 11570
+        },
+        {
+          "phrase": "я покажу тебе москву бесплатные экскурсии расписание",
+          "count": 1784
+        },
+        {
+          "phrase": "духи ру",
+          "count": 4050
+        },
+        {
+          "phrase": "арома бутик интернет магазин парфюмерии",
+          "count": 2286
+        },
+        {
+          "phrase": "репетитор ру официальный сайт",
+          "count": 2291
+        },
+        {
+          "phrase": "одеколон шоп интернет магазин",
+          "count": 1289
+        },
+        {
+          "phrase": "интернет урок семейное обучение",
+          "count": 1273
+        },
+        {
+          "phrase": "цифровые образовательные ресурсы и ресурсы сети интернет",
+          "count": 10269
+        },
+        {
+          "phrase": "парфюмер смотреть",
+          "count": 8087
+        }
+      ],
+      "dynamics": [
+        {
+          "date": "2025-08-01T00:00:00Z",
+          "count": null,
+          "share": null
+        },
+        {
+          "date": "2025-09-01T00:00:00Z",
+          "count": null,
+          "share": null
+        },
+        {
+          "date": "2025-10-01T00:00:00Z",
+          "count": null,
+          "share": null
+        },
+        {
+          "date": "2025-11-01T00:00:00Z",
+          "count": null,
+          "share": null
+        },
+        {
+          "date": "2025-12-01T00:00:00Z",
+          "count": null,
+          "share": null
+        },
+        {
+          "date": "2026-01-01T00:00:00Z",
+          "count": null,
+          "share": null
+        },
+        {
+          "date": "2026-02-01T00:00:00Z",
+          "count": null,
+          "share": null
+        },
+        {
+          "date": "2026-03-01T00:00:00Z",
+          "count": null,
+          "share": null
+        },
+        {
+          "date": "2026-04-01T00:00:00Z",
+          "count": null,
+          "share": null
+        },
+        {
+          "date": "2026-05-01T00:00:00Z",
+          "count": null,
+          "share": null
+        },
+        {
+          "date": "2026-06-01T00:00:00Z",
+          "count": null,
+          "share": null
+        },
+        {
+          "date": "2026-07-01T00:00:00Z",
+          "count": null,
+          "share": null
+        },
+        {
+          "date": "2026-08-01T00:00:00Z",
+          "count": null,
+          "share": null
+        }
+      ],
+      "regions": [
+        {
+          "regionId": "1",
+          "count": 3,
+          "share": 1.4241827754397972e-7,
+          "affinityIndex": 90.48243685933137,
+          "regionName": "Москва и область"
+        },
+        {
+          "regionId": "2",
+          "count": 1,
+          "share": 1.8777847089523742e-7,
+          "affinityIndex": 119.30107518027864,
+          "regionName": "Санкт-Петербург"
+        },
+        {
+          "regionId": "3",
+          "count": 4,
+          "share": 1.1244324222491165e-7,
+          "affinityIndex": 71.43843290572188,
+          "regionName": "Центр"
+        },
+        {
+          "regionId": "17",
+          "count": 2,
+          "share": 1.704290735222391e-7,
+          "affinityIndex": 108.27850294150825,
+          "regionName": "Северо-Запад"
+        },
+        {
+          "regionId": "26",
+          "count": 8,
+          "share": 7.806287742492534e-7,
+          "affinityIndex": 495.95596151465406,
+          "regionName": "Юг"
+        },
+        {
+          "regionId": "38",
+          "count": 2,
+          "share": 0.0000023358409793097394,
+          "affinityIndex": 1484.0271036037857,
+          "regionName": "Волгоград"
+        },
+        {
+          "regionId": "40",
+          "count": 2,
+          "share": 1.0103831922663011e-7,
+          "affinityIndex": 64.19255658371065,
+          "regionName": "Поволжье"
+        },
+        {
+          "regionId": "59",
+          "count": 2,
+          "share": 1.8674492793025827e-7,
+          "affinityIndex": 118.6444355432682,
+          "regionName": "Сибирь"
+        },
+        {
+          "regionId": "65",
+          "count": 2,
+          "share": 0.0000012704816006345394,
+          "affinityIndex": 807.1735818800203,
+          "regionName": "Новосибирск"
+        },
+        {
+          "regionId": "213",
+          "count": 2,
+          "share": 1.6722733784491396e-7,
+          "affinityIndex": 106.24434797727356,
+          "regionName": "Москва"
+        },
+        {
+          "regionId": "225",
+          "count": 18,
+          "share": 1.7265198369746958e-7,
+          "affinityIndex": 109.6907818501065,
+          "regionName": "Россия"
+        },
+        {
+          "regionId": "98617",
+          "count": 1,
+          "share": 0.000004076698849078611,
+          "affinityIndex": 2590.044287625617,
+          "regionName": "Щёлковский район"
+        },
+        {
+          "regionId": "10765",
+          "count": 1,
+          "share": 0.000007401057300243798,
+          "affinityIndex": 4702.105034621036,
+          "regionName": "Щёлково"
+        },
+        {
+          "regionId": "10802",
+          "count": 1,
+          "share": 0.0000015375737197407798,
+          "affinityIndex": 976.864903945002,
+          "regionName": "Тамбовская область"
+        },
+        {
+          "regionId": "10857",
+          "count": 1,
+          "share": 0.0000015155138607382189,
+          "affinityIndex": 962.8496396562693,
+          "regionName": "Калининградская область"
+        },
+        {
+          "regionId": "10950",
+          "count": 2,
+          "share": 0.0000012513424558283935,
+          "affinityIndex": 795.0139315083964,
+          "regionName": "Волгоградская область"
+        },
+        {
+          "regionId": "10995",
+          "count": 6,
+          "share": 0.0000012704899618492827,
+          "affinityIndex": 807.1788940007547,
+          "regionName": "Краснодарский край"
+        },
+        {
+          "regionId": "11148",
+          "count": 2,
+          "share": 0.0000019728214061696894,
+          "affinityIndex": 1253.3903049302257,
+          "regionName": "Удмуртская Республика"
+        },
+        {
+          "regionId": "11150",
+          "count": 2,
+          "share": 0.00003485968193677604,
+          "affinityIndex": 22147.360747335806,
+          "regionName": "Глазов"
+        },
+        {
+          "regionId": "11316",
+          "count": 2,
+          "share": 8.790266590545888e-7,
+          "affinityIndex": 558.4709740013142,
+          "regionName": "Новосибирская область"
+        }
+      ],
+      "brand": false,
+      "coverage": "partial",
+      "bestPage": "https://flowerlife-school.com/courses/catalog",
+      "matchedFields": [
+        "title",
+        "description",
+        "h1",
+        "h2"
+      ],
+      "matchRatio": 0.6666666666666666
+    }
+  ],
+  "primaryRecommendation": {
+    "seed": "платформа саморазвития",
+    "demand": 132,
+    "coverage": "missing",
+    "bestPage": null,
+    "action": "Создать или расширить посадочную страницу под спрос «платформа саморазвития»."
+  },
+  "requestCount": 12,
+  "limitations": []
+}

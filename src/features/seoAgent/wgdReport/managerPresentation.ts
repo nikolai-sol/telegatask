@@ -26,6 +26,7 @@ import {
 } from "./reportLocalization";
 import { safeDisplayUrl } from "./reportHtml";
 import { findingCatalogEntry } from "./findingCatalog";
+import type { WordstatDemandCluster, WordstatEvidence } from "./wordstatEvidence";
 
 export type WgdManagerNormalizedPayload = {
   generatedAt: string;
@@ -35,6 +36,7 @@ export type WgdManagerNormalizedPayload = {
   pages?: PageEvidence[];
   lighthouse?: LighthouseEvidence[];
   yandex?: YandexEvidence;
+  wordstat?: WordstatEvidence;
   findings: WgdFinding[];
   limitations?: readonly unknown[];
   evidenceFiles?: string[];
@@ -71,6 +73,7 @@ const SOURCE_PRESENTATION = {
   lighthouse: true,
   yandex_search: true,
   alice_ai: true,
+  wordstat: true,
   yandex_webmaster: true,
   gsc: true,
   dataforseo: true,
@@ -304,6 +307,91 @@ function buildYandex(
     },
     rows,
     empty: rows.length ? null : copy.emptyStates.yandex,
+  };
+}
+
+function wordstatCoverageLabel(
+  value: WordstatDemandCluster["coverage"],
+  locale: "ru" | "en"
+): string {
+  const labels = locale === "ru"
+    ? { covered: "Спрос покрыт", partial: "Покрыт частично", missing: "Контент отсутствует", not_measured: "Не измерено" }
+    : { covered: "Demand covered", partial: "Partly covered", missing: "Content missing", not_measured: "Not measured" };
+  return labels[value];
+}
+
+function demandTokens(value: string): string[] {
+  return [...new Set(value.toLocaleLowerCase("ru-RU").replace(/ё/g, "е")
+    .split(/[^\p{L}\p{N}]+/u).filter((token) => token.length >= 2))];
+}
+
+function buildWordstat(
+  input: WgdManagerPresentationInput,
+  copy: WgdReportLocalization
+): WgdManagerPresentation["wordstat"] {
+  const evidence = input.normalized.wordstat;
+  const ru = copy.locale === "ru";
+  const stateLabels = ru
+    ? { success: "Данные получены", partial: "Данные получены частично", unavailable: "Данные недоступны", not_applicable: "Не применяется" }
+    : { success: "Data collected", partial: "Data partly collected", unavailable: "Data unavailable", not_applicable: "Not applicable" };
+  const rows = (evidence?.clusters || []).map((cluster) => {
+    const dynamics = cluster.dynamics || [];
+    const first = dynamics[0]?.count;
+    const last = dynamics[dynamics.length - 1]?.count;
+    const trend = typeof first === "number" && typeof last === "number" && first > 0
+      ? `${last >= first ? "+" : ""}${copy.formatNumber(((last - first) / first) * 100, { maximumFractionDigits: 0 })} %`
+      : copy.labels.noData;
+    const topRegion = [...(cluster.regions || [])]
+      .sort((left, right) => (right.count ?? -1) - (left.count ?? -1))[0];
+    const seedTokens = demandTokens(cluster.seed);
+    const relatedPhrases = cluster.phrases.filter((item) => {
+      const phraseTokens = demandTokens(item.phrase);
+      return seedTokens.some((token) => phraseTokens.includes(token));
+    }).slice(0, 3);
+    return {
+      seed: cluster.seed,
+      demand: cluster.totalCount === null ? copy.labels.noData : copy.formatNumber(cluster.totalCount),
+      coverage: wordstatCoverageLabel(cluster.coverage, copy.locale),
+      bestPage: safeHttpUrl(cluster.bestPage) || (ru ? "Подходящая страница не найдена" : "No suitable page found"),
+      related: relatedPhrases.map((item) => item.count === null
+        ? item.phrase
+        : `${item.phrase} — ${copy.formatNumber(item.count)}`).join("; ") || copy.labels.noData,
+      trend,
+      region: topRegion
+        ? `${topRegion.regionName || topRegion.regionId}${topRegion.count === null ? "" : ` — ${copy.formatNumber(topRegion.count)}`}`
+        : copy.labels.noData,
+      brand: cluster.brand ? (ru ? "Брендовый" : "Brand") : (ru ? "Небрендовый" : "Non-brand"),
+    };
+  });
+  const recommendation = evidence?.primaryRecommendation;
+  const recommendationCluster = recommendation
+    ? evidence?.clusters.find((cluster) => cluster.seed === recommendation.seed)
+    : undefined;
+  const primary = recommendation ? {
+    title: ru ? "Главная возможность роста" : "Primary growth opportunity",
+    seed: recommendation.seed,
+    demand: recommendation.demand === null ? copy.labels.noData : copy.formatNumber(recommendation.demand),
+    coverage: wordstatCoverageLabel(recommendation.coverage, copy.locale),
+    action: recommendation.coverage === "missing"
+      ? (ru
+        ? `Создать отдельную посадочную страницу под запрос «${recommendation.seed}» и связанные формулировки спроса.`
+        : `Create a dedicated landing page for “${recommendation.seed}” and related demand phrases.`)
+      : (ru
+        ? `Расширить страницу ${safeHttpUrl(recommendation.bestPage) || "с наибольшим соответствием"} под запрос «${recommendation.seed}» и связанные формулировки.`
+        : `Expand the best-matching page for “${recommendation.seed}” and related phrases.`),
+  } : null;
+  const measured = evidence?.clusters.filter((cluster) => cluster.coverage !== "not_measured").length || 0;
+  return {
+    state: stateLabels[evidence?.status.state || "unavailable"],
+    scoreNote: ru ? "Не влияет на общую SEO-оценку" : "Does not affect the overall SEO score",
+    summary: evidence
+      ? (ru
+        ? `Измерено кластеров: ${measured} из ${evidence.clusters.length}. Слой показывает соответствие страниц реальному поисковому спросу.`
+        : `Measured clusters: ${measured} of ${evidence.clusters.length}. This layer compares pages with actual search demand.`)
+      : (ru ? "Данные Wordstat для этого отчёта не собирались." : "Wordstat data was not collected for this report."),
+    primary: recommendationCluster?.brand ? null : primary,
+    rows,
+    empty: rows.length ? null : (ru ? "Нет данных по поисковому спросу." : "No search-demand data."),
   };
 }
 
@@ -708,6 +796,7 @@ export function buildManagerPresentation(input: WgdManagerPresentationInput): Wg
       overall: copy.headings.overall,
       components: copy.headings.components,
       problems: copy.headings.problems,
+      demand: copy.headings.demand,
       yandex: copy.headings.yandex,
       alice: copy.headings.alice,
       speed: copy.headings.speed,
@@ -737,6 +826,7 @@ export function buildManagerPresentation(input: WgdManagerPresentationInput): Wg
     components,
     problems,
     problemsEmpty: problems.length ? null : copy.emptyStates.problems,
+    wordstat: buildWordstat(input, copy),
     yandex: buildYandex(input, copy),
     alice: buildAlice(input, copy),
     lighthouse: buildLighthouse(input, copy),

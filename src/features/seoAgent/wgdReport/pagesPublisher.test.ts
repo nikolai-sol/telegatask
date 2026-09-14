@@ -155,6 +155,31 @@ describe("publishSeoReport", () => {
     });
   });
 
+  test("publishes the manual query pack only when the canonical report declares its exact path", async () => {
+    const { repoRoot, reportDir } = await fixture();
+    await writeFile(join(reportDir, "manual-query-pack.md"), "# Ручная проверка\n\nЗапрос: курсы ароматерапии онлайн\n");
+    await rewriteReport(reportDir, (report) => {
+      report.manualQueryPackPath = "manual-query-pack.md";
+    }, true);
+
+    const result = await publishSeoReport({ reportDir, slug: "declared-pack", repoRoot });
+
+    expect(result.files).toContain("manual-query-pack.md");
+    expect(await readFile(join(result.destination, "manual-query-pack.md"), "utf8"))
+      .toContain("курсы ароматерапии онлайн");
+  });
+
+  test.each(["../manual-query-pack.md", "/manual-query-pack.md", "manual/query-pack.md"])(
+    "rejects an unsafe manual query pack declaration: %s",
+    async (manualQueryPackPath) => {
+      await expectRejectedWithoutDestination(async ({ reportDir }) => {
+        await rewriteReport(reportDir, (report) => {
+          report.manualQueryPackPath = manualQueryPackPath;
+        }, true);
+      });
+    }
+  );
+
   test.each(["extra.txt", ".hidden.json", "UPPER.json"])("rejects unexpected evidence entry: %s", async (entry) => {
     await expectRejectedWithoutDestination(async ({ reportDir }) => {
       await writeFile(join(reportDir, "evidence", entry), "{}");

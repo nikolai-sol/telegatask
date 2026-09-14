@@ -182,7 +182,7 @@ describe("collectLighthouseProfiles", () => {
     expect(JSON.stringify(result)).not.toContain("token=secret");
   });
 
-  test("keeps the successful profile when the other profile fails and redacts the failure message", async () => {
+  test("retries one transient profile failure and redacts the failure message", async () => {
     let callCount = 0;
     const result = await collectLighthouseProfiles(["https://example.com/"], async () => {
       callCount += 1;
@@ -190,9 +190,10 @@ describe("collectLighthouseProfiles", () => {
       return JSON.stringify(lighthouseFixture());
     }, { resolveDns: PUBLIC_DNS });
 
+    expect(callCount).toBe(3);
     expect(result).toHaveLength(2);
-    expect(result[0]).toMatchObject({ device: "mobile", status: "failed", error: "Lighthouse execution failed" });
-    expect(result[0].error).not.toContain("super-secret");
+    expect(result[0]).toMatchObject({ device: "mobile", status: "success" });
+    expect(JSON.stringify(result[0])).not.toContain("super-secret");
     expect(result[1]).toMatchObject({ device: "desktop", status: "success" });
   });
 
@@ -375,6 +376,8 @@ describe("collectLighthouseProfiles", () => {
     expect(result.every((item) => item.fieldData.source === "CrUX" && item.fieldData.state === "not_collected")).toBe(true);
     expect(JSON.stringify(result)).not.toContain("secret command detail");
     expect(calls).toEqual([
+      expect.objectContaining({ timeout: LIGHTHOUSE_PROFILE_TIMEOUT_MS, killSignal: "SIGTERM" }),
+      expect.objectContaining({ timeout: LIGHTHOUSE_PROFILE_TIMEOUT_MS, killSignal: "SIGTERM" }),
       expect.objectContaining({ timeout: LIGHTHOUSE_PROFILE_TIMEOUT_MS, killSignal: "SIGTERM" }),
       expect.objectContaining({ timeout: LIGHTHOUSE_PROFILE_TIMEOUT_MS, killSignal: "SIGTERM" }),
     ]);

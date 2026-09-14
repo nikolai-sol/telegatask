@@ -32,6 +32,12 @@ import {
   type YandexEvidenceDeps,
   type YandexEvidenceEnv,
 } from "./yandexEvidence";
+import {
+  collectWordstatEvidence as collectWordstatEvidenceDefault,
+  type WordstatEvidence,
+  type WordstatEvidenceDeps,
+  type WordstatEvidenceEnv,
+} from "./wordstatEvidence";
 
 const MAX_LIGHTHOUSE_PAGES = 6;
 const CRAWL_CONCURRENCY = 5;
@@ -85,13 +91,18 @@ export type WgdOwnerSourceFactories = {
 };
 
 export type RunWgdReportDeps = {
-  env?: ProviderPreflightEnv & YandexEvidenceEnv;
+  env?: ProviderPreflightEnv & YandexEvidenceEnv & WordstatEvidenceEnv;
   preflightDeps?: ProviderPreflightDeps;
   crawlSite?: CrawlRunner;
   crawlFetch?: CrawlFetch;
   dnsResolver?: DnsResolver;
   collectLighthouseProfiles?: (urls: string[]) => LighthouseEvidence[] | Promise<LighthouseEvidence[]>;
   collectYandexEvidence?: (options: WgdReportOptions, deps?: YandexEvidenceDeps) => Promise<YandexEvidence>;
+  collectWordstatEvidence?: (
+    options: WgdReportOptions,
+    pages: PageEvidence[],
+    deps?: WordstatEvidenceDeps
+  ) => Promise<WordstatEvidence>;
   yandexDeps?: Omit<YandexEvidenceDeps, "env" | "ownerAccess">;
   ownerSourceFactories?: Partial<WgdOwnerSourceFactories>;
   writeArtifacts?: (payload: WgdReportPayload) => Promise<WgdArtifactPaths>;
@@ -476,6 +487,35 @@ function aliceCoverage(
   };
 }
 
+function wordstatCoverage(evidence: WordstatEvidence, checkedAt: string): SourceCoverage {
+  const state = evidence.status.state;
+  return {
+    id: "wordstat",
+    label: "Yandex Wordstat",
+    state,
+    message: evidence.status.message,
+    checkedAt,
+    details: {
+      requested: evidence.clusters.length,
+      measured: evidence.clusters.filter((cluster) => cluster.coverage !== "not_measured").length,
+      requests: evidence.requestCount,
+    },
+  };
+}
+
+function nonRussianWordstat(options: WgdReportOptions, checkedAt: string): WordstatEvidence {
+  return {
+    status: { state: "not_applicable", message: "Wordstat applies to Russian-market reports.", checkedAt },
+    clusters: options.keywords.map((seed) => ({
+      seed, totalCount: null, phrases: [], measured: false, brand: false,
+      coverage: "not_measured", bestPage: null, matchedFields: [], matchRatio: 0,
+    })),
+    primaryRecommendation: null,
+    requestCount: 0,
+    limitations: [],
+  };
+}
+
 function coverageMap(sources: SourceCoverage[]): Record<string, CoverageState> {
   return Object.fromEntries(sources.map((source) => [source.id, source.state]));
 }
@@ -492,8 +532,8 @@ export async function runWgdReport(
   options: WgdReportOptions,
   deps: RunWgdReportDeps = {}
 ): Promise<WgdReportRunResult> {
-  const env: ProviderPreflightEnv & YandexEvidenceEnv = deps.env
-    || process.env as ProviderPreflightEnv & YandexEvidenceEnv;
+  const env: ProviderPreflightEnv & YandexEvidenceEnv & WordstatEvidenceEnv = deps.env
+    || process.env as ProviderPreflightEnv & YandexEvidenceEnv & WordstatEvidenceEnv;
   const crawlRunner = deps.crawlSite || crawlSiteDefault;
   const resolveDns = deps.dnsResolver ?? defaultDnsResolver;
   await resolvePublicHttpUrl(options.url, resolveDns);
@@ -522,6 +562,28 @@ export async function runWgdReport(
   assertPublicPageFetched(options, crawl);
 
   const generatedAt = (deps.now?.() || new Date()).toISOString();
+  let wordstat: WordstatEvidence;
+  if (options.market !== "RU" && !options.language.toLowerCase().startsWith("ru")) {
+    wordstat = nonRussianWordstat(options, generatedAt);
+  } else {
+    try {
+      wordstat = await (deps.collectWordstatEvidence || collectWordstatEvidenceDefault)(options, crawl.pages, {
+        env,
+        now: deps.now,
+      });
+    } catch {
+      wordstat = {
+        status: { state: "unavailable", message: "Wordstat demand is unavailable.", checkedAt: generatedAt },
+        clusters: options.keywords.map((seed) => ({
+          seed, totalCount: null, phrases: [], measured: false, brand: false,
+          coverage: "not_measured", bestPage: null, matchedFields: [], matchRatio: 0,
+        })),
+        primaryRecommendation: null,
+        requestCount: 0,
+        limitations: ["Optional Wordstat evidence collection was unavailable."],
+      };
+    }
+  }
   const lighthouseSelection = selectLighthousePages(options, crawl);
   const lighthouseUrls = lighthouseSelection.urls;
   const safeLighthouseUrls: string[] = [];
@@ -575,6 +637,7 @@ export async function runWgdReport(
   upsertSource(sources, lighthouseCoverage(lighthouse, requestedProfiles, generatedAt));
   upsertSource(sources, yandexSearchCoverage(options, yandex, generatedAt));
   upsertSource(sources, aliceCoverage(options, yandex, generatedAt));
+  upsertSource(sources, wordstatCoverage(wordstat, generatedAt));
 
   const findings = buildWgdFindings({ crawl, pages: crawl.pages, lighthouse, yandex, sources });
   const payload: WgdReportPayload = {
@@ -585,8 +648,14 @@ export async function runWgdReport(
     pages: crawl.pages,
     lighthouse,
     yandex,
+    wordstat,
     findings,
-    limitations: [...new Set([...crawl.limitations, ...yandex.limitations, ...lighthouseSelection.limitations])],
+    limitations: [...new Set([
+      ...crawl.limitations,
+      ...yandex.limitations,
+      ...wordstat.limitations,
+      ...lighthouseSelection.limitations,
+    ])],
   };
   const artifacts = await (deps.writeArtifacts || writeWgdArtifacts)(payload);
   const successful = lighthouse.filter((item) => item.status === "success").length;

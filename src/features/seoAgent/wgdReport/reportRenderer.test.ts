@@ -185,6 +185,19 @@ function payload(): WgdReportPayload {
       manualQueries: [],
       limitations: ["RAW_YANDEX_LIMITATION_SENTINEL"],
     },
+    wordstat: {
+      status: { state: "success", message: "RAW_WORDSTAT_STATUS_SENTINEL", checkedAt: "2026-09-01T10:20:00.000Z" },
+      clusters: [{
+        seed: "курсы ароматерапии онлайн", totalCount: 4200,
+        phrases: [{ phrase: "обучение ароматерапии", count: 1700 }], brand: false,
+        coverage: "missing", bestPage: null, matchedFields: [], matchRatio: 0,
+      }],
+      primaryRecommendation: {
+        seed: "курсы ароматерапии онлайн", demand: 4200, coverage: "missing",
+        bestPage: null, action: "RAW_WORDSTAT_ACTION_SENTINEL",
+      },
+      requestCount: 3, limitations: [],
+    },
     findings: [
       {
         code: "homepage_noindex", severity: "critical", affectedUrl: HOME,
@@ -230,6 +243,7 @@ describe("renderWgdHtml manager-first contract", () => {
     const ids = [
       "overall-score",
       "main-problems",
+      "wordstat-demand",
       "yandex-positions",
       "alice-visibility",
       "speed-ux",
@@ -245,6 +259,10 @@ describe("renderWgdHtml manager-first contract", () => {
     expect(html.match(/<details\b[^>]*class="page-detail"[^>]*>/g)).toHaveLength(2);
     expect(html).not.toMatch(/<details\b[^>]*\sopen(?:\s|=|>)/i);
     expect(html).not.toContain("<script");
+    expect(html).toContain("Спрос и соответствие контента");
+    expect(html).toContain("Главная возможность роста");
+    expect(html).toContain("Не влияет на общую SEO-оценку");
+    expect(html).not.toContain("RAW_WORDSTAT_ACTION_SENTINEL");
   });
 
   test("resolves every problem link to a real target and repeats all page recommendations in its detail", () => {
