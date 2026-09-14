@@ -5,6 +5,7 @@ import type { YandexEvidence, YandexEvidenceDeps } from "./yandexEvidence";
 import { runWgdReport, selectLighthouseUrls } from "./runWgdReport";
 import { runSeoReportCli } from "../../../../scripts/runSeoReport";
 import { SeoProviderNotConfiguredError } from "../providers/seoDataProvider";
+import type { WordstatEvidence } from "./wordstatEvidence";
 
 const PUBLIC_DNS = async () => [{ address: "93.184.216.34", family: 4 as const }];
 const LAB_PROFILE = {
@@ -79,6 +80,16 @@ function yandex(): YandexEvidence {
   };
 }
 
+function wordstat(state: "success" | "partial" | "unavailable" | "not_applicable" = "success"): WordstatEvidence {
+  return {
+    status: { state, message: "safe", checkedAt: "2026-09-14T10:00:00.000Z" },
+    clusters: [],
+    primaryRecommendation: null,
+    requestCount: state === "success" ? 1 : 0,
+    limitations: [],
+  };
+}
+
 function twoPageCrawl(): CrawlEvidence {
   const result = crawl();
   result.pages = result.pages.slice(0, 2);
@@ -146,6 +157,7 @@ async function runCoverageScenario(
       if (evidence instanceof Error) throw evidence;
       return evidence;
     },
+    collectWordstatEvidence: async () => wordstat(),
     writeArtifacts: async (written) => {
       payload = written;
       return {
@@ -244,6 +256,11 @@ describe("runWgdReport", () => {
         calls.push("yandex");
         return yandex();
       },
+      collectWordstatEvidence: async (_options, pages) => {
+        calls.push("wordstat");
+        expect(pages).toHaveLength(2);
+        return wordstat();
+      },
       writeArtifacts: async (payload) => {
         calls.push("write");
         written.push(payload);
@@ -280,6 +297,7 @@ describe("runWgdReport", () => {
           gsc: "owner_access_required",
           crawl: "success",
           lighthouse: "partial",
+          wordstat: "success",
         },
       },
     });
@@ -289,6 +307,7 @@ describe("runWgdReport", () => {
       crawl: expect.objectContaining({ pages: expect.any(Array) }),
       lighthouse: partialProfiles,
       yandex: expect.objectContaining({ serpStatus: expect.objectContaining({ state: "connected" }) }),
+      wordstat: expect.objectContaining({ status: expect.objectContaining({ state: "success" }) }),
       findings: expect.any(Array),
     }));
     expect(written[0].schemaVersion).toBeUndefined();
@@ -298,6 +317,28 @@ describe("runWgdReport", () => {
     ] as SourceCoverage[]));
     expect(JSON.stringify(result)).not.toContain("execution-plan");
     expect(JSON.stringify(written[0])).not.toContain("execution-plan");
+  });
+
+  test("marks Wordstat not applicable for non-Russian reports without calling the provider", async () => {
+    const collectWordstatEvidence = vi.fn();
+    let written: WgdReportPayload | undefined;
+
+    const result = await runWgdReport(options({ market: "AT", language: "de", lighthousePageLimit: 1 }), {
+      dnsResolver: PUBLIC_DNS,
+      env: {},
+      crawlSite: async () => twoPageCrawl(),
+      collectLighthouseProfiles: async () => [],
+      collectYandexEvidence: async () => yandex(),
+      collectWordstatEvidence,
+      writeArtifacts: async (payload) => {
+        written = payload;
+        return { directory: "/memory/non-ru", reportJson: "/memory/non-ru/report.json", reportHtml: "/memory/non-ru/report.html", evidenceFiles: [] };
+      },
+    });
+
+    expect(collectWordstatEvidence).not.toHaveBeenCalled();
+    expect(result.summary.coverage.wordstat).toBe("not_applicable");
+    expect((written?.wordstat as WordstatEvidence).status.state).toBe("not_applicable");
   });
 
   test("treats a failure to fetch the starting public page as fatal", async () => {

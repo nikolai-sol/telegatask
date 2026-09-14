@@ -109,6 +109,29 @@ function payload(): WgdReportPayload {
 }
 
 describe("buildPublishedWgdReport", () => {
+  test("retains Wordstat evidence without changing any assessment score", () => {
+    const baseline = buildPublishedWgdReport(payload());
+    const withDemand = payload();
+    withDemand.wordstat = {
+      status: { state: "success", message: "Collected", checkedAt: withDemand.generatedAt },
+      clusters: [{
+        seed: "online course", totalCount: 5000, phrases: [], brand: false,
+        coverage: "missing", bestPage: null, matchedFields: [], tokenRatio: 0,
+      }],
+      primaryRecommendation: {
+        seed: "online course", demand: 5000, coverage: "missing", bestPage: null,
+        action: "Create a page.",
+      },
+      requestCount: 3,
+      limitations: [],
+    };
+
+    const published = buildPublishedWgdReport(withDemand);
+
+    expect(published.wordstat).toEqual(withDemand.wordstat);
+    expect(published.assessment).toEqual(baseline.assessment);
+  });
+
   test("publishes schema 2 with recalculated scores and all finding groups while retaining normalized evidence", () => {
     const published = buildPublishedWgdReport(payload());
 

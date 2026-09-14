@@ -60,6 +60,10 @@ function payload(outDir: string, manual = true): WgdReportPayload {
       manualQueries: manual ? [{ source: "alice_ai", query: "best <flowers>", reason: "manual check" }] : [],
       limitations: [],
     },
+    wordstat: {
+      status: { state: "success", message: "Collected", checkedAt: "2026-08-31T10:20:00Z" },
+      clusters: [], primaryRecommendation: null, requestCount: 1, limitations: [],
+    },
     findings: [],
     limitations: [],
   };
@@ -79,6 +83,7 @@ describe("writeWgdArtifacts", () => {
     expect(await readdir(result.directory)).not.toContain("execution-plan.md");
     expect(result.evidenceFiles).toEqual([
       ...REQUIRED_EVIDENCE,
+      "evidence/wordstat.json",
       "evidence/lighthouse-example-com-home-mobile.json",
     ]);
 

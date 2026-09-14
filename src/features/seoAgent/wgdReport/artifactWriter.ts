@@ -290,6 +290,10 @@ export async function writeWgdArtifacts(
       }],
     ];
     const evidenceFiles: string[] = [...REQUIRED_EVIDENCE_PATHS];
+    if (payload.wordstat && typeof payload.wordstat === "object" && !Array.isArray(payload.wordstat)) {
+      normalizedEvidence.push(["evidence/wordstat.json", payload.wordstat]);
+      evidenceFiles.push("evidence/wordstat.json");
+    }
     for (const [relativePath, evidence] of normalizedEvidence) {
       await atomicWrite(evidenceFilePath(evidenceDirectory, relativePath), prettyJson(sanitize(evidence)));
     }
