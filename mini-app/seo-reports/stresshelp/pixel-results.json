@@ -1,0 +1,2618 @@
+{
+  "project_id": 14429,
+  "update_id": 53141,
+  "completed_at": "2026-10-15T13:19:49.000000Z",
+  "status": "completed_with_missing_answers",
+  "planned": 48,
+  "answered": 46,
+  "missing": 2,
+  "summary": [
+    {
+      "system": "chatgpt",
+      "name": "ChatGPT",
+      "nonbrand_planned": 11,
+      "nonbrand_answered": 11,
+      "nonbrand_missing": 0,
+      "nonbrand_mentions": 0,
+      "nonbrand_citations": 0,
+      "brand_answered": 1,
+      "brand_citations": 1
+    },
+    {
+      "system": "perplexity",
+      "name": "Perplexity",
+      "nonbrand_planned": 11,
+      "nonbrand_answered": 11,
+      "nonbrand_missing": 0,
+      "nonbrand_mentions": 1,
+      "nonbrand_citations": 1,
+      "brand_answered": 1,
+      "brand_citations": 1
+    },
+    {
+      "system": "yandex-alisa",
+      "name": "Поиск с Алисой",
+      "nonbrand_planned": 11,
+      "nonbrand_answered": 11,
+      "nonbrand_missing": 0,
+      "nonbrand_mentions": 0,
+      "nonbrand_citations": 0,
+      "brand_answered": 1,
+      "brand_citations": 1
+    },
+    {
+      "system": "google-ai-overview",
+      "name": "Google AI Overview",
+      "nonbrand_planned": 11,
+      "nonbrand_answered": 9,
+      "nonbrand_missing": 2,
+      "nonbrand_mentions": 0,
+      "nonbrand_citations": 0,
+      "brand_answered": 1,
+      "brand_citations": 1
+    }
+  ],
+  "rows": [
+    {
+      "prompt_id": 800300,
+      "prompt": "Где пройти бесплатный тест на тревожность онлайн?",
+      "brand_prompt": false,
+      "system": "yandex-alisa",
+      "system_name": "Поиск с Алисой",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://www.psychologies.ru/tests/test/6350059/",
+          "domain": "www.psychologies.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.psychologies.ru"
+        },
+        {
+          "url": "https://alter.ru/tests/shkala-trevogi-beka/",
+          "domain": "alter.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/alter.ru"
+        },
+        {
+          "url": "https://kudlaeva.ru/test-trevoga/",
+          "domain": "kudlaeva.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/kudlaeva.ru"
+        },
+        {
+          "url": "https://www.fdoctor.ru/psy/psychological-center/test-na-trevogu/",
+          "domain": "www.fdoctor.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.fdoctor.ru"
+        },
+        {
+          "url": "https://www.b17.ru/tests/bai/",
+          "domain": "www.b17.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.b17.ru"
+        },
+        {
+          "url": "https://xsho.ru/test/anxiety",
+          "domain": "xsho.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/xsho.ru"
+        }
+      ],
+      "urls_total": 6
+    },
+    {
+      "prompt_id": 800300,
+      "prompt": "Где пройти бесплатный тест на тревожность онлайн?",
+      "brand_prompt": false,
+      "system": "google-ai-overview",
+      "system_name": "Google AI Overview",
+      "has_answer": false,
+      "status": "no_answer_returned",
+      "brand_mentioned": null,
+      "brand_position": null,
+      "site_cited": null,
+      "site_position": null,
+      "answer_origin": "chat",
+      "update_id": 53141,
+      "urls": [],
+      "urls_total": 0
+    },
+    {
+      "prompt_id": 800300,
+      "prompt": "Где пройти бесплатный тест на тревожность онлайн?",
+      "brand_prompt": false,
+      "system": "chatgpt",
+      "system_name": "ChatGPT",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://gad-7.org/ru",
+          "domain": "gad-7.org",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/gad-7.org"
+        },
+        {
+          "url": "https://vopore.ru/assessment/bai",
+          "domain": "vopore.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/vopore.ru"
+        },
+        {
+          "url": "https://vopore.ru/assessment/test-na-trevozhnost",
+          "domain": "vopore.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/vopore.ru"
+        },
+        {
+          "url": "https://toolfox.ru/tools/spielberger-hanin-anxiety",
+          "domain": "toolfox.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/toolfox.ru"
+        },
+        {
+          "url": "https://publications.hse.ru/pubs/share/direct/889173128.pdf",
+          "domain": "publications.hse.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/publications.hse.ru"
+        }
+      ],
+      "urls_total": 5
+    },
+    {
+      "prompt_id": 800300,
+      "prompt": "Где пройти бесплатный тест на тревожность онлайн?",
+      "brand_prompt": false,
+      "system": "perplexity",
+      "system_name": "Perplexity",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://alter.ru/tests/",
+          "domain": "alter.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/alter.ru"
+        },
+        {
+          "url": "https://anxietytest.me/ru",
+          "domain": "anxietytest.me",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/anxietytest.me"
+        },
+        {
+          "url": "https://media.handlingbetter.ru/tests/anxiety/",
+          "domain": "media.handlingbetter.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/media.handlingbetter.ru"
+        },
+        {
+          "url": "https://gad-7.org/ru",
+          "domain": "gad-7.org",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/gad-7.org"
+        },
+        {
+          "url": "https://screening.mhanational.org/screening-tools/anxiety/",
+          "domain": "screening.mhanational.org",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/screening.mhanational.org"
+        },
+        {
+          "url": "https://www.newleaf.ua/ru/testy/",
+          "domain": "www.newleaf.ua",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.newleaf.ua"
+        },
+        {
+          "url": "https://www.idrlabs.com/ru/anxiety-disorders/test.php",
+          "domain": "www.idrlabs.com",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.idrlabs.com"
+        },
+        {
+          "url": "https://www.panatceya.ru/polezno/psikhotesty/test-spilbergera-khanina/",
+          "domain": "www.panatceya.ru",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.panatceya.ru"
+        },
+        {
+          "url": "https://alter.ru/trevoga_checkup",
+          "domain": "alter.ru",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/alter.ru"
+        },
+        {
+          "url": "https://www.kp.ru/woman/otnosheniya/test-na-trevozhnost/",
+          "domain": "www.kp.ru",
+          "position": 10,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.kp.ru"
+        }
+      ],
+      "urls_total": 10
+    },
+    {
+      "prompt_id": 800301,
+      "prompt": "Где пройти госпитальную шкалу тревоги и депрессии HADS онлайн?",
+      "brand_prompt": false,
+      "system": "yandex-alisa",
+      "system_name": "Поиск с Алисой",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://www.rlsnet.ru/med-calculators/psixiatriya/skala-hads-83",
+          "domain": "www.rlsnet.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.rlsnet.ru"
+        },
+        {
+          "url": "https://www.zdrav.ru/articles/4293667873-shkala-trevogi-i-depressii-hads-prakticheskoe-rukovodstvo-dlya-vracha",
+          "domain": "www.zdrav.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.zdrav.ru"
+        },
+        {
+          "url": "https://ru.wikipedia.org/wiki/Госпитальная_шкала_тревожности_и_депрессии",
+          "domain": "ru.wikipedia.org",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/ru.wikipedia.org"
+        },
+        {
+          "url": "https://kiselevaln.ru/blog/gospitalnaya-shkala-trevogi-i-depressii-hads",
+          "domain": "kiselevaln.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/kiselevaln.ru"
+        },
+        {
+          "url": "https://clinli.ru/tests/hads-test/",
+          "domain": "clinli.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/clinli.ru"
+        },
+        {
+          "url": "https://statblank.com/metodiki/hads-gospitalnaya-shkala",
+          "domain": "statblank.com",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/statblank.com"
+        },
+        {
+          "url": "https://medgorod-clinic.ru/stati/shkala-trevogi-i-depressii-hads/",
+          "domain": "medgorod-clinic.ru",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/medgorod-clinic.ru"
+        }
+      ],
+      "urls_total": 7
+    },
+    {
+      "prompt_id": 800301,
+      "prompt": "Где пройти госпитальную шкалу тревоги и депрессии HADS онлайн?",
+      "brand_prompt": false,
+      "system": "google-ai-overview",
+      "system_name": "Google AI Overview",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://neuropsy-clinic.ru/tests/hads",
+          "domain": "neuropsy-clinic.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/neuropsy-clinic.ru"
+        },
+        {
+          "url": "https://psytests.org/depr/hadsdf.html",
+          "domain": "psytests.org",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/psytests.org"
+        },
+        {
+          "url": "https://ru.wikipedia.org/wiki/Госпитальная_шкала_тревожности_и_депрессии",
+          "domain": "ru.wikipedia.org",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/ru.wikipedia.org"
+        },
+        {
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_358669/6c99ded80194d22e7b7bf038e2d58d93d4bcdef8/",
+          "domain": "www.consultant.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.consultant.ru"
+        }
+      ],
+      "urls_total": 4
+    },
+    {
+      "prompt_id": 800301,
+      "prompt": "Где пройти госпитальную шкалу тревоги и депрессии HADS онлайн?",
+      "brand_prompt": false,
+      "system": "chatgpt",
+      "system_name": "ChatGPT",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://www.rlsnet.ru/med-calculators/psixiatriya/skala-hads-83",
+          "domain": "www.rlsnet.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.rlsnet.ru"
+        },
+        {
+          "url": "https://школасеченова.рф/tools/hads",
+          "domain": "школасеченова.рф",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/школасеченова.рф"
+        }
+      ],
+      "urls_total": 2
+    },
+    {
+      "prompt_id": 800301,
+      "prompt": "Где пройти госпитальную шкалу тревоги и депрессии HADS онлайн?",
+      "brand_prompt": false,
+      "system": "perplexity",
+      "system_name": "Perplexity",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://clinli.ru/tests/hads-test/",
+          "domain": "clinli.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/clinli.ru"
+        },
+        {
+          "url": "https://www.b17.ru/tests/hads-test/",
+          "domain": "www.b17.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.b17.ru"
+        },
+        {
+          "url": "https://idmental.ru/hads",
+          "domain": "idmental.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/idmental.ru"
+        },
+        {
+          "url": "https://www.b17.ru/tests/hads91/",
+          "domain": "www.b17.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.b17.ru"
+        },
+        {
+          "url": "https://www.b17.ru/tests/1592/",
+          "domain": "www.b17.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.b17.ru"
+        },
+        {
+          "url": "https://base.garant.ru/400186478/f62c3b6c2c0ea0367ed000160e1a00cc/",
+          "domain": "base.garant.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/base.garant.ru"
+        },
+        {
+          "url": "https://www.sralab.org/rehabilitation-measures/hospital-anxiety-and-depression-scale",
+          "domain": "www.sralab.org",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.sralab.org"
+        },
+        {
+          "url": "https://www.mediasphera.ru/issues/profilakticheskaya-meditsina/2023/4/1230549482023041007",
+          "domain": "www.mediasphera.ru",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.mediasphera.ru"
+        },
+        {
+          "url": "https://onlinetestpad.com/ru/tests/depression",
+          "domain": "onlinetestpad.com",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/onlinetestpad.com"
+        },
+        {
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_424695/b75fa5c631c5b2e5a9d33c7ea72426d4b2f7979e/",
+          "domain": "www.consultant.ru",
+          "position": 10,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.consultant.ru"
+        }
+      ],
+      "urls_total": 10
+    },
+    {
+      "prompt_id": 800302,
+      "prompt": "Какие сайты помогают справиться со стрессом и тревогой?",
+      "brand_prompt": false,
+      "system": "yandex-alisa",
+      "system_name": "Поиск с Алисой",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://t-j.ru/list/calm-down-courses/",
+          "domain": "t-j.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/t-j.ru"
+        },
+        {
+          "url": "https://hi-tech.mail.ru/review/56301-6-tehnologicheskih-servisov-dlya-psihologicheskogo-komforta/",
+          "domain": "hi-tech.mail.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/hi-tech.mail.ru"
+        },
+        {
+          "url": "https://rb.ru/columns/services-to-fight-anxiety/",
+          "domain": "rb.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/rb.ru"
+        },
+        {
+          "url": "https://www.b17.ru/article/660093/",
+          "domain": "www.b17.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.b17.ru"
+        },
+        {
+          "url": "https://community.mosgorzdrav.ru/news/upravlyaem-stressom-i-trevozhnostyu-podborka-resursov-dlya-kontrolya-emociy",
+          "domain": "community.mosgorzdrav.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/community.mosgorzdrav.ru"
+        }
+      ],
+      "urls_total": 5
+    },
+    {
+      "prompt_id": 800302,
+      "prompt": "Какие сайты помогают справиться со стрессом и тревогой?",
+      "brand_prompt": false,
+      "system": "google-ai-overview",
+      "system_name": "Google AI Overview",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://antitrevoga.ru/",
+          "domain": "antitrevoga.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/antitrevoga.ru"
+        },
+        {
+          "url": "https://pomoschryadom.ru/",
+          "domain": "pomoschryadom.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/pomoschryadom.ru"
+        },
+        {
+          "url": "https://icognito.app/stress",
+          "domain": "icognito.app",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/icognito.app"
+        },
+        {
+          "url": "https://play.google.com/store/apps/details/Moodpress_Mood_Diary_Tracker?id=com.selfcare.diary.mood.tracker.moodpress&hl=ru",
+          "domain": "play.google.com",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/play.google.com"
+        },
+        {
+          "url": "https://brainbild.com/",
+          "domain": "brainbild.com",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/brainbild.com"
+        },
+        {
+          "url": "https://gruppy-psy.ru/online/",
+          "domain": "gruppy-psy.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/gruppy-psy.ru"
+        },
+        {
+          "url": "https://vmeste.group/",
+          "domain": "vmeste.group",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/vmeste.group"
+        }
+      ],
+      "urls_total": 7
+    },
+    {
+      "prompt_id": 800302,
+      "prompt": "Какие сайты помогают справиться со стрессом и тревогой?",
+      "brand_prompt": false,
+      "system": "chatgpt",
+      "system_name": "ChatGPT",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://psi.mchs.gov.ru/",
+          "domain": "psi.mchs.gov.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/psi.mchs.gov.ru"
+        },
+        {
+          "url": "https://www.who.int/westernpacific/publications/i/item/9789240003927",
+          "domain": "www.who.int",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.who.int"
+        },
+        {
+          "url": "https://www.nhs.uk/every-mind-matters/mental-health-issues/",
+          "domain": "www.nhs.uk",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.nhs.uk"
+        },
+        {
+          "url": "https://www.who.int/news-room/fact-sheets/detail/anxiety-disorders",
+          "domain": "www.who.int",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.who.int"
+        },
+        {
+          "url": "https://telefon-doveria.ru/contacts/",
+          "domain": "telefon-doveria.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/telefon-doveria.ru"
+        }
+      ],
+      "urls_total": 5
+    },
+    {
+      "prompt_id": 800302,
+      "prompt": "Какие сайты помогают справиться со стрессом и тревогой?",
+      "brand_prompt": false,
+      "system": "perplexity",
+      "system_name": "Perplexity",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": true,
+      "brand_position": 1,
+      "site_cited": true,
+      "site_position": 1,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://stresshelp.ru/",
+          "domain": "stresshelp.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stresshelp.ru"
+        },
+        {
+          "url": "https://www.everydayhealth.com/trusted-health-resources/best-anxiety-resources/",
+          "domain": "www.everydayhealth.com",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.everydayhealth.com"
+        },
+        {
+          "url": "https://www.healthline.com/health/mental-health/mental-health-apps",
+          "domain": "www.healthline.com",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.healthline.com"
+        },
+        {
+          "url": "https://www.sfhp.org/wp-content/files/member_materials/health_education/fact_sheets/HealthEd_ReduceStress_RUS.pdf",
+          "domain": "www.sfhp.org",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.sfhp.org"
+        },
+        {
+          "url": "https://www.jcmh.org/ru/resources-for-dealing-with-anxiety/",
+          "domain": "www.jcmh.org",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.jcmh.org"
+        },
+        {
+          "url": "https://slulibrary.saintleo.edu/c.php?g=1052042&p=7639927",
+          "domain": "slulibrary.saintleo.edu",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/slulibrary.saintleo.edu"
+        },
+        {
+          "url": "https://www.everydayhealth.com/emotional-health/best-mental-health-apps/",
+          "domain": "www.everydayhealth.com",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.everydayhealth.com"
+        },
+        {
+          "url": "https://psychiatry.wustl.edu/wellness-resources/website-resources/",
+          "domain": "psychiatry.wustl.edu",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/psychiatry.wustl.edu"
+        },
+        {
+          "url": "https://t-j.ru/list/calm-down-courses/",
+          "domain": "t-j.ru",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/t-j.ru"
+        },
+        {
+          "url": "https://rb.ru/list/mental-health-tech/",
+          "domain": "rb.ru",
+          "position": 10,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/rb.ru"
+        }
+      ],
+      "urls_total": 10
+    },
+    {
+      "prompt_id": 800303,
+      "prompt": "Где получить бесплатную консультацию психолога онлайн при тревоге?",
+      "brand_prompt": false,
+      "system": "yandex-alisa",
+      "system_name": "Поиск с Алисой",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "chat",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://alter.ru/besplatnaya-psikhologicheskaya-pomosch",
+          "domain": "alter.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/alter.ru"
+        },
+        {
+          "url": "https://sprosivracha.com/questions/psihoterapevt",
+          "domain": "sprosivracha.com",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/sprosivracha.com"
+        },
+        {
+          "url": "https://www.b17.ru/online/?vopros=72",
+          "domain": "www.b17.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.b17.ru"
+        },
+        {
+          "url": "https://foma.ru/besplatnaya-psihologicheskaya-pomoshh.html",
+          "domain": "foma.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/foma.ru"
+        },
+        {
+          "url": "https://yasno.live/free-psychological-help",
+          "domain": "yasno.live",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/yasno.live"
+        }
+      ],
+      "urls_total": 5
+    },
+    {
+      "prompt_id": 800303,
+      "prompt": "Где получить бесплатную консультацию психолога онлайн при тревоге?",
+      "brand_prompt": false,
+      "system": "google-ai-overview",
+      "system_name": "Google AI Overview",
+      "has_answer": false,
+      "status": "no_answer_returned",
+      "brand_mentioned": null,
+      "brand_position": null,
+      "site_cited": null,
+      "site_position": null,
+      "answer_origin": "chat",
+      "update_id": 53141,
+      "urls": [],
+      "urls_total": 0
+    },
+    {
+      "prompt_id": 800303,
+      "prompt": "Где получить бесплатную консультацию психолога онлайн при тревоге?",
+      "brand_prompt": false,
+      "system": "chatgpt",
+      "system_name": "ChatGPT",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://psi.mchs.gov.ru/",
+          "domain": "psi.mchs.gov.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/psi.mchs.gov.ru"
+        },
+        {
+          "url": "https://edu.gov.ru/press/12036/sergey-kravcov-otkryl-liniyu-psihologicheskoy-pomoschi-shkola-doveriya/",
+          "domain": "edu.gov.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/edu.gov.ru"
+        }
+      ],
+      "urls_total": 2
+    },
+    {
+      "prompt_id": 800303,
+      "prompt": "Где получить бесплатную консультацию психолога онлайн при тревоге?",
+      "brand_prompt": false,
+      "system": "perplexity",
+      "system_name": "Perplexity",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://psy-chat.ru/",
+          "domain": "psy-chat.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/psy-chat.ru"
+        },
+        {
+          "url": "https://brainbild.com/",
+          "domain": "brainbild.com",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/brainbild.com"
+        },
+        {
+          "url": "https://psy-chat.ru/catalog/trevoga-strahi",
+          "domain": "psy-chat.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/psy-chat.ru"
+        },
+        {
+          "url": "https://rb.ru/reviews/gde-poluchit-besplatnuyu-psihologicheskuyu-pomoshch/",
+          "domain": "rb.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/rb.ru"
+        },
+        {
+          "url": "https://msph.ru/gde-poluchit-uslugi",
+          "domain": "msph.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/msph.ru"
+        },
+        {
+          "url": "https://doctu.ru/consult/psikholog",
+          "domain": "doctu.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/doctu.ru"
+        },
+        {
+          "url": "https://zigmund.online/pages/help/besplatnaya-psihologicheskaya-pomoshch/",
+          "domain": "zigmund.online",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/zigmund.online"
+        },
+        {
+          "url": "https://msph.ru/uslugi/psikhologicheskoe-konsultirovanie",
+          "domain": "msph.ru",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/msph.ru"
+        },
+        {
+          "url": "https://www.unisender.com/ru/blog/servisy-po-poisku-i-podboru-psihologa/",
+          "domain": "www.unisender.com",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.unisender.com"
+        },
+        {
+          "url": "https://psychodemia.ru/get-help",
+          "domain": "psychodemia.ru",
+          "position": 10,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/psychodemia.ru"
+        }
+      ],
+      "urls_total": 10
+    },
+    {
+      "prompt_id": 800304,
+      "prompt": "Как справиться с постоянным чувством тревоги?",
+      "brand_prompt": false,
+      "system": "yandex-alisa",
+      "system_name": "Поиск с Алисой",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://dszn.ru/press-center/news/5234",
+          "domain": "dszn.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/dszn.ru"
+        },
+        {
+          "url": "https://www.gmsclinic.ru/blog/kak-izbavitsya-ot-trevogi-i-bespokoystva",
+          "domain": "www.gmsclinic.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.gmsclinic.ru"
+        },
+        {
+          "url": "https://cmzmedical.ru/simptomy/chuvstvo-trevogi-i-bespokoystva-bez-prichiny/",
+          "domain": "cmzmedical.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/cmzmedical.ru"
+        },
+        {
+          "url": "https://vielclinic.ru/articles/s-chem-svyazano-khronicheskoe-chuvstvo-trevogi-napryazheniya-i-bespokoystva/",
+          "domain": "vielclinic.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/vielclinic.ru"
+        },
+        {
+          "url": "https://rosa.clinic/blog/simptomy/kak-izbavitsya-ot-chuvstva-trevogi/",
+          "domain": "rosa.clinic",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/rosa.clinic"
+        }
+      ],
+      "urls_total": 5
+    },
+    {
+      "prompt_id": 800304,
+      "prompt": "Как справиться с постоянным чувством тревоги?",
+      "brand_prompt": false,
+      "system": "google-ai-overview",
+      "system_name": "Google AI Overview",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://ramsaydiagnostics.ru/blog/povyshennaya-trevozhnost-kak-vernut-kontrol-nad-svoey-zhiznyu-i-zdorovem/",
+          "domain": "ramsaydiagnostics.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/ramsaydiagnostics.ru"
+        },
+        {
+          "url": "https://vesnaclinic.com/blogs/5-effektivnyh-sposobov-spravitsya-s-trevogoj/",
+          "domain": "vesnaclinic.com",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/vesnaclinic.com"
+        },
+        {
+          "url": "https://alfazdrav.ru/articles/chuvstvo-trevogi-kak-otlichit-normu-ot-rasstrojstva-i-vernut-spokojstvie/",
+          "domain": "alfazdrav.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/alfazdrav.ru"
+        },
+        {
+          "url": "https://academpharm.by/kak-izbavitsya-chuvstva-trevogi-bespokojstva",
+          "domain": "academpharm.by",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/academpharm.by"
+        },
+        {
+          "url": "https://cmzmedical.ru/simptomy/chuvstvo-trevogi-i-bespokoystva-bez-prichiny/",
+          "domain": "cmzmedical.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/cmzmedical.ru"
+        },
+        {
+          "url": "https://mrtexpert.ru/articles/pochemu-poyavlyaetsya-trevoga-i-nado-li-s-ney-borotsya",
+          "domain": "mrtexpert.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/mrtexpert.ru"
+        },
+        {
+          "url": "https://vielclinic.ru/articles/prichiny-trevogi-i-bespokoystva/",
+          "domain": "vielclinic.ru",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/vielclinic.ru"
+        }
+      ],
+      "urls_total": 7
+    },
+    {
+      "prompt_id": 800304,
+      "prompt": "Как справиться с постоянным чувством тревоги?",
+      "brand_prompt": false,
+      "system": "chatgpt",
+      "system_name": "ChatGPT",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://www.who.int/ru/news-room/fact-sheets/detail/anxiety-disorders",
+          "domain": "www.who.int",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.who.int"
+        },
+        {
+          "url": "https://gkb2-kbr.ru/news/postojannaja-trevoga-gde-prohodit-granica-mezhdu-normalnoj-reakciej-i-povodom-obratitsja-za-pomoshhju/",
+          "domain": "gkb2-kbr.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/gkb2-kbr.ru"
+        }
+      ],
+      "urls_total": 2
+    },
+    {
+      "prompt_id": 800304,
+      "prompt": "Как справиться с постоянным чувством тревоги?",
+      "brand_prompt": false,
+      "system": "perplexity",
+      "system_name": "Perplexity",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://psi.mchs.gov.ru/appeals/119339",
+          "domain": "psi.mchs.gov.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/psi.mchs.gov.ru"
+        },
+        {
+          "url": "https://www.apollohospitals.com/ru/diseases-and-conditions/anxiety",
+          "domain": "www.apollohospitals.com",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.apollohospitals.com"
+        },
+        {
+          "url": "https://www.medanta.org/ru/patient-education-blog/5-effective-ways-to-manage-daily-anxiety",
+          "domain": "www.medanta.org",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.medanta.org"
+        },
+        {
+          "url": "https://www.psychologies.ru/articles/kak-spravitsya-s-trevogoy/",
+          "domain": "www.psychologies.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.psychologies.ru"
+        },
+        {
+          "url": "https://profilaktika.tomsk.ru/naseleniyu/stati/psikhologiya/vzroslaya-psikhologiya/kak-spravitsya-s-trevogoy-rekomendatsii-psikhologa/",
+          "domain": "profilaktika.tomsk.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/profilaktika.tomsk.ru"
+        },
+        {
+          "url": "https://ivgpu.ru/images/events/psychology/Тревога.pdf",
+          "domain": "ivgpu.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/ivgpu.ru"
+        },
+        {
+          "url": "https://www.rcpsych.ac.uk/mental-health/translations/russian/anxiety-in-children-and-young-people",
+          "domain": "www.rcpsych.ac.uk",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.rcpsych.ac.uk"
+        },
+        {
+          "url": "https://rosa.clinic/blog/simptomy/kak-izbavitsya-ot-chuvstva-trevogi/",
+          "domain": "rosa.clinic",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/rosa.clinic"
+        },
+        {
+          "url": "https://mitm.institute/journal--psihologiya--kak-izbavitsya-ot-trevozhnosti-prichiny-bespokojstva-i-dejstvennye-sposoby",
+          "domain": "mitm.institute",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/mitm.institute"
+        },
+        {
+          "url": "https://prizma.mgpu.ru/trevoga-chto-delat-kogda-trevozhnye-mysli-svodyat-s-uma/",
+          "domain": "prizma.mgpu.ru",
+          "position": 10,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/prizma.mgpu.ru"
+        }
+      ],
+      "urls_total": 10
+    },
+    {
+      "prompt_id": 800305,
+      "prompt": "Что делать при панической атаке?",
+      "brand_prompt": false,
+      "system": "yandex-alisa",
+      "system_name": "Поиск с Алисой",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://phlebocentr.ru/zabolevaniya/panicheskaya-ataka/",
+          "domain": "phlebocentr.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/phlebocentr.ru"
+        },
+        {
+          "url": "https://www.smclinic-spb.ru/zabolevaniya/panicheskie-ataki",
+          "domain": "www.smclinic-spb.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.smclinic-spb.ru"
+        },
+        {
+          "url": "https://ru.wikipedia.org/wiki/Паническая_атака",
+          "domain": "ru.wikipedia.org",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/ru.wikipedia.org"
+        },
+        {
+          "url": "https://www.onclinic.ru/panicheskie-ataki/",
+          "domain": "www.onclinic.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.onclinic.ru"
+        }
+      ],
+      "urls_total": 4
+    },
+    {
+      "prompt_id": 800305,
+      "prompt": "Что делать при панической атаке?",
+      "brand_prompt": false,
+      "system": "google-ai-overview",
+      "system_name": "Google AI Overview",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://www.invitro.ru/moscow/about/press_relizes/vrach-rasskazala-chego-nelzya-delat-pri-panicheskoy-atake/",
+          "domain": "www.invitro.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.invitro.ru"
+        },
+        {
+          "url": "https://fomin-clinic.ru/blog/panicheskaya-ataka-chto-delat-i-kak-uspokoitsya/",
+          "domain": "fomin-clinic.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/fomin-clinic.ru"
+        },
+        {
+          "url": "https://vielclinic.ru/articles/chto-delat-esli-voznikla-panicheskaya-ataka/",
+          "domain": "vielclinic.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/vielclinic.ru"
+        },
+        {
+          "url": "https://omr.by/news/stati/panicheskie-ataki-chto-delat",
+          "domain": "omr.by",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/omr.by"
+        },
+        {
+          "url": "https://chastnaya-psihiatricheskaya-klinika-stacionar.ru/blog/panicheskaya-ataka-chto-delat",
+          "domain": "chastnaya-psihiatricheskaya-klinika-stacionar.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/chastnaya-psihiatricheskaya-klinika-stacionar.ru"
+        },
+        {
+          "url": "https://newhospital.ru/departments/pervoe-nevrologicheskoe-otdelenie/chto-delat-pri-panicheskoy-atake/",
+          "domain": "newhospital.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/newhospital.ru"
+        },
+        {
+          "url": "https://premium-practice.ru/articles/panicheskaja-ataka/",
+          "domain": "premium-practice.ru",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/premium-practice.ru"
+        },
+        {
+          "url": "https://mozok.ua/ru/anxietydisorder/video/4286-sovety-psihiatra-kak-preodolevat-panicheskie-ataki",
+          "domain": "mozok.ua",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/mozok.ua"
+        },
+        {
+          "url": "https://alfazdrav.ru/articles/panicheskie-ataki-i-kak-s-nimi-spravitsya/",
+          "domain": "alfazdrav.ru",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/alfazdrav.ru"
+        }
+      ],
+      "urls_total": 9
+    },
+    {
+      "prompt_id": 800305,
+      "prompt": "Что делать при панической атаке?",
+      "brand_prompt": false,
+      "system": "chatgpt",
+      "system_name": "ChatGPT",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://www.consultant.ru/document/cons_doc_LAW_544905/4142c3cd9268f4a9d2663a863e064686256e1219/",
+          "domain": "www.consultant.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.consultant.ru"
+        },
+        {
+          "url": "https://minzdrav.gov.ru/special/documents/9801-algoritmy-okazaniya-pervoy-pomoschi",
+          "domain": "minzdrav.gov.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/minzdrav.gov.ru"
+        }
+      ],
+      "urls_total": 2
+    },
+    {
+      "prompt_id": 800305,
+      "prompt": "Что делать при панической атаке?",
+      "brand_prompt": false,
+      "system": "perplexity",
+      "system_name": "Perplexity",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://health.clevelandclinic.org/how-to-stop-a-panic-attack",
+          "domain": "health.clevelandclinic.org",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/health.clevelandclinic.org"
+        },
+        {
+          "url": "https://www.rbc.ru/life/news/632dc8199a79470480ee1894",
+          "domain": "www.rbc.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.rbc.ru"
+        },
+        {
+          "url": "https://www.mindwell-leeds.org.uk/myself/exploring-your-mental-health/panic/what-helps/",
+          "domain": "www.mindwell-leeds.org.uk",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.mindwell-leeds.org.uk"
+        },
+        {
+          "url": "https://www.kentcht.nhs.uk/leaflet/panic-attacks/",
+          "domain": "www.kentcht.nhs.uk",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.kentcht.nhs.uk"
+        },
+        {
+          "url": "https://docmed.ru/articles/chto-delat-pri-panicheskoy-atake/",
+          "domain": "docmed.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/docmed.ru"
+        },
+        {
+          "url": "https://suhareva-center.mos.ru/antistigma/poleznaya-informatsiya/panika-i-panicheskie-ataki-chto-delat-i-kak-spravlyatsya/",
+          "domain": "suhareva-center.mos.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/suhareva-center.mos.ru"
+        },
+        {
+          "url": "https://www.nstu.ru/studies/youth_policy/Psychsupport/panic_attack",
+          "domain": "www.nstu.ru",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.nstu.ru"
+        },
+        {
+          "url": "https://www.medicalnewstoday.com/articles/321510",
+          "domain": "www.medicalnewstoday.com",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.medicalnewstoday.com"
+        },
+        {
+          "url": "https://www.cpft.nhs.uk/download/coping-with-panic-russian.pdf?ver=9519",
+          "domain": "www.cpft.nhs.uk",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.cpft.nhs.uk"
+        },
+        {
+          "url": "https://40.mchs.gov.ru/deyatelnost/press-centr/novosti/2506077",
+          "domain": "40.mchs.gov.ru",
+          "position": 10,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/40.mchs.gov.ru"
+        }
+      ],
+      "urls_total": 10
+    },
+    {
+      "prompt_id": 800306,
+      "prompt": "Какие упражнения помогают снизить тревожность?",
+      "brand_prompt": false,
+      "system": "yandex-alisa",
+      "system_name": "Поиск с Алисой",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://www.b17.ru/article/852957/",
+          "domain": "www.b17.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.b17.ru"
+        },
+        {
+          "url": "https://wclinic.pro/blog/kak-spravitsia-s-trevogoi/",
+          "domain": "wclinic.pro",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/wclinic.pro"
+        },
+        {
+          "url": "https://rosa.clinic/blog/psyho/tekhniki-relaksatsii-rasslableniya-pri-navyazchivykh-sostoyaniyakh/",
+          "domain": "rosa.clinic",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/rosa.clinic"
+        },
+        {
+          "url": "https://mgkpd.by/информация/здоровый-образ-жизни/школа-пациента/document-8173.html",
+          "domain": "mgkpd.by",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/mgkpd.by"
+        },
+        {
+          "url": "https://ncrdo.ru/center/blog/kognitivno-povedencheskie-uprazhneniya/",
+          "domain": "ncrdo.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/ncrdo.ru"
+        }
+      ],
+      "urls_total": 5
+    },
+    {
+      "prompt_id": 800306,
+      "prompt": "Какие упражнения помогают снизить тревожность?",
+      "brand_prompt": false,
+      "system": "google-ai-overview",
+      "system_name": "Google AI Overview",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://vesnaclinic.com/blogs/5-effektivnyh-sposobov-spravitsya-s-trevogoj/",
+          "domain": "vesnaclinic.com",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/vesnaclinic.com"
+        },
+        {
+          "url": "https://rosa.clinic/blog/psyho/10-sposobov-bystro-rasslabitsya-i-snyat-trevogu/",
+          "domain": "rosa.clinic",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/rosa.clinic"
+        },
+        {
+          "url": "https://institut-medicina.ru/info/top-5-psikhologicheskikh-tekhnik-dlya-snizheniya-trevozhnosti/",
+          "domain": "institut-medicina.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/institut-medicina.ru"
+        },
+        {
+          "url": "https://4brain.ru/blog/kak-pomoch-sebe-pri-trevoge-bez-tabletok/",
+          "domain": "4brain.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/4brain.ru"
+        },
+        {
+          "url": "https://nacedu.by/assets/files/uprazhneniya.pdf",
+          "domain": "nacedu.by",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/nacedu.by"
+        },
+        {
+          "url": "https://www.instagram.com/reel/Dckw9hCMc1i/",
+          "domain": "www.instagram.com",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.instagram.com"
+        },
+        {
+          "url": "https://www.fdoctor.ru/health/helpful_information/spravitsya_so_stressom/",
+          "domain": "www.fdoctor.ru",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.fdoctor.ru"
+        },
+        {
+          "url": "https://poc.care/blog/article/207/",
+          "domain": "poc.care",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/poc.care"
+        },
+        {
+          "url": "https://www.maxmassage.ru/blogs/stati-maxmassage/kak-sport-pomogaet-spravitsya-so-stressom",
+          "domain": "www.maxmassage.ru",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.maxmassage.ru"
+        }
+      ],
+      "urls_total": 9
+    },
+    {
+      "prompt_id": 800306,
+      "prompt": "Какие упражнения помогают снизить тревожность?",
+      "brand_prompt": false,
+      "system": "chatgpt",
+      "system_name": "ChatGPT",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://www.nhs.uk/mental-health/self-help/guides-tools-and-activities/breathing-exercises-for-stress/",
+          "domain": "www.nhs.uk",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.nhs.uk"
+        },
+        {
+          "url": "https://www.nhsinform.scot/illnesses-and-conditions/mental-health/mental-health-self-help-guides/anxiety-self-help-guide",
+          "domain": "www.nhsinform.scot",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.nhsinform.scot"
+        },
+        {
+          "url": "https://www.nhsinform.scot/healthy-living/mental-wellbeing/breathing-and-relaxation-exercises/progressive-muscle-relaxation/",
+          "domain": "www.nhsinform.scot",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.nhsinform.scot"
+        },
+        {
+          "url": "https://www.nhs.uk/mental-health/feelings-symptoms-behaviours/feelings-and-symptoms/anxiety-fear-panic/",
+          "domain": "www.nhs.uk",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.nhs.uk"
+        },
+        {
+          "url": "https://www.nhs.uk/mental-health/self-help/tips-and-support/mindfulness/",
+          "domain": "www.nhs.uk",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.nhs.uk"
+        }
+      ],
+      "urls_total": 5
+    },
+    {
+      "prompt_id": 800306,
+      "prompt": "Какие упражнения помогают снизить тревожность?",
+      "brand_prompt": false,
+      "system": "perplexity",
+      "system_name": "Perplexity",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://www.health.harvard.edu/mental-health/how-to-reduce-stress-and-anxiety-through-movement-and-mindfulness",
+          "domain": "www.health.harvard.edu",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.health.harvard.edu"
+        },
+        {
+          "url": "https://www.mayoclinic.org/healthy-lifestyle/stress-management/in-depth/relaxation-technique/art-20045368",
+          "domain": "www.mayoclinic.org",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.mayoclinic.org"
+        },
+        {
+          "url": "https://www.healthline.com/health/anxiety-exercises",
+          "domain": "www.healthline.com",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.healthline.com"
+        },
+        {
+          "url": "https://health.usnews.com/wellness/mind/articles/best-exercises-for-every-mood",
+          "domain": "health.usnews.com",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/health.usnews.com"
+        },
+        {
+          "url": "https://www.medanta.org/ru/patient-education-blog/how-to-relax-your-mind-and-body-simple-relaxation-techniques-that-work",
+          "domain": "www.medanta.org",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.medanta.org"
+        },
+        {
+          "url": "https://www.mind.org.uk/information-support/tips-for-everyday-living/relaxation/",
+          "domain": "www.mind.org.uk",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.mind.org.uk"
+        },
+        {
+          "url": "https://www.beyondblue.org.au/mental-health/wellbeing/relaxation-exercises",
+          "domain": "www.beyondblue.org.au",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.beyondblue.org.au"
+        },
+        {
+          "url": "https://ndn.info/publikatsii/581730-vashe-telo-hochet-sporta-ekspert-rasskazal-kak-spravitsya-so-stressom-i-razgruzit-mozg/",
+          "domain": "ndn.info",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/ndn.info"
+        },
+        {
+          "url": "https://www.mielenterveystalo.fi/ru/self-help/programma-samopomoschi-pri-trevozhnykh-sostoyaniyakh/uprazhneniya-dlya-tela",
+          "domain": "www.mielenterveystalo.fi",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.mielenterveystalo.fi"
+        },
+        {
+          "url": "https://psychodemia.ru/blog/how-to-deal-with-anxiety",
+          "domain": "psychodemia.ru",
+          "position": 10,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/psychodemia.ru"
+        }
+      ],
+      "urls_total": 10
+    },
+    {
+      "prompt_id": 800307,
+      "prompt": "Как распознать эмоциональное выгорание?",
+      "brand_prompt": false,
+      "system": "yandex-alisa",
+      "system_name": "Поиск с Алисой",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://znanierussia.ru/articles/Эмоциональное_выгорание",
+          "domain": "znanierussia.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/znanierussia.ru"
+        },
+        {
+          "url": "https://externat.foxford.ru/polezno-znat/burnout",
+          "domain": "externat.foxford.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/externat.foxford.ru"
+        },
+        {
+          "url": "https://rosa.clinic/blog/psihiatria/emotsionalnoe-vygoranie-bolezn-xxi-veka-ili-vremennyy-trend/",
+          "domain": "rosa.clinic",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/rosa.clinic"
+        }
+      ],
+      "urls_total": 3
+    },
+    {
+      "prompt_id": 800307,
+      "prompt": "Как распознать эмоциональное выгорание?",
+      "brand_prompt": false,
+      "system": "google-ai-overview",
+      "system_name": "Google AI Overview",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://luciano-sochi.ru/info/blog/vygoranie-priznaki-stadii-i-kak-vosstanovitsya/",
+          "domain": "luciano-sochi.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/luciano-sochi.ru"
+        },
+        {
+          "url": "https://vielclinic.ru/articles/kak-ponyat-chto-u-menya-emotsionalnoe-vygoranie/",
+          "domain": "vielclinic.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/vielclinic.ru"
+        },
+        {
+          "url": "https://netology.ru/burnout_test",
+          "domain": "netology.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/netology.ru"
+        }
+      ],
+      "urls_total": 3
+    },
+    {
+      "prompt_id": 800307,
+      "prompt": "Как распознать эмоциональное выгорание?",
+      "brand_prompt": false,
+      "system": "chatgpt",
+      "system_name": "ChatGPT",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://www.who.int/news/item/28-05-2019-burn-out-an-occupational-phenomenon-international-classification-of-diseases",
+          "domain": "www.who.int",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.who.int"
+        }
+      ],
+      "urls_total": 1
+    },
+    {
+      "prompt_id": 800307,
+      "prompt": "Как распознать эмоциональное выгорание?",
+      "brand_prompt": false,
+      "system": "perplexity",
+      "system_name": "Perplexity",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://www.rbc.ru/education/30/01/2026/697b22509a7947f2af59a1fd",
+          "domain": "www.rbc.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.rbc.ru"
+        },
+        {
+          "url": "https://www.nstu.ru/studies/youth_policy/Psychsupport/selfhelp/Burnout",
+          "domain": "www.nstu.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.nstu.ru"
+        },
+        {
+          "url": "https://kontur.ru/articles/1923",
+          "domain": "kontur.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/kontur.ru"
+        },
+        {
+          "url": "https://sberbankins.ru/useful/emotsionalnoe-vygoranie-kak-ponyat-spravitsya-i-zashchitit-sebya/",
+          "domain": "sberbankins.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/sberbankins.ru"
+        },
+        {
+          "url": "https://netology.ru/blog/11-2022-burnout-control",
+          "domain": "netology.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/netology.ru"
+        },
+        {
+          "url": "https://asi.org.ru/2019/08/09/instruktsiyaka-2/",
+          "domain": "asi.org.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/asi.org.ru"
+        },
+        {
+          "url": "https://media.kpfu.ru/news/vygoranie-kak-ego-raspoznat-i-kto-v-gruppe-riska-otvetila-psikholog-kfu",
+          "domain": "media.kpfu.ru",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/media.kpfu.ru"
+        },
+        {
+          "url": "https://rcmp.tatarstan.ru/index.htm/news/2457782.htm",
+          "domain": "rcmp.tatarstan.ru",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/rcmp.tatarstan.ru"
+        },
+        {
+          "url": "https://www.bsmu.by/universitet/podrazdeleniya/otdel-vospitatelnoy-raboty-s-molodezhyu/sector-soc-ped-i-psihologicheskoy-raboti/polezno/prepodavatelyu-kuratoru-vospitatelyu/sindrom-emocionalnogo-vygoraniya/",
+          "domain": "www.bsmu.by",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.bsmu.by"
+        },
+        {
+          "url": "https://krizis-centr.ru/informatsiya/news/emotsionalnoe-vygoranie-prichiny-i-sposoby-preodoleniya",
+          "domain": "krizis-centr.ru",
+          "position": 10,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/krizis-centr.ru"
+        }
+      ],
+      "urls_total": 10
+    },
+    {
+      "prompt_id": 800308,
+      "prompt": "Как стресс связан с бессонницей?",
+      "brand_prompt": false,
+      "system": "yandex-alisa",
+      "system_name": "Поиск с Алисой",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://paininstitute.ru/useful_articles/kak-vlijaet-stress-na-son/",
+          "domain": "paininstitute.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/paininstitute.ru"
+        },
+        {
+          "url": "https://tenoten.ru/articles/bessonnitsa-iz-za-stressa-kak-vosstanovit-zdorovyy-son/",
+          "domain": "tenoten.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/tenoten.ru"
+        },
+        {
+          "url": "https://www.b17.ru/article/863418/",
+          "domain": "www.b17.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.b17.ru"
+        },
+        {
+          "url": "https://sberhealth.ru/library/zdorove/son-i-stress-kak-naladit-son",
+          "domain": "sberhealth.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/sberhealth.ru"
+        },
+        {
+          "url": "https://ei-t.ru/wiki/bessonnitsa-iz-za-stressa-kak-svyazany-trevoga-i-narushenie-sna/",
+          "domain": "ei-t.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/ei-t.ru"
+        }
+      ],
+      "urls_total": 5
+    },
+    {
+      "prompt_id": 800308,
+      "prompt": "Как стресс связан с бессонницей?",
+      "brand_prompt": false,
+      "system": "google-ai-overview",
+      "system_name": "Google AI Overview",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://paininstitute.ru/useful_articles/kak-vlijaet-stress-na-son/",
+          "domain": "paininstitute.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/paininstitute.ru"
+        },
+        {
+          "url": "https://www.intac.ru/stati/bessonnitsa-i-stress-naydite-put-k-spokoynomu-snu",
+          "domain": "www.intac.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.intac.ru"
+        },
+        {
+          "url": "https://postnauka.org/faq/155190",
+          "domain": "postnauka.org",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/postnauka.org"
+        },
+        {
+          "url": "https://sberhealth.ru/library/zdorove/son-i-stress-kak-naladit-son",
+          "domain": "sberhealth.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/sberhealth.ru"
+        },
+        {
+          "url": "https://guztokkd.gosuslugi.ru/informatsiya-dlya-patsientov/mental-health/2025-10-09.html",
+          "domain": "guztokkd.gosuslugi.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/guztokkd.gosuslugi.ru"
+        }
+      ],
+      "urls_total": 5
+    },
+    {
+      "prompt_id": 800308,
+      "prompt": "Как стресс связан с бессонницей?",
+      "brand_prompt": false,
+      "system": "chatgpt",
+      "system_name": "ChatGPT",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://health.nih.gov/health-topics-a-z/insomnia",
+          "domain": "health.nih.gov",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/health.nih.gov"
+        },
+        {
+          "url": "https://www.nhlbi.nih.gov/health/insomnia/causes",
+          "domain": "www.nhlbi.nih.gov",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.nhlbi.nih.gov"
+        },
+        {
+          "url": "https://www.nccih.nih.gov/health/stress?nav=tw",
+          "domain": "www.nccih.nih.gov",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.nccih.nih.gov"
+        }
+      ],
+      "urls_total": 3
+    },
+    {
+      "prompt_id": 800308,
+      "prompt": "Как стресс связан с бессонницей?",
+      "brand_prompt": false,
+      "system": "perplexity",
+      "system_name": "Perplexity",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://www.sleepfoundation.org/insomnia/stress-and-insomnia",
+          "domain": "www.sleepfoundation.org",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.sleepfoundation.org"
+        },
+        {
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3538178/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/pmc.ncbi.nlm.nih.gov"
+        },
+        {
+          "url": "https://www.hopkinsmedicine.org/health/wellness-and-prevention/sleepless-nights-try-stress-relief-techniques",
+          "domain": "www.hopkinsmedicine.org",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.hopkinsmedicine.org"
+        },
+        {
+          "url": "https://healthcare.utah.edu/the-scope/health-library/all/2025/08/breaking-stress-sleep-cycle-how-rest-better-difficult-times",
+          "domain": "healthcare.utah.edu",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/healthcare.utah.edu"
+        },
+        {
+          "url": "https://onlinelibrary.wiley.com/doi/full/10.1111/jsr.13842",
+          "domain": "onlinelibrary.wiley.com",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/onlinelibrary.wiley.com"
+        },
+        {
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2128619/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/pmc.ncbi.nlm.nih.gov"
+        },
+        {
+          "url": "https://www.dartmouth-health.org/articles/how-sleep-times-stress",
+          "domain": "www.dartmouth-health.org",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.dartmouth-health.org"
+        },
+        {
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7045300/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/pmc.ncbi.nlm.nih.gov"
+        },
+        {
+          "url": "https://www.bcm.edu/news/how-stress-can-affect-your-sleep",
+          "domain": "www.bcm.edu",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.bcm.edu"
+        },
+        {
+          "url": "https://www.stressresearch.or.kr/upload/pdf/JSR012-04-01.pdf",
+          "domain": "www.stressresearch.or.kr",
+          "position": 10,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.stressresearch.or.kr"
+        }
+      ],
+      "urls_total": 10
+    },
+    {
+      "prompt_id": 800309,
+      "prompt": "Что такое психобиотики и как они связаны со стрессом?",
+      "brand_prompt": false,
+      "system": "yandex-alisa",
+      "system_name": "Поиск с Алисой",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://tr-page.yandex.ru/translate?lang=en-ru&url=https://www.frontiersin.org/journals/psychiatry/articles/10.3389/fpsyt.2023.1074736/full",
+          "domain": "tr-page.yandex.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/tr-page.yandex.ru"
+        },
+        {
+          "url": "https://www.lvrach.ru/2023/10/15438868",
+          "domain": "www.lvrach.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.lvrach.ru"
+        },
+        {
+          "url": "http://medbio.ulsu.ru/images/numbers/2025/1-2025/002.pdf",
+          "domain": "medbio.ulsu.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/medbio.ulsu.ru"
+        },
+        {
+          "url": "https://tc-longevity.ru/article/psihobiotiki-kak-mikrobiota-vliyaet-na-sostoyanie-mozga",
+          "domain": "tc-longevity.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/tc-longevity.ru"
+        },
+        {
+          "url": "https://bifistim.com/blog/kak-bakterii-upravlyayut-vashim-nastroeniem-i-stressoustoychivostyu",
+          "domain": "bifistim.com",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/bifistim.com"
+        },
+        {
+          "url": "https://cmac-journal.ru/publication/2022/2/cmac-2022-t24-n2-p108/cmac-2022-t24-n2-p108.pdf",
+          "domain": "cmac-journal.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/cmac-journal.ru"
+        }
+      ],
+      "urls_total": 6
+    },
+    {
+      "prompt_id": 800309,
+      "prompt": "Что такое психобиотики и как они связаны со стрессом?",
+      "brand_prompt": false,
+      "system": "google-ai-overview",
+      "system_name": "Google AI Overview",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://www.fdoctor.ru/health/helpful_information/psikhobiotiki_kishechnye_bakterii_vliyayushchie_na_psikhiku_cheloveka/",
+          "domain": "www.fdoctor.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.fdoctor.ru"
+        },
+        {
+          "url": "https://maxiflor.ru/statyi/tpost/psikhobiotiki-dlya-nervnoi-sistemi",
+          "domain": "maxiflor.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/maxiflor.ru"
+        },
+        {
+          "url": "https://novabiom.ru/blog/stress-and-gut",
+          "domain": "novabiom.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/novabiom.ru"
+        },
+        {
+          "url": "https://lactoflorene.eu/blog/mikrobiom-i-stress/",
+          "domain": "lactoflorene.eu",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/lactoflorene.eu"
+        },
+        {
+          "url": "https://www.a-life.ru/blogs/blog/chernovik-stati-ot-16112023-1348",
+          "domain": "www.a-life.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.a-life.ru"
+        },
+        {
+          "url": "https://www.gastro-j.ru/jour/article/view/211",
+          "domain": "www.gastro-j.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.gastro-j.ru"
+        }
+      ],
+      "urls_total": 6
+    },
+    {
+      "prompt_id": 800309,
+      "prompt": "Что такое психобиотики и как они связаны со стрессом?",
+      "brand_prompt": false,
+      "system": "chatgpt",
+      "system_name": "ChatGPT",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13567437/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/pmc.ncbi.nlm.nih.gov"
+        }
+      ],
+      "urls_total": 1
+    },
+    {
+      "prompt_id": 800309,
+      "prompt": "Что такое психобиотики и как они связаны со стрессом?",
+      "brand_prompt": false,
+      "system": "perplexity",
+      "system_name": "Perplexity",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9940471/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/pmc.ncbi.nlm.nih.gov"
+        },
+        {
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9518511/",
+          "domain": "pmc.ncbi.nlm.nih.gov",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/pmc.ncbi.nlm.nih.gov"
+        },
+        {
+          "url": "https://link.springer.com/article/10.1007/s44518-026-00004-3?error=cookies_not_supported&code=20661496-58f8-445c-88b2-38518573ee90",
+          "domain": "link.springer.com",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/link.springer.com"
+        },
+        {
+          "url": "https://www.livescience.com/what-are-psychobiotics",
+          "domain": "www.livescience.com",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.livescience.com"
+        },
+        {
+          "url": "https://www.mdpi.com/2076-3417/15/8/4564",
+          "domain": "www.mdpi.com",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.mdpi.com"
+        },
+        {
+          "url": "https://www.frontiersin.org/journals/microbiology/articles/10.3389/fmicb.2026.1804560/full",
+          "domain": "www.frontiersin.org",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.frontiersin.org"
+        },
+        {
+          "url": "https://sciup.org/psihobiotiki-v-funkcionalnom-pitanii-rol-i-vozmozhnosti-primenenija-14132972",
+          "domain": "sciup.org",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/sciup.org"
+        },
+        {
+          "url": "https://www.kommersant.ru/doc/4501976",
+          "domain": "www.kommersant.ru",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.kommersant.ru"
+        },
+        {
+          "url": "https://unclinic.ru/psihobiotiki-chto-jeto-pokazanija-sostav/",
+          "domain": "unclinic.ru",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/unclinic.ru"
+        },
+        {
+          "url": "https://www.biocodexmicrobiotainstitute.com/sites/default/files/2023-10/infog_stress_RU.pdf",
+          "domain": "www.biocodexmicrobiotainstitute.com",
+          "position": 10,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.biocodexmicrobiotainstitute.com"
+        }
+      ],
+      "urls_total": 10
+    },
+    {
+      "prompt_id": 800310,
+      "prompt": "Что представляет собой проект Stresshelp.ru?",
+      "brand_prompt": true,
+      "system": "yandex-alisa",
+      "system_name": "Поиск с Алисой",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": true,
+      "brand_position": 1,
+      "site_cited": true,
+      "site_position": 2,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://vk.ru/stresshelpru",
+          "domain": "vk.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/vk.ru"
+        },
+        {
+          "url": "https://stresshelp.ru/about/",
+          "domain": "stresshelp.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stresshelp.ru"
+        },
+        {
+          "url": "https://uncia.ru/stresshelp-project/",
+          "domain": "uncia.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/uncia.ru"
+        },
+        {
+          "url": "https://pharmvestnik.ru/content/news/Proekt-StressHelp-ru-kompanii-Soteks-stal-prizerom-premii-Russian-Pharma-Awards.html",
+          "domain": "pharmvestnik.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/pharmvestnik.ru"
+        },
+        {
+          "url": "https://stresshelp.ru/",
+          "domain": "stresshelp.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stresshelp.ru"
+        },
+        {
+          "url": "https://stress.help/concept",
+          "domain": "stress.help",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stress.help"
+        },
+        {
+          "url": "https://vk.ru/wall-203856966_19",
+          "domain": "vk.ru",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/vk.ru"
+        }
+      ],
+      "urls_total": 7
+    },
+    {
+      "prompt_id": 800310,
+      "prompt": "Что представляет собой проект Stresshelp.ru?",
+      "brand_prompt": true,
+      "system": "google-ai-overview",
+      "system_name": "Google AI Overview",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": true,
+      "brand_position": 1,
+      "site_cited": true,
+      "site_position": 1,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "http://stresshelp.ru",
+          "domain": "stresshelp.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stresshelp.ru"
+        }
+      ],
+      "urls_total": 1
+    },
+    {
+      "prompt_id": 800310,
+      "prompt": "Что представляет собой проект Stresshelp.ru?",
+      "brand_prompt": true,
+      "system": "chatgpt",
+      "system_name": "ChatGPT",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": true,
+      "brand_position": 1,
+      "site_cited": true,
+      "site_position": 1,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://stresshelp.ru/about/",
+          "domain": "stresshelp.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stresshelp.ru"
+        },
+        {
+          "url": "https://stresshelp.ru/",
+          "domain": "stresshelp.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stresshelp.ru"
+        }
+      ],
+      "urls_total": 2
+    },
+    {
+      "prompt_id": 800310,
+      "prompt": "Что представляет собой проект Stresshelp.ru?",
+      "brand_prompt": true,
+      "system": "perplexity",
+      "system_name": "Perplexity",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": true,
+      "brand_position": 1,
+      "site_cited": true,
+      "site_position": 1,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://stresshelp.ru/about/",
+          "domain": "stresshelp.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stresshelp.ru"
+        },
+        {
+          "url": "https://stresshelp.ru/",
+          "domain": "stresshelp.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stresshelp.ru"
+        },
+        {
+          "url": "https://stresshelp.ru/psyco-support/",
+          "domain": "stresshelp.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stresshelp.ru"
+        },
+        {
+          "url": "https://sky-rocket-agency.ru/stresshelp",
+          "domain": "sky-rocket-agency.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/sky-rocket-agency.ru"
+        },
+        {
+          "url": "https://sotex.ru/about/news/proekt-stresshelp-ru-kompanii-soteks-stal-prizerom-premii-russian-pharma-awards/",
+          "domain": "sotex.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/sotex.ru"
+        },
+        {
+          "url": "https://stresshelp.ru/pravila-polzovaniya-saytov/",
+          "domain": "stresshelp.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stresshelp.ru"
+        },
+        {
+          "url": "https://uncia.ru/stresshelp-project/",
+          "domain": "uncia.ru",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/uncia.ru"
+        },
+        {
+          "url": "https://stress.help/",
+          "domain": "stress.help",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stress.help"
+        },
+        {
+          "url": "https://stresshelp.ru/stati-i-video/",
+          "domain": "stresshelp.ru",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stresshelp.ru"
+        },
+        {
+          "url": "https://stresshelp.ru/serial/rodvigor9/",
+          "domain": "stresshelp.ru",
+          "position": 10,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stresshelp.ru"
+        }
+      ],
+      "urls_total": 10
+    },
+    {
+      "prompt_id": 800311,
+      "prompt": "Какие материалы о препарате Авиандр доступны на официальных информационных сайтах?",
+      "brand_prompt": false,
+      "system": "yandex-alisa",
+      "system_name": "Поиск с Алисой",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://www.rlsnet.ru/drugs/aviandr-89501",
+          "domain": "www.rlsnet.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.rlsnet.ru"
+        },
+        {
+          "url": "https://www.vidal.ru/drugs/aviandr",
+          "domain": "www.vidal.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.vidal.ru"
+        },
+        {
+          "url": "https://apteka.ru/product/aviandr-20-mg-30-sht-blister-tabletki-pokrytye-plenochnoj-obolochkoj-6511af41e22d532358eca04c/",
+          "domain": "apteka.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/apteka.ru"
+        },
+        {
+          "url": "https://gorzdrav.org/catalog/aviandr/",
+          "domain": "gorzdrav.org",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/gorzdrav.org"
+        },
+        {
+          "url": "https://stolichki.ru/drugs/aviandr-tab-p-o-20mg-30",
+          "domain": "stolichki.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/stolichki.ru"
+        },
+        {
+          "url": "https://www.lsgeotar.ru/drugs/aviandr-AGZl",
+          "domain": "www.lsgeotar.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.lsgeotar.ru"
+        },
+        {
+          "url": "https://planetazdorovo.ru/catalog/lekarstva-i-bad/nevrologiya-psikhiatriya/anksiolitiki/aviandr-tab-pob-plenochnoj-20mg-20401411/",
+          "domain": "planetazdorovo.ru",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/planetazdorovo.ru"
+        }
+      ],
+      "urls_total": 7
+    },
+    {
+      "prompt_id": 800311,
+      "prompt": "Какие материалы о препарате Авиандр доступны на официальных информационных сайтах?",
+      "brand_prompt": false,
+      "system": "google-ai-overview",
+      "system_name": "Google AI Overview",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": "serp",
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://aviandr.ru/",
+          "domain": "aviandr.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/aviandr.ru"
+        },
+        {
+          "url": "https://chemrar.ru/rossijskij-innovacionnyj-preparat-aviandr-vklyuchen-v-mezhdunarodnyj-farmacevticheskij-reestr-vsemirnoj-organizacii-zdravooxraneniya-voz/",
+          "domain": "chemrar.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/chemrar.ru"
+        },
+        {
+          "url": "https://grls.pharm-portal.ru/grls/36e2dcf6-25ef-4934-9ec6-16c01eb97f46",
+          "domain": "grls.pharm-portal.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/grls.pharm-portal.ru"
+        },
+        {
+          "url": "https://www.rlsnet.ru/drugs/aviandr-89501",
+          "domain": "www.rlsnet.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.rlsnet.ru"
+        },
+        {
+          "url": "https://www.zdrav.ru/news/1099949-minzdrav-odobril-preparat-aviandr-dlya-lecheniya-trevojnyh-rasstroystv",
+          "domain": "www.zdrav.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.zdrav.ru"
+        },
+        {
+          "url": "https://aviandr.ru/patient",
+          "domain": "aviandr.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/aviandr.ru"
+        },
+        {
+          "url": "https://www.vidal.ru/drugs/aviandr",
+          "domain": "www.vidal.ru",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.vidal.ru"
+        },
+        {
+          "url": "https://medi.ru/instrukciya/aviandr_27908/",
+          "domain": "medi.ru",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/medi.ru"
+        },
+        {
+          "url": "https://oblast45.ru/publication/82610",
+          "domain": "oblast45.ru",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/oblast45.ru"
+        },
+        {
+          "url": "https://aviandr.ru/patient-blog/aviandr-ddi",
+          "domain": "aviandr.ru",
+          "position": 10,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/aviandr.ru"
+        },
+        {
+          "url": "https://aviandr.ru/aviandr-anxiolitik-or-antidepressant",
+          "domain": "aviandr.ru",
+          "position": 11,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/aviandr.ru"
+        },
+        {
+          "url": "https://main-cdn.sbermegamarket.ru/hlr-system/-44/380/030/836/122/5/100064047703bi01.pdf",
+          "domain": "main-cdn.sbermegamarket.ru",
+          "position": 12,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/main-cdn.sbermegamarket.ru"
+        }
+      ],
+      "urls_total": 12
+    },
+    {
+      "prompt_id": 800311,
+      "prompt": "Какие материалы о препарате Авиандр доступны на официальных информационных сайтах?",
+      "brand_prompt": false,
+      "system": "chatgpt",
+      "system_name": "ChatGPT",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://aviandr.ru/avi-video",
+          "domain": "aviandr.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/aviandr.ru"
+        },
+        {
+          "url": "https://aviandr.ru/patient",
+          "domain": "aviandr.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/aviandr.ru"
+        },
+        {
+          "url": "https://aviandr.ru/medic",
+          "domain": "aviandr.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/aviandr.ru"
+        },
+        {
+          "url": "https://aviandr.ru/nauchnie-publikatsii-aviandr",
+          "domain": "aviandr.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/aviandr.ru"
+        }
+      ],
+      "urls_total": 4
+    },
+    {
+      "prompt_id": 800311,
+      "prompt": "Какие материалы о препарате Авиандр доступны на официальных информационных сайтах?",
+      "brand_prompt": false,
+      "system": "perplexity",
+      "system_name": "Perplexity",
+      "has_answer": true,
+      "status": "answered",
+      "brand_mentioned": false,
+      "brand_position": null,
+      "site_cited": false,
+      "site_position": null,
+      "answer_origin": null,
+      "update_id": 53141,
+      "urls": [
+        {
+          "url": "https://aviandr.ru/medic",
+          "domain": "aviandr.ru",
+          "position": 1,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/aviandr.ru"
+        },
+        {
+          "url": "https://aviandr.ru/patient",
+          "domain": "aviandr.ru",
+          "position": 2,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/aviandr.ru"
+        },
+        {
+          "url": "https://aviandr.ru/patient-blog",
+          "domain": "aviandr.ru",
+          "position": 3,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/aviandr.ru"
+        },
+        {
+          "url": "https://www.vidal.ru/drugs/aviandr",
+          "domain": "www.vidal.ru",
+          "position": 4,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.vidal.ru"
+        },
+        {
+          "url": "https://medi.ru/instrukciya/aviandr_27908/",
+          "domain": "medi.ru",
+          "position": 5,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/medi.ru"
+        },
+        {
+          "url": "https://www.lsgeotar.ru/drugs/aviandr-AGZl/attachments",
+          "domain": "www.lsgeotar.ru",
+          "position": 6,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.lsgeotar.ru"
+        },
+        {
+          "url": "https://www.sechenov.ru/pressroom/news/v-sechenovskom-universitete-uspeshno-proshli-issledovaniya-innovatsionnogo-lekarstvennogo-preparata-/",
+          "domain": "www.sechenov.ru",
+          "position": 7,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.sechenov.ru"
+        },
+        {
+          "url": "https://chemrar.ru/avinejro/",
+          "domain": "chemrar.ru",
+          "position": 8,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/chemrar.ru"
+        },
+        {
+          "url": "https://nnp.ima-press.net/nnp/article/download/2339/1708",
+          "domain": "nnp.ima-press.net",
+          "position": 9,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/nnp.ima-press.net"
+        },
+        {
+          "url": "https://www.acmespb.ru/news/annotation/aviandr/",
+          "domain": "www.acmespb.ru",
+          "position": 10,
+          "favicon": "https://tools.pixelplus.ru/projects/shared/getfavicon/www.acmespb.ru"
+        }
+      ],
+      "urls_total": 10
+    }
+  ],
+  "method": "One run, 12 Russian prompts, RU region 225; 11 nonbrand prompts plus one brand control. Missing answers excluded from citation denominator. Source position is within the answer, not a search ranking. Provider model names, not independently verified versions.",
+  "settings": {
+    "chatgpt_web_search": true,
+    "yandex_chat_fallback": true,
+    "google_ai_mode": false,
+    "schedules": "paused"
+  }
+}

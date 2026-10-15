@@ -1,19 +1,15 @@
 {
-  "source": "Pixel Tools GEO API",
   "project_id": 14429,
-  "project_url": "https://ai.pixeltools.ru/projects/14429/summary",
-  "status": "blocked_insufficient_limits",
-  "http_status": 403,
-  "provider_message": "Недостаточно лимитов на балансе.",
-  "requested_prompts": 12,
-  "requested_systems": [
-    "ChatGPT",
-    "Perplexity",
-    "Поиск с Алисой",
-    "Google AI Overview"
-  ],
-  "requested_cells": 48,
-  "measurements": null,
-  "schedules": "all_paused",
-  "date": "2026-10-15"
+  "update_id": 53141,
+  "completed_at": "2026-10-15T13:19:49.000000Z",
+  "status": "completed_with_missing_answers",
+  "planned": 48,
+  "answered": 46,
+  "missing": 2,
+  "settings": {
+    "chatgpt_web_search": true,
+    "yandex_chat_fallback": true,
+    "google_ai_mode": false,
+    "schedules": "paused"
+  }
 }
